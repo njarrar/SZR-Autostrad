@@ -1,0 +1,226 @@
+<title>__TITLE__</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
+<style>
+/* Layout: full-bleed 3D road, a side sheet for the menu, a thin HUD frame over the drive. */
+:root {
+__TOKENS__
+  --display: 'Lalezar', 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --r: 14px;
+}
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--body); overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+#gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- menu sheet ---------- */
+.screen { position: fixed; inset: 0; display: flex; pointer-events: none; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
+.sheet { pointer-events: auto; direction: rtl; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+#menu { justify-content: flex-end; }
+.brand { display: flex; flex-direction: column; gap: 2px; }
+.brand .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; text-transform: uppercase; direction: ltr; text-align: right; }
+.brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 9vw, 62px); line-height: 1; margin: 4px 0 0; color: var(--accent); text-wrap: balance; }
+.brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.flagbar { height: 6px; border-radius: 3px; background: var(--flagbar); }
+.label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 6px; }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--chip); border-radius: 10px; padding: 3px; gap: 3px; }
+.seg button { border: 0; background: transparent; padding: 9px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+.seg button.sel { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,.18); color: var(--accent); }
+#trips { display: flex; flex-direction: column; gap: 6px; max-height: 236px; overflow-y: auto; padding-inline-end: 2px; }
+.trip { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
+.trip .tt { font-weight: 600; font-size: 15px; }
+.trip .tt i { font-style: normal; color: var(--muted); font-weight: 500; }
+.trip .ts { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.trip.sel { border-color: var(--accent); background: var(--chip); }
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; }
+.btn { border: 0; border-radius: 12px; padding: 12px 14px; font-weight: 700; background: var(--chip); }
+.go { font-family: var(--display); font-weight: 400; font-size: 30px; background: var(--accent); color: var(--on-accent); border-radius: 12px; border: 0; padding: 10px 14px 6px; letter-spacing: .01em; }
+.go:active, .btn:active { transform: translateY(1px); }
+.drawer { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+#cars { display: flex; flex-direction: column; gap: 6px; }
+.car { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.car span { font-size: 12px; color: var(--muted); }
+.car.sel { border-color: var(--accent); background: var(--chip); }
+#colors { display: flex; gap: 8px; flex-wrap: wrap; }
+.sw { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--line); background: var(--sw); }
+.sw.sel { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sw:disabled { opacity: .35; cursor: not-allowed; }
+.note { font-size: 12px; color: var(--muted); margin: 0; }
+#plate { width: 100%; box-sizing: border-box; font: 600 18px var(--body); padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--panel-solid); color: var(--ink); direction: ltr; text-align: center; letter-spacing: .08em; }
+.foot { font-size: 12px; color: var(--muted); line-height: 1.6; display: flex; flex-direction: column; gap: 6px; }
+.foot a { color: var(--accent); font-weight: 700; }
+kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; padding: 1px 5px; direction: ltr; display: inline-block; }
+#loading { font-weight: 600; color: var(--muted); padding: 10px 0; }
+
+/* ---------- HUD ---------- */
+#hud { position: fixed; inset: 0; pointer-events: none; direction: rtl; font-variant-numeric: tabular-nums; }
+.hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
+.speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
+.speedo.over .num { color: var(--bad); }
+.speedo .unit { font-size: 11px; opacity: .8; }
+.limit { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 5px solid #d0201a; color: #111; display: grid; place-items: center; font-weight: 700; font-size: 15px; box-sizing: border-box; }
+.trip-hud { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; max-width: 46vw; }
+.trip-hud .lbl { font-size: 11px; opacity: .75; }
+.trip-hud b { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trip-hud .rem { font-family: var(--display); font-size: 22px; line-height: 1.1; color: var(--accent-hud); }
+.stats { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 104px); inset-inline-start: 12px; display: flex; flex-direction: column; gap: 6px; }
+.chip { background: var(--hud); color: var(--hud-ink); border-radius: 10px; padding: 5px 10px; font-size: 13px; display: flex; gap: 8px; align-items: baseline; }
+.chip span { opacity: .75; font-size: 11px; }
+.dmg { width: 110px; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; align-self: center; }
+#hDmgBar { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #e2452b); }
+#mini { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 80px); inset-inline-end: 12px; width: 120px; height: 120px; background: var(--hud); border-radius: 14px; }
+#btnPause { pointer-events: auto; position: absolute; top: calc(env(safe-area-inset-top, 0px) + 208px); inset-inline-end: 12px; background: var(--hud); color: var(--hud-ink); border: 0; border-radius: 10px; padding: 7px 14px; font-weight: 700; }
+.toast { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -8px); background: var(--hud); color: var(--hud-ink); padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 17px; opacity: 0; transition: opacity .2s, transform .2s; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.bad { background: var(--bad); color: #fff; }
+.toast.good { background: var(--good); color: #fff; }
+#warn { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 80px); left: 50%; transform: translateX(-50%); background: #f2c218; color: #111; font-weight: 700; padding: 6px 14px; border-radius: 8px; font-size: 14px; }
+#hWeave { position: absolute; top: 24%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-size: 32px; color: var(--accent-hud); text-shadow: 0 2px 10px rgba(0,0,0,.5); opacity: 0; white-space: nowrap; }
+#hWeave.pop { animation: pop 1.1s ease-out; }
+@keyframes pop { 0% { opacity: 0; transform: translate(-50%, 10px) scale(.8); } 15% { opacity: 1; transform: translate(-50%, 0) scale(1.08); } 70% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, -14px); } }
+#flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+#flash.go { animation: fl .45s ease-out; }
+@keyframes fl { 0% { opacity: .85; } 100% { opacity: 0; } }
+
+/* ---------- touch ---------- */
+#touch { position: fixed; inset: auto 0 0 0; padding: 0 14px calc(env(safe-area-inset-bottom, 0px) + 14px); display: flex; justify-content: space-between; align-items: flex-end; direction: ltr; pointer-events: none; }
+#touch .grp { display: flex; gap: 10px; pointer-events: auto; }
+.tb { width: 74px; height: 74px; border-radius: 18px; border: 0; background: var(--hud); color: var(--hud-ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; touch-action: none; }
+.tb.on { background: var(--accent); color: var(--on-accent); }
+.tb.gas { height: 110px; }
+.tb.horn { width: 84px; height: 56px; border-radius: 28px; font-family: var(--display); font-size: 20px; font-weight: 400; }
+#touch .hornwrap { order: 2; pointer-events: auto; }
+#touch.horn-left .hornwrap { order: 0; }
+#touch .steer { order: 1; }
+#touch .pedals { order: 3; }
+#touch.horn-left .steer { order: 1; }
+
+/* ---------- results / pause ---------- */
+#result, #pause { justify-content: center; align-items: center; }
+#result .sheet, #pause .sheet { margin: 0; }
+#rTitle { font-family: var(--display); font-weight: 400; font-size: 58px; line-height: 1; margin: 0; color: var(--accent); }
+#rSub { margin: 0; color: var(--muted); font-weight: 600; }
+#rStats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.stat { background: var(--chip); border-radius: 10px; padding: 8px 12px; display: flex; flex-direction: column; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); }
+.stat b { font-size: 18px; }
+.scorebox { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid var(--line); padding-top: 12px; gap: 8px; flex-wrap: wrap; }
+#rScore { font-family: var(--display); font-size: 44px; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+#rRate { font-weight: 700; font-size: 16px; }
+#rBest { font-size: 12px; color: var(--muted); width: 100%; }
+
+@media (max-width: 640px) {
+  .tb { width: 62px; height: 62px; border-radius: 16px; }
+  .tb.gas { height: 96px; }
+  .tb.horn { width: 70px; height: 50px; }
+  #touch { padding-inline: 10px; }
+  #touch .grp { gap: 8px; }
+  #menu { align-items: flex-end; }
+  #menu .sheet { max-height: 64%; padding: 16px 16px 14px; gap: 12px; }
+  .brand h1 { font-size: 40px; }
+  .brand p { display: none; }
+  #trips { max-height: 150px; }
+  .trip-hud { max-width: 52vw; }
+  .speedo .num { font-size: 36px; }
+  #mini { width: 92px; height: 92px; }
+  #btnPause { top: calc(env(safe-area-inset-top, 0px) + 180px); }
+}
+@media (prefers-reduced-motion: reduce) { #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
+</style>
+
+<canvas id="gl" aria-label="__ALT__"></canvas>
+<div id="flash"></div>
+
+<div id="hud" hidden>
+  <div class="hbar">
+    <div class="trip-hud"><span class="lbl">__T_NEXT__</span><b id="hNext"></b><span class="rem" id="hRemain">0.0</span></div>
+    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit">__T_KMH__</div></div></div>
+  </div>
+  <div class="stats">
+    <div class="chip"><span>__T_TIME__</span><b id="hTime">0:00</b></div>
+    <div class="chip"><span>__T_SCORE__</span><b id="hScore">0</b></div>
+    <div class="chip"><span>__T_VIOL__</span><b id="hViol">0</b></div>
+    <div class="chip"><span>__T_DMG__</span><div class="dmg"><div id="hDmgBar"></div></div></div>
+  </div>
+  <canvas id="mini" width="300" height="300"></canvas>
+  <button id="btnPause" type="button">__T_PAUSE__</button>
+  <div id="warn" hidden></div>
+  <div id="hWeave"></div>
+  <div id="toast" class="toast"></div>
+</div>
+
+<div id="touch" hidden>
+  <div class="grp steer"><button class="tb" data-hold="left" type="button" aria-label="left">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="right">&#9654;</button></div>
+  <div class="grp hornwrap"><button class="tb horn" data-hold="horn" type="button">__T_HORN__</button></div>
+  <div class="grp pedals"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button">__T_GAS__</button></div>
+</div>
+
+<div id="menu" class="screen">
+  <div class="sheet">
+    <div class="brand">
+      <span class="eyebrow">__EYEBROW__</span>
+      <h1>__NAME__</h1>
+      <div class="flagbar"></div>
+      <p>__BLURB__</p>
+    </div>
+    <div id="loading">...</div>
+    <div id="menuBody" hidden style="display:contents">
+      <div><div class="label">__T_DIR__</div><div class="seg" id="segDir"><button type="button" data-v="1">__T_CW__</button><button type="button" data-v="-1">__T_CCW__</button></div></div>
+      <div><div class="label">__T_TRIP__</div><div id="trips"></div></div>
+      <div><div class="label">__T_TRAFFIC__</div><div class="seg" id="segTraffic"><button type="button" data-v="0">__T_TR0__</button><button type="button" data-v="1">__T_TR1__</button><button type="button" data-v="2">__T_TR2__</button></div></div>
+      <button class="go" id="btnStart" type="button">__T_GO__</button>
+      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button></div>
+      <div class="drawer" id="garage" hidden>
+        <div><div class="label">__T_CARS__</div><div id="cars"></div></div>
+        <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
+        <div><div class="label"><label for="plate">__T_PLATE__</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
+      </div>
+      <div class="drawer" id="settingsBox" hidden>
+        <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam1"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
+        <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn1"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
+        <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound1"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
+      </div>
+      <div class="foot">
+        <span>__T_KEYS__</span>
+        <span>__T_MAPNOTE__</span>
+        __OTHER__
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pause" class="screen" hidden>
+  <div class="sheet">
+    <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)">__T_PAUSED__</h2>
+    <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam2"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
+    <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn2"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
+    <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound2"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
+    <div class="row"><button class="go" id="btnResume" type="button">__T_RESUME__</button></div>
+    <button class="btn" id="btnQuit" type="button">__T_QUIT__</button>
+  </div>
+</div>
+
+<div id="result" class="screen" hidden>
+  <div class="sheet">
+    <div><h2 id="rTitle"></h2><p id="rSub"></p></div>
+    <div id="rStats"></div>
+    <div class="scorebox"><div><div class="label">__T_SCORE__</div><div id="rScore">0</div></div><div id="rRate"></div><div id="rBest"></div></div>
+    <div class="row"><button class="go" id="btnAgain" type="button">__T_AGAIN__</button></div>
+    <button class="btn" id="btnMenu" type="button">__T_NEWTRIP__</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+__CITY__
+</script>
+<script>
+__ENGINE__
+</script>

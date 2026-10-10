@@ -1,0 +1,108 @@
+window.CITY = {
+  id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20, currency: 'درهم',
+  fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
+  origin: [25.16, 55.22],
+  horn: [330, 415],
+  defaultPlate: 'A 12345',
+  route: [
+    [25.2340, 55.3000, 'mid'], [25.2265, 55.2880, 'tower'], [25.2185, 55.2810, 'tower'], [25.2010, 55.2680, 'tower'],
+    [25.1800, 55.2500, 'industrial'], [25.1530, 55.2290, 'mid'], [25.1170, 55.2010, 'mid'], [25.0990, 55.1790, 'tower'],
+    [25.0820, 55.1560, 'tower'], [25.0880, 55.1530, 'tower'], [25.1000, 55.1640, 'villa'], [25.1200, 55.1820, 'villa'],
+    [25.1360, 55.1960, 'villa'], [25.1600, 55.2120, 'villa'], [25.1850, 55.2300, 'villa'], [25.2050, 55.2460, 'villa'],
+    [25.2320, 55.2660, 'mid'], [25.2390, 55.2820, 'mid']
+  ],
+  coast: [[25.060, 55.120], [25.090, 55.150], [25.118, 55.172], [25.140, 55.192], [25.170, 55.212], [25.205, 55.238], [25.240, 55.262], [25.262, 55.285]],
+  fill: { count: 6000, pad: 1500, zone: 'villa', yaw: 0.6 },
+  defaultZone: 'mid',
+  zones: {
+    tower: { rows: 3, w: [18, 30], d: [18, 30], h: [25, 60], setback: 16, rowGap: 55, jitter: 10, spacing: [45, 75],
+      colors: [0xd8d2c4, 0xbfc6cc], tallP: 0.6, tw: [24, 42], th: [90, 320], crown: true,
+      tallColors: [0x8fb3c9, 0xc8d3dc, 0x6d8ba3, 0xd9c79a, 0x9aa7b4, 0x4f6577], tree: 'palm', treeP: 0.3 },
+    mid: { rows: 3, w: [20, 32], d: [20, 30], h: [15, 45], setback: 14, rowGap: 40, jitter: 8, spacing: [34, 52],
+      colors: [0xd8cdb8, 0xc4c9cc, 0xe6dccb], tallP: 0.15, tw: [22, 32], th: [60, 130], crown: true,
+      tallColors: [0x8fb3c9, 0xc8d3dc, 0x9aa7b4], tree: 'palm', treeP: 0.35 },
+    industrial: { rows: 2, w: [30, 55], d: [25, 40], h: [8, 14], setback: 20, rowGap: 50, jitter: 8, spacing: [40, 65],
+      colors: [0xb9b2a5, 0xa9a69f, 0xd1c7b3], tallP: 0.12, tw: [22, 30], th: [40, 90], tallColors: [0x9aa7b4, 0xc8d3dc], tree: 'palm', treeP: 0.15 },
+    villa: { rows: 3, w: [14, 20], d: [14, 20], h: [6, 10], setback: 12, rowGap: 26, jitter: 6, spacing: [22, 32],
+      colors: [0xe9dcc0, 0xf2ebdd, 0xdac7a2, 0xf6f2ea], tree: 'palm', treeP: 0.6 }
+  },
+  radars: [0.06, 0.2, 0.33, 0.5, 0.66, 0.85],
+  tollsAt: [[25.1835, 55.2550], [25.1060, 55.1880]],
+  landmarks: [
+    { ar: 'برواز دبي', en: 'Dubai Frame', lat: 25.2355, lon: 55.3003, build: 'frame', clear: 80 },
+    { ar: 'المركز التجاري العالمي', en: 'World Trade Centre', lat: 25.2245, lon: 55.2865, build: 'wtc', clear: 60 },
+    { ar: 'متحف المستقبل', en: 'Museum of the Future', lat: 25.2192, lon: 55.2818, build: 'museum', clear: 70 },
+    { ar: 'أبراج الإمارات', en: 'Emirates Towers', lat: 25.2172, lon: 55.2840, build: 'emiratesTowers', clear: 70 },
+    { ar: 'برج خليفة', en: 'Burj Khalifa', lat: 25.1972, lon: 55.2744, build: 'burjKhalifa', clear: 90 },
+    { ar: 'مول الإمارات', en: 'Mall of the Emirates', lat: 25.1181, lon: 55.2006, build: 'mall', clear: 230, ski: true, ink: '#6b4b1f' },
+    { ar: 'دبي مارينا', en: 'Dubai Marina', lat: 25.0790, lon: 55.1440, build: 'marina', clear: 220 },
+    { ar: 'عين دبي', en: 'Ain Dubai', lat: 25.0795, lon: 55.1225, build: 'ainDubai', clear: 140, sea: true },
+    { ar: 'برج العرب', en: 'Burj Al Arab', lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
+    { ar: 'مسجد جميرا', en: 'Jumeirah Mosque', lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
+  ],
+  cars: [
+    { name: 'دفع رباعي', kind: 'suv', vmax: 200, accel: 5.0, grip: 0.9, note: 'عالية وثابتة' },
+    { name: 'رياضية', kind: 'sports', vmax: 260, accel: 7.5, grip: 1.2, note: 'سريعة وايد' },
+    { name: 'تاكسي دبي', kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 175, accel: 4.6, grip: 1.0, note: 'بسقف أحمر' }
+  ],
+  colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
+  traffic: [
+    { kind: 'suv', colors: [0xf4f3ef, 0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979], speed: [90, 130] },
+    { kind: 'suv', colors: [0xf4f3ef, 0x141414], speed: [90, 130] },
+    { kind: 'sedan', colors: [0xf4f3ef, 0xb9bec4, 0x5a5f66, 0x1d1f22, 0x2c4a7a], speed: [85, 120] },
+    { kind: 'sports', colors: [0xc0141c, 0xf2c12e, 0x141414, 0x2a7de1, 0xf4f3ef], speed: [110, 140], wild: 0.6 },
+    { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0xd2232a }, speed: [85, 115] },
+    { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0x2e8b57 }, speed: [85, 115] },
+    { kind: 'pickup', colors: [0xf4f3ef], speed: [75, 100] },
+    { kind: 'bus', colors: [0xf4f4f0], extra: { stripe: 0xc8102e }, speed: [70, 90] },
+    { kind: 'truck', colors: [0xf4f3ef, 0x2b5b8f], extra: { cargo: 0xe2ddd2 }, speed: [65, 85] }
+  ],
+  flag(g, w, h) {
+    g.fillStyle = '#00843d'; g.fillRect(0, 0, w, h / 3); g.fillStyle = '#fff'; g.fillRect(0, h / 3, w, h / 3);
+    g.fillStyle = '#000'; g.fillRect(0, 2 * h / 3, w, h / 3); g.fillStyle = '#c8102e'; g.fillRect(0, 0, w / 4, h);
+  },
+  drawPlate(g, w, h, text) {
+    g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.strokeStyle = '#111'; g.lineWidth = 6; g.strokeRect(3, 3, w - 6, h - 6);
+    g.fillStyle = '#c8102e'; g.textAlign = 'center'; g.font = 'bold 26px sans-serif'; g.fillText('DUBAI', 62, 56); g.font = 'bold 28px sans-serif'; g.fillText('دبي', 62, 92);
+    g.fillStyle = '#111'; g.font = 'bold 76px sans-serif'; g.fillText(text, 310, 92);
+  },
+  look: {
+    exposure: 1.05, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
+    skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.0, sunColor: 0xffa26b, sun: 1.35, sunDir: [-0.8, 0.12, -0.45],
+    winLit: '#ffd9a0', winGlass: '#2d3a4a', windows: { floor: 3.6, bay: 2.4, size: 0.7 },
+    ground: ['#cdb38a', '#c4a77a', '#8d8478'], sand: '#e6d4ad', sea: '#1d5b78', asphalt: '#2f3033', median: '#9a958c',
+    lineEdge: '#f0e6c8', lineLane: '#f2f2f2', barrier: 0xc9c5bc, pole: 0xb0b4b8, tanks: [0xe8e8e8],
+    treeDark: 0x3e5a33, treeLight: 0x6f8a4a, signColor: '#0a4f8f', warnColor: '#a8740a', radarColor: 0xdedede, tollColor: '#127a63',
+    miniRoad: '#f4e2c4', miniDot: '#f2c46b', miniDest: '#ff6a5a', miniMe: '#ffffff'
+  },
+  text: {
+    meters: 'م', km: 'كم', kmh: 'كم/س', to: 'إلى', bumpSign: '', tollName: 'سالك', tollPrice: '4 درهم',
+    freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق على راحتك، كل 25 كم صيانة', fullLap: 'لفّة كاملة',
+    goTo: 'يلا إلى', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'تبا لها سطحة',
+    rTime: 'الوقت', rDist: 'المسافة', rAvg: 'معدل السرعة', rWeave: 'تجاوزات', rRadar: 'رادار', rCrash: 'حوادث', rFines: 'المخالفات',
+    newBest: 'رقم قياسي جديد', best: 'أحسن نتيجة',
+    rateTop: 'عفيه عليك!', rateMid: 'زين', rateBad: 'تبالك تدريب',
+    scrape: 'لا تحك بالحاجز!', crash: 'حادث!', radarAhead: 'رادار بعد', flash: 'الرادار صوّرك!', radarOk: 'عديت الرادار تمام',
+    bumpHit: '', bumpOk: '', bonus: '+500 كل 10 كم', workshop: 'صيانة: السيارة رجعت جديدة',
+    weave: 'تجاوز', loadRoad: 'قاعدين نرسم الشارع...', loadCity: 'قاعدين نبني دبي...'
+  },
+  page: {
+    title: 'لفّة دبي', name: 'لفّة دبي', eyebrow: 'Dubai · دبي', alt: 'Driving through Dubai',
+    blurb: 'من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.',
+    T_NEXT: 'الوجهة', T_KMH: 'كم/س', T_TIME: 'الوقت', T_SCORE: 'النقاط', T_VIOL: 'مخالفات', T_DMG: 'الضرر', T_PAUSE: 'وقّف',
+    T_HORN: 'هرن', T_BRAKE: 'بريك', T_GAS: 'دعس', T_DIR: 'الاتجاه', T_CW: 'مع عقارب الساعة', T_CCW: 'عكس عقارب الساعة',
+    T_TRIP: 'المشوار', T_TRAFFIC: 'الزحمة', T_TR0: 'خفيفة', T_TR1: 'عادية', T_TR2: 'زحمة', T_GO: 'يلا نمشي',
+    T_GARAGE: 'الكراج', T_SETTINGS: 'الإعدادات', T_CARS: 'السيارة', T_COLOR: 'اللون', T_FIXEDCOLOR: 'لون التاكسي ثابت',
+    T_PLATE: 'رقم اللوحة', T_CAM: 'الكاميرا', T_CAM0: 'قريبة', T_CAM1: 'عادية', T_CAM2: 'بعيدة', T_HORNSIDE: 'مكان الهرن',
+    T_LEFT: 'يسار', T_RIGHT: 'يمين', T_SOUND: 'الصوت', T_ON: 'شغّال', T_OFF: 'طافي',
+    T_KEYS: 'السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>',
+    T_MAPNOTE: 'الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.',
+    T_PAUSED: 'استراحة', T_RESUME: 'كمّل', T_QUIT: 'رجوع للقائمة', T_AGAIN: 'عيدها', T_NEWTRIP: 'مشوار ثاني',
+    otherLabel: 'جرّب عمّان',
+    tokens: {
+      ground: '#1b1830', ink: '#f4ecdf', muted: '#b7aec2', panel: 'rgba(19,18,38,0.9)', 'panel-solid': '#2a2746', chip: 'rgba(255,255,255,0.09)',
+      line: 'rgba(255,255,255,0.16)', accent: '#e2b04f', 'on-accent': '#1a1427', hud: 'rgba(14,12,30,0.7)', 'hud-ink': '#f7f0e4', 'accent-hud': '#f2c46b',
+      bad: '#e0473a', good: '#1f9e7a', flagbar: 'linear-gradient(90deg,#c8102e 0 22%,#00843d 22% 48%,#f4f1ea 48% 74%,#111 74%)'
+    }
+  }
+};
