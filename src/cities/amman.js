@@ -39,9 +39,12 @@ window.CITY = {
     { ar: 'شارع الجاردنز', en: 'Gardens Street', lat: 31.9845, lon: 35.8800, build: 'shops', clear: 140 }
   ],
   cars: [
-    { name: 'تكسي أصفر', kind: 'taxi', fixedColor: 0xf2c12e, vmax: 150, accel: 4.4, grip: 1.05, note: 'خفيف وبحشّر' },
-    { name: 'سيدان العيلة', kind: 'sedan', vmax: 170, accel: 4.6, grip: 1.0, note: 'متوازنة' },
-    { name: 'بكب', kind: 'pickup', vmax: 145, accel: 3.9, grip: 0.85, note: 'تقيل بس بتحمّل' }
+    { name: 'هيونداي إلنترا', en: 'Hyundai Elantra', kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0,
+      pros: 'متوازنة وبتحشّر بسهولة', cons: 'ما بتتميّز بإشي' },
+    { name: 'تويوتا بريوس', en: 'Toyota Prius', kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3,
+      pros: 'ثابتة بالكوع وبتلف بسهولة', cons: 'تسارعها بطيء وبتخرب بسرعة' },
+    { name: 'تويوتا هايلكس', en: 'Toyota Hilux', kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55,
+      pros: 'تقيلة، الضربات والمطبات ما بتأثر فيها كثير', cons: 'بطيئة ولفّتها صعبة' }
   ],
   colors: [0xf2f2ee, 0xb9bec4, 0x1d1f22, 0xb3202a, 0x4a6b3a, 0x24365c],
   traffic: [
@@ -69,7 +72,7 @@ window.CITY = {
     g.font = 'bold 74px sans-serif'; g.fillText(text, 300, 92);
   },
   look: {
-    exposure: 1.0, night: 0, fog: '#dccaa6', fogNear: 250, fogFar: 3200, skyTop: '#6f9fcf', sunGlow: '#ffd59a',
+    clouds: 0.6, cloudColor: '#fbf7f0', exposure: 1.0, night: 0, fog: '#dccaa6', fogNear: 250, fogFar: 3200, skyTop: '#6f9fcf', sunGlow: '#ffd59a',
     skyLight: 0xcfe1f2, groundLight: 0xb59c73, hemi: 1.15, sunColor: 0xffe1b0, sun: 1.9, sunDir: [-0.7, 0.45, 0.25],
     winLit: '#ffd58a', winGlass: '#4a5966', windows: { floor: 3.4, bay: 3.4, size: 0.4 },
     ground: ['#b9a27a', '#a48c63', '#a39a88'], asphalt: '#3d3d40', median: '#8c8a85', lineEdge: '#f0f0f0', lineLane: '#e8e8e8',
@@ -78,6 +81,7 @@ window.CITY = {
     miniRoad: '#f1e6d0', miniDot: '#7ed09b', miniDest: '#ff4d5e', miniMe: '#ce1126'
   },
   text: {
+    stSpeed: 'سرعة', stAccel: 'تسارع', stGrip: 'ثبات', stTough: 'تحمّل',
     meters: 'م', km: 'كم', kmh: 'كم/س', to: 'على', bumpSign: 'مطب', tollName: '', tollPrice: '',
     freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق براحتك، كل 25 كم في صيانة', fullLap: 'لفّة كاملة',
     goTo: 'يلا على', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'بدها ونش',
@@ -124,6 +128,7 @@ window.CITY = {
     T_R3: 'انتبه للمخالفات', T_R3S: 'الرادار بصوّر فوق 90 كم/س، والمطبات والحوادث بتخرّب السيارة.',
     T_WTOUR: 'جولة تعليمية', T_WSKIP: 'بعرف أسوق، بدي ألعب', T_TSKIP: 'تخطّي الجولة', T_TNEXT: 'التالي',
     T_TEND: 'جاهز!', T_TENDS: 'خلصت الجولة. بدك تختار مشوار ولا تكمّل سواقة حرة؟', T_TEMENU: 'اختار مشوار', T_TEDRIVE: 'كمّل سواقة حرة',
+    T_QUALITY: 'الرسومات', T_QHIGH: 'عالية', T_QLOW: 'سريعة',
     otherLabel: 'جرّب دبي',
     tokens: {
       ground: '#cbb48c', ink: '#2b2118', muted: '#6f6253', panel: 'rgba(246,240,229,0.94)', 'panel-solid': '#fbf7ef', chip: '#ece2cf',

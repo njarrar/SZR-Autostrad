@@ -41,9 +41,12 @@ window.CITY = {
     { ar: 'مسجد جميرا', en: 'Jumeirah Mosque', lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
   ],
   cars: [
-    { name: 'دفع رباعي', kind: 'suv', vmax: 200, accel: 5.0, grip: 0.9, note: 'عالية وثابتة' },
-    { name: 'رياضية', kind: 'sports', vmax: 260, accel: 7.5, grip: 1.2, note: 'سريعة وايد' },
-    { name: 'تاكسي دبي', kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 175, accel: 4.6, grip: 1.0, note: 'بسقف أحمر' }
+    { name: 'نيسان باترول', en: 'Nissan Patrol', kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55,
+      pros: 'قوية وتتحمل الصدمات', cons: 'ثقيلة ولفّتها صعبة' },
+    { name: 'لامبورغيني هوراكان', en: 'Lamborghini Huracán', kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5,
+      pros: 'أسرع سيارة في الشارع وثابتة وايد', cons: 'أي صدمة تخربها' },
+    { name: 'تويوتا كامري', en: 'Toyota Camry', kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0,
+      pros: 'متوازنة وتمشي مع كل شي', cons: 'ما فيها شي مميز' }
   ],
   colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
   traffic: [
@@ -67,7 +70,7 @@ window.CITY = {
     g.fillStyle = '#111'; g.font = 'bold 76px sans-serif'; g.fillText(text, 310, 92);
   },
   look: {
-    exposure: 1.05, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
+    clouds: 0.3, cloudColor: '#f1b49a', exposure: 1.05, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
     skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.0, sunColor: 0xffa26b, sun: 1.35, sunDir: [-0.8, 0.12, -0.45],
     winLit: '#ffd9a0', winGlass: '#2d3a4a', windows: { floor: 3.6, bay: 2.4, size: 0.7 },
     ground: ['#cdb38a', '#c4a77a', '#8d8478'], sand: '#e6d4ad', sea: '#1d5b78', asphalt: '#2f3033', median: '#9a958c',
@@ -76,6 +79,7 @@ window.CITY = {
     miniRoad: '#f4e2c4', miniDot: '#f2c46b', miniDest: '#ff6a5a', miniMe: '#ffffff'
   },
   text: {
+    stSpeed: 'سرعة', stAccel: 'تسارع', stGrip: 'ثبات', stTough: 'تحمّل',
     meters: 'م', km: 'كم', kmh: 'كم/س', to: 'إلى', bumpSign: '', tollName: 'سالك', tollPrice: '4 درهم',
     freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق على راحتك، كل 25 كم صيانة', fullLap: 'لفّة كاملة',
     goTo: 'يلا إلى', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'تبا لها سطحة',
@@ -122,6 +126,7 @@ window.CITY = {
     T_R3: 'انتبه للمخالفات', T_R3S: 'الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.',
     T_WTOUR: 'جولة تعليمية', T_WSKIP: 'أعرف أسوق، أبي ألعب', T_TSKIP: 'تخطّى الجولة', T_TNEXT: 'التالي',
     T_TEND: 'جاهز!', T_TENDS: 'خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟', T_TEMENU: 'اختار مشوار', T_TEDRIVE: 'كمّل سواقة حرة',
+    T_QUALITY: 'الرسومات', T_QHIGH: 'عالية', T_QLOW: 'سريعة',
     otherLabel: 'جرّب عمّان',
     tokens: {
       ground: '#1b1830', ink: '#f4ecdf', muted: '#b7aec2', panel: 'rgba(19,18,38,0.9)', 'panel-solid': '#2a2746', chip: 'rgba(255,255,255,0.09)',

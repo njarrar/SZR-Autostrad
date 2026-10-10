@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SZR Autostrad</title>
+<meta name="description" content="Two 3D driving games in the browser, set on real roads in Amman and Dubai.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
+<style>
+/* Layout: one column, a title, then two city cards side by side that stack on phones. */
+:root {
+  --bg: #efe7d8; --ink: #22190f; --muted: #6c5f4f; --card: #fbf7ef; --line: #ddd0b8;
+  --amman: #0b6e3a; --dubai: #b5822a;
+  --display: 'Lalezar', 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  --body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #17140f; --ink: #f3ebdc; --muted: #b3a690; --card: #221e17; --line: #3a3226; --amman: #4fc27f; --dubai: #e2b04f; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 40px; display: flex; flex-direction: column; gap: 36px; }
+header { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--muted); direction: ltr; text-align: right; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 9vw, 92px); line-height: 1; margin: 0; text-wrap: balance; }
+header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
+.cities { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.city { background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; color: inherit; text-decoration: none; transition: transform .15s; }
+.city:hover { transform: translateY(-3px); }
+.city:focus-visible { outline: 3px solid var(--c); outline-offset: 3px; }
+.city img { display: block; width: 100%; aspect-ratio: 1280 / 760; object-fit: cover; }
+.city .txt { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.city h2 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; color: var(--c); }
+.city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); direction: ltr; text-align: right; }
+.city p { margin: 0; color: var(--muted); }
+.play { margin-top: 10px; align-self: flex-start; background: var(--c); color: var(--card); font-family: var(--display); font-size: 24px; padding: 8px 22px 4px; border-radius: 12px; }
+.amman { --c: var(--amman); }
+.dubai { --c: var(--dubai); }
+.how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; border-top: 1px solid var(--line); padding-top: 28px; }
+.how h3 { margin: 0 0 4px; font-size: 16px; }
+.how p { margin: 0; color: var(--muted); font-size: 15px; }
+kbd { font: 600 12px var(--body); background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; direction: ltr; display: inline-block; }
+footer { font-size: 13px; color: var(--muted); }
+footer a { color: inherit; }
+@media (prefers-reduced-motion: reduce) { .city { transition: none; } .city:hover { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">SZR AUTOSTRAD</span>
+    <h1>سوق بشوارع عمّان ودبي</h1>
+    <p>لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</p>
+  </header>
+  <section class="cities">
+    <a class="city amman" href="amman.html">
+      <img src="img/amman-drive.png" alt="سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر">
+      <div class="txt">
+        <span class="en">AMMAN LOOP · 22 KM</span>
+        <h2>لفّة عمّان</h2>
+        <p>العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</p>
+        <span class="play">العب</span>
+      </div>
+    </a>
+    <a class="city dubai" href="dubai.html">
+      <img src="img/dubai-drive.png" alt="سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب">
+      <div class="txt">
+        <span class="en">DUBAI LOOP · 47 KM</span>
+        <h2>لفّة دبي</h2>
+        <p>برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</p>
+        <span class="play">العب</span>
+      </div>
+    </a>
+  </section>
+  <section class="how">
+    <div><h3>السواقة</h3><p><kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور. عالموبايل في أزرار عالشاشة.</p></div>
+    <div><h3>النقاط</h3><p>كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.</p></div>
+    <div><h3>المخالفات</h3><p>الرادار، الحوادث، الحك بالحاجز والمطبات بتنقص النقاط وبتخرّب السيارة.</p></div>
+    <div><h3>أول مرة؟</h3><p>اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.</p></div>
+  </section>
+  <footer>المسارات مرسومة بشكل تقريبي على أماكن حقيقية. <a href="https://github.com/njarrar/SZR-Autostrad">الكود على GitHub</a></footer>
+</div>
+</body>
+</html>

@@ -20,6 +20,12 @@ On a phone, the game shows touch buttons:
 
 ## Play
 
+**Play online:** https://njarrar.github.io/SZR-Autostrad/
+
+The page lets you pick Amman or Dubai. It works on a computer or a phone.
+
+To play offline:
+
 1. Download or clone this repo.
 2. Open `dist/amman.html` or `dist/dubai.html` in Chrome, Edge, Safari or Firefox.
 
@@ -54,8 +60,33 @@ You can move the horn button to the left or right side from the settings.
 
 1. **Pick a direction**: clockwise or counterclockwise around the loop.
 2. **Pick a trip**: from one landmark to another, a full lap, or free drive with no end.
-3. **Pick the traffic**: light, normal or heavy.
-4. **Drive to the end of the trip.** The box at the top shows where you're going and how far is left. The map shows you, the landmarks and your destination.
+3. **Pick your car** (see below).
+4. **Pick the traffic**: light, normal or heavy.
+5. **Drive to the end of the trip.** The box at the top shows where you're going and how far is left. The map shows you, the landmarks and your destination.
+
+### Cars
+
+Each city has three cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly.
+
+![Car picker in the Amman menu](docs/screenshots/amman-menu.png)
+
+**Amman**
+
+| Car | Top speed | Good at | Weak at |
+| --- | --- | --- | --- |
+| Hyundai Elantra (yellow taxi) | 175 km/h | Even all round, easy to weave | Nothing stands out |
+| Toyota Prius | 165 km/h | Best grip in curves | Slowest pick up, takes the most damage |
+| Toyota Hilux | 160 km/h | Takes the least damage | Slow and heavy in curves |
+
+**Dubai**
+
+| Car | Top speed | Good at | Weak at |
+| --- | --- | --- | --- |
+| Nissan Patrol | 210 km/h | Tough, shrugs off crashes | Heavy and hard to turn |
+| Lamborghini Huracán | 300 km/h | Fastest and best grip | One crash hurts a lot |
+| Toyota Camry (taxi) | 190 km/h | Even all round | Nothing stands out |
+
+Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
 
 ### Points
 
@@ -77,7 +108,8 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 
 - Sound the horn behind a slow car. It moves over if the lane next to it is free.
 - Curves push you outward at high speed, so steer into them.
-- The garage lets you change the car, its color and your plate number.
+- The garage lets you change the car's color and your plate number.
+- On a slow phone, set graphics to **سريعة** (fast) in the settings. It turns off shadows and draws fewer pixels.
 
 ## Project layout
 
@@ -86,6 +118,8 @@ src/engine.js          The game: road, terrain, buildings, landmarks, traffic, s
 src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, limits, fines, colors and all text
 src/cities/dubai.js    Dubai: the same for Dubai
 src/template.html      Page layout and styles
+src/landing.html       The start page that links to both games
+.github/workflows/     Builds the games and publishes them to GitHub Pages
 build.mjs              Builds one HTML file per city into dist/
 dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
@@ -99,11 +133,20 @@ You need Node.js 18 or newer. There are no packages to install.
 node build.mjs
 ```
 
-This writes `dist/amman.html` and `dist/dubai.html`. To add a link from each game to the other, create `links.json` next to `build.mjs`:
+This writes `dist/index.html`, `dist/amman.html` and `dist/dubai.html`. To add a link from each game to the other, create `links.json` next to `build.mjs`:
 
 ```json
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html" }
 ```
+
+## Publish on GitHub Pages
+
+Every push to `main` builds the games and publishes `dist/` with GitHub Actions. To turn this on once:
+
+1. Open **Settings > Pages** in the repo.
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
+
+GitHub Pages is free for public repos. A private repo needs a paid GitHub plan.
 
 ## Add a city
 

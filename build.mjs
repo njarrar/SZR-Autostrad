@@ -19,7 +19,7 @@ for (const id of ['amman', 'dubai']) {
     if (k === 'EYEBROW') return page.eyebrow;
     if (k === 'BLURB') return page.blurb;
     if (k === 'ALT') return page.alt;
-    if (k === 'OTHER') return links[other] ? `<a href="${links[other]}" target="_blank" rel="noopener">${page.otherLabel}</a>` : '';
+    if (k === 'OTHER') return links[other] ? `<a href="${links[other]}" target="_blank" rel="noopener">${page.otherLabel}</a>` : `<a href="${other}.html">${page.otherLabel}</a>`;
     if (k in page) return page[k];
     throw new Error('missing ' + k);
   });
@@ -27,3 +27,9 @@ for (const id of ['amman', 'dubai']) {
   fs.writeFileSync(here + `dist/${id}.html`, html);
   console.log(id, html.length);
 }
+
+// landing page and its images
+fs.copyFileSync(here + 'src/landing.html', here + 'dist/index.html');
+fs.mkdirSync(here + 'dist/img', { recursive: true });
+for (const f of ['amman-drive.png', 'dubai-drive.png']) fs.copyFileSync(here + 'docs/screenshots/' + f, here + 'dist/img/' + f);
+console.log('index.html');
