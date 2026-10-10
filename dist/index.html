@@ -24,7 +24,10 @@
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 40px; display: flex; flex-direction: column; gap: 36px; }
 header { display: flex; flex-direction: column; gap: 8px; }
-.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--muted); direction: ltr; text-align: right; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.langbtn { font: 600 14px var(--body); color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+.langbtn:focus-visible { outline: 3px solid var(--amman); outline-offset: 2px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 9vw, 92px); line-height: 1; margin: 0; text-wrap: balance; }
 header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .cities { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
@@ -34,7 +37,7 @@ header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .city img { display: block; width: 100%; aspect-ratio: 1280 / 760; object-fit: cover; }
 .city .txt { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .city h2 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; color: var(--c); }
-.city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); direction: ltr; text-align: right; }
+.city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
 .city p { margin: 0; color: var(--muted); }
 .play { margin-top: 10px; align-self: flex-start; background: var(--c); color: var(--card); font-family: var(--display); font-size: 24px; padding: 8px 22px 4px; border-radius: 12px; }
 .amman { --c: var(--amman); }
@@ -51,37 +54,58 @@ footer a { color: inherit; }
 <body>
 <div class="wrap">
   <header>
-    <span class="eyebrow">SZR AUTOSTRAD</span>
-    <h1>سوق بشوارع عمّان ودبي</h1>
-    <p>لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</p>
+    <div class="top"><span class="eyebrow">SZR AUTOSTRAD</span><button class="langbtn" type="button" data-lang-switch></button></div>
+    <h1 data-t="h1">سوق بشوارع عمّان ودبي</h1>
+    <p data-t="intro">لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</p>
   </header>
   <section class="cities">
-    <a class="city amman" href="amman.html">
-      <img src="img/amman-drive.png" alt="سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر">
+    <a class="city amman" href="amman.html" data-game>
+      <img src="img/amman-drive.png" alt="سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر" data-t-alt="ammanAlt">
       <div class="txt">
-        <span class="en">AMMAN LOOP · 22 KM</span>
-        <h2>لفّة عمّان</h2>
-        <p>العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</p>
-        <span class="play">العب</span>
+        <span class="en" data-t="ammanTag">AMMAN LOOP · 22 KM</span>
+        <h2 data-t="ammanName">لفّة عمّان</h2>
+        <p data-t="ammanText">العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</p>
+        <span class="play" data-t="play">العب</span>
       </div>
     </a>
-    <a class="city dubai" href="dubai.html">
-      <img src="img/dubai-drive.png" alt="سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب">
+    <a class="city dubai" href="dubai.html" data-game>
+      <img src="img/dubai-drive.png" alt="سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب" data-t-alt="dubaiAlt">
       <div class="txt">
-        <span class="en">DUBAI LOOP · 47 KM</span>
-        <h2>لفّة دبي</h2>
-        <p>برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</p>
-        <span class="play">العب</span>
+        <span class="en" data-t="dubaiTag">DUBAI LOOP · 47 KM</span>
+        <h2 data-t="dubaiName">لفّة دبي</h2>
+        <p data-t="dubaiText">برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</p>
+        <span class="play" data-t="play">العب</span>
       </div>
     </a>
   </section>
   <section class="how">
-    <div><h3>السواقة</h3><p><kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور. عالموبايل في أزرار عالشاشة.</p></div>
-    <div><h3>النقاط</h3><p>كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.</p></div>
-    <div><h3>المخالفات</h3><p>الرادار، الحوادث، الحك بالحاجز والمطبات بتنقص النقاط وبتخرّب السيارة.</p></div>
-    <div><h3>أول مرة؟</h3><p>اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.</p></div>
+    <div><h3 data-t="how1t">السواقة</h3><p data-t="how1"><kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور. عالموبايل في أزرار عالشاشة.</p></div>
+    <div><h3 data-t="how2t">النقاط</h3><p data-t="how2">كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.</p></div>
+    <div><h3 data-t="how3t">المخالفات</h3><p data-t="how3">الرادار، الحوادث، الحك بالحاجز والمطبات بتنقص النقاط وبتخرّب السيارة.</p></div>
+    <div><h3 data-t="how4t">أول مرة؟</h3><p data-t="how4">اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.</p></div>
   </section>
-  <footer>المسارات مرسومة بشكل تقريبي على أماكن حقيقية. <a href="https://github.com/njarrar/SZR-Autostrad">الكود على GitHub</a></footer>
+  <footer><span data-t="footer">المسارات مرسومة بشكل تقريبي على أماكن حقيقية.</span> <a href="https://github.com/njarrar/SZR-Autostrad" data-t="code">الكود على GitHub</a></footer>
 </div>
+<script>
+window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"title":"SZR Autostrad","h1":"سوق بشوارع عمّان ودبي","intro":"لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.","ammanTag":"AMMAN LOOP · 22 KM","ammanName":"لفّة عمّان","ammanText":"العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.","ammanAlt":"سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر","dubaiTag":"DUBAI LOOP · 47 KM","dubaiName":"لفّة دبي","dubaiText":"برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.","dubaiAlt":"سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب","play":"العب","how1t":"السواقة","how1":"\u003ckbd>↑\u003c/kbd> بنزين، \u003ckbd>↓\u003c/kbd> بريك، \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> تغيير المسرب، \u003ckbd>Space\u003c/kbd> زامور. عالموبايل في أزرار عالشاشة.","how2t":"النقاط","how2":"كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.","how3t":"المخالفات","how3":"الرادار، الحوادث، الحك بالحاجز والمطبات بتنقص النقاط وبتخرّب السيارة.","how4t":"أول مرة؟","how4":"اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.","footer":"المسارات مرسومة بشكل تقريبي على أماكن حقيقية.","code":"الكود على GitHub"}},"en":{"name":"English","dir":"ltr","s":{"title":"SZR Autostrad","h1":"Drive the roads of Amman and Dubai","intro":"Two 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera. Plays in the browser on a computer or a phone.","ammanTag":"22 KM LOOP","ammanName":"Amman Loop","ammanText":"Abdali, the Citadel, the Raghadan flagpole, the Roman Theatre, Abdoun Bridge and Mecca Mall. Hills, dips and speed bumps.","ammanAlt":"A yellow taxi on an Amman road between stone buildings","dubaiTag":"47 KM LOOP","dubaiName":"Dubai Loop","dubaiText":"The Dubai Frame, the Museum of the Future, Burj Khalifa, the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab. Speed cameras and Salik gates.","dubaiAlt":"A car on Sheikh Zayed Road between Dubai towers at sunset","play":"Play","how1t":"Driving","how1":"\u003ckbd>↑\u003c/kbd> gas, \u003ckbd>↓\u003c/kbd> brake, \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> change lane, \u003ckbd>Space\u003c/kbd> horn. On a phone, use the buttons on screen.","how2t":"Points","how2":"Every kilometer earns points. Close, fast passes earn more, and passes in a row multiply them.","how3t":"Fines","how3":"Speed cameras, crashes, scraping the barrier and speed bumps cost points and damage the car.","how4t":"First time?","how4":"The game starts with a short guided tour that teaches every control while you drive.","footer":"The roads roughly follow real places.","code":"Code on GitHub"}}};
+// Same choice as the games: ?lang=, then the saved language, then the browser language.
+(function () {
+  var KEY = 'szr:lang', l = null;
+  try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+  if (!LANGS[l]) { try { l = localStorage.getItem(KEY); } catch (e) { l = null; } }
+  if (!LANGS[l]) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : 'en';
+  if (!LANGS[l]) l = Object.keys(LANGS)[0];
+  function apply() {
+    var L = LANGS[l], codes = Object.keys(LANGS), next = codes[(codes.indexOf(l) + 1) % codes.length];
+    document.documentElement.lang = l; document.documentElement.dir = L.dir;
+    document.querySelectorAll('[data-t]').forEach(function (el) { el.innerHTML = L.s[el.dataset.t]; });
+    document.querySelectorAll('[data-t-alt]').forEach(function (el) { el.alt = L.s[el.dataset.tAlt]; });
+    document.querySelectorAll('a[data-game]').forEach(function (a) { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + l; });
+    var b = document.querySelector('[data-lang-switch]'); b.textContent = LANGS[next].name; b.lang = next;
+    b.onclick = function () { l = next; try { localStorage.setItem(KEY, l); } catch (e) {} apply(); };
+  }
+  apply();
+})();
+</script>
 </body>
 </html>

@@ -5,7 +5,7 @@ Two 3D driving games that run in the browser, set on real roads in two Arab citi
 - **لفّة عمّان (Amman Loop):** a 22 km loop over the hills of Amman, past Abdali, the King Abdullah I Mosque, the Citadel, the Raghadan flagpole, the Roman Theatre, Rainbow Street, Abdoun Bridge, the 7th Circle and Mecca Mall.
 - **لفّة دبي (Dubai Loop):** a 47 km loop at sunset, down Sheikh Zayed Road past the Dubai Frame, the Museum of the Future, Emirates Towers, Burj Khalifa and Mall of the Emirates to the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab and Jumeirah Mosque.
 
-All on-screen text is in Arabic, in each city's own dialect.
+The games come in English and Arabic. The Arabic text uses each city's own dialect, and the layout flips right to left.
 
 ![Amman welcome screen](docs/screenshots/amman-welcome.png)
 
@@ -39,22 +39,28 @@ npx http-server dist
 
 Then open the address it prints and pick `amman.html` or `dubai.html`.
 
+## Language
+
+The game picks English or Arabic from your browser language. Press the language button at the top of the menu or the welcome screen to switch. Your choice is saved, and you can also add `?lang=en` or `?lang=ar` to the address.
+
+![The Amman menu in English](docs/screenshots/amman-menu-en.png)
+
 ## First time playing
 
-The game opens with a welcome screen that explains the three things to know. Press **جولة تعليمية** (guided tour) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. Crashes and fines don't count during the tour. You can start the tour again at any time from the menu with **كيف ألعب؟**.
+The game opens with a welcome screen that explains the three things to know. Press **Guided tour** (**جولة تعليمية** in Arabic) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. Crashes and fines don't count during the tour. You can start the tour again at any time from the menu with **How to play** (**كيف ألعب؟**).
 
 ## Controls
 
 | Action | Keyboard | Phone |
 | --- | --- | --- |
-| Gas | `↑` or `W` | بنزين / دعس button (bottom right) |
-| Brake | `↓` or `S` | بريك button |
+| Gas | `↑` or `W` | Gas button (bottom right) |
+| Brake | `↓` or `S` | Brake button |
 | Change lane | `←` `→` or `A` `D` | Arrow buttons (bottom left) |
-| Horn | `Space` or `H` | زامور / هرن button |
+| Horn | `Space` or `H` | Horn button |
 | Change camera | `C` | Pause menu |
-| Pause | `P` or `Esc` | وقّف button |
+| Pause | `P` or `Esc` | Pause button |
 
-You can move the horn button to the left or right side from the settings.
+A quick tap of an arrow moves you one lane over, and the car settles in the middle of that lane on its own. Hold the arrow to cross several lanes. You can move the horn button to the left or right side from the settings.
 
 ## How to play
 
@@ -115,8 +121,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 
 ```
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, sound, HUD and guided tour
-src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, limits, fines, colors and all text
+src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, limits, fines and colors
 src/cities/dubai.js    Dubai: the same for Dubai
+lang/en.xml            English text for both games and the start page
+lang/ar.xml            Arabic text (Jordanian for Amman, Gulf for Dubai)
 src/template.html      Page layout and styles
 src/landing.html       The start page that links to both games
 .github/workflows/     Builds the games and publishes them to GitHub Pages
@@ -139,6 +147,13 @@ This writes `dist/index.html`, `dist/amman.html` and `dist/dubai.html`. To add a
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html" }
 ```
 
+## Add a language
+
+1. Copy `lang/en.xml` to a new file, for example `lang/fr.xml`.
+2. Set `code`, `name` (shown on the language button) and `dir` (`ltr` or `rtl`) on the `<language>` tag.
+3. Translate each `<string>`. Keys in `<common>` apply to both cities, and a key under `<city>` wins over the same key in `<common>`. Keep text with tags such as `<kbd>` inside `<![CDATA[ ... ]]>`.
+4. Run `node build.mjs`. The build stops and lists any key the new file is missing.
+
 ## Publish on GitHub Pages
 
 Every push to `main` builds the games and publishes `dist/` with GitHub Actions. To turn this on once:
@@ -151,9 +166,10 @@ GitHub Pages is free for public repos. A private repo needs a paid GitHub plan.
 ## Add a city
 
 1. Copy `src/cities/dubai.js` to a new file, for example `src/cities/riyadh.js`.
-2. Change `id`, `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `look`, `text`, `tour` and `page`.
-3. Add the city id to the list in `build.mjs`.
-4. Run `node build.mjs`.
+2. Change `id`, `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `look`, `tour` and `page`.
+3. Add a `<city id="...">` section to every file in `lang/` with the city's names, places, cars and tour text.
+4. Add the city id to the `CITIES` list in `build.mjs`.
+5. Run `node build.mjs`.
 
 Landmark models are small builder functions in `src/engine.js` (the `LB` object). Add a new builder there if a landmark needs its own shape.
 

@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<meta charset="utf-8">
 <title>لفّة دبي</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,19 +37,21 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 
 /* ---------- menu sheet ---------- */
 .screen { position: fixed; inset: 0; display: flex; pointer-events: none; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
-.sheet { pointer-events: auto; direction: rtl; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.sheet { pointer-events: auto; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 #menu { justify-content: flex-end; }
 .brand { display: flex; flex-direction: column; gap: 2px; }
-.brand .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; text-transform: uppercase; direction: ltr; text-align: right; }
+.brand .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
 .brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 9vw, 62px); line-height: 1; margin: 4px 0 0; color: var(--accent); text-wrap: balance; }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.brandtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.langbtn { border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
 .flagbar { height: 6px; border-radius: 3px; background: var(--flagbar); }
 .label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 6px; }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--chip); border-radius: 10px; padding: 3px; gap: 3px; }
 .seg button { border: 0; background: transparent; padding: 9px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; }
 .seg button.sel { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,.18); color: var(--accent); }
 #trips { display: flex; flex-direction: column; gap: 6px; max-height: 236px; overflow-y: auto; padding-inline-end: 2px; }
-.trip { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
+.trip { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
 .trip .tt { font-weight: 600; font-size: 15px; }
 .trip .tt i { font-style: normal; color: var(--muted); font-weight: 500; }
 .trip .ts { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -58,12 +63,13 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .go:active, .btn:active { transform: translateY(1px); }
 .drawer { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
 #carPick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.pick { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pick { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pick b { font-size: 14px; line-height: 1.3; }
-.pick .en { font-size: 10.5px; color: var(--muted); direction: ltr; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pick .en { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick .bars { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
 .pick .st { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); }
 .pick .st i { width: 44px; height: 5px; border-radius: 3px; flex: none; background: linear-gradient(to left, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
+[dir=ltr] .pick .st i { background: linear-gradient(to right, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
 .pick.sel { border-color: var(--accent); background: var(--chip); }
 #carPros { margin: 6px 0 0; display: flex; flex-direction: column; font-size: 12.5px; line-height: 1.5; }
 #carPros .pro { color: var(--good); font-weight: 600; }
@@ -80,7 +86,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #loading { font-weight: 600; color: var(--muted); padding: 10px 0; }
 
 /* ---------- HUD ---------- */
-#hud { position: fixed; inset: 0; pointer-events: none; direction: rtl; font-variant-numeric: tabular-nums; }
+#hud { position: fixed; inset: 0; pointer-events: none; font-variant-numeric: tabular-nums; }
 .hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
 .speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
@@ -160,7 +166,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 /* ---------- guided tour ---------- */
 #tour { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
 #tourHole { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(8,6,4,.5), 0 0 0 3px var(--accent-hud); transition: left .3s, top .3s, width .3s, height .3s; }
-#tourCard { position: fixed; pointer-events: auto; background: var(--panel-solid); color: var(--ink); border-radius: 16px; padding: 16px 18px; direction: rtl; box-shadow: 0 18px 50px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; transition: left .3s, top .3s; }
+#tourCard { position: fixed; pointer-events: auto; background: var(--panel-solid); color: var(--ink); border-radius: 16px; padding: 16px 18px; box-shadow: 0 18px 50px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; transition: left .3s, top .3s; }
 .tourHead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 #tourStep { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
 #tourSkip { padding: 2px; font-size: 13px; }
@@ -207,17 +213,17 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <div id="hud" hidden>
   <div class="hbar">
-    <div class="trip-hud"><span class="lbl">الوجهة</span><b id="hNext"></b><span class="rem" id="hRemain">0.0</span></div>
-    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit">كم/س</div></div></div>
+    <div class="trip-hud"><span class="lbl"><span data-t="page.T_NEXT">الوجهة</span></span><b id="hNext"></b><span class="rem" id="hRemain">0.0</span></div>
+    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit"><span data-t="page.T_KMH">كم/س</span></div></div></div>
   </div>
   <div class="stats">
-    <div class="chip"><span>الوقت</span><b id="hTime">0:00</b></div>
-    <div class="chip"><span>النقاط</span><b id="hScore">0</b></div>
-    <div class="chip"><span>مخالفات</span><b id="hViol">0</b></div>
-    <div class="chip"><span>الضرر</span><div class="dmg"><div id="hDmgBar"></div></div></div>
+    <div class="chip"><span><span data-t="page.T_TIME">الوقت</span></span><b id="hTime">0:00</b></div>
+    <div class="chip"><span><span data-t="page.T_SCORE">النقاط</span></span><b id="hScore">0</b></div>
+    <div class="chip"><span><span data-t="page.T_VIOL">مخالفات</span></span><b id="hViol">0</b></div>
+    <div class="chip"><span><span data-t="page.T_DMG">الضرر</span></span><div class="dmg"><div id="hDmgBar"></div></div></div>
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
-  <button id="btnPause" type="button">وقّف</button>
+  <button id="btnPause" type="button"><span data-t="page.T_PAUSE">وقّف</span></button>
   <div id="warn" hidden></div>
   <div id="hWeave"></div>
   <div id="toast" class="toast"></div>
@@ -225,40 +231,40 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <div id="touch" hidden>
   <div class="grp steer"><button class="tb" data-hold="left" type="button" aria-label="left">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="right">&#9654;</button></div>
-  <div class="grp hornwrap"><button class="tb horn" data-hold="horn" type="button">هرن</button></div>
-  <div class="grp pedals"><button class="tb" data-hold="brake" type="button">بريك</button><button class="tb gas" data-hold="gas" type="button">دعس</button></div>
+  <div class="grp hornwrap"><button class="tb horn" data-hold="horn" type="button"><span data-t="page.T_HORN">هرن</span></button></div>
+  <div class="grp pedals"><button class="tb" data-hold="brake" type="button"><span data-t="page.T_BRAKE">بريك</span></button><button class="tb gas" data-hold="gas" type="button"><span data-t="page.T_GAS">دعس</span></button></div>
 </div>
 
 <div id="menu" class="screen">
   <div class="sheet">
     <div class="brand">
-      <span class="eyebrow">Dubai · دبي</span>
-      <h1>لفّة دبي</h1>
+      <div class="brandtop"><span class="eyebrow"><span data-t="page.eyebrow">Dubai · دبي</span></span><button class="langbtn" type="button" data-lang-switch></button></div>
+      <h1><span data-t="page.name">لفّة دبي</span></h1>
       <div class="flagbar"></div>
-      <p>من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.</p>
+      <p><span data-t="page.blurb">من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.</span></p>
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
-      <div><div class="label">الاتجاه</div><div class="seg" id="segDir"><button type="button" data-v="1">مع عقارب الساعة</button><button type="button" data-v="-1">عكس عقارب الساعة</button></div></div>
-      <div><div class="label">المشوار</div><div id="trips"></div></div>
-      <div><div class="label">السيارة</div><div id="carPick"></div><p id="carPros"></p></div>
-      <div><div class="label">الزحمة</div><div class="seg" id="segTraffic"><button type="button" data-v="0">خفيفة</button><button type="button" data-v="1">عادية</button><button type="button" data-v="2">زحمة</button></div></div>
-      <button class="go" id="btnStart" type="button">يلا نمشي</button>
-      <div class="row"><button class="btn" id="btnGarage" type="button">الكراج</button><button class="btn" id="btnSettings" type="button">الإعدادات</button><button class="btn" id="btnTour" type="button">شلون ألعب؟</button></div>
+      <div><div class="label"><span data-t="page.T_DIR">الاتجاه</span></div><div class="seg" id="segDir"><button type="button" data-v="1"><span data-t="page.T_CW">مع عقارب الساعة</span></button><button type="button" data-v="-1"><span data-t="page.T_CCW">عكس عقارب الساعة</span></button></div></div>
+      <div><div class="label"><span data-t="page.T_TRIP">المشوار</span></div><div id="trips"></div></div>
+      <div><div class="label"><span data-t="page.T_CARS">السيارة</span></div><div id="carPick"></div><p id="carPros"></p></div>
+      <div><div class="label"><span data-t="page.T_TRAFFIC">الزحمة</span></div><div class="seg" id="segTraffic"><button type="button" data-v="0"><span data-t="page.T_TR0">خفيفة</span></button><button type="button" data-v="1"><span data-t="page.T_TR1">عادية</span></button><button type="button" data-v="2"><span data-t="page.T_TR2">زحمة</span></button></div></div>
+      <button class="go" id="btnStart" type="button"><span data-t="page.T_GO">يلا نمشي</span></button>
+      <div class="row"><button class="btn" id="btnGarage" type="button"><span data-t="page.T_GARAGE">الكراج</span></button><button class="btn" id="btnSettings" type="button"><span data-t="page.T_SETTINGS">الإعدادات</span></button><button class="btn" id="btnTour" type="button"><span data-t="page.T_HOWTO">شلون ألعب؟</span></button></div>
       <div class="drawer" id="garage" hidden>
-        <div><div class="label">اللون</div><div id="colors"></div><p class="note" id="colorNote" hidden>لون التاكسي ثابت</p></div>
-        <div><div class="label"><label for="plate">رقم اللوحة</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
+        <div><div class="label"><span data-t="page.T_COLOR">اللون</span></div><div id="colors"></div><p class="note" id="colorNote" hidden><span data-t="page.T_FIXEDCOLOR">لون التاكسي ثابت</span></p></div>
+        <div><div class="label"><label for="plate"><span data-t="page.T_PLATE">رقم اللوحة</span></label></div><input id="plate" maxlength="12" autocomplete="off"></div>
       </div>
       <div class="drawer" id="settingsBox" hidden>
-        <div><div class="label">الكاميرا</div><div class="seg segCam" id="segCam1"><button type="button" data-v="0">قريبة</button><button type="button" data-v="1">عادية</button><button type="button" data-v="2">بعيدة</button></div></div>
-        <div><div class="label">مكان الهرن</div><div class="seg segHorn" id="segHorn1"><button type="button" data-v="left">يسار</button><button type="button" data-v="right">يمين</button></div></div>
-        <div><div class="label">الرسومات</div><div class="seg segQual" id="segQual1"><button type="button" data-v="high">عالية</button><button type="button" data-v="low">سريعة</button></div></div>
-        <div><div class="label">الصوت</div><div class="seg segSound" id="segSound1"><button type="button" data-v="1">شغّال</button><button type="button" data-v="0">طافي</button></div></div>
+        <div><div class="label"><span data-t="page.T_CAM">الكاميرا</span></div><div class="seg segCam" id="segCam1"><button type="button" data-v="0"><span data-t="page.T_CAM0">قريبة</span></button><button type="button" data-v="1"><span data-t="page.T_CAM1">عادية</span></button><button type="button" data-v="2"><span data-t="page.T_CAM2">بعيدة</span></button></div></div>
+        <div><div class="label"><span data-t="page.T_HORNSIDE">مكان الهرن</span></div><div class="seg segHorn" id="segHorn1"><button type="button" data-v="left"><span data-t="page.T_LEFT">يسار</span></button><button type="button" data-v="right"><span data-t="page.T_RIGHT">يمين</span></button></div></div>
+        <div><div class="label"><span data-t="page.T_QUALITY">الرسومات</span></div><div class="seg segQual" id="segQual1"><button type="button" data-v="high"><span data-t="page.T_QHIGH">عالية</span></button><button type="button" data-v="low"><span data-t="page.T_QLOW">سريعة</span></button></div></div>
+        <div><div class="label"><span data-t="page.T_SOUND">الصوت</span></div><div class="seg segSound" id="segSound1"><button type="button" data-v="1"><span data-t="page.T_ON">شغّال</span></button><button type="button" data-v="0"><span data-t="page.T_OFF">طافي</span></button></div></div>
       </div>
       <div class="foot">
-        <span>السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd></span>
-        <span>الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.</span>
-        <a href="amman.html">جرّب عمّان</a>
+        <span><span data-t="page.T_KEYS">السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd></span></span>
+        <span><span data-t="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.</span></span>
+        <a href="amman.html" data-local><span data-t="page.otherLabel">جرّب عمّان</span></a>
       </div>
     </div>
   </div>
@@ -267,44 +273,44 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <div id="welcome" class="screen" hidden>
   <div class="sheet">
-    <div class="brand"><span class="eyebrow">Dubai · دبي</span><h1>لفّة دبي</h1><div class="flagbar"></div></div>
+    <div class="brand"><div class="brandtop"><span class="eyebrow"><span data-t="page.eyebrow">Dubai · دبي</span></span><button class="langbtn" type="button" data-lang-switch></button></div><h1><span data-t="page.name">لفّة دبي</span></h1><div class="flagbar"></div></div>
     <div class="rules">
-      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M20 9c-5 0-8.5 3.6-8.5 8.3C11.5 23.6 20 31 20 31s8.5-7.4 8.5-13.7C28.5 12.6 25 9 20 9z" fill="var(--accent)"/><circle cx="20" cy="17.5" r="3.4" fill="var(--panel-solid)"/></svg><div><b>وصّل مشوارك</b><span>اختار مشوار بين معالم دبي، من البرواز لبرج خليفة لين المارينا، ووصل للنهاية.</span></div></div>
-      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M14 30c0-7 12-6 12-13V10" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/><path d="M21.5 14 26 9.5l4.5 4.5" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>تجاوز واجمع نقاط</b><span>كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.</span></div></div>
-      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><circle cx="20" cy="20" r="10" fill="none" stroke="var(--bad)" stroke-width="3.6"/><text x="20" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)" font-family="sans-serif">!</text></svg><div><b>انتبه للمخالفات</b><span>الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.</span></div></div>
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M20 9c-5 0-8.5 3.6-8.5 8.3C11.5 23.6 20 31 20 31s8.5-7.4 8.5-13.7C28.5 12.6 25 9 20 9z" fill="var(--accent)"/><circle cx="20" cy="17.5" r="3.4" fill="var(--panel-solid)"/></svg><div><b><span data-t="page.T_R1">وصّل مشوارك</span></b><span><span data-t="page.T_R1S">اختار مشوار بين معالم دبي، من البرواز لبرج خليفة لين المارينا، ووصل للنهاية.</span></span></div></div>
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M14 30c0-7 12-6 12-13V10" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/><path d="M21.5 14 26 9.5l4.5 4.5" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b><span data-t="page.T_R2">تجاوز واجمع نقاط</span></b><span><span data-t="page.T_R2S">كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.</span></span></div></div>
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><circle cx="20" cy="20" r="10" fill="none" stroke="var(--bad)" stroke-width="3.6"/><text x="20" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)" font-family="sans-serif">!</text></svg><div><b><span data-t="page.T_R3">انتبه للمخالفات</span></b><span><span data-t="page.T_R3S">الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.</span></span></div></div>
     </div>
-    <div class="cta"><button class="go" id="wTour" type="button">جولة تعليمية</button><button class="linkbtn" id="wSkip" type="button">أعرف أسوق، أبي ألعب</button></div>
+    <div class="cta"><button class="go" id="wTour" type="button"><span data-t="page.T_WTOUR">جولة تعليمية</span></button><button class="linkbtn" id="wSkip" type="button"><span data-t="page.T_WSKIP">أعرف أسوق، أبي ألعب</span></button></div>
   </div>
 </div>
 
 <div id="tour" hidden>
   <div id="tourHole" hidden></div>
   <div id="tourCard" role="dialog" aria-live="polite">
-    <div class="tourHead"><span id="tourStep"></span><button class="linkbtn" id="tourSkip" type="button">تخطّى الجولة</button></div>
+    <div class="tourHead"><span id="tourStep"></span><button class="linkbtn" id="tourSkip" type="button"><span data-t="page.T_TSKIP">تخطّى الجولة</span></button></div>
     <h3 id="tourTitle"></h3>
     <p id="tourBody"></p>
-    <div class="tourFoot"><div id="tourDots"></div><span id="tourTry"></span><button class="go" id="tourNext" type="button" style="font-size:22px">التالي</button></div>
+    <div class="tourFoot"><div id="tourDots"></div><span id="tourTry"></span><button class="go" id="tourNext" type="button" style="font-size:22px"><span data-t="page.T_TNEXT">التالي</span></button></div>
   </div>
 </div>
 
 <div id="tourEnd" class="screen" hidden>
   <div class="sheet">
-    <h2 style="font-family:var(--display);font-weight:400;font-size:52px;margin:0;color:var(--accent)">جاهز!</h2>
-    <p style="margin:0;color:var(--muted);line-height:1.6">خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟</p>
-    <button class="go" id="teMenu" type="button">اختار مشوار</button>
-    <button class="btn" id="teDrive" type="button">كمّل سواقة حرة</button>
+    <h2 style="font-family:var(--display);font-weight:400;font-size:52px;margin:0;color:var(--accent)"><span data-t="page.T_TEND">جاهز!</span></h2>
+    <p style="margin:0;color:var(--muted);line-height:1.6"><span data-t="page.T_TENDS">خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟</span></p>
+    <button class="go" id="teMenu" type="button"><span data-t="page.T_TEMENU">اختار مشوار</span></button>
+    <button class="btn" id="teDrive" type="button"><span data-t="page.T_TEDRIVE">كمّل سواقة حرة</span></button>
   </div>
 </div>
 
 <div id="pause" class="screen" hidden>
   <div class="sheet">
-    <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)">استراحة</h2>
-    <div><div class="label">الكاميرا</div><div class="seg segCam" id="segCam2"><button type="button" data-v="0">قريبة</button><button type="button" data-v="1">عادية</button><button type="button" data-v="2">بعيدة</button></div></div>
-    <div><div class="label">مكان الهرن</div><div class="seg segHorn" id="segHorn2"><button type="button" data-v="left">يسار</button><button type="button" data-v="right">يمين</button></div></div>
-    <div><div class="label">الرسومات</div><div class="seg segQual" id="segQual2"><button type="button" data-v="high">عالية</button><button type="button" data-v="low">سريعة</button></div></div>
-    <div><div class="label">الصوت</div><div class="seg segSound" id="segSound2"><button type="button" data-v="1">شغّال</button><button type="button" data-v="0">طافي</button></div></div>
-    <div class="row"><button class="go" id="btnResume" type="button">كمّل</button></div>
-    <button class="btn" id="btnQuit" type="button">رجوع للقائمة</button>
+    <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)"><span data-t="page.T_PAUSED">استراحة</span></h2>
+    <div><div class="label"><span data-t="page.T_CAM">الكاميرا</span></div><div class="seg segCam" id="segCam2"><button type="button" data-v="0"><span data-t="page.T_CAM0">قريبة</span></button><button type="button" data-v="1"><span data-t="page.T_CAM1">عادية</span></button><button type="button" data-v="2"><span data-t="page.T_CAM2">بعيدة</span></button></div></div>
+    <div><div class="label"><span data-t="page.T_HORNSIDE">مكان الهرن</span></div><div class="seg segHorn" id="segHorn2"><button type="button" data-v="left"><span data-t="page.T_LEFT">يسار</span></button><button type="button" data-v="right"><span data-t="page.T_RIGHT">يمين</span></button></div></div>
+    <div><div class="label"><span data-t="page.T_QUALITY">الرسومات</span></div><div class="seg segQual" id="segQual2"><button type="button" data-v="high"><span data-t="page.T_QHIGH">عالية</span></button><button type="button" data-v="low"><span data-t="page.T_QLOW">سريعة</span></button></div></div>
+    <div><div class="label"><span data-t="page.T_SOUND">الصوت</span></div><div class="seg segSound" id="segSound2"><button type="button" data-v="1"><span data-t="page.T_ON">شغّال</span></button><button type="button" data-v="0"><span data-t="page.T_OFF">طافي</span></button></div></div>
+    <div class="row"><button class="go" id="btnResume" type="button"><span data-t="page.T_RESUME">كمّل</span></button></div>
+    <button class="btn" id="btnQuit" type="button"><span data-t="page.T_QUIT">رجوع للقائمة</span></button>
   </div>
 </div>
 
@@ -312,16 +318,19 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   <div class="sheet">
     <div><h2 id="rTitle"></h2><p id="rSub"></p></div>
     <div id="rStats"></div>
-    <div class="scorebox"><div><div class="label">النقاط</div><div id="rScore">0</div></div><div id="rRate"></div><div id="rBest"></div></div>
-    <div class="row"><button class="go" id="btnAgain" type="button">عيدها</button></div>
-    <button class="btn" id="btnMenu" type="button">مشوار ثاني</button>
+    <div class="scorebox"><div><div class="label"><span data-t="page.T_SCORE">النقاط</span></div><div id="rScore">0</div></div><div id="rRate"></div><div id="rBest"></div></div>
+    <div class="row"><button class="go" id="btnAgain" type="button"><span data-t="page.T_AGAIN">عيدها</span></button></div>
+    <button class="btn" id="btnMenu" type="button"><span data-t="page.T_NEWTRIP">مشوار ثاني</span></button>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
+window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"اللغة","page.title":"لفّة دبي","page.name":"لفّة دبي","page.eyebrow":"Dubai · دبي","page.alt":"Driving through Dubai","page.blurb":"من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.","page.T_NEXT":"الوجهة","page.T_KMH":"كم/س","page.T_TIME":"الوقت","page.T_SCORE":"النقاط","page.T_VIOL":"مخالفات","page.T_DMG":"الضرر","page.T_PAUSE":"وقّف","page.T_HORN":"هرن","page.T_BRAKE":"بريك","page.T_GAS":"دعس","page.T_DIR":"الاتجاه","page.T_CW":"مع عقارب الساعة","page.T_CCW":"عكس عقارب الساعة","page.T_TRIP":"المشوار","page.T_TRAFFIC":"الزحمة","page.T_TR0":"خفيفة","page.T_TR1":"عادية","page.T_TR2":"زحمة","page.T_GO":"يلا نمشي","page.T_GARAGE":"الكراج","page.T_SETTINGS":"الإعدادات","page.T_CARS":"السيارة","page.T_COLOR":"اللون","page.T_FIXEDCOLOR":"لون التاكسي ثابت","page.T_PLATE":"رقم اللوحة","page.T_CAM":"الكاميرا","page.T_CAM0":"قريبة","page.T_CAM1":"عادية","page.T_CAM2":"بعيدة","page.T_HORNSIDE":"مكان الهرن","page.T_LEFT":"يسار","page.T_RIGHT":"يمين","page.T_SOUND":"الصوت","page.T_ON":"شغّال","page.T_OFF":"طافي","page.T_KEYS":"السواقة بالأسهم أو \u003ckbd>WASD\u003c/kbd> · الهرن \u003ckbd>Space\u003c/kbd> · الكاميرا \u003ckbd>C\u003c/kbd> · وقوف \u003ckbd>P\u003c/kbd>","page.T_MAPNOTE":"الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.","page.T_PAUSED":"استراحة","page.T_RESUME":"كمّل","page.T_QUIT":"رجوع للقائمة","page.T_AGAIN":"عيدها","page.T_NEWTRIP":"مشوار ثاني","page.T_HOWTO":"شلون ألعب؟","page.T_R1":"وصّل مشوارك","page.T_R1S":"اختار مشوار بين معالم دبي، من البرواز لبرج خليفة لين المارينا، ووصل للنهاية.","page.T_R2":"تجاوز واجمع نقاط","page.T_R2S":"كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.","page.T_R3":"انتبه للمخالفات","page.T_R3S":"الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.","page.T_WTOUR":"جولة تعليمية","page.T_WSKIP":"أعرف أسوق، أبي ألعب","page.T_TSKIP":"تخطّى الجولة","page.T_TNEXT":"التالي","page.T_TEND":"جاهز!","page.T_TENDS":"خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟","page.T_TEMENU":"اختار مشوار","page.T_TEDRIVE":"كمّل سواقة حرة","page.T_QUALITY":"الرسومات","page.T_QHIGH":"عالية","page.T_QLOW":"سريعة","page.otherLabel":"جرّب عمّان","text.stSpeed":"سرعة","text.stAccel":"تسارع","text.stGrip":"ثبات","text.stTough":"تحمّل","text.meters":"م","text.km":"كم","text.kmh":"كم/س","text.to":"إلى","text.bumpSign":"","text.tollName":"سالك","text.tollPrice":"4 درهم","text.freeDrive":"سواقة حرة","text.freeSub":"بلا نهاية، صيانة كل 25 كم","text.freeHint":"سوق على راحتك، كل 25 كم صيانة","text.fullLap":"لفّة كاملة","text.goTo":"يلا إلى","text.arrived":"وصلنا!","text.wrecked":"السيارة خربت","text.wreckedSub":"تبا لها سطحة","text.rTime":"الوقت","text.rDist":"المسافة","text.rAvg":"معدل السرعة","text.rWeave":"تجاوزات","text.rRadar":"رادار","text.rCrash":"حوادث","text.rFines":"المخالفات","text.newBest":"رقم قياسي جديد","text.best":"أحسن نتيجة","text.rateTop":"عفيه عليك!","text.rateMid":"زين","text.rateBad":"تبالك تدريب","text.scrape":"لا تحك بالحاجز!","text.crash":"حادث!","text.radarAhead":"رادار بعد","text.flash":"الرادار صوّرك!","text.radarOk":"عديت الرادار تمام","text.bumpHit":"","text.bumpOk":"","text.bonus":"+500 كل 10 كم","text.workshop":"صيانة: السيارة رجعت جديدة","text.weave":"تجاوز","text.loadRoad":"قاعدين نرسم الشارع...","text.loadCity":"قاعدين نبني دبي...","text.currency":"درهم","tour.tryIt":"جربها الحين","tour.nice":"زين!","tour.0.title":"دعس","tour.0.keys":"اضغط مطوّل على \u003ckbd>↑\u003c/kbd> أو \u003ckbd>W\u003c/kbd> لين السرعة تعدي 45.","tour.0.touch":"اضغط مطوّل على زر \u003cb>دعس\u003c/b> لين السرعة تعدي 45.","tour.1.title":"غيّر المسار","tour.1.keys":"استخدم \u003ckbd>←\u003c/kbd> و\u003ckbd>→\u003c/kbd> (أو \u003ckbd>A\u003c/kbd> و\u003ckbd>D\u003c/kbd>) وانتقل لمسار ثاني.","tour.1.touch":"استخدم الأسهم اللي على اليسار وانتقل لمسار ثاني.","tour.2.title":"البريك","tour.2.keys":"اضغط \u003ckbd>↓\u003c/kbd> أو \u003ckbd>S\u003c/kbd> وهدّي السرعة.","tour.2.touch":"اضغط على زر \u003cb>بريك\u003c/b> وهدّي السرعة.","tour.3.title":"الهرن","tour.3.keys":"اضغط \u003ckbd>Space\u003c/kbd>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.","tour.3.touch":"اضغط على زر \u003cb>هرن\u003c/b>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.","tour.4.title":"العداد","tour.4.body":"الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر الرادار بيصوّرك. قبل كل رادار تطلع لك إشارة صفرا.","tour.5.title":"الوجهة","tour.5.body":"هني اسم وجهتك وكم باقي لين توصل. في السواقة الحرة تشوف كم سقت.","tour.6.title":"النقاط والمخالفات","tour.6.body":"النقاط تزيد مع المسافة والتجاوزات، والرادار والحوادث ينقصونها. إذا الضرر وصل للنهاية السيارة تخرب.","tour.7.title":"الخريطة","tour.7.body":"النقطة البيضا انت، والنقاط الذهبية المعالم. وجهتك تبان أكبر.","tour.8.title":"التجاوز","tour.8.body":"عدّ جنب السيارات من قريب وانت أسرع منها عشان تاخذ نقاط. كم تجاوز ورا بعض يضاعف النقاط.","tour.9.title":"الاستراحة","tour.9.keys":"من هني توقّف اللعبة وتغيّر الكاميرا والصوت. \u003ckbd>C\u003c/kbd> تغيّر الكاميرا و\u003ckbd>P\u003c/kbd> توقّف.","tour.9.touch":"من هني توقّف اللعبة وتغيّر الكاميرا ومكان الهرن والصوت.","car.0.name":"نيسان باترول","car.0.sub":"Nissan Patrol","car.0.pros":"قوية وتتحمل الصدمات","car.0.cons":"ثقيلة ولفّتها صعبة","car.1.name":"لامبورغيني هوراكان","car.1.sub":"Lamborghini Huracán","car.1.pros":"أسرع سيارة في الشارع وثابتة وايد","car.1.cons":"أي صدمة تخربها","car.2.name":"تويوتا كامري","car.2.sub":"Toyota Camry","car.2.pros":"متوازنة وتمشي مع كل شي","car.2.cons":"ما فيها شي مميز","place.0":"برواز دبي","place.1":"المركز التجاري العالمي","place.2":"متحف المستقبل","place.3":"أبراج الإمارات","place.4":"برج خليفة","place.5":"مول الإمارات","place.6":"دبي مارينا","place.7":"عين دبي","place.8":"برج العرب","place.9":"مسجد جميرا"}},"en":{"name":"English","dir":"ltr","s":{"page.T_NEXT":"Heading to","page.T_KMH":"km/h","page.T_TIME":"Time","page.T_SCORE":"Points","page.T_VIOL":"Fines","page.T_DMG":"Damage","page.T_PAUSE":"Pause","page.T_HORN":"Horn","page.T_BRAKE":"Brake","page.T_GAS":"Gas","page.T_DIR":"Direction","page.T_CW":"Clockwise","page.T_CCW":"Counterclockwise","page.T_TRIP":"Trip","page.T_TRAFFIC":"Traffic","page.T_TR0":"Light","page.T_TR1":"Normal","page.T_TR2":"Heavy","page.T_GO":"Let's go","page.T_GARAGE":"Garage","page.T_SETTINGS":"Settings","page.T_CARS":"Car","page.T_COLOR":"Color","page.T_FIXEDCOLOR":"The taxi keeps its own color","page.T_PLATE":"Plate number","page.T_CAM":"Camera","page.T_CAM0":"Close","page.T_CAM1":"Normal","page.T_CAM2":"Far","page.T_HORNSIDE":"Horn button side","page.T_LEFT":"Left","page.T_RIGHT":"Right","page.T_SOUND":"Sound","page.T_ON":"On","page.T_OFF":"Off","page.T_KEYS":"Drive with the arrow keys or \u003ckbd>WASD\u003c/kbd> · Horn \u003ckbd>Space\u003c/kbd> · Camera \u003ckbd>C\u003c/kbd> · Pause \u003ckbd>P\u003c/kbd>","page.T_PAUSED":"Paused","page.T_RESUME":"Resume","page.T_QUIT":"Back to menu","page.T_AGAIN":"Again","page.T_NEWTRIP":"New trip","page.T_HOWTO":"How to play","page.T_R1":"Finish your trip","page.T_R2":"Pass cars for points","page.T_R2S":"Pass a car close and faster than it to earn points. Passes in a row multiply them.","page.T_R3":"Watch for fines","page.T_WTOUR":"Guided tour","page.T_WSKIP":"I can drive, let me play","page.T_TSKIP":"Skip tour","page.T_TNEXT":"Next","page.T_TEND":"Ready!","page.T_TENDS":"That's the tour. Pick a trip, or keep driving freely?","page.T_TEMENU":"Pick a trip","page.T_TEDRIVE":"Keep driving","page.T_QUALITY":"Graphics","page.T_QHIGH":"High","page.T_QLOW":"Fast","page.T_LANG":"Language","text.stSpeed":"Speed","text.stAccel":"Pick up","text.stGrip":"Grip","text.stTough":"Toughness","text.meters":"m","text.km":"km","text.kmh":"km/h","text.to":"to","text.freeDrive":"Free drive","text.freeSub":"No end, repairs every 25 km","text.freeHint":"Drive as long as you like, repairs every 25 km","text.fullLap":"Full lap","text.goTo":"Off to","text.arrived":"You made it!","text.wrecked":"Your car broke down","text.rTime":"Time","text.rDist":"Distance","text.rAvg":"Average speed","text.rWeave":"Passes","text.rRadar":"Cameras","text.rCrash":"Crashes","text.rFines":"Fines","text.newBest":"New best score","text.best":"Best score","text.scrape":"You scraped the barrier!","text.crash":"Crash!","text.radarAhead":"Speed camera in","text.flash":"Speed camera got you!","text.radarOk":"Clean pass under the camera","text.bonus":"+500 every 10 km","text.workshop":"Repair: your car is like new","text.weave":"Close pass","text.loadRoad":"Drawing the road...","tour.tryIt":"Try it now","tour.nice":"Nice!","tour.0.title":"Hit the gas","tour.0.keys":"Hold \u003ckbd>↑\u003c/kbd> or \u003ckbd>W\u003c/kbd> until your speed passes 45.","tour.1.title":"Change lanes","tour.1.keys":"Use \u003ckbd>←\u003c/kbd> and \u003ckbd>→\u003c/kbd> (or \u003ckbd>A\u003c/kbd> and \u003ckbd>D\u003c/kbd>) to move to another lane.","tour.1.touch":"Use the arrows at the bottom left to move to another lane.","tour.2.title":"Brake","tour.2.keys":"Press \u003ckbd>↓\u003c/kbd> or \u003ckbd>S\u003c/kbd> to slow down.","tour.2.touch":"Press \u003cb>Brake\u003c/b> to slow down.","tour.3.title":"Horn","tour.3.keys":"Press \u003ckbd>Space\u003c/kbd>. The car ahead moves over if the lane next to it is free.","tour.3.touch":"Press \u003cb>Horn\u003c/b>. The car ahead moves over if the lane next to it is free.","tour.4.title":"Speed","tour.4.body":"The big number is your speed and the red circle is the limit. When the number turns red, the camera will catch you. A yellow sign shows before each camera.","tour.5.title":"Where to","tour.5.body":"This shows where you're going and how far is left. In free drive it shows how far you've gone.","tour.6.title":"Points and fines","tour.6.body":"Points grow with distance and close passes. Cameras and crashes take them away. If damage fills up, the car breaks down.","tour.7.title":"Map","tour.8.title":"Close passes","tour.8.body":"Pass cars close while going faster than them to earn points. Several in a row multiply the points.","tour.9.title":"Pause","tour.9.keys":"Pause the game here and change the camera and sound. \u003ckbd>C\u003c/kbd> changes the camera and \u003ckbd>P\u003c/kbd> pauses.","tour.9.touch":"Pause the game here and change the camera, horn side and sound.","text.rateMid":"Not bad","page.title":"Dubai Loop","page.name":"Dubai Loop","page.eyebrow":"Dubai · دبي","page.alt":"Driving through Dubai","page.blurb":"From the Dubai Frame down Sheikh Zayed Road to the Marina, then back along Jumeirah. The cameras show no mercy and Salik gates add up.","page.T_MAPNOTE":"The road roughly follows real places in Dubai. The horn makes the car ahead move over.","page.T_R1S":"Pick a trip between Dubai landmarks, from the Frame to Burj Khalifa to the Marina, and reach the end.","page.T_R3S":"Cameras flash above 120 km/h, Salik gates charge you, and crashes damage the car.","page.otherLabel":"Try Amman","text.bumpSign":"","text.tollName":"Salik","text.tollPrice":"4 AED","text.wreckedSub":"Call the recovery truck","text.rateTop":"Well done!","text.rateBad":"You need some practice","text.bumpHit":"","text.bumpOk":"","text.loadCity":"Building Dubai...","text.currency":"AED","tour.0.touch":"Hold \u003cb>Gas\u003c/b> until your speed passes 45.","tour.7.body":"The white dot is you and the gold dots are landmarks. Your destination shows bigger.","car.0.name":"Nissan Patrol","car.0.sub":"SUV","car.0.pros":"Strong and shrugs off crashes","car.0.cons":"Heavy and hard to turn","car.1.name":"Lamborghini Huracán","car.1.sub":"Supercar","car.1.pros":"Fastest car on the road and very steady","car.1.cons":"Any crash wrecks it","car.2.name":"Toyota Camry","car.2.sub":"Taxi","car.2.pros":"Even all round, good at everything","car.2.cons":"Nothing stands out","place.0":"Dubai Frame","place.1":"World Trade Centre","place.2":"Museum of the Future","place.3":"Emirates Towers","place.4":"Burj Khalifa","place.5":"Mall of the Emirates","place.6":"Dubai Marina","place.7":"Ain Dubai","place.8":"Burj Al Arab","place.9":"Jumeirah Mosque"}}};
+</script>
+<script>
 window.CITY = {
-  id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20, currency: 'درهم',
+  id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20,
   fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
   origin: [25.16, 55.22],
   horn: [330, 415],
@@ -351,24 +360,21 @@ window.CITY = {
   radars: [0.06, 0.2, 0.33, 0.5, 0.66, 0.85],
   tollsAt: [[25.1835, 55.2550], [25.1060, 55.1880]],
   landmarks: [
-    { ar: 'برواز دبي', en: 'Dubai Frame', lat: 25.2355, lon: 55.3003, build: 'frame', clear: 80 },
-    { ar: 'المركز التجاري العالمي', en: 'World Trade Centre', lat: 25.2245, lon: 55.2865, build: 'wtc', clear: 60 },
-    { ar: 'متحف المستقبل', en: 'Museum of the Future', lat: 25.2192, lon: 55.2818, build: 'museum', clear: 70 },
-    { ar: 'أبراج الإمارات', en: 'Emirates Towers', lat: 25.2172, lon: 55.2840, build: 'emiratesTowers', clear: 70 },
-    { ar: 'برج خليفة', en: 'Burj Khalifa', lat: 25.1972, lon: 55.2744, build: 'burjKhalifa', clear: 90 },
-    { ar: 'مول الإمارات', en: 'Mall of the Emirates', lat: 25.1181, lon: 55.2006, build: 'mall', clear: 230, ski: true, ink: '#6b4b1f' },
-    { ar: 'دبي مارينا', en: 'Dubai Marina', lat: 25.0790, lon: 55.1440, build: 'marina', clear: 220 },
-    { ar: 'عين دبي', en: 'Ain Dubai', lat: 25.0795, lon: 55.1225, build: 'ainDubai', clear: 140, sea: true },
-    { ar: 'برج العرب', en: 'Burj Al Arab', lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
-    { ar: 'مسجد جميرا', en: 'Jumeirah Mosque', lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
+    { lat: 25.2355, lon: 55.3003, build: 'frame', clear: 80 },
+    { lat: 25.2245, lon: 55.2865, build: 'wtc', clear: 60 },
+    { lat: 25.2192, lon: 55.2818, build: 'museum', clear: 70 },
+    { lat: 25.2172, lon: 55.2840, build: 'emiratesTowers', clear: 70 },
+    { lat: 25.1972, lon: 55.2744, build: 'burjKhalifa', clear: 90 },
+    { lat: 25.1181, lon: 55.2006, build: 'mall', clear: 230, ski: true, ink: '#6b4b1f' },
+    { lat: 25.0790, lon: 55.1440, build: 'marina', clear: 220 },
+    { lat: 25.0795, lon: 55.1225, build: 'ainDubai', clear: 140, sea: true },
+    { lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
+    { lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
   ],
   cars: [
-    { name: 'نيسان باترول', en: 'Nissan Patrol', kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55,
-      pros: 'قوية وتتحمل الصدمات', cons: 'ثقيلة ولفّتها صعبة' },
-    { name: 'لامبورغيني هوراكان', en: 'Lamborghini Huracán', kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5,
-      pros: 'أسرع سيارة في الشارع وثابتة وايد', cons: 'أي صدمة تخربها' },
-    { name: 'تويوتا كامري', en: 'Toyota Camry', kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0,
-      pros: 'متوازنة وتمشي مع كل شي', cons: 'ما فيها شي مميز' }
+    { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55 },
+    { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5 },
+    { kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0 }
   ],
   colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
   traffic: [
@@ -400,56 +406,20 @@ window.CITY = {
     treeDark: 0x3e5a33, treeLight: 0x6f8a4a, signColor: '#0a4f8f', warnColor: '#a8740a', radarColor: 0xdedede, tollColor: '#127a63',
     miniRoad: '#f4e2c4', miniDot: '#f2c46b', miniDest: '#ff6a5a', miniMe: '#ffffff'
   },
-  text: {
-    stSpeed: 'سرعة', stAccel: 'تسارع', stGrip: 'ثبات', stTough: 'تحمّل',
-    meters: 'م', km: 'كم', kmh: 'كم/س', to: 'إلى', bumpSign: '', tollName: 'سالك', tollPrice: '4 درهم',
-    freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق على راحتك، كل 25 كم صيانة', fullLap: 'لفّة كاملة',
-    goTo: 'يلا إلى', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'تبا لها سطحة',
-    rTime: 'الوقت', rDist: 'المسافة', rAvg: 'معدل السرعة', rWeave: 'تجاوزات', rRadar: 'رادار', rCrash: 'حوادث', rFines: 'المخالفات',
-    newBest: 'رقم قياسي جديد', best: 'أحسن نتيجة',
-    rateTop: 'عفيه عليك!', rateMid: 'زين', rateBad: 'تبالك تدريب',
-    scrape: 'لا تحك بالحاجز!', crash: 'حادث!', radarAhead: 'رادار بعد', flash: 'الرادار صوّرك!', radarOk: 'عديت الرادار تمام',
-    bumpHit: '', bumpOk: '', bonus: '+500 كل 10 كم', workshop: 'صيانة: السيارة رجعت جديدة',
-    weave: 'تجاوز', loadRoad: 'قاعدين نرسم الشارع...', loadCity: 'قاعدين نبني دبي...'
-  },
-  tour: {
-    tryIt: 'جربها الحين', nice: 'زين!',
-    steps: [
-      { wait: 'gas', title: 'دعس', target: '.speedo', targetTouch: '[data-hold=gas]',
-        keys: 'اضغط مطوّل على <kbd>↑</kbd> أو <kbd>W</kbd> لين السرعة تعدي 45.', touch: 'اضغط مطوّل على زر <b>دعس</b> لين السرعة تعدي 45.' },
-      { wait: 'steer', title: 'غيّر المسار', targetTouch: '.steer',
-        keys: 'استخدم <kbd>←</kbd> و<kbd>→</kbd> (أو <kbd>A</kbd> و<kbd>D</kbd>) وانتقل لمسار ثاني.', touch: 'استخدم الأسهم اللي على اليسار وانتقل لمسار ثاني.' },
-      { wait: 'brake', title: 'البريك', targetTouch: '[data-hold=brake]',
-        keys: 'اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وهدّي السرعة.', touch: 'اضغط على زر <b>بريك</b> وهدّي السرعة.' },
-      { wait: 'horn', title: 'الهرن', targetTouch: '[data-hold=horn]',
-        keys: 'اضغط <kbd>Space</kbd>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.', touch: 'اضغط على زر <b>هرن</b>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.' },
-      { title: 'العداد', target: '.speedo', body: 'الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر الرادار بيصوّرك. قبل كل رادار تطلع لك إشارة صفرا.' },
-      { title: 'الوجهة', target: '.trip-hud', body: 'هني اسم وجهتك وكم باقي لين توصل. في السواقة الحرة تشوف كم سقت.' },
-      { title: 'النقاط والمخالفات', target: '.stats', body: 'النقاط تزيد مع المسافة والتجاوزات، والرادار والحوادث ينقصونها. إذا الضرر وصل للنهاية السيارة تخرب.' },
-      { title: 'الخريطة', target: '#mini', body: 'النقطة البيضا انت، والنقاط الذهبية المعالم. وجهتك تبان أكبر.' },
-      { title: 'التجاوز', body: 'عدّ جنب السيارات من قريب وانت أسرع منها عشان تاخذ نقاط. كم تجاوز ورا بعض يضاعف النقاط.' },
-      { title: 'الاستراحة', target: '#btnPause', keys: 'من هني توقّف اللعبة وتغيّر الكاميرا والصوت. <kbd>C</kbd> تغيّر الكاميرا و<kbd>P</kbd> توقّف.', touch: 'من هني توقّف اللعبة وتغيّر الكاميرا ومكان الهرن والصوت.' }
-    ]
-  },
+  // what each guided tour step waits for and points at; the words live in lang/*.xml
+  tour: [
+    { wait: 'gas', target: '.speedo', targetTouch: '[data-hold=gas]' },
+    { wait: 'steer', targetTouch: '.steer' },
+    { wait: 'brake', targetTouch: '[data-hold=brake]' },
+    { wait: 'horn', targetTouch: '[data-hold=horn]' },
+    { target: '.speedo' },
+    { target: '.trip-hud' },
+    { target: '.stats' },
+    { target: '#mini' },
+    {},
+    { target: '#btnPause' }
+  ],
   page: {
-    title: 'لفّة دبي', name: 'لفّة دبي', eyebrow: 'Dubai · دبي', alt: 'Driving through Dubai',
-    blurb: 'من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.',
-    T_NEXT: 'الوجهة', T_KMH: 'كم/س', T_TIME: 'الوقت', T_SCORE: 'النقاط', T_VIOL: 'مخالفات', T_DMG: 'الضرر', T_PAUSE: 'وقّف',
-    T_HORN: 'هرن', T_BRAKE: 'بريك', T_GAS: 'دعس', T_DIR: 'الاتجاه', T_CW: 'مع عقارب الساعة', T_CCW: 'عكس عقارب الساعة',
-    T_TRIP: 'المشوار', T_TRAFFIC: 'الزحمة', T_TR0: 'خفيفة', T_TR1: 'عادية', T_TR2: 'زحمة', T_GO: 'يلا نمشي',
-    T_GARAGE: 'الكراج', T_SETTINGS: 'الإعدادات', T_CARS: 'السيارة', T_COLOR: 'اللون', T_FIXEDCOLOR: 'لون التاكسي ثابت',
-    T_PLATE: 'رقم اللوحة', T_CAM: 'الكاميرا', T_CAM0: 'قريبة', T_CAM1: 'عادية', T_CAM2: 'بعيدة', T_HORNSIDE: 'مكان الهرن',
-    T_LEFT: 'يسار', T_RIGHT: 'يمين', T_SOUND: 'الصوت', T_ON: 'شغّال', T_OFF: 'طافي',
-    T_KEYS: 'السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>',
-    T_MAPNOTE: 'الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.',
-    T_PAUSED: 'استراحة', T_RESUME: 'كمّل', T_QUIT: 'رجوع للقائمة', T_AGAIN: 'عيدها', T_NEWTRIP: 'مشوار ثاني',
-    T_HOWTO: 'شلون ألعب؟', T_R1: 'وصّل مشوارك', T_R1S: 'اختار مشوار بين معالم دبي، من البرواز لبرج خليفة لين المارينا، ووصل للنهاية.',
-    T_R2: 'تجاوز واجمع نقاط', T_R2S: 'كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.',
-    T_R3: 'انتبه للمخالفات', T_R3S: 'الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.',
-    T_WTOUR: 'جولة تعليمية', T_WSKIP: 'أعرف أسوق، أبي ألعب', T_TSKIP: 'تخطّى الجولة', T_TNEXT: 'التالي',
-    T_TEND: 'جاهز!', T_TENDS: 'خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟', T_TEMENU: 'اختار مشوار', T_TEDRIVE: 'كمّل سواقة حرة',
-    T_QUALITY: 'الرسومات', T_QHIGH: 'عالية', T_QLOW: 'سريعة',
-    otherLabel: 'جرّب عمّان',
     tokens: {
       ground: '#1b1830', ink: '#f4ecdf', muted: '#b7aec2', panel: 'rgba(19,18,38,0.9)', 'panel-solid': '#2a2746', chip: 'rgba(255,255,255,0.09)',
       line: 'rgba(255,255,255,0.16)', accent: '#e2b04f', 'on-accent': '#1a1427', hud: 'rgba(14,12,30,0.7)', 'hud-ink': '#f7f0e4', 'accent-hud': '#f2c46b',
@@ -464,8 +434,47 @@ window.CITY = {
 (function () {
 'use strict';
 const C = window.CITY;
-const T = C.text;
 const $ = (s) => document.querySelector(s);
+
+// ---------- language ----------
+// window.LANGS holds every lang/*.xml for this city: { code: { name, dir, s: { key: text } } }.
+// Pick: ?lang= in the address, then the saved choice, then the browser language.
+const LANGS = window.LANGS;
+const LANG_KEY = 'szr:lang';
+const LANG = (() => {
+  let l = null;
+  try { l = new URLSearchParams(location.search).get('lang'); } catch (e) { /* no query */ }
+  if (!LANGS[l]) { try { l = localStorage.getItem(LANG_KEY); } catch (e) { l = null; } }
+  if (!LANGS[l]) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : Object.keys(LANGS).includes('en') ? 'en' : Object.keys(LANGS)[0];
+  return l;
+})();
+const S = LANGS[LANG].s;
+const strings = (prefix) => Object.fromEntries(Object.entries(S).filter(([k]) => k.startsWith(prefix)).map(([k, v]) => [k.slice(prefix.length), v]));
+const T = strings('text.');
+C.currency = T.currency;
+C.tour = { tryIt: S['tour.tryIt'], nice: S['tour.nice'], steps: C.tour.map((st, i) => ({ ...st, title: S[`tour.${i}.title`], keys: S[`tour.${i}.keys`], touch: S[`tour.${i}.touch`], body: S[`tour.${i}.body`] })) };
+C.cars.forEach((c, i) => Object.assign(c, { name: S[`car.${i}.name`], sub: S[`car.${i}.sub`], pros: S[`car.${i}.pros`], cons: S[`car.${i}.cons`] }));
+// road signs stay bilingual like the real ones; menus and the HUD use the chosen language
+const SIGN_AR = (LANGS.ar || LANGS[LANG]).s, SIGN_EN = (LANGS.en || LANGS[LANG]).s;
+C.landmarks.forEach((lm, i) => Object.assign(lm, { name: S['place.' + i], ar: SIGN_AR['place.' + i], en: SIGN_EN['place.' + i] }));
+function applyLanguage() {
+  const L = LANGS[LANG];
+  document.documentElement.lang = LANG; document.documentElement.dir = L.dir;
+  document.title = S['page.title'];
+  $('#gl').setAttribute('aria-label', S['page.alt']);
+  document.querySelectorAll('[data-t]').forEach((el) => { if (el.dataset.t in S) el.innerHTML = S[el.dataset.t]; });
+  const codes = Object.keys(LANGS), next = codes[(codes.indexOf(LANG) + 1) % codes.length];
+  document.querySelectorAll('[data-lang-switch]').forEach((b) => {
+    b.textContent = LANGS[next].name; b.lang = next; b.setAttribute('aria-label', S['page.T_LANG'] + ': ' + LANGS[next].name);
+    b.onclick = () => {
+      try { localStorage.setItem(LANG_KEY, next); } catch (e) { /* no storage */ }
+      try { const u = new URL(location.href); u.searchParams.set('lang', next); location.replace(u.href); } catch (e) { location.reload(); }
+    };
+  });
+  // keep the language when jumping to the other city on the same site
+  document.querySelectorAll('a[data-local]').forEach((a) => { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + LANG; });
+}
+applyLanguage();
 
 // ---------- helpers ----------
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -1140,13 +1149,13 @@ function buildEvents() {
       curveAt(s, dir * (MED + CW / 2), o);
       const m = new THREE.Mesh(new THREE.BoxGeometry(CW, 0.14, 1.6), new THREE.MeshLambertMaterial({ map: tex }));
       m.position.set(o.x, o.y + 0.05, o.z); m.rotation.y = yawOf(o.tx, o.tz); scene.add(m);
-      addGantry(s - dir * 120, dir, signTexture(T.bumpSign, 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
+      addGantry(s - dir * 120, dir, signTexture(SIGN_AR['text.bumpSign'], 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
     }
     events.push({ type: 'bump', s });
   }
   for (const tg of (C.tollsAt || [])) {
     const gg = geo(tg[0], tg[1]); const s = nearestS(gg[0], gg[1]).s;
-    for (const dir of [1, -1]) addGantry(s, dir, signTexture(T.tollName, 'Toll gate', T.tollPrice, C.look.tollColor), false);
+    for (const dir of [1, -1]) addGantry(s, dir, signTexture(SIGN_AR['text.tollName'], 'Toll gate', T.tollPrice, C.look.tollColor), false);
     events.push({ type: 'toll', s });
   }
 }
@@ -1397,7 +1406,7 @@ function updateTraffic(dt, honk) {
 }
 
 // ---------- player ----------
-const player = { t: 0, d: laneD(0), v: 0, lat: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
+const player = { t: 0, d: laneD(0), v: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
 const brakeMat = new THREE.MeshBasicMaterial({ color: 0x550000, toneMapped: false });
 let plateTex = null;
 function drawPlate() {
@@ -1541,15 +1550,15 @@ function startTrip(opts) {
   DIR = settings.dir;
   const trips = tripList(); const tr = trips[opts.free ? trips.length - 1 : Math.min(settings.trip, trips.length - 1)];
   trafficLevel = opts.traffic != null ? opts.traffic : settings.traffic;
-  player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.lat = 0; player.dmg = 0;
+  player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.lat = 0; player.steer = 0; player.laneT = Math.min(1, LANES - 1); player.dmg = 0;
   Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour, lastOpts: opts.tour ? { free: true } : opts });
   game.lastS = sOfT(player.t); for (const ev of events) ev.lastT = null;
   resetTraffic();
   showScreen(null);
   $('#hud').hidden = false; $('#touch').hidden = !isTouch();
   hud.limit.textContent = C.limit;
-  hud.next.textContent = tr.free ? T.freeDrive : tr.to.ar;
-  if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.ar);
+  hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
+  if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name);
 }
 function finishTrip(reason) {
   game.mode = 'done'; resetInputs();
@@ -1558,7 +1567,7 @@ function finishTrip(reason) {
   const key = 'best:' + settings.dir + ':' + settings.trip;
   const best = store.get(key, 0); if (reason === 'arrive' && score > best) store.set(key, score);
   $('#rTitle').textContent = reason === 'arrive' ? T.arrived : T.wrecked;
-  $('#rSub').textContent = reason === 'arrive' ? (game.dest ? game.dest.ar : '') : T.wreckedSub;
+  $('#rSub').textContent = reason === 'arrive' ? (game.dest ? game.dest.name : '') : T.wreckedSub;
   const rows = [
     [T.rTime, fmtTime(game.time)], [T.rDist, (game.dist / 1000).toFixed(1) + ' ' + T.km], [T.rAvg, fmt(game.time > 0 ? game.dist / game.time * 3.6 : 0) + ' ' + T.kmh],
     [T.rWeave, fmt(game.weaves)], [T.rRadar, fmt(game.radar)], [T.rCrash, fmt(game.crashes)], [T.rFines, fmt(game.fines) + ' ' + C.currency]
@@ -1602,10 +1611,18 @@ function step(dt) {
   player.v = clamp(player.v + a * dt, 0, player.vmax * dmgSlow);
   // steering
   trackAt(player.t, player.d, P);
+  // keys are on/off, so ease the input in and out to feel like turning a wheel
   const steer = (right ? 1 : 0) - (left ? 1 : 0);
-  const tgt = steer * (3.2 + Math.min(player.v, 30) * 0.13) * player.grip * clamp(player.v / 6, 0, 1);
-  player.lat += (tgt - player.lat) * Math.min(1, dt * 6);
-  player.lat += -P.k * player.v * player.v * 0.18 * dt / player.grip; // pushes outward on curves
+  player.steer += clamp(steer - player.steer, -dt * (steer ? 8 : 10), dt * (steer ? 8 : 10));
+  let tgt = player.steer * (3.2 + Math.min(player.v, 30) * 0.13) * player.grip * clamp(player.v / 6, 0, 1);
+  // while steering, aim for the next lane over; let go and the car settles there, so a quick tap is a full lane change
+  const lanePos = (player.d - MED - SH) / LW - 0.5;
+  if (steer) player.laneT = clamp(steer > 0 ? Math.ceil(lanePos + 0.05) : Math.floor(lanePos - 0.05), 0, LANES - 1);
+  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
+  player.lat += (tgt - player.lat) * Math.min(1, dt * 5.5);
+  // curves only push you outward when you take them faster than the car's grip allows
+  const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
+  if (need > cap) player.lat -= Math.sign(P.k) * (need - cap) * 0.6 * dt;
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
@@ -1624,6 +1641,7 @@ function step(dt) {
       game.crashCool = 1.2; if (!game.tour) { game.crashes++; game.fines += C.fines.crash; player.dmg += (8 + player.v * 0.35) * player.tough; } game.shake = 0.6; game.combo = 0;
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
+      if (Math.abs(dd) > 1) player.laneT = clamp(Math.round((player.d - MED - SH) / LW - 0.5 - Math.sign(dd) * 0.5), 0, LANES - 1);
       toast(T.crash, 'bad'); crashSound(); vibrate(150); otherHorn();
     }
     // weaving: passing close
@@ -1685,7 +1703,7 @@ function step(dt) {
 function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
 const fxEl = document.querySelector('#fx');
-const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0;
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0; let camRoll = 0;
 const tmpEuler = new THREE.Euler();
 function render(dt) {
   // player
@@ -1718,8 +1736,8 @@ function render(dt) {
     camera.position.copy(camPos);
     if (game.shake > 0) { game.shake -= dt; camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; }
     camera.lookAt(camLook);
-    camera.rotateZ(clamp(player.lat * 0.006, -0.03, 0.03));
-    if (player.v > 30) { const j = (player.v - 30) * 0.0009; camera.position.x += (Math.random() - 0.5) * j; camera.position.y += (Math.random() - 0.5) * j; }
+    camRoll += (clamp(player.lat * 0.006, -0.03, 0.03) - camRoll) * Math.min(1, dt * 5);
+    camera.rotateZ(camRoll);
     camera.fov = 62 + Math.min(14, player.v * 0.18); camera.updateProjectionMatrix();
   } else {
     orbit += dt * 0.12;
@@ -1755,9 +1773,11 @@ function resize() {
 addEventListener('resize', resize);
 
 let last = performance.now();
+const STEP = 1 / 120; let stepAcc = 0;
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  step(dt);
+  // physics runs in even steps so a slow or uneven frame rate drives the same
+  stepAcc += dt; while (stepAcc >= STEP) { step(STEP); stepAcc -= STEP; }
   if ((game.mode !== 'drive' || game.paused) && AC) { hornGain.gain.setTargetAtTime(0, AC.currentTime, 0.03); engGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
   if (game.mode === 'menu' && !game.paused) { updateTrafficIdle(dt); }
   render(dt);
@@ -1775,7 +1795,7 @@ function renderTrips() {
   const trips = tripList();
   const el = $('#trips');
   el.innerHTML = trips.map((tr, i) => {
-    const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.ar} <i>${T.to}</i> ${tr.to.ar}`;
+    const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.name} <i>${T.to}</i> ${tr.to.name}`;
     const sub = tr.free ? T.freeSub : (tr.len / 1000).toFixed(1) + ' ' + T.km;
     const best = store.get('best:' + settings.dir + ':' + i, 0);
     return `<button class="trip${i === settings.trip ? ' sel' : ''}" data-i="${i}" type="button"><span class="tt">${title}</span><span class="ts">${sub}${best ? ' · ' + T.best + ' ' + fmt(best) : ''}</span></button>`;
@@ -1807,7 +1827,7 @@ function carStats(c) {
 function renderGarage() {
   if (settings.car >= CARS.length) settings.car = 0;
   $('#carPick').innerHTML = CARS.map((c, i) => `<button type="button" class="pick${i === settings.car ? ' sel' : ''}" data-i="${i}" aria-pressed="${i === settings.car}">
-    <b>${c.name}</b><span class="en">${c.en}</span>
+    <b>${c.name}</b><span class="en">${c.sub}</span>
     <span class="bars">${carStats(c).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('')}</span></button>`).join('');
   $('#carPick').querySelectorAll('.pick').forEach((b) => b.onclick = () => { settings.car = +b.dataset.i; saveSettings(); renderGarage(); buildPlayer(); });
   const cur = CARS[settings.car];

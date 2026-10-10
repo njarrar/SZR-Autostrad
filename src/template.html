@@ -1,3 +1,6 @@
+<!doctype html>
+<html lang="__LANG__" dir="__DIR__">
+<meta charset="utf-8">
 <title>__TITLE__</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,19 +23,21 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 
 /* ---------- menu sheet ---------- */
 .screen { position: fixed; inset: 0; display: flex; pointer-events: none; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
-.sheet { pointer-events: auto; direction: rtl; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.sheet { pointer-events: auto; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 #menu { justify-content: flex-end; }
 .brand { display: flex; flex-direction: column; gap: 2px; }
-.brand .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; text-transform: uppercase; direction: ltr; text-align: right; }
+.brand .eyebrow { font-size: 12px; letter-spacing: .08em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
 .brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 9vw, 62px); line-height: 1; margin: 4px 0 0; color: var(--accent); text-wrap: balance; }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.brandtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.langbtn { border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
 .flagbar { height: 6px; border-radius: 3px; background: var(--flagbar); }
 .label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 6px; }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--chip); border-radius: 10px; padding: 3px; gap: 3px; }
 .seg button { border: 0; background: transparent; padding: 9px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; }
 .seg button.sel { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,.18); color: var(--accent); }
 #trips { display: flex; flex-direction: column; gap: 6px; max-height: 236px; overflow-y: auto; padding-inline-end: 2px; }
-.trip { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
+.trip { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
 .trip .tt { font-weight: 600; font-size: 15px; }
 .trip .tt i { font-style: normal; color: var(--muted); font-weight: 500; }
 .trip .ts { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
@@ -44,12 +49,13 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .go:active, .btn:active { transform: translateY(1px); }
 .drawer { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
 #carPick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-.pick { text-align: right; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pick { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pick b { font-size: 14px; line-height: 1.3; }
-.pick .en { font-size: 10.5px; color: var(--muted); direction: ltr; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pick .en { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick .bars { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
 .pick .st { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); }
 .pick .st i { width: 44px; height: 5px; border-radius: 3px; flex: none; background: linear-gradient(to left, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
+[dir=ltr] .pick .st i { background: linear-gradient(to right, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
 .pick.sel { border-color: var(--accent); background: var(--chip); }
 #carPros { margin: 6px 0 0; display: flex; flex-direction: column; font-size: 12.5px; line-height: 1.5; }
 #carPros .pro { color: var(--good); font-weight: 600; }
@@ -66,7 +72,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #loading { font-weight: 600; color: var(--muted); padding: 10px 0; }
 
 /* ---------- HUD ---------- */
-#hud { position: fixed; inset: 0; pointer-events: none; direction: rtl; font-variant-numeric: tabular-nums; }
+#hud { position: fixed; inset: 0; pointer-events: none; font-variant-numeric: tabular-nums; }
 .hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
 .speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
@@ -146,7 +152,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 /* ---------- guided tour ---------- */
 #tour { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
 #tourHole { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(8,6,4,.5), 0 0 0 3px var(--accent-hud); transition: left .3s, top .3s, width .3s, height .3s; }
-#tourCard { position: fixed; pointer-events: auto; background: var(--panel-solid); color: var(--ink); border-radius: 16px; padding: 16px 18px; direction: rtl; box-shadow: 0 18px 50px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; transition: left .3s, top .3s; }
+#tourCard { position: fixed; pointer-events: auto; background: var(--panel-solid); color: var(--ink); border-radius: 16px; padding: 16px 18px; box-shadow: 0 18px 50px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; transition: left .3s, top .3s; }
 .tourHead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 #tourStep { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
 #tourSkip { padding: 2px; font-size: 13px; }
@@ -218,7 +224,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 <div id="menu" class="screen">
   <div class="sheet">
     <div class="brand">
-      <span class="eyebrow">__EYEBROW__</span>
+      <div class="brandtop"><span class="eyebrow">__EYEBROW__</span><button class="langbtn" type="button" data-lang-switch></button></div>
       <h1>__NAME__</h1>
       <div class="flagbar"></div>
       <p>__BLURB__</p>
@@ -253,7 +259,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <div id="welcome" class="screen" hidden>
   <div class="sheet">
-    <div class="brand"><span class="eyebrow">__EYEBROW__</span><h1>__NAME__</h1><div class="flagbar"></div></div>
+    <div class="brand"><div class="brandtop"><span class="eyebrow">__EYEBROW__</span><button class="langbtn" type="button" data-lang-switch></button></div><h1>__NAME__</h1><div class="flagbar"></div></div>
     <div class="rules">
       <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M20 9c-5 0-8.5 3.6-8.5 8.3C11.5 23.6 20 31 20 31s8.5-7.4 8.5-13.7C28.5 12.6 25 9 20 9z" fill="var(--accent)"/><circle cx="20" cy="17.5" r="3.4" fill="var(--panel-solid)"/></svg><div><b>__T_R1__</b><span>__T_R1S__</span></div></div>
       <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M14 30c0-7 12-6 12-13V10" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/><path d="M21.5 14 26 9.5l4.5 4.5" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>__T_R2__</b><span>__T_R2S__</span></div></div>
@@ -305,6 +311,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+__LANGS__
+</script>
 <script>
 __CITY__
 </script>

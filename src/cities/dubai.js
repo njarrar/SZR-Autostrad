@@ -1,5 +1,5 @@
 window.CITY = {
-  id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20, currency: 'درهم',
+  id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20,
   fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
   origin: [25.16, 55.22],
   horn: [330, 415],
@@ -29,24 +29,21 @@ window.CITY = {
   radars: [0.06, 0.2, 0.33, 0.5, 0.66, 0.85],
   tollsAt: [[25.1835, 55.2550], [25.1060, 55.1880]],
   landmarks: [
-    { ar: 'برواز دبي', en: 'Dubai Frame', lat: 25.2355, lon: 55.3003, build: 'frame', clear: 80 },
-    { ar: 'المركز التجاري العالمي', en: 'World Trade Centre', lat: 25.2245, lon: 55.2865, build: 'wtc', clear: 60 },
-    { ar: 'متحف المستقبل', en: 'Museum of the Future', lat: 25.2192, lon: 55.2818, build: 'museum', clear: 70 },
-    { ar: 'أبراج الإمارات', en: 'Emirates Towers', lat: 25.2172, lon: 55.2840, build: 'emiratesTowers', clear: 70 },
-    { ar: 'برج خليفة', en: 'Burj Khalifa', lat: 25.1972, lon: 55.2744, build: 'burjKhalifa', clear: 90 },
-    { ar: 'مول الإمارات', en: 'Mall of the Emirates', lat: 25.1181, lon: 55.2006, build: 'mall', clear: 230, ski: true, ink: '#6b4b1f' },
-    { ar: 'دبي مارينا', en: 'Dubai Marina', lat: 25.0790, lon: 55.1440, build: 'marina', clear: 220 },
-    { ar: 'عين دبي', en: 'Ain Dubai', lat: 25.0795, lon: 55.1225, build: 'ainDubai', clear: 140, sea: true },
-    { ar: 'برج العرب', en: 'Burj Al Arab', lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
-    { ar: 'مسجد جميرا', en: 'Jumeirah Mosque', lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
+    { lat: 25.2355, lon: 55.3003, build: 'frame', clear: 80 },
+    { lat: 25.2245, lon: 55.2865, build: 'wtc', clear: 60 },
+    { lat: 25.2192, lon: 55.2818, build: 'museum', clear: 70 },
+    { lat: 25.2172, lon: 55.2840, build: 'emiratesTowers', clear: 70 },
+    { lat: 25.1972, lon: 55.2744, build: 'burjKhalifa', clear: 90 },
+    { lat: 25.1181, lon: 55.2006, build: 'mall', clear: 230, ski: true, ink: '#6b4b1f' },
+    { lat: 25.0790, lon: 55.1440, build: 'marina', clear: 220 },
+    { lat: 25.0795, lon: 55.1225, build: 'ainDubai', clear: 140, sea: true },
+    { lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
+    { lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
   ],
   cars: [
-    { name: 'نيسان باترول', en: 'Nissan Patrol', kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55,
-      pros: 'قوية وتتحمل الصدمات', cons: 'ثقيلة ولفّتها صعبة' },
-    { name: 'لامبورغيني هوراكان', en: 'Lamborghini Huracán', kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5,
-      pros: 'أسرع سيارة في الشارع وثابتة وايد', cons: 'أي صدمة تخربها' },
-    { name: 'تويوتا كامري', en: 'Toyota Camry', kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0,
-      pros: 'متوازنة وتمشي مع كل شي', cons: 'ما فيها شي مميز' }
+    { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55 },
+    { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5 },
+    { kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0 }
   ],
   colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
   traffic: [
@@ -78,56 +75,20 @@ window.CITY = {
     treeDark: 0x3e5a33, treeLight: 0x6f8a4a, signColor: '#0a4f8f', warnColor: '#a8740a', radarColor: 0xdedede, tollColor: '#127a63',
     miniRoad: '#f4e2c4', miniDot: '#f2c46b', miniDest: '#ff6a5a', miniMe: '#ffffff'
   },
-  text: {
-    stSpeed: 'سرعة', stAccel: 'تسارع', stGrip: 'ثبات', stTough: 'تحمّل',
-    meters: 'م', km: 'كم', kmh: 'كم/س', to: 'إلى', bumpSign: '', tollName: 'سالك', tollPrice: '4 درهم',
-    freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق على راحتك، كل 25 كم صيانة', fullLap: 'لفّة كاملة',
-    goTo: 'يلا إلى', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'تبا لها سطحة',
-    rTime: 'الوقت', rDist: 'المسافة', rAvg: 'معدل السرعة', rWeave: 'تجاوزات', rRadar: 'رادار', rCrash: 'حوادث', rFines: 'المخالفات',
-    newBest: 'رقم قياسي جديد', best: 'أحسن نتيجة',
-    rateTop: 'عفيه عليك!', rateMid: 'زين', rateBad: 'تبالك تدريب',
-    scrape: 'لا تحك بالحاجز!', crash: 'حادث!', radarAhead: 'رادار بعد', flash: 'الرادار صوّرك!', radarOk: 'عديت الرادار تمام',
-    bumpHit: '', bumpOk: '', bonus: '+500 كل 10 كم', workshop: 'صيانة: السيارة رجعت جديدة',
-    weave: 'تجاوز', loadRoad: 'قاعدين نرسم الشارع...', loadCity: 'قاعدين نبني دبي...'
-  },
-  tour: {
-    tryIt: 'جربها الحين', nice: 'زين!',
-    steps: [
-      { wait: 'gas', title: 'دعس', target: '.speedo', targetTouch: '[data-hold=gas]',
-        keys: 'اضغط مطوّل على <kbd>↑</kbd> أو <kbd>W</kbd> لين السرعة تعدي 45.', touch: 'اضغط مطوّل على زر <b>دعس</b> لين السرعة تعدي 45.' },
-      { wait: 'steer', title: 'غيّر المسار', targetTouch: '.steer',
-        keys: 'استخدم <kbd>←</kbd> و<kbd>→</kbd> (أو <kbd>A</kbd> و<kbd>D</kbd>) وانتقل لمسار ثاني.', touch: 'استخدم الأسهم اللي على اليسار وانتقل لمسار ثاني.' },
-      { wait: 'brake', title: 'البريك', targetTouch: '[data-hold=brake]',
-        keys: 'اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وهدّي السرعة.', touch: 'اضغط على زر <b>بريك</b> وهدّي السرعة.' },
-      { wait: 'horn', title: 'الهرن', targetTouch: '[data-hold=horn]',
-        keys: 'اضغط <kbd>Space</kbd>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.', touch: 'اضغط على زر <b>هرن</b>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.' },
-      { title: 'العداد', target: '.speedo', body: 'الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر الرادار بيصوّرك. قبل كل رادار تطلع لك إشارة صفرا.' },
-      { title: 'الوجهة', target: '.trip-hud', body: 'هني اسم وجهتك وكم باقي لين توصل. في السواقة الحرة تشوف كم سقت.' },
-      { title: 'النقاط والمخالفات', target: '.stats', body: 'النقاط تزيد مع المسافة والتجاوزات، والرادار والحوادث ينقصونها. إذا الضرر وصل للنهاية السيارة تخرب.' },
-      { title: 'الخريطة', target: '#mini', body: 'النقطة البيضا انت، والنقاط الذهبية المعالم. وجهتك تبان أكبر.' },
-      { title: 'التجاوز', body: 'عدّ جنب السيارات من قريب وانت أسرع منها عشان تاخذ نقاط. كم تجاوز ورا بعض يضاعف النقاط.' },
-      { title: 'الاستراحة', target: '#btnPause', keys: 'من هني توقّف اللعبة وتغيّر الكاميرا والصوت. <kbd>C</kbd> تغيّر الكاميرا و<kbd>P</kbd> توقّف.', touch: 'من هني توقّف اللعبة وتغيّر الكاميرا ومكان الهرن والصوت.' }
-    ]
-  },
+  // what each guided tour step waits for and points at; the words live in lang/*.xml
+  tour: [
+    { wait: 'gas', target: '.speedo', targetTouch: '[data-hold=gas]' },
+    { wait: 'steer', targetTouch: '.steer' },
+    { wait: 'brake', targetTouch: '[data-hold=brake]' },
+    { wait: 'horn', targetTouch: '[data-hold=horn]' },
+    { target: '.speedo' },
+    { target: '.trip-hud' },
+    { target: '.stats' },
+    { target: '#mini' },
+    {},
+    { target: '#btnPause' }
+  ],
   page: {
-    title: 'لفّة دبي', name: 'لفّة دبي', eyebrow: 'Dubai · دبي', alt: 'Driving through Dubai',
-    blurb: 'من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.',
-    T_NEXT: 'الوجهة', T_KMH: 'كم/س', T_TIME: 'الوقت', T_SCORE: 'النقاط', T_VIOL: 'مخالفات', T_DMG: 'الضرر', T_PAUSE: 'وقّف',
-    T_HORN: 'هرن', T_BRAKE: 'بريك', T_GAS: 'دعس', T_DIR: 'الاتجاه', T_CW: 'مع عقارب الساعة', T_CCW: 'عكس عقارب الساعة',
-    T_TRIP: 'المشوار', T_TRAFFIC: 'الزحمة', T_TR0: 'خفيفة', T_TR1: 'عادية', T_TR2: 'زحمة', T_GO: 'يلا نمشي',
-    T_GARAGE: 'الكراج', T_SETTINGS: 'الإعدادات', T_CARS: 'السيارة', T_COLOR: 'اللون', T_FIXEDCOLOR: 'لون التاكسي ثابت',
-    T_PLATE: 'رقم اللوحة', T_CAM: 'الكاميرا', T_CAM0: 'قريبة', T_CAM1: 'عادية', T_CAM2: 'بعيدة', T_HORNSIDE: 'مكان الهرن',
-    T_LEFT: 'يسار', T_RIGHT: 'يمين', T_SOUND: 'الصوت', T_ON: 'شغّال', T_OFF: 'طافي',
-    T_KEYS: 'السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>',
-    T_MAPNOTE: 'الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.',
-    T_PAUSED: 'استراحة', T_RESUME: 'كمّل', T_QUIT: 'رجوع للقائمة', T_AGAIN: 'عيدها', T_NEWTRIP: 'مشوار ثاني',
-    T_HOWTO: 'شلون ألعب؟', T_R1: 'وصّل مشوارك', T_R1S: 'اختار مشوار بين معالم دبي، من البرواز لبرج خليفة لين المارينا، ووصل للنهاية.',
-    T_R2: 'تجاوز واجمع نقاط', T_R2S: 'كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.',
-    T_R3: 'انتبه للمخالفات', T_R3S: 'الرادار يصوّر فوق 120 كم/س، وبوابات سالك تحسب عليك، والحوادث تخرّب السيارة.',
-    T_WTOUR: 'جولة تعليمية', T_WSKIP: 'أعرف أسوق، أبي ألعب', T_TSKIP: 'تخطّى الجولة', T_TNEXT: 'التالي',
-    T_TEND: 'جاهز!', T_TENDS: 'خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟', T_TEMENU: 'اختار مشوار', T_TEDRIVE: 'كمّل سواقة حرة',
-    T_QUALITY: 'الرسومات', T_QHIGH: 'عالية', T_QLOW: 'سريعة',
-    otherLabel: 'جرّب عمّان',
     tokens: {
       ground: '#1b1830', ink: '#f4ecdf', muted: '#b7aec2', panel: 'rgba(19,18,38,0.9)', 'panel-solid': '#2a2746', chip: 'rgba(255,255,255,0.09)',
       line: 'rgba(255,255,255,0.16)', accent: '#e2b04f', 'on-accent': '#1a1427', hud: 'rgba(14,12,30,0.7)', 'hud-ink': '#f7f0e4', 'accent-hud': '#f2c46b',

@@ -1,5 +1,5 @@
 window.CITY = {
-  id: 'amman', seed: 11, hills: true, lanes: 3, limit: 80, tolerance: 10, currency: 'د.أ',
+  id: 'amman', seed: 11, hills: true, lanes: 3, limit: 80, tolerance: 10,
   fines: { radar: 30, crash: 50 }, tripHop: 3,
   origin: [31.962, 35.900],
   horn: [415, 520],
@@ -25,26 +25,23 @@ window.CITY = {
   radars: [0.08, 0.3, 0.55, 0.8],
   bumps: [0.18, 0.43, 0.68, 0.9],
   landmarks: [
-    { ar: 'دوار الداخلية', en: 'Interior Circle', lat: 31.9693, lon: 35.9078, build: 'fountain', clear: 30 },
-    { ar: 'بوليفارد العبدلي', en: 'Abdali Boulevard', lat: 31.9625, lon: 35.9080, build: 'towers', clear: 100 },
-    { ar: 'مسجد الملك عبدالله', en: 'King Abdullah I Mosque', lat: 31.9617, lon: 35.9137, build: 'mosqueBlue', clear: 50 },
-    { ar: 'جبل القلعة', en: 'Amman Citadel', lat: 31.9540, lon: 35.9345, build: 'citadel', clear: 120 },
-    { ar: 'سارية رغدان', en: 'Raghadan Flagpole', lat: 31.9573, lon: 35.9458, build: 'flagpole', clear: 20, h: 126 },
-    { ar: 'المدرج الروماني', en: 'Roman Theatre', lat: 31.9516, lon: 35.9394, build: 'theatre', clear: 60 },
-    { ar: 'شارع الرينبو', en: 'Rainbow Street', lat: 31.9512, lon: 35.9290, build: 'oldHouses', clear: 70 },
-    { ar: 'جسر عبدون', en: 'Abdoun Bridge', lat: 31.9455, lon: 35.8960, build: 'cableBridge', clear: 140 },
-    { ar: 'الدوار السابع', en: '7th Circle', lat: 31.9520, lon: 35.8705, build: 'fountain', clear: 30 },
-    { ar: 'الصويفية', en: 'Sweifieh', lat: 31.9585, lon: 35.8640, build: 'shops', clear: 140 },
-    { ar: 'مكة مول', en: 'Mecca Mall', lat: 31.9775, lon: 35.8460, build: 'mall', clear: 110, ink: '#7a1f2b' },
-    { ar: 'شارع الجاردنز', en: 'Gardens Street', lat: 31.9845, lon: 35.8800, build: 'shops', clear: 140 }
+    { lat: 31.9693, lon: 35.9078, build: 'fountain', clear: 30 },
+    { lat: 31.9625, lon: 35.9080, build: 'towers', clear: 100 },
+    { lat: 31.9617, lon: 35.9137, build: 'mosqueBlue', clear: 50 },
+    { lat: 31.9540, lon: 35.9345, build: 'citadel', clear: 120 },
+    { lat: 31.9573, lon: 35.9458, build: 'flagpole', clear: 20, h: 126 },
+    { lat: 31.9516, lon: 35.9394, build: 'theatre', clear: 60 },
+    { lat: 31.9512, lon: 35.9290, build: 'oldHouses', clear: 70 },
+    { lat: 31.9455, lon: 35.8960, build: 'cableBridge', clear: 140 },
+    { lat: 31.9520, lon: 35.8705, build: 'fountain', clear: 30 },
+    { lat: 31.9585, lon: 35.8640, build: 'shops', clear: 140 },
+    { lat: 31.9775, lon: 35.8460, build: 'mall', clear: 110, ink: '#7a1f2b' },
+    { lat: 31.9845, lon: 35.8800, build: 'shops', clear: 140 }
   ],
   cars: [
-    { name: 'هيونداي إلنترا', en: 'Hyundai Elantra', kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0,
-      pros: 'متوازنة وبتحشّر بسهولة', cons: 'ما بتتميّز بإشي' },
-    { name: 'تويوتا بريوس', en: 'Toyota Prius', kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3,
-      pros: 'ثابتة بالكوع وبتلف بسهولة', cons: 'تسارعها بطيء وبتخرب بسرعة' },
-    { name: 'تويوتا هايلكس', en: 'Toyota Hilux', kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55,
-      pros: 'تقيلة، الضربات والمطبات ما بتأثر فيها كثير', cons: 'بطيئة ولفّتها صعبة' }
+    { kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0 },
+    { kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3 },
+    { kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55 }
   ],
   colors: [0xf2f2ee, 0xb9bec4, 0x1d1f22, 0xb3202a, 0x4a6b3a, 0x24365c],
   traffic: [
@@ -80,56 +77,20 @@ window.CITY = {
     treeDark: 0x3e5a33, treeLight: 0x7d8a5a, signColor: '#0d6b3d', warnColor: '#a8740a', radarColor: 0x2b2b2b,
     miniRoad: '#f1e6d0', miniDot: '#7ed09b', miniDest: '#ff4d5e', miniMe: '#ce1126'
   },
-  text: {
-    stSpeed: 'سرعة', stAccel: 'تسارع', stGrip: 'ثبات', stTough: 'تحمّل',
-    meters: 'م', km: 'كم', kmh: 'كم/س', to: 'على', bumpSign: 'مطب', tollName: '', tollPrice: '',
-    freeDrive: 'سواقة حرة', freeSub: 'بلا نهاية، صيانة كل 25 كم', freeHint: 'سوق براحتك، كل 25 كم في صيانة', fullLap: 'لفّة كاملة',
-    goTo: 'يلا على', arrived: 'وصلنا!', wrecked: 'السيارة خربت', wreckedSub: 'بدها ونش',
-    rTime: 'الوقت', rDist: 'المسافة', rAvg: 'معدل السرعة', rWeave: 'تحشيرات', rRadar: 'رادار', rCrash: 'حوادث', rFines: 'المخالفات',
-    newBest: 'رقم قياسي جديد', best: 'أحسن نتيجة',
-    rateTop: 'معلّم سواقة!', rateMid: 'مش بطال', rateBad: 'بدك دروس سواقة',
-    scrape: 'حكّيت بالحاجز!', crash: 'ضربت سيارة!', radarAhead: 'رادار بعد', flash: 'صوّرك الرادار!', radarOk: 'مرقت عالرادار تمام',
-    bumpHit: 'مطب! خفّف شوي', bumpOk: 'نزلت عالمطب بهدوء', bonus: '+500 كل 10 كم', workshop: 'صيانة: رجعت السيارة جديدة',
-    weave: 'تحشيرة', loadRoad: 'بنرسم الشارع...', loadCity: 'بنبني عمّان...'
-  },
-  tour: {
-    tryIt: 'جرّبها هلأ', nice: 'تمام!',
-    steps: [
-      { wait: 'gas', title: 'دوس بنزين', target: '.speedo', targetTouch: '[data-hold=gas]',
-        keys: 'اضغط مطوّل على <kbd>↑</kbd> أو <kbd>W</kbd> وخلّي السرعة تطلع فوق 45.', touch: 'اضغط مطوّل على زر <b>بنزين</b> وخلّي السرعة تطلع فوق 45.' },
-      { wait: 'steer', title: 'غيّر المسرب', targetTouch: '.steer',
-        keys: 'استعمل <kbd>←</kbd> و<kbd>→</kbd> (أو <kbd>A</kbd> و<kbd>D</kbd>) وانقل لمسرب ثاني.', touch: 'استعمل الأسهم اللي عاليسار وانقل لمسرب ثاني.' },
-      { wait: 'brake', title: 'البريك', targetTouch: '[data-hold=brake]',
-        keys: 'اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وخفّف السرعة.', touch: 'اضغط على زر <b>بريك</b> وخفّف السرعة.' },
-      { wait: 'horn', title: 'الزامور', targetTouch: '[data-hold=horn]',
-        keys: 'اضغط <kbd>Space</kbd>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.', touch: 'اضغط على زر <b>زامور</b>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.' },
-      { title: 'العداد', target: '.speedo', body: 'الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر يعني الرادار رح يصوّرك. قبل كل رادار بتطلعلك إشارة صفرا.' },
-      { title: 'وين رايحين', target: '.trip-hud', body: 'هون اسم وجهتك وقديش ضايل للوصول. بالسواقة الحرة بتشوف قديش سقت.' },
-      { title: 'النقاط والمخالفات', target: '.stats', body: 'النقاط بتزيد مع المسافة والتحشيرات، والرادار والحوادث بنقصوا منها. إذا الضرر وصل للآخر السيارة بتخرب.' },
-      { title: 'الخريطة', target: '#mini', body: 'النقطة الحمرا إنت، والنقاط الخضرا المعالم. وجهتك بتبيّن أكبر.' },
-      { title: 'التحشيرة', body: 'مرّ جنب السيارات من قريب وإنت أسرع منها لتاخذ نقاط. كذا وحدة ورا بعض بتضاعف النقاط.' },
-      { title: 'الاستراحة', target: '#btnPause', keys: 'من هون بتوقّف اللعبة وبتغيّر الكاميرا والصوت. <kbd>C</kbd> بتغيّر الكاميرا و<kbd>P</kbd> بتوقّف.', touch: 'من هون بتوقّف اللعبة وبتغيّر الكاميرا ومكان الزامور والصوت.' }
-    ]
-  },
+  // what each guided tour step waits for and points at; the words live in lang/*.xml
+  tour: [
+    { wait: 'gas', target: '.speedo', targetTouch: '[data-hold=gas]' },
+    { wait: 'steer', targetTouch: '.steer' },
+    { wait: 'brake', targetTouch: '[data-hold=brake]' },
+    { wait: 'horn', targetTouch: '[data-hold=horn]' },
+    { target: '.speedo' },
+    { target: '.trip-hud' },
+    { target: '.stats' },
+    { target: '#mini' },
+    {},
+    { target: '#btnPause' }
+  ],
   page: {
-    title: 'لفّة عمّان', name: 'لفّة عمّان', eyebrow: 'Amman · عمّان', alt: 'Driving through Amman',
-    blurb: 'من العبدلي للقلعة لجبل عمّان، بين الطلعات والنزلات. انتبه عالرادار والمطبات، وحشّر بين السيارات بس بدون ما تضرب.',
-    T_NEXT: 'رايحين على', T_KMH: 'كم/س', T_TIME: 'الوقت', T_SCORE: 'النقاط', T_VIOL: 'مخالفات', T_DMG: 'الضرر', T_PAUSE: 'وقّف',
-    T_HORN: 'زامور', T_BRAKE: 'بريك', T_GAS: 'بنزين', T_DIR: 'الاتجاه', T_CW: 'مع عقارب الساعة', T_CCW: 'عكس عقارب الساعة',
-    T_TRIP: 'المشوار', T_TRAFFIC: 'أزمة السير', T_TR0: 'فاضية', T_TR1: 'عادية', T_TR2: 'أزمة', T_GO: 'يلا نطلع',
-    T_GARAGE: 'الكراج', T_SETTINGS: 'الإعدادات', T_CARS: 'السيارة', T_COLOR: 'اللون', T_FIXEDCOLOR: 'التكسي لونه أصفر وبس',
-    T_PLATE: 'النمرة', T_CAM: 'الكاميرا', T_CAM0: 'قريبة', T_CAM1: 'عادية', T_CAM2: 'بعيدة', T_HORNSIDE: 'مكان الزامور',
-    T_LEFT: 'يسار', T_RIGHT: 'يمين', T_SOUND: 'الصوت', T_ON: 'شغّال', T_OFF: 'مسكّر',
-    T_KEYS: 'السواقة بالأسهم أو <kbd>WASD</kbd> · الزامور <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>',
-    T_MAPNOTE: 'الطريق مرسوم بشكل تقريبي على أماكن حقيقية بعمّان. الزامور بخلّي السيارة اللي قدامك توسّعلك.',
-    T_PAUSED: 'استراحة', T_RESUME: 'كمّل', T_QUIT: 'رجوع للقائمة', T_AGAIN: 'عيدها', T_NEWTRIP: 'مشوار ثاني',
-    T_HOWTO: 'كيف ألعب؟', T_R1: 'وصّل مشوارك', T_R1S: 'اختار مشوار بين معالم عمّان، من العبدلي للقلعة لمكة مول، ووصل لآخره.',
-    T_R2: 'حشّر وجمّع نقاط', T_R2S: 'كل ما تتجاوز سيارة من قريب وبسرعة بتاخذ نقاط، وإذا ورا بعض بتتضاعف.',
-    T_R3: 'انتبه للمخالفات', T_R3S: 'الرادار بصوّر فوق 90 كم/س، والمطبات والحوادث بتخرّب السيارة.',
-    T_WTOUR: 'جولة تعليمية', T_WSKIP: 'بعرف أسوق، بدي ألعب', T_TSKIP: 'تخطّي الجولة', T_TNEXT: 'التالي',
-    T_TEND: 'جاهز!', T_TENDS: 'خلصت الجولة. بدك تختار مشوار ولا تكمّل سواقة حرة؟', T_TEMENU: 'اختار مشوار', T_TEDRIVE: 'كمّل سواقة حرة',
-    T_QUALITY: 'الرسومات', T_QHIGH: 'عالية', T_QLOW: 'سريعة',
-    otherLabel: 'جرّب دبي',
     tokens: {
       ground: '#cbb48c', ink: '#2b2118', muted: '#6f6253', panel: 'rgba(246,240,229,0.94)', 'panel-solid': '#fbf7ef', chip: '#ece2cf',
       line: '#dccfb7', accent: '#0b6e3a', 'on-accent': '#ffffff', hud: 'rgba(28,24,20,0.72)', 'hud-ink': '#fbf5ea', 'accent-hud': '#8fe0ab',

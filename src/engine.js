@@ -2,8 +2,47 @@
 (function () {
 'use strict';
 const C = window.CITY;
-const T = C.text;
 const $ = (s) => document.querySelector(s);
+
+// ---------- language ----------
+// window.LANGS holds every lang/*.xml for this city: { code: { name, dir, s: { key: text } } }.
+// Pick: ?lang= in the address, then the saved choice, then the browser language.
+const LANGS = window.LANGS;
+const LANG_KEY = 'szr:lang';
+const LANG = (() => {
+  let l = null;
+  try { l = new URLSearchParams(location.search).get('lang'); } catch (e) { /* no query */ }
+  if (!LANGS[l]) { try { l = localStorage.getItem(LANG_KEY); } catch (e) { l = null; } }
+  if (!LANGS[l]) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : Object.keys(LANGS).includes('en') ? 'en' : Object.keys(LANGS)[0];
+  return l;
+})();
+const S = LANGS[LANG].s;
+const strings = (prefix) => Object.fromEntries(Object.entries(S).filter(([k]) => k.startsWith(prefix)).map(([k, v]) => [k.slice(prefix.length), v]));
+const T = strings('text.');
+C.currency = T.currency;
+C.tour = { tryIt: S['tour.tryIt'], nice: S['tour.nice'], steps: C.tour.map((st, i) => ({ ...st, title: S[`tour.${i}.title`], keys: S[`tour.${i}.keys`], touch: S[`tour.${i}.touch`], body: S[`tour.${i}.body`] })) };
+C.cars.forEach((c, i) => Object.assign(c, { name: S[`car.${i}.name`], sub: S[`car.${i}.sub`], pros: S[`car.${i}.pros`], cons: S[`car.${i}.cons`] }));
+// road signs stay bilingual like the real ones; menus and the HUD use the chosen language
+const SIGN_AR = (LANGS.ar || LANGS[LANG]).s, SIGN_EN = (LANGS.en || LANGS[LANG]).s;
+C.landmarks.forEach((lm, i) => Object.assign(lm, { name: S['place.' + i], ar: SIGN_AR['place.' + i], en: SIGN_EN['place.' + i] }));
+function applyLanguage() {
+  const L = LANGS[LANG];
+  document.documentElement.lang = LANG; document.documentElement.dir = L.dir;
+  document.title = S['page.title'];
+  $('#gl').setAttribute('aria-label', S['page.alt']);
+  document.querySelectorAll('[data-t]').forEach((el) => { if (el.dataset.t in S) el.innerHTML = S[el.dataset.t]; });
+  const codes = Object.keys(LANGS), next = codes[(codes.indexOf(LANG) + 1) % codes.length];
+  document.querySelectorAll('[data-lang-switch]').forEach((b) => {
+    b.textContent = LANGS[next].name; b.lang = next; b.setAttribute('aria-label', S['page.T_LANG'] + ': ' + LANGS[next].name);
+    b.onclick = () => {
+      try { localStorage.setItem(LANG_KEY, next); } catch (e) { /* no storage */ }
+      try { const u = new URL(location.href); u.searchParams.set('lang', next); location.replace(u.href); } catch (e) { location.reload(); }
+    };
+  });
+  // keep the language when jumping to the other city on the same site
+  document.querySelectorAll('a[data-local]').forEach((a) => { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + LANG; });
+}
+applyLanguage();
 
 // ---------- helpers ----------
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
@@ -678,13 +717,13 @@ function buildEvents() {
       curveAt(s, dir * (MED + CW / 2), o);
       const m = new THREE.Mesh(new THREE.BoxGeometry(CW, 0.14, 1.6), new THREE.MeshLambertMaterial({ map: tex }));
       m.position.set(o.x, o.y + 0.05, o.z); m.rotation.y = yawOf(o.tx, o.tz); scene.add(m);
-      addGantry(s - dir * 120, dir, signTexture(T.bumpSign, 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
+      addGantry(s - dir * 120, dir, signTexture(SIGN_AR['text.bumpSign'], 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
     }
     events.push({ type: 'bump', s });
   }
   for (const tg of (C.tollsAt || [])) {
     const gg = geo(tg[0], tg[1]); const s = nearestS(gg[0], gg[1]).s;
-    for (const dir of [1, -1]) addGantry(s, dir, signTexture(T.tollName, 'Toll gate', T.tollPrice, C.look.tollColor), false);
+    for (const dir of [1, -1]) addGantry(s, dir, signTexture(SIGN_AR['text.tollName'], 'Toll gate', T.tollPrice, C.look.tollColor), false);
     events.push({ type: 'toll', s });
   }
 }
@@ -935,7 +974,7 @@ function updateTraffic(dt, honk) {
 }
 
 // ---------- player ----------
-const player = { t: 0, d: laneD(0), v: 0, lat: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
+const player = { t: 0, d: laneD(0), v: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
 const brakeMat = new THREE.MeshBasicMaterial({ color: 0x550000, toneMapped: false });
 let plateTex = null;
 function drawPlate() {
@@ -1079,15 +1118,15 @@ function startTrip(opts) {
   DIR = settings.dir;
   const trips = tripList(); const tr = trips[opts.free ? trips.length - 1 : Math.min(settings.trip, trips.length - 1)];
   trafficLevel = opts.traffic != null ? opts.traffic : settings.traffic;
-  player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.lat = 0; player.dmg = 0;
+  player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.lat = 0; player.steer = 0; player.laneT = Math.min(1, LANES - 1); player.dmg = 0;
   Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour, lastOpts: opts.tour ? { free: true } : opts });
   game.lastS = sOfT(player.t); for (const ev of events) ev.lastT = null;
   resetTraffic();
   showScreen(null);
   $('#hud').hidden = false; $('#touch').hidden = !isTouch();
   hud.limit.textContent = C.limit;
-  hud.next.textContent = tr.free ? T.freeDrive : tr.to.ar;
-  if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.ar);
+  hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
+  if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name);
 }
 function finishTrip(reason) {
   game.mode = 'done'; resetInputs();
@@ -1096,7 +1135,7 @@ function finishTrip(reason) {
   const key = 'best:' + settings.dir + ':' + settings.trip;
   const best = store.get(key, 0); if (reason === 'arrive' && score > best) store.set(key, score);
   $('#rTitle').textContent = reason === 'arrive' ? T.arrived : T.wrecked;
-  $('#rSub').textContent = reason === 'arrive' ? (game.dest ? game.dest.ar : '') : T.wreckedSub;
+  $('#rSub').textContent = reason === 'arrive' ? (game.dest ? game.dest.name : '') : T.wreckedSub;
   const rows = [
     [T.rTime, fmtTime(game.time)], [T.rDist, (game.dist / 1000).toFixed(1) + ' ' + T.km], [T.rAvg, fmt(game.time > 0 ? game.dist / game.time * 3.6 : 0) + ' ' + T.kmh],
     [T.rWeave, fmt(game.weaves)], [T.rRadar, fmt(game.radar)], [T.rCrash, fmt(game.crashes)], [T.rFines, fmt(game.fines) + ' ' + C.currency]
@@ -1140,10 +1179,18 @@ function step(dt) {
   player.v = clamp(player.v + a * dt, 0, player.vmax * dmgSlow);
   // steering
   trackAt(player.t, player.d, P);
+  // keys are on/off, so ease the input in and out to feel like turning a wheel
   const steer = (right ? 1 : 0) - (left ? 1 : 0);
-  const tgt = steer * (3.2 + Math.min(player.v, 30) * 0.13) * player.grip * clamp(player.v / 6, 0, 1);
-  player.lat += (tgt - player.lat) * Math.min(1, dt * 6);
-  player.lat += -P.k * player.v * player.v * 0.18 * dt / player.grip; // pushes outward on curves
+  player.steer += clamp(steer - player.steer, -dt * (steer ? 8 : 10), dt * (steer ? 8 : 10));
+  let tgt = player.steer * (3.2 + Math.min(player.v, 30) * 0.13) * player.grip * clamp(player.v / 6, 0, 1);
+  // while steering, aim for the next lane over; let go and the car settles there, so a quick tap is a full lane change
+  const lanePos = (player.d - MED - SH) / LW - 0.5;
+  if (steer) player.laneT = clamp(steer > 0 ? Math.ceil(lanePos + 0.05) : Math.floor(lanePos - 0.05), 0, LANES - 1);
+  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
+  player.lat += (tgt - player.lat) * Math.min(1, dt * 5.5);
+  // curves only push you outward when you take them faster than the car's grip allows
+  const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
+  if (need > cap) player.lat -= Math.sign(P.k) * (need - cap) * 0.6 * dt;
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
@@ -1162,6 +1209,7 @@ function step(dt) {
       game.crashCool = 1.2; if (!game.tour) { game.crashes++; game.fines += C.fines.crash; player.dmg += (8 + player.v * 0.35) * player.tough; } game.shake = 0.6; game.combo = 0;
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
+      if (Math.abs(dd) > 1) player.laneT = clamp(Math.round((player.d - MED - SH) / LW - 0.5 - Math.sign(dd) * 0.5), 0, LANES - 1);
       toast(T.crash, 'bad'); crashSound(); vibrate(150); otherHorn();
     }
     // weaving: passing close
@@ -1223,7 +1271,7 @@ function step(dt) {
 function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
 const fxEl = document.querySelector('#fx');
-const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0;
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0; let camRoll = 0;
 const tmpEuler = new THREE.Euler();
 function render(dt) {
   // player
@@ -1256,8 +1304,8 @@ function render(dt) {
     camera.position.copy(camPos);
     if (game.shake > 0) { game.shake -= dt; camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; }
     camera.lookAt(camLook);
-    camera.rotateZ(clamp(player.lat * 0.006, -0.03, 0.03));
-    if (player.v > 30) { const j = (player.v - 30) * 0.0009; camera.position.x += (Math.random() - 0.5) * j; camera.position.y += (Math.random() - 0.5) * j; }
+    camRoll += (clamp(player.lat * 0.006, -0.03, 0.03) - camRoll) * Math.min(1, dt * 5);
+    camera.rotateZ(camRoll);
     camera.fov = 62 + Math.min(14, player.v * 0.18); camera.updateProjectionMatrix();
   } else {
     orbit += dt * 0.12;
@@ -1293,9 +1341,11 @@ function resize() {
 addEventListener('resize', resize);
 
 let last = performance.now();
+const STEP = 1 / 120; let stepAcc = 0;
 function loop(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
-  step(dt);
+  // physics runs in even steps so a slow or uneven frame rate drives the same
+  stepAcc += dt; while (stepAcc >= STEP) { step(STEP); stepAcc -= STEP; }
   if ((game.mode !== 'drive' || game.paused) && AC) { hornGain.gain.setTargetAtTime(0, AC.currentTime, 0.03); engGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
   if (game.mode === 'menu' && !game.paused) { updateTrafficIdle(dt); }
   render(dt);
@@ -1313,7 +1363,7 @@ function renderTrips() {
   const trips = tripList();
   const el = $('#trips');
   el.innerHTML = trips.map((tr, i) => {
-    const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.ar} <i>${T.to}</i> ${tr.to.ar}`;
+    const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.name} <i>${T.to}</i> ${tr.to.name}`;
     const sub = tr.free ? T.freeSub : (tr.len / 1000).toFixed(1) + ' ' + T.km;
     const best = store.get('best:' + settings.dir + ':' + i, 0);
     return `<button class="trip${i === settings.trip ? ' sel' : ''}" data-i="${i}" type="button"><span class="tt">${title}</span><span class="ts">${sub}${best ? ' · ' + T.best + ' ' + fmt(best) : ''}</span></button>`;
@@ -1345,7 +1395,7 @@ function carStats(c) {
 function renderGarage() {
   if (settings.car >= CARS.length) settings.car = 0;
   $('#carPick').innerHTML = CARS.map((c, i) => `<button type="button" class="pick${i === settings.car ? ' sel' : ''}" data-i="${i}" aria-pressed="${i === settings.car}">
-    <b>${c.name}</b><span class="en">${c.en}</span>
+    <b>${c.name}</b><span class="en">${c.sub}</span>
     <span class="bars">${carStats(c).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('')}</span></button>`).join('');
   $('#carPick').querySelectorAll('.pick').forEach((b) => b.onclick = () => { settings.car = +b.dataset.i; saveSettings(); renderGarage(); buildPlayer(); });
   const cur = CARS[settings.car];
