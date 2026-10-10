@@ -22,7 +22,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- menu sheet ---------- */
-.screen { position: fixed; inset: 0; display: flex; pointer-events: none; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
+.screen { position: fixed; inset: 0; z-index: 10; display: flex; pointer-events: none; padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
 .sheet { pointer-events: auto; width: min(430px, 100%); max-height: 100%; overflow-y: auto; background: var(--panel); color: var(--ink); border-radius: var(--r); box-shadow: 0 20px 60px rgba(0,0,0,.35); padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 16px; margin-inline-start: auto; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
 #menu { justify-content: flex-end; }
 .brand { display: flex; flex-direction: column; gap: 2px; }
@@ -72,7 +72,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #loading { font-weight: 600; color: var(--muted); padding: 10px 0; }
 
 /* ---------- HUD ---------- */
-#hud { position: fixed; inset: 0; pointer-events: none; font-variant-numeric: tabular-nums; }
+#hud { position: fixed; inset: 0; pointer-events: none; z-index: 3; font-variant-numeric: tabular-nums; }
 .hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
 .speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
@@ -110,17 +110,37 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 @keyframes fl { 0% { opacity: .85; } 100% { opacity: 0; } }
 
 /* ---------- touch ---------- */
-#touch { position: fixed; inset: auto 0 0 0; padding: 0 14px calc(env(safe-area-inset-bottom, 0px) + 14px); display: flex; justify-content: space-between; align-items: flex-end; direction: ltr; pointer-events: none; }
-#touch .grp { display: flex; gap: 10px; pointer-events: auto; }
+/* One stick does gas, brake and steering. "stick" keeps it at the bottom; "onehand" and "tilt" move it under your thumb. */
+#touch { position: fixed; inset: 0; z-index: 2; pointer-events: none; direction: ltr; --stick: min(40vmin, 176px); --pad: calc(env(safe-area-inset-bottom, 0px) + 14px); }
+#ctl { position: absolute; inset: 0; pointer-events: none; touch-action: none; }
+#touch[data-mode=onehand] #ctl, #touch[data-mode=tilt] #ctl { pointer-events: auto; top: 32%; }
+#stick { position: absolute; width: var(--stick); height: var(--stick); left: 50%; bottom: var(--pad); transform: translateX(-50%); pointer-events: auto; touch-action: none; }
+#touch[data-mode=onehand] #stick, #touch[data-mode=tilt] #stick { pointer-events: none; opacity: .55; transition: opacity .15s; }
+#touch.held #stick { opacity: 1; }
+#stick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#stick .base { fill: var(--hud); }
+#stick .rim { fill: none; stroke: rgba(255,255,255,.28); stroke-width: 2.5; }
+#stick .up { fill: none; stroke: #f6c445; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1 11; }
+#stick .dn { fill: none; stroke: #e2452b; stroke-width: 6; stroke-linecap: round; }
+#stick .chev { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+#stick.gas .up { stroke-dasharray: none; filter: drop-shadow(0 0 6px #f6c445); }
+#stick.brake .dn { filter: drop-shadow(0 0 6px #e2452b); }
+#knob { position: absolute; left: 50%; top: 50%; width: 38%; height: 38%; margin: -19% 0 0 -19%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ffffff, #d9dde2 55%, #a9b0b8); box-shadow: 0 4px 14px rgba(0,0,0,.45), inset 0 -3px 6px rgba(0,0,0,.18); }
+#stick .lbl { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--hud-ink); text-shadow: 0 1px 3px rgba(0,0,0,.7); white-space: nowrap; pointer-events: none; }
+#stick .lbl.u { top: 7%; } #stick .lbl.d { bottom: 7%; }
+.lanesUI { position: absolute; inset: auto 0 var(--pad) 0; padding: 0 14px; display: none; justify-content: space-between; align-items: flex-end; pointer-events: none; }
+#touch[data-mode=lanes] .lanesUI { display: flex; }
+#touch[data-mode=lanes] #stick { display: none; }
+.lanesUI .grp { display: flex; gap: 10px; pointer-events: auto; }
 .tb { width: 74px; height: 74px; border-radius: 18px; border: 0; background: var(--hud); color: var(--hud-ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; touch-action: none; }
 .tb.on { background: var(--accent); color: var(--on-accent); }
 .tb.gas { height: 110px; }
-.tb.horn { width: 84px; height: 56px; border-radius: 28px; font-family: var(--display); font-size: 20px; font-weight: 400; }
-#touch .hornwrap { order: 2; pointer-events: auto; }
-#touch.horn-left .hornwrap { order: 0; }
-#touch .steer { order: 1; }
-#touch .pedals { order: 3; }
-#touch.horn-left .steer { order: 1; }
+.horn { position: absolute; bottom: calc(var(--pad) + 6px); right: 16px; width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22); background: var(--hud); color: var(--hud-ink); display: grid; place-items: center; pointer-events: auto; touch-action: none; }
+.horn svg { width: 46%; height: 46%; }
+.horn.on { background: var(--accent); color: var(--on-accent); }
+#touch.horn-left .horn { right: auto; left: 16px; }
+#touch.horn-small .horn { width: 58px; height: 58px; }
+#touch[data-mode=lanes] .horn { bottom: calc(var(--pad) + 124px); }
 
 /* ---------- results / pause ---------- */
 #result, #pause { justify-content: center; align-items: center; }
@@ -136,6 +156,30 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #rRate { font-weight: 700; font-size: 16px; }
 #rBest { font-size: 12px; color: var(--muted); width: 100%; }
 
+
+
+/* ---------- settings ---------- */
+#settings { justify-content: center; align-items: center; }
+#settings .sheet { margin: 0; width: min(560px, 100%); gap: 14px; }
+.setHead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.setHead h2 { font-family: var(--display); font-weight: 400; font-size: 40px; line-height: 1; margin: 0; color: var(--accent); }
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.tabs button { border: 1.5px solid var(--line); background: transparent; border-radius: 12px; padding: 8px 4px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-weight: 700; font-size: 13px; }
+.tabs svg { width: 24px; height: 24px; }
+.tabs button.sel { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.panel { display: flex; flex-direction: column; gap: 14px; }
+.modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.mode { border: 1.5px solid var(--line); background: transparent; border-radius: 12px; padding: 10px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.mode svg { width: 34px; height: 34px; color: var(--accent); }
+.mode b { font-size: 12.5px; line-height: 1.2; text-align: center; }
+.mode.sel { border-color: var(--accent); background: var(--chip); box-shadow: 0 0 0 2px var(--accent) inset; }
+#modeNote { margin-top: 8px; line-height: 1.5; }
+.slider { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.slider input { flex: 1; accent-color: var(--accent); height: 28px; }
+.langs { display: flex; flex-direction: column; gap: 8px; }
+.langs button { border: 1.5px solid var(--line); background: transparent; border-radius: 12px; padding: 12px 14px; font-weight: 700; font-size: 16px; text-align: start; }
+.langs button.sel { border-color: var(--accent); background: var(--chip); }
+@media (max-width: 420px) { .modes { grid-template-columns: repeat(2, 1fr); } }
 
 /* ---------- welcome ---------- */
 #welcome { justify-content: center; align-items: center; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.35)); }
@@ -174,9 +218,6 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 @media (max-width: 640px) {
   .tb { width: 62px; height: 62px; border-radius: 16px; }
   .tb.gas { height: 96px; }
-  .tb.horn { width: 70px; height: 50px; }
-  #touch { padding-inline: 10px; }
-  #touch .grp { gap: 8px; }
   #menu { align-items: flex-end; }
   #menu .sheet { max-height: 64%; padding: 16px 16px 14px; gap: 12px; }
   .brand h1 { font-size: 40px; }
@@ -189,6 +230,46 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .speedo .num { font-size: 36px; }
   #mini { width: 92px; height: 92px; }
   #btnPause { top: calc(env(safe-area-inset-top, 0px) + 180px); }
+}
+
+/* phone on its side: short screen, so the HUD and sheets get compact */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hbar { top: calc(env(safe-area-inset-top, 0px) + 8px); inset-inline: max(12px, env(safe-area-inset-left, 0px)); }
+  .speedo { padding: 4px 10px 2px; gap: 8px; }
+  .speedo .num { font-size: 30px; }
+  .limit { width: 32px; height: 32px; border-width: 4px; font-size: 12px; }
+  .trip-hud { padding: 4px 10px; max-width: 34vw; }
+  .trip-hud b { font-size: 14px; }
+  .trip-hud .rem { font-size: 17px; }
+  .stats { top: calc(env(safe-area-inset-top, 0px) + 78px); gap: 4px; inset-inline-start: max(12px, env(safe-area-inset-left, 0px)); }
+  .chip { padding: 3px 8px; font-size: 12px; }
+  .dmg { width: 80px; }
+  #mini { top: calc(env(safe-area-inset-top, 0px) + 60px); width: 76px; height: 76px; inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); }
+  #btnPause { top: calc(env(safe-area-inset-top, 0px) + 144px); inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); padding: 5px 12px; }
+  #touch { --stick: min(44vmin, 168px); --pad: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+  /* sideways the stick sits under the left thumb and the horn under the right, so the car stays in view */
+  #touch[data-mode=stick] #stick { left: max(24px, env(safe-area-inset-left, 0px)); transform: none; }
+  #touch[data-mode=stick].horn-left #stick { left: auto; right: max(24px, env(safe-area-inset-right, 0px)); }
+  .horn { width: 64px; height: 64px; right: max(16px, env(safe-area-inset-right, 0px)); }
+  #touch.horn-left .horn { left: max(16px, env(safe-area-inset-left, 0px)); }
+  #touch.horn-small .horn { width: 50px; height: 50px; }
+  .lanesUI { padding-inline: max(14px, env(safe-area-inset-left, 0px)); }
+  .lanesUI .tb { width: 58px; height: 58px; }
+  .lanesUI .tb.gas { height: 84px; }
+  #touch[data-mode=lanes] .horn { bottom: calc(var(--pad) + 96px); }
+  .sheet { padding: 14px 16px; gap: 10px; }
+  .brand h1 { font-size: 34px; }
+  .brand p { display: none; }
+  #welcome .sheet { width: min(640px, 100%); }
+  #welcome h1 { font-size: 44px; }
+  .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .rule { grid-template-columns: 1fr; }
+  .rule svg { width: 30px; height: 30px; }
+  .rule span { font-size: 12.5px; }
+  .toast { top: 26%; font-size: 15px; }
+  #rTitle { font-size: 40px; }
+  #tourBody { font-size: 14px; line-height: 1.5; }
+  #tourTitle { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
 </style>
@@ -215,11 +296,25 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   <div id="toast" class="toast"></div>
 </div>
 
-<div id="touch" hidden>
-  <div class="grp steer"><button class="tb" data-hold="left" type="button" aria-label="left">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="right">&#9654;</button></div>
-  <div class="grp hornwrap"><button class="tb horn" data-hold="horn" type="button">__T_HORN__</button></div>
-  <div class="grp pedals"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button">__T_GAS__</button></div>
+<div id="touch" hidden data-mode="stick">
+  <div id="ctl"></div>
+  <div id="stick" role="img" aria-label="__T_C_STICK__">
+    <svg viewBox="-100 -100 200 200" aria-hidden="true">
+      <circle class="base" r="92"/><circle class="rim" r="92"/>
+      <path class="up" d="M-52 -60 A80 80 0 0 1 52 -60"/>
+      <path class="dn" d="M-46 66 A80 80 0 0 0 46 66"/>
+      <path class="chev" d="M-66 -12 L-78 0 L-66 12"/><path class="chev" d="M66 -12 L78 0 L66 12"/>
+    </svg>
+    <div id="knob"></div>
+    <span class="lbl u">__T_GAS__</span><span class="lbl d">__T_BRAKE__</span>
+  </div>
+  <div class="lanesUI">
+    <div class="grp"><button class="tb" data-hold="left" type="button" aria-label="__T_LEFT__">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="__T_RIGHT__">&#9654;</button></div>
+    <div class="grp"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button">__T_GAS__</button></div>
+  </div>
+  <button class="horn" data-hold="horn" type="button" aria-label="__T_HORN__"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></button>
 </div>
+
 
 <div id="menu" class="screen">
   <div class="sheet">
@@ -240,12 +335,6 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <div class="drawer" id="garage" hidden>
         <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
         <div><div class="label"><label for="plate">__T_PLATE__</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
-      </div>
-      <div class="drawer" id="settingsBox" hidden>
-        <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam1"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
-        <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn1"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
-        <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual1"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
-        <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound1"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
       </div>
       <div class="foot">
         <span>__T_KEYS__</span>
@@ -288,15 +377,40 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   </div>
 </div>
 
+<div id="settings" class="screen" hidden>
+  <div class="sheet">
+    <div class="setHead"><h2>__T_SETTINGS__</h2><button class="btn" id="setClose" type="button">__T_CLOSE__</button></div>
+    <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="ctl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><path d="M3.5 10.5h6M14.5 10.5h6M12 14.5V21" stroke="currentColor" stroke-width="2.2"/></svg><span>__T_SET_CONTROLS__</span></button><button type="button" role="tab" data-tab="snd"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>__T_SET_SOUND__</span></button><button type="button" role="tab" data-tab="dsp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 20h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>__T_SET_DISPLAY__</span></button><button type="button" role="tab" data-tab="lng"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>__T_LANG__</span></button></div>
+    <div class="panel" data-panel="ctl">
+      <div><div class="label">__T_CTRL__</div><div class="modes" id="ctlModes"><button type="button" class="mode" data-v="stick"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="20" cy="15" r="6" fill="currentColor"/></svg><b>__T_C_STICK__</b></button><button type="button" class="mode" data-v="onehand"><svg viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20h12M14 20l3-3M14 20l3 3M26 20l-3-3M26 20l-3 3" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>__T_C_ONE__</b></button><button type="button" class="mode" data-v="tilt"><svg viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="28" rx="4" transform="rotate(-20 20 20)" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5 14a16 16 0 0 0 0 12M35 14a16 16 0 0 1 0 12" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>__T_C_TILT__</b></button><button type="button" class="mode" data-v="lanes"><svg viewBox="0 0 40 40"><path d="M10 36 15 4M30 36 25 4" stroke="currentColor" stroke-width="3" fill="none"/><path d="M20 30v-6M20 18v-6" stroke="currentColor" stroke-width="2.4"/></svg><b>__T_C_LANES__</b></button></div><p class="note" id="modeNote"></p></div>
+      <div><div class="label"><label for="rSteer">__T_STEERFEEL__</label></div><div class="slider"><span>__T_LIGHT__</span><input type="range" id="rSteer" min="0" max="100" step="1"><span>__T_HEAVY__</span></div></div>
+      <div><div class="label"><label for="rBrake">__T_BRAKEFEEL__</label></div><div class="slider"><span>__T_SOFT__</span><input type="range" id="rBrake" min="0" max="100" step="1"><span>__T_HARD__</span></div></div>
+      <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
+      <div><div class="label">__T_HORNSIZE__</div><div class="seg " id="segHornSize"><button type="button" data-v="small">__T_SMALL__</button><button type="button" data-v="normal">__T_NORMAL__</button></div></div>
+      <p class="note">__T_KEYSNOTE__</p>
+    </div>
+    <div class="panel" data-panel="snd" hidden>
+      <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
+      <div><div class="label"><label for="rEngine">__T_VOLENG__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rEngine" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
+      <div><div class="label"><label for="rFx">__T_VOLFX__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rFx" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
+    </div>
+    <div class="panel" data-panel="dsp" hidden>
+      <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
+      <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
+      <div><div class="label">__T_SPEEDFX__</div><div class="seg " id="segFx"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
+      <div><div class="label">__T_MINIMAP__</div><div class="seg " id="segMini"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
+    </div>
+    <div class="panel" data-panel="lng" hidden>
+      <div class="langs" id="langList"></div>
+    </div>
+  </div>
+</div>
+
 <div id="pause" class="screen" hidden>
   <div class="sheet">
     <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)">__T_PAUSED__</h2>
-    <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam2"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
-    <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn2"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
-    <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual2"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
-    <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound2"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
     <div class="row"><button class="go" id="btnResume" type="button">__T_RESUME__</button></div>
-    <button class="btn" id="btnQuit" type="button">__T_QUIT__</button>
+    <div class="row"><button class="btn" id="btnPauseSet" type="button">__T_SETTINGS__</button><button class="btn" id="btnQuit" type="button">__T_QUIT__</button></div>
   </div>
 </div>
 

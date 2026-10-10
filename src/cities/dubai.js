@@ -67,20 +67,20 @@ window.CITY = {
     g.fillStyle = '#111'; g.font = 'bold 76px sans-serif'; g.fillText(text, 310, 92);
   },
   look: {
-    clouds: 0.3, cloudColor: '#f1b49a', exposure: 1.05, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
-    skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.0, sunColor: 0xffa26b, sun: 1.35, sunDir: [-0.8, 0.12, -0.45],
+    clouds: 0.3, cloudColor: '#f1b49a', exposure: 1.2, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
+    skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.55, sunColor: 0xffa26b, sun: 1.7, sunDir: [-0.8, 0.12, -0.45],
     winLit: '#ffd9a0', winGlass: '#2d3a4a', windows: { floor: 3.6, bay: 2.4, size: 0.7 },
-    ground: ['#cdb38a', '#c4a77a', '#8d8478'], sand: '#e6d4ad', sea: '#1d5b78', asphalt: '#2f3033', median: '#9a958c',
+    ground: ['#cdb38a', '#c4a77a', '#8d8478'], sand: '#e6d4ad', sea: '#1d5b78', asphalt: '#4a4b50', median: '#9a958c',
     lineEdge: '#f0e6c8', lineLane: '#f2f2f2', barrier: 0xc9c5bc, pole: 0xb0b4b8, tanks: [0xe8e8e8],
     treeDark: 0x3e5a33, treeLight: 0x6f8a4a, signColor: '#0a4f8f', warnColor: '#a8740a', radarColor: 0xdedede, tollColor: '#127a63',
     miniRoad: '#f4e2c4', miniDot: '#f2c46b', miniDest: '#ff6a5a', miniMe: '#ffffff'
   },
   // what each guided tour step waits for and points at; the words live in lang/*.xml
   tour: [
-    { wait: 'gas', target: '.speedo', targetTouch: '[data-hold=gas]' },
-    { wait: 'steer', targetTouch: '.steer' },
-    { wait: 'brake', targetTouch: '[data-hold=brake]' },
-    { wait: 'horn', targetTouch: '[data-hold=horn]' },
+    { wait: 'gas', target: '.speedo', targetTouch: '#stick' },
+    { wait: 'steer', targetTouch: '#stick' },
+    { wait: 'brake', targetTouch: '#stick' },
+    { wait: 'horn', targetTouch: '.horn' },
     { target: '.speedo' },
     { target: '.trip-hud' },
     { target: '.stats' },

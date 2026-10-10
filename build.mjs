@@ -46,6 +46,8 @@ for (const id of CITIES) {
   let html = tpl;
   const tokens = Object.entries(page.tokens).map(([k, v]) => `  --${k}: ${v};`).join('\n');
   html = html.replace('__TOKENS__', tokens);
+  // placeholders inside aria-label get plain text plus a marker so the game can swap the language later
+  html = html.replace(/aria-label="__(T_[A-Z0-9_]+)__"/g, (m, k) => { if (!(('page.' + k) in S)) throw new Error('missing string page.' + k); return `aria-label="${S['page.' + k]}" data-t-aria="page.${k}"`; });
   html = html.replace(/__([A-Z0-9_]+)__/g, (m, k) => {
     if (k === 'CITY' || k === 'ENGINE' || k === 'LANGS') return m;
     if (k === 'LANG') return DEFAULT_LANG;
@@ -55,12 +57,15 @@ for (const id of CITIES) {
     if (k === 'NAME') return span('page.name');
     if (k === 'EYEBROW') return span('page.eyebrow');
     if (k === 'BLURB') return span('page.blurb');
-    if (k === 'OTHER') return links[other] ? `<a href="${links[other]}" target="_blank" rel="noopener">${span('page.otherLabel')}</a>` : `<a href="${other}.html" data-local>${span('page.otherLabel')}</a>`;
+    if (k === 'OTHER') return links[other] ? `<a href="${links[other]}" target="_blank" rel="noopener">${span('page.otherLabel')}</a>` : `<a href="../${other}/" data-local>${span('page.otherLabel')}</a>`;
     if (k.startsWith('T_')) return span('page.' + k);
     throw new Error('missing ' + k);
   });
   html = html.replace('__LANGS__', () => 'window.LANGS = ' + json(pack) + ';').replace('__CITY__', () => src).replace('__ENGINE__', () => engine);
-  fs.writeFileSync(here + `dist/${id}.html`, html);
+  // each city has its own page at /<city>/; the old /<city>.html address forwards there
+  fs.mkdirSync(here + `dist/${id}`, { recursive: true });
+  fs.writeFileSync(here + `dist/${id}/index.html`, html);
+  fs.writeFileSync(here + `dist/${id}.html`, `<!doctype html><meta charset="utf-8"><title>${S['page.title']}</title><meta http-equiv="refresh" content="0; url=${id}/"><script>location.replace('${id}/' + location.search + location.hash)</script><a href="${id}/">${S['page.title']}</a>\n`);
   console.log(id, html.length);
 }
 

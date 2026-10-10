@@ -7,6 +7,32 @@
 <language code="ar" name="العربية" dir="rtl">
   <common>
     <string key="page.T_LANG">اللغة</string>
+    <string key="page.T_SET_CONTROLS">التحكم</string>
+    <string key="page.T_SET_SOUND">الصوت</string>
+    <string key="page.T_SET_DISPLAY">الشاشة</string>
+    <string key="page.T_CLOSE">تمام</string>
+    <string key="page.T_CTRL">طريقة السواقة على شاشة اللمس</string>
+    <string key="page.T_C_STICK">عصا</string>
+    <string key="page.T_C_ONE">يد وحدة</string>
+    <string key="page.T_C_TILT">إمالة</string>
+    <string key="page.T_C_LANES">أزرار</string>
+    <string key="page.T_STEERFEEL">الدركسيون</string>
+    <string key="page.T_LIGHT">خفيف</string>
+    <string key="page.T_HEAVY">ثقيل</string>
+    <string key="page.T_BRAKEFEEL">البريك</string>
+    <string key="page.T_SOFT">ناعم</string>
+    <string key="page.T_HARD">قوي</string>
+    <string key="page.T_HORNSIZE">حجم زر الهرن</string>
+    <string key="page.T_SMALL">صغير</string>
+    <string key="page.T_NORMAL">عادي</string>
+    <string key="page.T_VOLENG">صوت الماتور</string>
+    <string key="page.T_VOLFX">الهرن والمؤثرات</string>
+    <string key="page.T_QUIET">واطي</string>
+    <string key="page.T_LOUD">عالي</string>
+    <string key="page.T_SPEEDFX">مؤثرات السرعة</string>
+    <string key="page.T_MINIMAP">الخريطة</string>
+    <string key="page.T_SHOW">بيّن</string>
+    <string key="page.T_HIDE">خبّي</string>
   </common>
   <city id="amman">
     <string key="page.title">لفّة عمّان</string>
@@ -122,17 +148,17 @@
     <string key="tour.tryIt">جرّبها هلأ</string>
     <string key="tour.nice">تمام!</string>
     <string key="tour.0.title">دوس بنزين</string>
-    <string key="tour.0.keys"><![CDATA[اضغط مطوّل على <kbd>↑</kbd> أو <kbd>W</kbd> وخلّي السرعة تطلع فوق 45.]]></string>
-    <string key="tour.0.touch"><![CDATA[اضغط مطوّل على زر <b>بنزين</b> وخلّي السرعة تطلع فوق 45.]]></string>
+    <string key="tour.0.keys"><![CDATA[اضغط على <kbd>↑</kbd> أو <kbd>W</kbd> لحد ما السرعة تطلع فوق 45. لما تشيل إيدك السيارة بتضل ماشية على نفس السرعة.]]></string>
+    <string key="tour.0.touch">ادفع العصا لفوق لحد ما السرعة تطلع فوق 45. لما تتركها السيارة بتضل ماشية على نفس السرعة.</string>
     <string key="tour.1.title">غيّر المسرب</string>
     <string key="tour.1.keys"><![CDATA[استعمل <kbd>←</kbd> و<kbd>→</kbd> (أو <kbd>A</kbd> و<kbd>D</kbd>) وانقل لمسرب ثاني.]]></string>
-    <string key="tour.1.touch">استعمل الأسهم اللي عاليسار وانقل لمسرب ثاني.</string>
+    <string key="tour.1.touch">حرّك العصا يمين أو شمال وانقل لمسرب ثاني. دفشة قصيرة بتنقلك مسرب واحد.</string>
     <string key="tour.2.title">البريك</string>
-    <string key="tour.2.keys"><![CDATA[اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وخفّف السرعة.]]></string>
-    <string key="tour.2.touch"><![CDATA[اضغط على زر <b>بريك</b> وخفّف السرعة.]]></string>
+    <string key="tour.2.keys"><![CDATA[اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وخفّف السرعة. السيارة بتضل على السرعة الجديدة.]]></string>
+    <string key="tour.2.touch">اسحب العصا لتحت وخفّف السرعة. السيارة بتضل على السرعة الجديدة.</string>
     <string key="tour.3.title">الزامور</string>
     <string key="tour.3.keys"><![CDATA[اضغط <kbd>Space</kbd>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.]]></string>
-    <string key="tour.3.touch"><![CDATA[اضغط على زر <b>زامور</b>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.]]></string>
+    <string key="tour.3.touch"><![CDATA[اضغط على زر <b>الزامور</b> المدوّر. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.]]></string>
     <string key="tour.4.title">العداد</string>
     <string key="tour.4.body">الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر يعني الرادار رح يصوّرك. قبل كل رادار بتطلعلك إشارة صفرا.</string>
     <string key="tour.5.title">وين رايحين</string>
@@ -170,6 +196,16 @@
     <string key="place.9">الصويفية</string>
     <string key="place.10">مكة مول</string>
     <string key="place.11">شارع الجاردنز</string>
+    <string key="page.T_C_ONE">إيد وحدة</string>
+    <string key="page.T_HORNSIZE">حجم زر الزامور</string>
+    <string key="page.T_VOLFX">الزامور والمؤثرات</string>
+    <string key="page.T_C_STICK_D">عصا مدوّرة تحت. ادفعها لفوق لتسرّع، اسحبها لتحت للبريك، وحرّكها يمين وشمال لتغيّر المسرب. لما تتركها السيارة بتضل على نفس السرعة.</string>
+    <string key="page.T_C_ONE_D">حط إصبعك بأي مكان بالنص اللي تحت من الشاشة واسحب: لفوق لتسرّع، لتحت للبريك، ويمين وشمال لتغيّر المسرب.</string>
+    <string key="page.T_C_TILT_D">ميّل التلفون زي الدركسيون لتغيّر المسرب. اسحب لفوق بأي مكان لتسرّع ولتحت للبريك.</string>
+    <string key="page.T_C_LANES_D">أسهم لتغيير المسرب، كل كبسة مسرب، مع زر بنزين وزر بريك.</string>
+    <string key="page.T_TILTPERM">اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.</string>
+    <string key="page.T_NOTILT">هالجهاز ما فيه حسّاس إمالة، فالعصا رح تسوق بداله.</string>
+    <string key="page.T_KEYSNOTE"><![CDATA[عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للزامور.]]></string>
   </city>
   <city id="dubai">
     <string key="page.title">لفّة دبي</string>
@@ -285,17 +321,17 @@
     <string key="tour.tryIt">جربها الحين</string>
     <string key="tour.nice">زين!</string>
     <string key="tour.0.title">دعس</string>
-    <string key="tour.0.keys"><![CDATA[اضغط مطوّل على <kbd>↑</kbd> أو <kbd>W</kbd> لين السرعة تعدي 45.]]></string>
-    <string key="tour.0.touch"><![CDATA[اضغط مطوّل على زر <b>دعس</b> لين السرعة تعدي 45.]]></string>
+    <string key="tour.0.keys"><![CDATA[اضغط <kbd>↑</kbd> أو <kbd>W</kbd> لين السرعة تعدي 45. لين تفك السيارة تظل ماشية على نفس السرعة.]]></string>
+    <string key="tour.0.touch">ادفع العصا لفوق لين السرعة تعدي 45. لين تفكها السيارة تظل ماشية على نفس السرعة.</string>
     <string key="tour.1.title">غيّر المسار</string>
     <string key="tour.1.keys"><![CDATA[استخدم <kbd>←</kbd> و<kbd>→</kbd> (أو <kbd>A</kbd> و<kbd>D</kbd>) وانتقل لمسار ثاني.]]></string>
-    <string key="tour.1.touch">استخدم الأسهم اللي على اليسار وانتقل لمسار ثاني.</string>
+    <string key="tour.1.touch">حرّك العصا يمين أو يسار وانتقل لمسار ثاني. دفة قصيرة تنقلك مسار واحد.</string>
     <string key="tour.2.title">البريك</string>
-    <string key="tour.2.keys"><![CDATA[اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وهدّي السرعة.]]></string>
-    <string key="tour.2.touch"><![CDATA[اضغط على زر <b>بريك</b> وهدّي السرعة.]]></string>
+    <string key="tour.2.keys"><![CDATA[اضغط <kbd>↓</kbd> أو <kbd>S</kbd> وهدّي السرعة. السيارة تظل على السرعة الجديدة.]]></string>
+    <string key="tour.2.touch">اسحب العصا لتحت وهدّي السرعة. السيارة تظل على السرعة الجديدة.</string>
     <string key="tour.3.title">الهرن</string>
     <string key="tour.3.keys"><![CDATA[اضغط <kbd>Space</kbd>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.]]></string>
-    <string key="tour.3.touch"><![CDATA[اضغط على زر <b>هرن</b>. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.]]></string>
+    <string key="tour.3.touch"><![CDATA[اضغط زر <b>الهرن</b> المدوّر. السيارة اللي قدامك تفسح لك إذا المسار اللي جنبها فاضي.]]></string>
     <string key="tour.4.title">العداد</string>
     <string key="tour.4.body">الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر الرادار بيصوّرك. قبل كل رادار تطلع لك إشارة صفرا.</string>
     <string key="tour.5.title">الوجهة</string>
@@ -331,6 +367,13 @@
     <string key="place.7">عين دبي</string>
     <string key="place.8">برج العرب</string>
     <string key="place.9">مسجد جميرا</string>
+    <string key="page.T_C_STICK_D">عصا مدوّرة تحت. ادفعها لفوق عشان تسرّع، اسحبها لتحت للبريك، وحرّكها يمين ويسار عشان تغيّر المسار. لين تفكها السيارة تظل على نفس السرعة.</string>
+    <string key="page.T_C_ONE_D">حط صبعك في أي مكان في النص اللي تحت من الشاشة واسحب: لفوق تسرّع، لتحت بريك، ويمين ويسار تغيّر المسار.</string>
+    <string key="page.T_C_TILT_D">ميّل التلفون مثل السكان عشان تغيّر المسار. اسحب لفوق في أي مكان تسرّع ولتحت بريك.</string>
+    <string key="page.T_C_LANES_D">أسهم لتغيير المسار، كل ضغطة مسار، مع زر دعس وزر بريك.</string>
+    <string key="page.T_TILTPERM">اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.</string>
+    <string key="page.T_NOTILT">هالجهاز ما فيه حسّاس إمالة، فالعصا بتسوق بداله.</string>
+    <string key="page.T_KEYSNOTE"><![CDATA[على الكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للهرن.]]></string>
   </city>
   <landing>
     <string key="title">SZR Autostrad</string>

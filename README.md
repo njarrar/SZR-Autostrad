@@ -14,15 +14,20 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-On a phone, the game shows touch buttons:
+On a phone it plays upright or sideways, with a touch stick and a horn button:
 
-![Phone screens: welcome, guided tour and driving](docs/screenshots/phone.png)
+![Phone screens: driving upright, the settings screen, and driving sideways](docs/screenshots/phone.png)
 
 ## Play
 
 **Play online:** https://njarrar.github.io/SZR-Autostrad/
 
-The page lets you pick Amman or Dubai. It works on a computer or a phone.
+The page lets you pick a city. Each game also has its own address:
+
+- Amman: https://njarrar.github.io/SZR-Autostrad/amman/
+- Dubai: https://njarrar.github.io/SZR-Autostrad/dubai/
+
+They work on a computer or a phone, upright or sideways.
 
 To play offline:
 
@@ -51,16 +56,31 @@ The game opens with a welcome screen that explains the three things to know. Pre
 
 ## Controls
 
-| Action | Keyboard | Phone |
+The car drives on its own and keeps its speed. You speed it up, slow it down and change lanes.
+
+| Action | Keyboard | Phone (stick) |
 | --- | --- | --- |
-| Gas | `↑` or `W` | Gas button (bottom right) |
-| Brake | `↓` or `S` | Brake button |
-| Change lane | `←` `→` or `A` `D` | Arrow buttons (bottom left) |
-| Horn | `Space` or `H` | Horn button |
-| Change camera | `C` | Pause menu |
+| Speed up | Hold `↑` or `W` | Push the stick up |
+| Slow down or stop | Hold `↓` or `S` | Pull the stick down |
+| Change lane | `←` `→` or `A` `D` | Push the stick left or right |
+| Horn | `Space` or `H` | Round horn button |
+| Change camera | `C` | Settings > Display |
 | Pause | `P` or `Esc` | Pause button |
 
-A quick tap of an arrow moves you one lane over, and the car settles in the middle of that lane on its own. Hold the arrow to cross several lanes. You can move the horn button to the left or right side from the settings.
+Let go and the car holds its current speed. A quick tap left or right moves you one lane over, and the car settles in the middle of that lane. Hold it to cross several lanes.
+
+### Settings
+
+Open **Settings** from the menu or the pause screen. It has four tabs:
+
+- **Controls**: pick how you drive on a touch screen, set how light or heavy the steering feels and how hard the brakes bite, and move or shrink the horn button.
+  - **Stick**: a round stick at the bottom (under your left thumb when the phone is sideways).
+  - **One hand**: put your thumb anywhere on the lower screen and drag.
+  - **Tilt**: turn the phone like a steering wheel to change lanes, and drag up or down to change speed. On iPhone the game asks for motion access the first time.
+  - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
+- **Sound**: sound on or off, engine volume, and horn and effects volume.
+- **Display**: graphics quality, camera distance, speed effects and the map.
+- **Language**: English or Arabic.
 
 ## How to play
 
@@ -113,9 +133,9 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 ### Tips
 
 - Sound the horn behind a slow car. It moves over if the lane next to it is free.
-- Curves push you outward at high speed, so steer into them.
+- Curves only push you outward when you take them faster than your car's grip allows.
 - The garage lets you change the car's color and your plate number.
-- On a slow phone, set graphics to **سريعة** (fast) in the settings. It turns off shadows and draws fewer pixels.
+- On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## Project layout
 
@@ -128,7 +148,7 @@ lang/ar.xml            Arabic text (Jordanian for Amman, Gulf for Dubai)
 src/template.html      Page layout and styles
 src/landing.html       The start page that links to both games
 .github/workflows/     Builds the games and publishes them to GitHub Pages
-build.mjs              Builds one HTML file per city into dist/
+build.mjs              Builds the start page and one page per city into dist/
 dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
 ```
@@ -141,7 +161,7 @@ You need Node.js 18 or newer. There are no packages to install.
 node build.mjs
 ```
 
-This writes `dist/index.html`, `dist/amman.html` and `dist/dubai.html`. To add a link from each game to the other, create `links.json` next to `build.mjs`:
+This writes the start page `dist/index.html` and one page per city, `dist/amman/index.html` and `dist/dubai/index.html`. The old `dist/amman.html` and `dist/dubai.html` addresses forward to the new pages. To add a link from each game to the other, create `links.json` next to `build.mjs`:
 
 ```json
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html" }

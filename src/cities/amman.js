@@ -72,17 +72,17 @@ window.CITY = {
     clouds: 0.6, cloudColor: '#fbf7f0', exposure: 1.0, night: 0, fog: '#dccaa6', fogNear: 250, fogFar: 3200, skyTop: '#6f9fcf', sunGlow: '#ffd59a',
     skyLight: 0xcfe1f2, groundLight: 0xb59c73, hemi: 1.15, sunColor: 0xffe1b0, sun: 1.9, sunDir: [-0.7, 0.45, 0.25],
     winLit: '#ffd58a', winGlass: '#4a5966', windows: { floor: 3.4, bay: 3.4, size: 0.4 },
-    ground: ['#b9a27a', '#a48c63', '#a39a88'], asphalt: '#3d3d40', median: '#8c8a85', lineEdge: '#f0f0f0', lineLane: '#e8e8e8',
+    ground: ['#b9a27a', '#a48c63', '#a39a88'], asphalt: '#56575b', median: '#8c8a85', lineEdge: '#f0f0f0', lineLane: '#e8e8e8',
     barrier: 0xb8b3a8, pole: 0x8d9196, tanks: [0x222222, 0x2b2b2b, 0xe8e8e8, 0x2f5d9a, 0xd8d8d0],
     treeDark: 0x3e5a33, treeLight: 0x7d8a5a, signColor: '#0d6b3d', warnColor: '#a8740a', radarColor: 0x2b2b2b,
     miniRoad: '#f1e6d0', miniDot: '#7ed09b', miniDest: '#ff4d5e', miniMe: '#ce1126'
   },
   // what each guided tour step waits for and points at; the words live in lang/*.xml
   tour: [
-    { wait: 'gas', target: '.speedo', targetTouch: '[data-hold=gas]' },
-    { wait: 'steer', targetTouch: '.steer' },
-    { wait: 'brake', targetTouch: '[data-hold=brake]' },
-    { wait: 'horn', targetTouch: '[data-hold=horn]' },
+    { wait: 'gas', target: '.speedo', targetTouch: '#stick' },
+    { wait: 'steer', targetTouch: '#stick' },
+    { wait: 'brake', targetTouch: '#stick' },
+    { wait: 'horn', targetTouch: '.horn' },
     { target: '.speedo' },
     { target: '.trip-hud' },
     { target: '.stats' },
