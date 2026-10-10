@@ -992,20 +992,21 @@ function tripList() {
 }
 
 // ---------- game flow ----------
-function startTrip() {
+function startTrip(opts) {
+  opts = opts || {};
   audioInit();
   DIR = settings.dir;
-  const trips = tripList(); const tr = trips[Math.min(settings.trip, trips.length - 1)];
-  trafficLevel = settings.traffic;
+  const trips = tripList(); const tr = trips[opts.free ? trips.length - 1 : Math.min(settings.trip, trips.length - 1)];
+  trafficLevel = opts.traffic != null ? opts.traffic : settings.traffic;
   player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.lat = 0; player.dmg = 0;
-  Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr });
+  Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour });
   game.lastS = sOfT(player.t);
   resetTraffic();
   showScreen(null);
   $('#hud').hidden = false; $('#touch').hidden = !isTouch();
   hud.limit.textContent = C.limit;
   hud.next.textContent = tr.free ? T.freeDrive : tr.to.ar;
-  toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.ar);
+  if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.ar);
 }
 function finishTrip(reason) {
   game.mode = 'done';
@@ -1032,8 +1033,9 @@ function togglePause() {
   if (game.mode !== 'drive') return;
   game.paused = !game.paused;
   showScreen(game.paused ? '#pause' : null);
+  if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { if (tour) { tour = null; $('#tour').hidden = true; } game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -1063,7 +1065,7 @@ function step(dt) {
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
-    if (player.v > 8) { player.v *= 1 - 0.8 * dt; player.dmg += 4 * dt; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
+    if (player.v > 8) { player.v *= 1 - 0.8 * dt; if (!game.tour) player.dmg += 4 * dt; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
   }
   const prevT = player.t;
   player.t += player.v * dt;
@@ -1075,7 +1077,7 @@ function step(dt) {
     const dt2 = c.t - player.t, dd = c.d - player.d;
     const lenSum = (c.len + player.len) / 2, widSum = (c.wid + player.wid) / 2;
     if (Math.abs(dt2) < lenSum && Math.abs(dd) < widSum - 0.1 && game.crashCool <= 0) {
-      game.crashCool = 1.2; game.crashes++; game.fines += C.fines.crash; player.dmg += 8 + player.v * 0.35; game.shake = 0.6; game.combo = 0;
+      game.crashCool = 1.2; if (!game.tour) { game.crashes++; game.fines += C.fines.crash; player.dmg += 8 + player.v * 0.35; } game.shake = 0.6; game.combo = 0;
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
       toast(T.crash, 'bad'); crashSound(); vibrate(150); otherHorn();
@@ -1101,10 +1103,10 @@ function step(dt) {
     if (moved > 0 && ahead + moved >= L) { // just passed it
       const kmh = player.v * 3.6;
       if (ev.type === 'radar') {
-        if (kmh > C.limit + C.tolerance) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); beep(1800, 0.2, 0.08); }
+        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); beep(1800, 0.2, 0.08); }
         else toast(T.radarOk, 'good');
       } else if (ev.type === 'bump') {
-        if (kmh > 35) { player.dmg += (kmh - 35) * 0.22; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); vibrate(80); } else toast(T.bumpOk, 'good');
+        if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); vibrate(80); } else toast(T.bumpOk, 'good');
       } else if (ev.type === 'toll') {
         game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); beep(1200, 0.12, 0.05);
       }
@@ -1127,6 +1129,7 @@ function step(dt) {
     hud.remain.textContent = (game.dist / 1000).toFixed(1) + ' ' + T.km;
   }
   if (player.dmg >= 100) { player.dmg = 100; finishTrip('wreck'); return; }
+  if (tour) tourCheck({ gas, brake, left, right, horn });
   // hud
   const kmh = Math.round(player.v * 3.6);
   hud.speed.textContent = kmh; hud.speed.parentElement.classList.toggle('over', kmh > C.limit + C.tolerance);
@@ -1254,14 +1257,102 @@ function renderGarage() {
   $('#plate').value = settings.plate;
 }
 $('#plate').addEventListener('input', (e) => { settings.plate = e.target.value.slice(0, 12); saveSettings(); buildPlayer(); });
-$('#btnStart').onclick = startTrip;
+$('#btnStart').onclick = () => startTrip();
 $('#btnGarage').onclick = () => { $('#garage').hidden = !$('#garage').hidden; $('#settingsBox').hidden = true; };
 $('#btnSettings').onclick = () => { $('#settingsBox').hidden = !$('#settingsBox').hidden; $('#garage').hidden = true; };
 $('#btnPause').onclick = togglePause;
 $('#btnResume').onclick = togglePause;
 $('#btnQuit').onclick = toMenu;
-$('#btnAgain').onclick = startTrip;
+$('#btnAgain').onclick = () => startTrip();
 $('#btnMenu').onclick = toMenu;
+
+// ---------- welcome + guided tour ----------
+let tour = null;
+const TT = C.tour;
+function tourBody(st) { return isTouch() ? (st.touch || st.body) : (st.keys || st.body); }
+function startTour() {
+  showScreen(null);
+  startTrip({ free: true, traffic: 0, tour: true });
+  tour = { i: -1 };
+  $('#tour').hidden = false;
+  nextTourStep();
+}
+function nextTourStep() {
+  tour.i++;
+  if (tour.i >= TT.steps.length) { endTour(); return; }
+  const st = TT.steps[tour.i];
+  tour.done = false; tour.v0 = player.v; tour.d0 = player.d; tour.t0 = performance.now();
+  $('#tourStep').textContent = (tour.i + 1) + ' / ' + TT.steps.length;
+  $('#tourTitle').textContent = st.title;
+  $('#tourBody').innerHTML = tourBody(st);
+  $('#tourDots').innerHTML = TT.steps.map((_, i) => `<i class="${i < tour.i ? 'past' : i === tour.i ? 'now' : ''}"></i>`).join('');
+  $('#tourNext').hidden = !!st.wait;
+  $('#tourTry').hidden = !st.wait;
+  $('#tourTry').textContent = TT.tryIt;
+  $('#tourTry').classList.remove('ok');
+  placeTour();
+}
+function tourTarget() {
+  const st = TT.steps[tour.i]; if (!st) return null;
+  const sel = isTouch() ? (st.targetTouch || st.target) : st.target;
+  if (!sel) return null;
+  const el = document.querySelector(sel);
+  return el && el.offsetParent !== null ? el : null;
+}
+function placeTour() {
+  if (!tour) return;
+  const hole = $('#tourHole'), card = $('#tourCard');
+  const el = tourTarget();
+  const vw = innerWidth, vh = innerHeight;
+  if (el) {
+    const r = el.getBoundingClientRect(); const pad = 8;
+    Object.assign(hole.style, { left: (r.left - pad) + 'px', top: (r.top - pad) + 'px', width: (r.width + pad * 2) + 'px', height: (r.height + pad * 2) + 'px' });
+    hole.hidden = false;
+    const cw = Math.min(360, vw - 32); card.style.width = cw + 'px';
+    const ch = card.offsetHeight || 200;
+    let left = clamp(r.left + r.width / 2 - cw / 2, 16, vw - cw - 16);
+    let top = r.top + r.height / 2 < vh / 2 ? r.bottom + 18 : r.top - ch - 18;
+    top = clamp(top, 16, vh - ch - 16);
+    Object.assign(card.style, { left: left + 'px', top: top + 'px' });
+  } else {
+    hole.hidden = true;
+    const cw = Math.min(380, vw - 32); card.style.width = cw + 'px';
+    Object.assign(card.style, { left: (vw - cw) / 2 + 'px', top: Math.max(16, vh * 0.5 - (card.offsetHeight || 200) / 2) + 'px' });
+  }
+}
+addEventListener('resize', () => placeTour());
+function tourCheck(inp) {
+  if (!tour || tour.done || game.paused) return;
+  const st = TT.steps[tour.i]; if (!st || !st.wait) return;
+  if (performance.now() - tour.t0 < 600) return;
+  let ok = false;
+  if (st.wait === 'gas') ok = player.v * 3.6 > 45;
+  if (st.wait === 'steer') ok = Math.abs(player.d - tour.d0) > 2.6;
+  if (st.wait === 'brake') ok = inp.brake && player.v < tour.v0 - 3;
+  if (st.wait === 'horn') ok = inp.horn;
+  if (ok) {
+    tour.done = true; $('#tourTry').textContent = TT.nice; $('#tourTry').classList.add('ok'); beep(990, 0.12, 0.05);
+    setTimeout(() => { if (tour) nextTourStep(); }, 900);
+  }
+}
+function endTour() {
+  tour = null; $('#tour').hidden = true; store.set('toured', 1);
+  game.paused = true; showScreen('#tourEnd');
+}
+function skipTour() {
+  tour = null; $('#tour').hidden = true; store.set('toured', 1); game.tour = false; toMenu();
+}
+$('#tourNext').onclick = nextTourStep;
+$('#tourSkip').onclick = skipTour;
+$('#btnTour').onclick = startTour;
+$('#wTour').onclick = () => { store.set('welcomed', 1); startTour(); };
+$('#wSkip').onclick = () => { store.set('welcomed', 1); showScreen('#menu'); };
+$('#teDrive').onclick = () => {
+  showScreen(null); game.paused = false; game.tour = false;
+  Object.assign(game, { time: 0, dist: 0, weaves: 0, combo: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000 });
+  player.dmg = 0;
+};
+$('#teMenu').onclick = () => { game.tour = false; toMenu(); };
 
 // ---------- boot ----------
 async function boot() {
@@ -1273,8 +1364,9 @@ async function boot() {
   prepMini(); buildPlayer(); placeMenuCar();
   renderTrips(); renderGarage(); syncSettingsUI();
   resize(); status.hidden = true; $('#menuBody').hidden = false;
+  if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  window.__game = { game, player, L, LMS, settings, startTrip, keys, step, SAME };
+  window.__game = { game, player, L, LMS, settings, startTrip, keys, step, SAME, startTour, nextTourStep, touch };
 }
 boot();
 })();

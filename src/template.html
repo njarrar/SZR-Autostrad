@@ -116,6 +116,41 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #rRate { font-weight: 700; font-size: 16px; }
 #rBest { font-size: 12px; color: var(--muted); width: 100%; }
 
+
+/* ---------- welcome ---------- */
+#welcome { justify-content: center; align-items: center; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.35)); }
+#welcome .sheet { margin: 0; width: min(520px, 100%); gap: 18px; padding: 26px 24px 22px; }
+#welcome h1 { font-family: var(--display); font-weight: 400; font-size: clamp(54px, 13vw, 84px); line-height: .95; margin: 2px 0 0; color: var(--accent); }
+.rules { display: flex; flex-direction: column; gap: 12px; }
+.rule { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; }
+.rule svg { width: 40px; height: 40px; }
+.rule b { display: block; font-size: 16px; }
+.rule span { font-size: 14px; color: var(--muted); line-height: 1.55; }
+.cta { display: flex; flex-direction: column; gap: 8px; }
+.linkbtn { background: none; border: 0; color: var(--muted); font-weight: 600; padding: 6px; text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- guided tour ---------- */
+#tour { position: fixed; inset: 0; pointer-events: none; z-index: 20; }
+#tourHole { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(8,6,4,.5), 0 0 0 3px var(--accent-hud); transition: left .3s, top .3s, width .3s, height .3s; }
+#tourCard { position: fixed; pointer-events: auto; background: var(--panel-solid); color: var(--ink); border-radius: 16px; padding: 16px 18px; direction: rtl; box-shadow: 0 18px 50px rgba(0,0,0,.4); display: flex; flex-direction: column; gap: 10px; box-sizing: border-box; transition: left .3s, top .3s; }
+.tourHead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#tourStep { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+#tourSkip { padding: 2px; font-size: 13px; }
+#tourTitle { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.1; margin: 0; color: var(--accent); }
+#tourBody { margin: 0; font-size: 15px; line-height: 1.65; }
+#tourBody b { color: var(--accent); }
+#tourDots { display: flex; gap: 5px; }
+#tourDots i { width: 8px; height: 8px; border-radius: 4px; background: var(--line); }
+#tourDots i.past { background: var(--accent); opacity: .5; }
+#tourDots i.now { width: 22px; background: var(--accent); }
+.tourFoot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#tourTry { font-weight: 700; font-size: 14px; color: var(--accent); background: var(--chip); padding: 8px 14px; border-radius: 999px; animation: pulse 1.4s ease-in-out infinite; }
+#tourTry.ok { animation: none; background: var(--good); color: #fff; }
+#tourNext { padding: 9px 22px; }
+@keyframes pulse { 50% { opacity: .55; } }
+#tourEnd { justify-content: center; align-items: center; }
+#tourEnd .sheet { margin: 0; }
+
 @media (max-width: 640px) {
   .tb { width: 62px; height: 62px; border-radius: 16px; }
   .tb.gas { height: 96px; }
@@ -127,12 +162,15 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .brand h1 { font-size: 40px; }
   .brand p { display: none; }
   #trips { max-height: 150px; }
-  .trip-hud { max-width: 52vw; }
+  .trip-hud { max-width: 52vw; padding: 6px 12px; }
+  .trip-hud b { font-size: 15px; }
+  .trip-hud .rem { font-size: 19px; }
+  .stats { top: calc(env(safe-area-inset-top, 0px) + 112px); }
   .speedo .num { font-size: 36px; }
   #mini { width: 92px; height: 92px; }
   #btnPause { top: calc(env(safe-area-inset-top, 0px) + 180px); }
 }
-@media (prefers-reduced-motion: reduce) { #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
+@media (prefers-reduced-motion: reduce) { #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
 </style>
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
@@ -176,7 +214,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <div><div class="label">__T_TRIP__</div><div id="trips"></div></div>
       <div><div class="label">__T_TRAFFIC__</div><div class="seg" id="segTraffic"><button type="button" data-v="0">__T_TR0__</button><button type="button" data-v="1">__T_TR1__</button><button type="button" data-v="2">__T_TR2__</button></div></div>
       <button class="go" id="btnStart" type="button">__T_GO__</button>
-      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button></div>
+      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button><button class="btn" id="btnTour" type="button">__T_HOWTO__</button></div>
       <div class="drawer" id="garage" hidden>
         <div><div class="label">__T_CARS__</div><div id="cars"></div></div>
         <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
@@ -193,6 +231,38 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
         __OTHER__
       </div>
     </div>
+  </div>
+</div>
+
+
+<div id="welcome" class="screen" hidden>
+  <div class="sheet">
+    <div class="brand"><span class="eyebrow">__EYEBROW__</span><h1>__NAME__</h1><div class="flagbar"></div></div>
+    <div class="rules">
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M20 9c-5 0-8.5 3.6-8.5 8.3C11.5 23.6 20 31 20 31s8.5-7.4 8.5-13.7C28.5 12.6 25 9 20 9z" fill="var(--accent)"/><circle cx="20" cy="17.5" r="3.4" fill="var(--panel-solid)"/></svg><div><b>__T_R1__</b><span>__T_R1S__</span></div></div>
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><path d="M14 30c0-7 12-6 12-13V10" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round"/><path d="M21.5 14 26 9.5l4.5 4.5" fill="none" stroke="var(--accent)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>__T_R2__</b><span>__T_R2S__</span></div></div>
+      <div class="rule"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="19" fill="var(--chip)"/><circle cx="20" cy="20" r="10" fill="none" stroke="var(--bad)" stroke-width="3.6"/><text x="20" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)" font-family="sans-serif">!</text></svg><div><b>__T_R3__</b><span>__T_R3S__</span></div></div>
+    </div>
+    <div class="cta"><button class="go" id="wTour" type="button">__T_WTOUR__</button><button class="linkbtn" id="wSkip" type="button">__T_WSKIP__</button></div>
+  </div>
+</div>
+
+<div id="tour" hidden>
+  <div id="tourHole" hidden></div>
+  <div id="tourCard" role="dialog" aria-live="polite">
+    <div class="tourHead"><span id="tourStep"></span><button class="linkbtn" id="tourSkip" type="button">__T_TSKIP__</button></div>
+    <h3 id="tourTitle"></h3>
+    <p id="tourBody"></p>
+    <div class="tourFoot"><div id="tourDots"></div><span id="tourTry"></span><button class="go" id="tourNext" type="button" style="font-size:22px">__T_TNEXT__</button></div>
+  </div>
+</div>
+
+<div id="tourEnd" class="screen" hidden>
+  <div class="sheet">
+    <h2 style="font-family:var(--display);font-weight:400;font-size:52px;margin:0;color:var(--accent)">__T_TEND__</h2>
+    <p style="margin:0;color:var(--muted);line-height:1.6">__T_TENDS__</p>
+    <button class="go" id="teMenu" type="button">__T_TEMENU__</button>
+    <button class="btn" id="teDrive" type="button">__T_TEDRIVE__</button>
   </div>
 </div>
 
