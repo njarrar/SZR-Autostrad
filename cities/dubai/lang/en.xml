@@ -2,6 +2,7 @@
 <!-- dubai: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
 <language code="en" name="English" dir="ltr">
   <city>
+    <string key="page.T_WXON">Sandstorm</string>
     <string key="card.tag">47 KM LOOP</string>
     <string key="card.name">Dubai Loop</string>
     <string key="card.text">The Dubai Frame, the Museum of the Future, Burj Khalifa, the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab. Speed cameras and Salik gates.</string>

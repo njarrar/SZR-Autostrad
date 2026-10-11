@@ -35,6 +35,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 6px; }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--chip); border-radius: 10px; padding: 3px; gap: 3px; }
 .seg button { border: 0; background: transparent; padding: 9px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+.seg5 button { padding-inline: 2px; font-size: 13px; }
 .seg button.sel { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,.18); color: var(--accent); }
 #trips { display: flex; flex-direction: column; gap: 6px; max-height: 236px; overflow-y: auto; padding-inline-end: 2px; }
 .trip { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
@@ -105,6 +106,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   -webkit-mask: radial-gradient(ellipse at 50% 52%, transparent 42%, #000 78%); mask: radial-gradient(ellipse at 50% 52%, transparent 42%, #000 78%);
   animation: streak .18s steps(3) infinite; }
 @keyframes streak { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(1.3deg) scale(1.02); } 100% { transform: rotate(-.9deg) scale(1.01); } }
+#wx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#wx[data-kind=dust] { background: radial-gradient(ellipse at 50% 60%, rgba(214,170,105,.10), rgba(190,140,80,.32)); }
+#wx[data-kind=rain] { background: linear-gradient(rgba(70,80,95,.10), rgba(70,80,95,.18)); }
 #flash { position: fixed; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
 #flash.go { animation: fl .45s ease-out; }
 @keyframes fl { 0% { opacity: .85; } 100% { opacity: 0; } }
@@ -327,6 +331,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
 <div id="fx" aria-hidden="true"><div class="vig"></div><div class="streaks"></div></div>
+<canvas id="wx" aria-hidden="true" hidden></canvas>
 <div id="flash"></div>
 <div id="count" aria-live="assertive" hidden></div>
 
@@ -465,6 +470,8 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="panel" data-panel="dsp" hidden>
       <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
       <div><div class="label">__T_AUTOQ__</div><div class="seg" id="segAutoQ"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div><p class="note">__T_AUTOQ_D__</p></div>
+      <div><div class="label">__T_TIME__</div><div class="seg seg5" id="segTime"><button type="button" data-v="auto">__T_TAUTO__</button><button type="button" data-v="morning">__T_TMORN__</button><button type="button" data-v="noon">__T_TNOON__</button><button type="button" data-v="sunset">__T_TSUN__</button><button type="button" data-v="night">__T_TNIGHT__</button></div></div>
+      <div><div class="label">__T_WX__</div><div class="seg" id="segWx"><button type="button" data-v="0">__T_WXOFF__</button><button type="button" data-v="1">__T_WXON__</button></div></div>
       <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
       <div><div class="label">__T_SPEEDFX__</div><div class="seg " id="segFx"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
       <div><div class="label">__T_MINIMAP__</div><div class="seg " id="segMini"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>

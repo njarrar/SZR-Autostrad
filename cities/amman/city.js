@@ -2,6 +2,7 @@ window.CITY = {
   id: 'amman', seed: 11, hills: true, valley: 28, stone: true, lanes: 3, limit: 80, tolerance: 10,
   fines: { radar: 30, crash: 50 }, tripHop: 3,
   origin: [31.962, 35.900],
+  weather: 'rain', // what the weather setting brings: 'rain' or 'dust'
   horn: [415, 520],
   // the car radio: made-up stations, each with its own rhythm, maqam and lead sound
   radio: [

@@ -46,6 +46,7 @@ const SND = (() => {
     gestured = true;
     if (!ac && !make()) return;
     if (ac.state !== 'running') ac.resume().catch(() => {});
+    if (wxKind && !wx) weather(wxKind);
   }
   for (const ev of ['pointerdown', 'touchend', 'keydown', 'click']) addEventListener(ev, unlock, { capture: true, passive: true });
   // some phones leave the sound asleep after a call or a lock; keep nudging it while the page is in view
@@ -467,6 +468,31 @@ const SND = (() => {
     };
   })();
 
+  // ---------- weather ----------
+  // rain hiss with drops on the roof, or gusts of wind and sand
+  let wx = null, wxKind = null, dripT = null;
+  function weather(kind) {
+    wxKind = kind;
+    if (!ac) return;
+    if (wx) { const w = wx; wx = null; w.g.gain.setTargetAtTime(0, now(), 0.4); stopAt(w.oscs, now() + 2); }
+    clearInterval(dripT); dripT = null;
+    if (!kind) return;
+    const t = now(), g = gainN(0), oscs = [];
+    if (kind === 'rain') {
+      const n = noiseSrc(pink); chain(n, filt('highpass', 900, 0.5), filt('lowpass', 7000, 0.5), g); oscs.push(n);
+      g.gain.setTargetAtTime(0.16, t, 0.8);
+      dripT = setInterval(() => { if (!ac || !sfxOn || ac.state !== 'running') return; for (let i = 0; i < 3; i++) if (Math.random() < 0.6) burst(now() + Math.random() * 0.2, 0.02, 0.02 + Math.random() * 0.03, [filt('bandpass', 2500 + Math.random() * 3000, 4)], bus.fx, 3); }, 220);
+    } else {
+      const n = noiseSrc(white), bp = filt('bandpass', 420, 0.7), lfo = ac.createOscillator(); lfo.frequency.value = 0.13; const lg = gainN(0.07); lfo.connect(lg); lg.connect(g.gain);
+      const lfo2 = ac.createOscillator(); lfo2.frequency.value = 0.21; const l2 = gainN(160); lfo2.connect(l2); l2.connect(bp.frequency);
+      chain(n, bp, g); oscs.push(n, lfo, lfo2); lfo.start(t); lfo2.start(t);
+      const hiss = noiseSrc(white), hg = gainN(0.025); chain(hiss, filt('highpass', 5000, 0.7), hg, g); oscs.push(hiss);
+      g.gain.setTargetAtTime(0.12, t, 0.8);
+    }
+    g.connect(bus.fx); for (const o of oscs) if (o.buffer) o.start(t);
+    wx = { g, oscs };
+  }
+
   // ---------- phone buzz ----------
   const VIB = [0, 0.6, 1, 1.5];
   let vibLevel = 2, lastVib = 0;
@@ -479,7 +505,7 @@ const SND = (() => {
   }
 
   return {
-    unlock, drive, horn, otherHorn, crash, scrape, bump, passBy, cue, combo, blip: (f, d, v, w) => blip(f, d, w || 'sine', v), radio, vibrate,
+    unlock, drive, horn, weather, otherHorn, crash, scrape, bump, passBy, cue, combo, blip: (f, d, v, w) => blip(f, d, w || 'sine', v), radio, vibrate,
     get ready() { return !!ac; },
     // settings: volumes are 0..100
     apply(s) {
