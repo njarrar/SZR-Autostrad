@@ -18,11 +18,11 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.3** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.4** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
-![Phone screens: driving upright, the settings screen, and driving sideways](docs/screenshots/phone.png)
+![Phone screens: the menu, driving upright, and driving sideways](docs/screenshots/phone.png)
 
 ## Play
 
@@ -58,7 +58,7 @@ The game picks English or Arabic from your browser language. Press the language 
 
 ## First time playing
 
-The game opens with a welcome screen that explains the three things to know. Press **Guided tour** (**جولة تعليمية** in Arabic) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. Crashes and fines don't count during the tour. You can start the tour again at any time from the menu with **How to play** (**كيف ألعب؟**).
+The game opens with a welcome screen that explains the three things to know. Press **Guided tour** (**جولة تعليمية** in Arabic) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. Crashes and fines don't count during the tour. You can start the tour again at any time from **More options** in the menu with **How to play** (**كيف ألعب؟**).
 
 ## Controls
 
@@ -80,7 +80,7 @@ The stick lights up as you push: the yellow arc fills as you speed up, the red a
 
 ### Settings
 
-Open **Settings** from the menu or the pause screen. It has four tabs:
+Open **Settings** from **More options** in the menu, or from the pause screen. It has four tabs:
 
 - **Controls**: pick how you drive on a touch screen, set how light or heavy the steering feels and how hard the brakes bite, and move or shrink the horn button.
   - **Stick**: a round stick at the bottom (under your left thumb when the phone is sideways).
@@ -112,15 +112,14 @@ Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a
 
 ## How to play
 
-1. **Pick a direction**: clockwise or counterclockwise around the loop.
-2. **Pick a trip**: from one landmark to another, a full lap, or free drive with no end.
-3. **Pick your car** (see below).
-4. **Pick the traffic**: light, normal or heavy.
-5. **Drive to the end of the trip.** The box at the top shows where you're going and how far is left. The map shows you, the landmarks and your destination.
+1. **Pick a trip** with the arrows: from one landmark to another, a full lap, or free drive with no end.
+2. **Pick your car** (see below).
+3. **Press Let's go.** Press **More options** first if you want to change the direction (clockwise or counterclockwise), the traffic (light, normal or heavy), or open the garage, album, settings or tour.
+4. **Drive to the end of the trip.** The box at the top shows where you're going and how far is left. The map shows you, the landmarks and your destination.
 
 ### Cars
 
-Each city has four cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly.
+Each city has four cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly. On a phone the bars for the chosen car sit under **More options**.
 
 ![Car picker in the Amman menu](docs/screenshots/amman-menu.png)
 
@@ -155,13 +154,13 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 
 ### Garage
 
-Open **Garage** in the menu to change the paint, the plate, a neon glow under the car, a sticker on the back window and a charm that swings from the mirror. Drag across the road to spin the car.
+Open **Garage** under **More options** in the menu to change the paint, the plate, a neon glow under the car, a sticker on the back window and a charm that swings from the mirror. Drag across the road to spin the car.
 
 ![The Amman garage](docs/screenshots/amman-garage.png)
 
 ### Landmark album
 
-Drive past a landmark to collect its postcard. Open **Landmark Album** in the menu to see the ones you have.
+Drive past a landmark to collect its postcard. Open **Landmark Album** under **More options** in the menu to see the ones you have.
 
 ![The landmark album](docs/screenshots/amman-album.png)
 
@@ -203,6 +202,14 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.4 (October 2026)
+
+A shorter menu and a cleaner screen on phones.
+
+- **Shorter menu.** The menu now shows only the trip and the car, then **Let's go**, so it fits on a phone without scrolling. Trips show one at a time with arrows and a count, like "3 / 14". Direction, traffic, the garage, the album, settings and the tour sit under **More options**. **Let's go** stays at the bottom of the menu, even when you scroll.
+- **Cleaner phone screen.** The six stat boxes are now one slim strip with icons for time, points, fines, passengers, fuel and damage. Pause and the radio are small icon buttons, and the map is smaller. This works with the phone upright or sideways.
+- **One place for messages.** Hints like "Passengers aboard" and notices like "Lowered the quality" show in one spot under the top bar, at most two lines, and never on top of each other.
 
 ### 2.3 (October 2026)
 

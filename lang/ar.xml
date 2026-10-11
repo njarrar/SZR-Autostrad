@@ -74,6 +74,10 @@
     <string key="page.T_CHARM">تعليقة المراية</string>
     <string key="page.T_GARAGE_HINT">اسحب الشاشة يمين أو شمال عشان تلف السيارة 360°</string>
     <string key="page.T_ALBUM">ألبوم المعالم</string>
+    <string key="page.T_MORE">خيارات أكثر</string>
+    <string key="page.T_LESS">خيارات أقل</string>
+    <string key="text.prevTrip">المشوار السابق</string>
+    <string key="text.nextTrip">المشوار التالي</string>
     <string key="page.T_PAX">الركّاب</string>
     <string key="page.T_FUEL">البنزين</string>
     <string key="text.serviceMode">ورديّة سرفيس وتاكسي</string>
