@@ -1938,13 +1938,24 @@ function walkGeo(kind) {
     for (const z of [-0.5, 0.5]) parts.push({ g: CYL(0.1, 0.1, 0.06, 8), c: 0x111111, x: 0.42, y: 0.1, z, rz: Math.PI / 2 }, { g: CYL(0.1, 0.1, 0.06, 8), c: 0x111111, x: -0.42, y: 0.1, z, rz: Math.PI / 2 });
   } else if (kind === 'boxes') {
     parts = [box(0xa47148, 0, 0.22, 0, 0.55, 0.44, 0.5, { ry: 0.2 }), box(0x8d6e4f, 0.05, 0.6, 0.05, 0.45, 0.34, 0.42, { ry: -0.3 }), box(0xb98758, -0.1, 0.18, 0.45, 0.4, 0.36, 0.36, { ry: 0.6 })];
+  } else if (kind === 'falafel') { // a falafel sandwich rolled in paper
+    parts = [{ g: CYL(0.09, 0.09, 0.34, 10), c: 0xd9b27a, x: 0, y: 0, z: 0, rz: 0.35 }, { g: CYL(0.1, 0.1, 0.16, 10), c: 0xf4f4f0, x: -0.05, y: -0.08, z: 0, rz: 0.35 }];
+    for (const k of [-1, 0, 1]) parts.push({ g: new THREE.SphereGeometry(0.045, 6, 5), c: 0x6b4423, x: 0.06 + k * 0.03, y: 0.17, z: k * 0.035 }, box(0x3f8f3a, 0.03 + k * 0.03, 0.15, -k * 0.03, 0.03, 0.02, 0.05));
+  } else if (kind === 'lemon') { // a cup of lemon and mint with a straw
+    parts = [{ g: CYL(0.09, 0.07, 0.24, 12), c: 0xe8f06a, x: 0, y: 0, z: 0 }, { g: CYL(0.092, 0.092, 0.03, 12), c: 0x55a630, x: 0, y: 0.1, z: 0 }, box(0xf43f5e, 0.03, 0.2, 0, 0.02, 0.22, 0.02, { rz: -0.2 }), { g: new THREE.SphereGeometry(0.04, 8, 6), c: 0xf2c218, x: -0.08, y: 0.12, z: 0 }];
+  } else if (kind === 'coffee') { // a small cup of coffee
+    parts = [{ g: CYL(0.08, 0.06, 0.16, 12), c: 0xf4f4f0, x: 0, y: 0, z: 0 }, { g: CYL(0.075, 0.075, 0.02, 12), c: 0x4a2c17, x: 0, y: 0.075, z: 0 }, box(0xb3202a, 0, 0, 0, 0.165, 0.05, 0.165)];
   } else { // a banana peel
     parts = [0, 2.1, 4.2].map((r) => box(0xf2c218, Math.sin(r) * 0.08, 0.025, Math.cos(r) * 0.08, 0.07, 0.03, 0.2, { ry: r }));
     parts.push(box(0x5a4a1a, 0, 0.04, 0, 0.06, 0.05, 0.06));
   }
   return (WALK_GEO[kind] = mergeParts(parts));
 }
-const WALK_SIZE = { man: [0.28, 0.28], kid: [0.22, 0.22], seller: [0.28, 0.28], vendor: [0.8, 0.45], bags: [0.5, 0.45], bin: [0.68, 0.48], boxes: [0.45, 0.42], peel: [0.16, 0.16] };
+const WALK_SIZE = { man: [0.28, 0.28], kid: [0.22, 0.22], seller: [0.28, 0.28], vendor: [0.8, 0.45], bags: [0.5, 0.45], bin: [0.68, 0.48], boxes: [0.45, 0.42], peel: [0.16, 0.16], falafel: [0.45, 0.45], lemon: [0.45, 0.45], coffee: [0.45, 0.45] };
+// things to pick up off the pavement, and what each one does
+const WALK_TREATS = ['falafel', 'lemon', 'coffee'];
+const ringMat = new THREE.MeshBasicMaterial({ color: 0xfde68a, transparent: true, opacity: 0.7, depthWrite: false, toneMapped: false });
+const RING_G = new THREE.RingGeometry(0.42, 0.6, 28); RING_G.rotateX(-Math.PI / 2);
 const walkVc = new THREE.MeshLambertMaterial({ vertexColors: true });
 const crowd = []; // figures, reused from walk to walk
 function crowdFigure(kid) {
@@ -1965,7 +1976,10 @@ function walkAdd(W, kind, t, d, extra) {
   const [hl, hw] = WALK_SIZE[kind] || [0.3, 0.3];
   const o = Object.assign({ kind, t, d, hl, hw, v: 0, td: d, obj: null, fig: null }, extra || {});
   if (kind === 'man' || kind === 'kid' || kind === 'seller') { o.fig = crowdFigure(kind === 'kid'); o.obj = o.fig.g; }
-  else if (kind !== 'tree' && kind !== 'pole' && kind !== 'crowd') { o.obj = new THREE.Mesh(walkGeo(kind), walkVc); o.obj.castShadow = kind !== 'peel'; scene.add(o.obj); o.own = true; }
+  else if (WALK_TREATS.includes(kind)) {
+    o.pick = true; o.obj = new THREE.Group(); o.own = true; scene.add(o.obj);
+    o.food = new THREE.Mesh(walkGeo(kind), walkVc); o.food.scale.setScalar(2.8); o.food.castShadow = true; o.obj.add(o.food, new THREE.Mesh(RING_G, ringMat));
+  } else if (kind !== 'tree' && kind !== 'pole' && kind !== 'crowd') { o.obj = new THREE.Mesh(walkGeo(kind), walkVc); o.obj.castShadow = kind !== 'peel'; scene.add(o.obj); o.own = true; }
   if (o.obj) walkPlace(o);
   W.items.push(o); return o;
 }
@@ -1977,7 +1991,7 @@ function walkClear() {
 }
 const fits = (W, t, d, hl, hw) => W.items.every((o) => Math.abs(o.t - t) > o.hl + hl + 1.2 || Math.abs(o.d - d) > o.hw + hw + 1.6);
 function walkSetup() {
-  const W = game.walk = { items: [], stun: 0, spin: 0, excuseT: 0, combo: 0, comboT: 0, dodges: 0, bumps: 0, stepPh: 0, hitCool: 0, cool: 0 };
+  const W = game.walk = { items: [], lemonT: 0, coffeeT: 0, stun: 0, spin: 0, excuseT: 0, combo: 0, comboT: 0, dodges: 0, bumps: 0, stepPh: 0, hitCool: 0, cool: 0 };
   // fixed things already on this side: trees, poles, pumps, people waiting at the shelters
   const s0 = sOfT(player.t);
   for (const so of SIDE_OBS) {
@@ -2010,6 +2024,13 @@ function walkSetup() {
       break;
     }
     t += mr(4, 9) + 7 * (1 - (t - player.t) / WALK_GOAL);
+  }
+  // a falafel, a lemon juice or a coffee every 40 m or so, somewhere free
+  for (let tt = player.t + 30; tt < player.t + WALK_GOAL - 10; tt += mr(32, 50)) {
+    for (let tries = 0; tries < 6; tries++) {
+      const t0 = tt + tries * 2.5, d = mr(WD_MIN + 0.3, WD_MAX - 0.3);
+      if (W.items.every((o) => Math.abs(o.t - t0) > o.hl + 1.2 || Math.abs(o.d - d) > o.hw + 0.9)) { walkAdd(W, WALK_TREATS[Math.floor(Math.random() * 3)], t0, d); break; }
+    }
   }
   player.d = (WD_MIN + WD_MAX) / 2; player.v = 0; player.lat = 0;
   game.warnTxt = ''; game.weavePts = 0; game.weaves = 0; game.nitro = 0.5; game.boost = 0; hideDog();
@@ -2044,7 +2065,8 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
   if (W.comboT > 0) W.comboT -= dt;
   if (game.nitroReq) walkNitro(W);
   if (game.boost > 0) game.boost -= dt;
-  const vWant = W.stun > 0 ? 0 : game.boost > 0 ? WALK_RUN : brake ? 0 : gas ? WALK_FAST : WALK_V;
+  const lemon = W.lemonT > 0 ? 0.8 : 0; // lemon and mint puts a spring in his step
+  const vWant = W.stun > 0 ? 0 : game.boost > 0 ? WALK_RUN : brake ? 0 : (gas ? WALK_FAST : WALK_V) + lemon;
   player.v += clamp(vWant - player.v, -5 * dt, (game.boost > 0 ? 6 : 2.4) * dt);
   dogStep(W, dt);
   player.lat += (steerIn * 1.8 - player.lat) * Math.min(1, dt * (W.stun > 0 ? 2 : 9));
@@ -2055,16 +2077,19 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
   if (W.stepPh >= 1) { W.stepPh -= 1; SND.cue('step'); }
   // "excuse me": the people just ahead step aside, unless they are on the phone
   if (W.excuseT > 0) W.excuseT -= dt;
-  if (hornTap && W.excuseT <= 0) {
-    W.excuseT = 1.6; spawnFxText(P.x, P.y + 2.0, P.z, T.walkExcuse, '#fde68a'); SND.cue('ok');
+  const makeWay = (all) => {
     for (const o of W.items) {
       const ahead = o.t - player.t;
-      if ((o.kind === 'man' || o.kind === 'kid') && ahead > 0 && ahead < 10 && Math.abs(o.d - player.d) < 1.3 && !o.stubborn) {
+      if ((o.kind === 'man' || o.kind === 'kid') && ahead > 0 && ahead < 10 && Math.abs(o.d - player.d) < 1.3 && (all || !o.stubborn)) {
         const room = o.d - WD_MIN > WD_MAX - o.d ? -1 : 1;
         o.td = clamp(player.d + room * 1.4, WD_MIN + 0.1, WD_MAX - 0.1); o.aside = 3;
       }
     }
-  }
+  };
+  if (hornTap && W.excuseT <= 0) { W.excuseT = 1.6; spawnFxText(P.x, P.y + 2.0, P.z, T.walkExcuse, '#fde68a'); SND.cue('ok'); makeWay(false); }
+  // coffee: for a while everyone ahead makes way, even the ones on their phone
+  if (W.coffeeT > 0) { W.coffeeT -= dt; if ((W.wayT = (W.wayT || 0) - dt) <= 0) { W.wayT = 0.4; makeWay(true); } }
+  if (W.lemonT > 0) W.lemonT -= dt;
   let end = null;
   for (const o of W.items) {
     if (o.gone) continue;
@@ -2091,6 +2116,11 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
     // sellers call out as you come near
     if (o.cries && !o.cried && rel > 0 && rel < 9) { o.cried = true; sayAt(o, mpick(walkLines('vendor'))); }
     const dd = o.d - player.d;
+    if (o.pick) {
+      if (o.obj.visible) { o.food.rotation.y += dt * 2; o.food.position.y = 0.85 + Math.sin(game.time * 3 + o.t) * 0.1; }
+      if (Math.abs(rel) < o.hl && Math.abs(dd) < o.hw) walkTreat(W, o);
+      continue;
+    }
     if (W.cool <= 0 && Math.abs(rel) < o.hl + 0.22 && Math.abs(dd) < o.hw + 0.22) { if (walkBump(W, o, rel, dd)) end = 'tired'; o.hit = true; }
     // slipping past close by earns points, more for a chain of them
     if (!o.passed && rel < -(o.hl + 0.3)) {
@@ -2107,6 +2137,13 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
   for (const c of SAME) { const ahead = c.t > player.t; if (c.wAhead && !ahead) { const gap = player.d - c.d; if (gap < 14) SND.passBy(-1, sizeOf(c.kind), 1 - (gap - 5) / 10); } c.wAhead = ahead; }
   if (end) return end;
   if (game.dist >= WALK_GOAL) return 'arrive';
+}
+function walkTreat(W, o) {
+  o.gone = true; o.obj.visible = false; game.extraPts += 50;
+  if (o.kind === 'falafel') { W.bumps = Math.max(0, W.bumps - 1); game.crashes = W.bumps; game.nitro = Math.min(1, game.nitro + 0.35); toast(T.walkFalafel, 'good'); }
+  else if (o.kind === 'lemon') { W.lemonT = 10; toast(T.walkLemon, 'good'); }
+  else { W.coffeeT = 8; W.wayT = 0; toast(T.walkCoffee, 'good'); }
+  spawnFxText(P.x, P.y + 2.1, P.z, '+50', '#38d996'); SND.cue('paxPick'); vibrate([15, 25, 15]);
 }
 function walkScore() { return Math.max(0, Math.round(game.dist * 2 + game.weavePts + game.extraPts - (game.walk ? game.walk.bumps * 30 : 0))); }
 // Haitham's figure follows the player each frame

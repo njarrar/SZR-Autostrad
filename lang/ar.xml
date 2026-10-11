@@ -117,6 +117,9 @@
     <string key="text.walkDog">الكلب لاحقك! اركض!</string>
     <string key="text.walkDogGone">الكلب رجع</string>
     <string key="text.walkWoof">هاو هاو!</string>
+    <string key="text.walkFalafel">عروس فلافل! راحت خبطة</string>
+    <string key="text.walkLemon">ليمون ونعنع! صرت أسرع</string>
+    <string key="text.walkCoffee">قهوة! الكل بوسّعلك</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
