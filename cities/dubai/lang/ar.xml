@@ -164,6 +164,10 @@
     <string key="car.2.sub">Toyota Camry</string>
     <string key="car.2.pros">متوازنة وتمشي مع كل شي</string>
     <string key="car.2.cons">ما فيها شي مميز</string>
+    <string key="car.3.name">باص كوستر</string>
+    <string key="car.3.sub">Toyota Coaster</string>
+    <string key="car.3.pros">يشيل ركّاب وايد ويعطيك نقاط مضاعفة بالورديّة</string>
+    <string key="car.3.cons">كبير وثقيل في التجاوز</string>
     <string key="place.0">برواز دبي</string>
     <string key="place.1">المركز التجاري العالمي</string>
     <string key="place.2">متحف المستقبل</string>

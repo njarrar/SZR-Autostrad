@@ -49,7 +49,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .go { font-family: var(--display); font-weight: 400; font-size: 30px; background: var(--accent); color: var(--on-accent); border-radius: 12px; border: 0; padding: 10px 14px 6px; letter-spacing: .01em; }
 .go:active, .btn:active { transform: translateY(1px); }
 .drawer { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
-#carPick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+#carPick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .pick { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pick b { font-size: 14px; line-height: 1.3; }
 .pick .en { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -61,10 +61,19 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 #carPros { margin: 6px 0 0; display: flex; flex-direction: column; font-size: 12.5px; line-height: 1.5; }
 #carPros .pro { color: var(--good); font-weight: 600; }
 #carPros .con { color: var(--bad); font-weight: 600; }
-#colors { display: flex; gap: 8px; flex-wrap: wrap; }
+#colors, #leds { display: flex; gap: 8px; flex-wrap: wrap; }
 .sw { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--line); background: var(--sw); }
 .sw.sel { outline: 3px solid var(--accent); outline-offset: 2px; }
 .sw:disabled { opacity: .35; cursor: not-allowed; }
+.chip-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip-btn { border: 1.5px solid var(--line); background: transparent; border-radius: 8px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; }
+.chip-btn.sel { border-color: var(--accent); background: var(--chip); color: var(--accent); }
+.album-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-height: calc(100vh - 150px); overflow-y: auto; padding: 4px; }
+.pcard { border: 1.5px solid var(--line); background: var(--chip); border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.pcard.locked { opacity: .45; filter: grayscale(0.85); }
+.pcard .art { height: 74px; border-radius: 8px; display: grid; place-items: center; font-family: var(--display); font-size: 24px; color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.45); }
+.pcard b { font-size: 14px; }
+.pcard span { font-size: 11.5px; color: var(--muted); }
 .note { font-size: 12px; color: var(--muted); margin: 0; }
 #plate { width: 100%; box-sizing: border-box; font: 600 18px var(--body); padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--panel-solid); color: var(--ink); direction: ltr; text-align: center; letter-spacing: .08em; }
 .foot { font-size: 12px; color: var(--muted); line-height: 1.6; display: flex; flex-direction: column; gap: 6px; }
@@ -74,6 +83,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 /* ---------- HUD ---------- */
 #hud { position: fixed; inset: 0; pointer-events: none; z-index: 3; font-variant-numeric: tabular-nums; }
+#fxCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 .hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
 .speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
@@ -87,8 +97,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 .stats { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 104px); inset-inline-start: 12px; display: flex; flex-direction: column; gap: 6px; }
 .chip { background: var(--hud); color: var(--hud-ink); border-radius: 10px; padding: 5px 10px; font-size: 13px; display: flex; gap: 8px; align-items: baseline; }
 .chip span { opacity: .75; font-size: 11px; }
-.dmg { width: 110px; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; align-self: center; }
+.dmg, .fuel { width: 110px; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; align-self: center; }
 #hDmgBar { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #e2452b); }
+#hFuelBar { height: 100%; width: 100%; background: linear-gradient(90deg, #e2452b, #f6c445 45%, #2ecc71); }
 #mini { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 80px); inset-inline-end: 12px; width: 120px; height: 120px; background: var(--hud); border-radius: 14px; }
 #btnPause { pointer-events: auto; position: absolute; top: calc(env(safe-area-inset-top, 0px) + 208px); inset-inline-end: 12px; background: var(--hud); color: var(--hud-ink); border: 0; border-radius: 10px; padding: 7px 14px; font-weight: 700; }
 .toast { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -8px); background: var(--hud); color: var(--hud-ink); padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 17px; opacity: 0; transition: opacity .2s, transform .2s; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; }
@@ -364,6 +375,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 <canvas id="gl" aria-label="__ALT__"></canvas>
 <div id="fx" aria-hidden="true"><div class="vig"></div><div class="streaks"></div></div>
 <canvas id="wx" aria-hidden="true" hidden></canvas>
+<canvas id="fxCanvas" aria-hidden="true"></canvas>
 <div id="flash"></div>
 <div id="beam" aria-hidden="true"></div>
 <div id="count" aria-live="assertive" hidden></div>
@@ -377,6 +389,8 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="chip"><span>__T_TIME__</span><b id="hTime">0:00</b></div>
     <div class="chip"><span>__T_SCORE__</span><b id="hScore">0</b></div>
     <div class="chip"><span>__T_VIOL__</span><b id="hViol">0</b></div>
+    <div class="chip" id="chipPax" hidden><span>__T_PAX__</span><b id="hPax">0/4</b></div>
+    <div class="chip" id="chipFuel" hidden><span>__T_FUEL__</span><div class="fuel"><div id="hFuelBar"></div></div></div>
     <div class="chip"><span>__T_DMG__</span><div class="dmg"><div id="hDmgBar"></div></div></div>
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
@@ -434,9 +448,13 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <div><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
       <div><div class="label">__T_TRAFFIC__</div><div class="seg" id="segTraffic"><button type="button" data-v="0">__T_TR0__</button><button type="button" data-v="1">__T_TR1__</button><button type="button" data-v="2">__T_TR2__</button></div></div>
       <button class="go" id="btnStart" type="button">__T_GO__</button>
-      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button><button class="btn" id="btnTour" type="button">__T_HOWTO__</button></div>
+      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnBooklet" type="button">__T_ALBUM__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button><button class="btn" id="btnTour" type="button">__T_HOWTO__</button></div>
       <div class="drawer" id="garage" hidden>
+        <p class="note">__T_GARAGE_HINT__</p>
         <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
+        <div><div class="label">__T_LED__</div><div id="leds"></div></div>
+        <div><div class="label">__T_STICKER__</div><div class="chip-row" id="stickers"></div></div>
+        <div><div class="label">__T_CHARM__</div><div class="chip-row" id="charms"></div></div>
         <div><div class="label"><label for="plate">__T_PLATE__</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
       </div>
       <div class="foot">
@@ -445,6 +463,13 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
         __OTHER__
       </div>
     </div>
+  </div>
+</div>
+
+<div id="booklet" class="screen" hidden>
+  <div class="sheet" style="margin:0;width:min(560px,100%)">
+    <div class="setHead"><h2>__T_ALBUM__ <small id="bookletProg"></small></h2><button class="btn" id="bookClose" type="button">__T_CLOSE__</button></div>
+    <div class="album-grid" id="albumGrid"></div>
   </div>
 </div>
 
@@ -506,7 +531,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="panel" data-panel="dsp" hidden>
       <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
       <div><div class="label">__T_AUTOQ__</div><div class="seg" id="segAutoQ"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div><p class="note">__T_AUTOQ_D__</p></div>
-      <div><div class="label">__T_TIME__</div><div class="seg seg5" id="segTime"><button type="button" data-v="auto">__T_TAUTO__</button><button type="button" data-v="morning">__T_TMORN__</button><button type="button" data-v="noon">__T_TNOON__</button><button type="button" data-v="sunset">__T_TSUN__</button><button type="button" data-v="night">__T_TNIGHT__</button></div></div>
+      <div><div class="label">__T_TOD__</div><div class="seg seg5" id="segTime"><button type="button" data-v="auto">__T_TAUTO__</button><button type="button" data-v="morning">__T_TMORN__</button><button type="button" data-v="noon">__T_TNOON__</button><button type="button" data-v="sunset">__T_TSUN__</button><button type="button" data-v="night">__T_TNIGHT__</button></div></div>
       <div><div class="label">__T_WX__</div><div class="seg" id="segWx"><button type="button" data-v="0">__T_WXOFF__</button><button type="button" data-v="1">__T_WXON__</button></div></div>
       <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
       <div><div class="label">__T_SPEEDFX__</div><div class="seg " id="segFx"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>

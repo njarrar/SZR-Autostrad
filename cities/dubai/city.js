@@ -24,13 +24,13 @@ window.CITY = {
   fill: { count: 6000, pad: 1500, zone: 'villa', yaw: 0.6 },
   defaultZone: 'mid',
   zones: {
-    tower: { rows: 3, w: [18, 30], d: [18, 30], h: [25, 60], setback: 16, rowGap: 55, jitter: 10, spacing: [45, 75],
-      colors: [0xd8d2c4, 0xbfc6cc], tallP: 0.75, tw: [24, 42], th: [90, 320], crown: true, curtain: true,
+    tower: { rows: 3, w: [18, 30], d: [18, 30], h: [28, 68], setback: 16, rowGap: 55, jitter: 10, spacing: [42, 70],
+      colors: [0x6b8fa8, 0x88a8bf, 0x9ab0c2, 0x52758f, 0xc8bfa8], tallP: 0.85, tw: [24, 42], th: [95, 320], crown: true, curtain: true,
       shapes: ['box', 'box', 'box', 'round', 'taper'],
-      tallColors: [0x5f8fb0, 0x8fb3c9, 0xa8b4bf, 0x4f8f8f, 0xb8975a, 0x34495e, 0x6d8ba3], tree: 'palm', treeP: 0.45 },
-    mid: { rows: 3, w: [20, 32], d: [20, 30], h: [15, 45], setback: 14, rowGap: 40, jitter: 8, spacing: [34, 52],
-      colors: [0xd8cdb8, 0xc4c9cc, 0xe6dccb], tallP: 0.25, tw: [22, 32], th: [60, 140], crown: true, curtain: true,
-      shapes: ['box', 'box', 'round', 'taper'], tallColors: [0x5f8fb0, 0x8fb3c9, 0xa8b4bf, 0x4f8f8f], tree: 'palm', treeP: 0.45 },
+      tallColors: [0x5f8fb0, 0x8fb3c9, 0xa8b4bf, 0x4f8f8f, 0xb8975a, 0x34495e, 0x6d8ba3], tree: 'palm', treeP: 0.5 },
+    mid: { rows: 3, w: [20, 32], d: [20, 30], h: [18, 52], setback: 14, rowGap: 40, jitter: 8, spacing: [34, 52],
+      colors: [0x6b8fa8, 0x88a8bf, 0x9ab0c2, 0xc4c9cc, 0xd8cdb8], tallP: 0.55, tw: [22, 34], th: [68, 165], crown: true, curtain: true,
+      shapes: ['box', 'box', 'round', 'taper'], tallColors: [0x5f8fb0, 0x8fb3c9, 0xa8b4bf, 0x4f8f8f, 0xb8975a], tree: 'palm', treeP: 0.5 },
     industrial: { rows: 2, w: [30, 55], d: [25, 40], h: [8, 14], setback: 20, rowGap: 50, jitter: 8, spacing: [40, 65],
       colors: [0xb9b2a5, 0xa9a69f, 0xd1c7b3], tallP: 0.12, tw: [22, 30], th: [40, 90], tallColors: [0x9aa7b4, 0xc8d3dc], tree: 'palm', treeP: 0.15 },
     villa: { rows: 3, w: [14, 20], d: [14, 20], h: [6, 10], setback: 12, rowGap: 26, jitter: 6, spacing: [22, 32],
@@ -51,11 +51,18 @@ window.CITY = {
     { lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
   ],
   cars: [
-    { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55 },
-    { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5 },
-    { kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0 }
+    { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55, role: 'vip' },
+    { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5, role: 'weave' },
+    { kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0, role: 'taxi', paxCap: 4 },
+    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0xc8102e }, vmax: 165, accel: 4.0, grip: 0.94, tough: 0.45, role: 'bus', paxCap: 14 }
   ],
-  colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
+  stickers: ['', 'ما شاء الله', 'دار الحي', 'عزّك يا دبي', 'حفظك الله', 'تبارك الرحمن', 'الملكي'],
+  barks: {
+    honk: ['دربك خضر يا الطيب!', 'تفضل طال عمرك!', 'هدّي السرعة الرادار جدامك!', 'افسح الطريق للشيخ!', 'على خشمي تفضل!'],
+    cut: ['يا ساتر! شوي شوي!', 'ما شاء الله عليك فنان!', 'انتبه للمسار يا خوي!', 'غرزة عالمية والله!', 'رفقاً بالقوارير يا كابتن!'],
+    pax: ['برج خليفة لو سمحت!', 'وصلني المارينا عالسريع', 'أقرب محطة مترو يا كابتن', 'مشكور ما قصرت!']
+  },
+  colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979, 0x1d5b78, 0x2e8b57],
   traffic: [
     // white is common in the heat, but black, silver, grey, gold and dark blue are on every road too
     { kind: 'suv', colors: [0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979, 0x5a5f66, 0x1f3556, 0x6e1a22], speed: [90, 130] },

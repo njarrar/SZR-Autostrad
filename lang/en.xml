@@ -174,7 +174,7 @@
     <string key="page.T_HIDE">Hide</string>
     <string key="tour.0.touch">Push the stick up until your speed passes 45. Let go and the car keeps that speed.</string>
     <string key="page.tryCity">Try {city}</string>
-    <string key="page.T_TIME">Time of day</string>
+    <string key="page.T_TOD">Time of day</string>
     <string key="page.T_TAUTO">Auto</string>
     <string key="page.T_TMORN">Morning</string>
     <string key="page.T_TNOON">Afternoon</string>
@@ -198,6 +198,25 @@
     <string key="text.tailOk">You let it pass +120</string>
     <string key="text.rExtra">Road events</string>
     <string key="text.noWebGL">This device can&apos;t show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.</string>
+    <string key="page.T_LED">Underbody neon glow</string>
+    <string key="page.T_STICKER">Rear window sticker</string>
+    <string key="page.T_CHARM">Mirror charm</string>
+    <string key="page.T_GARAGE_HINT">Drag left or right on the road to spin the car 360°</string>
+    <string key="page.T_ALBUM">Landmark Album</string>
+    <string key="page.T_PAX">Passengers</string>
+    <string key="page.T_FUEL">Fuel</string>
+    <string key="text.serviceMode">Taxi &amp; Service Shift</string>
+    <string key="text.serviceSub">Pick up roadside passengers, drop them off &amp; refuel</string>
+    <string key="text.paxPick">Passengers aboard! Head to the green drop-off</string>
+    <string key="text.paxDrop">Passengers dropped off! Fare bonus +</string>
+    <string key="text.refuel">Tank refilled at the station! +100</string>
+    <string key="text.fuelLow">Low fuel! Pull into the next right-lane station</string>
+    <string key="text.cardUnlocked">Unlocked landmark postcard:</string>
+    <string key="page.T_NONE">None</string>
+    <string key="page.T_CHARM_1">Prayer beads</string>
+    <string key="page.T_CHARM_2">Hamsa</string>
+    <string key="page.T_CHARM_3">Medallion</string>
+    <string key="text.rFares">Fares</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>

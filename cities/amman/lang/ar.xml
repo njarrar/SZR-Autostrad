@@ -163,6 +163,10 @@
     <string key="car.2.sub">Toyota Hilux</string>
     <string key="car.2.pros">تقيلة، الضربات والمطبات ما بتأثر فيها كثير</string>
     <string key="car.2.cons">بطيئة ولفّتها صعبة</string>
+    <string key="car.3.name">باص كوستر سرفيس</string>
+    <string key="car.3.sub">Toyota Coaster</string>
+    <string key="car.3.pros">بيحمّل ركّاب كثير وبيطلع نقاط مضاعفة بالورديّة</string>
+    <string key="car.3.cons">كبير وتقيل بالتجاوز</string>
     <string key="place.0">دوار الداخلية</string>
     <string key="place.1">بوليفارد العبدلي</string>
     <string key="place.2">مسجد الملك عبدالله</string>

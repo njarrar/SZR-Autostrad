@@ -21,13 +21,13 @@ window.CITY = {
   fill: { count: 22000, pad: 1200, zone: 'stone' },
   defaultZone: 'stone',
   zones: {
-    stone: { rows: 4, w: [12, 20], d: [12, 18], h: [9, 22], setback: 10, rowGap: 22, jitter: 4, spacing: [15, 26], skew: 0.15,
-      colors: [0xefe9dc, 0xe6dcc6, 0xf4f0e6, 0xdcd0b6, 0xe9e1cd, 0xd6c8a8], tanks: true, balcony: true, tree: 'mix', treeP: 0.5 },
-    old: { rows: 6, w: [8, 13], d: [8, 12], h: [6, 15], setback: 8, rowGap: 15, jitter: 3, spacing: [10, 15], skew: 0.3,
-      colors: [0xebe3d0, 0xddd1b6, 0xd8caa9, 0xcdb48c, 0xc9b08a, 0xeee8db], tanks: true, balcony: true, tree: 'cypress', treeP: 0.2 },
-    tower: { rows: 4, w: [12, 20], d: [12, 18], h: [10, 24], setback: 12, rowGap: 26, jitter: 4, spacing: [18, 30], skew: 0.1,
-      colors: [0xefe9dc, 0xe6dcc6, 0xf4f0e6, 0xdcd0b6], tanks: true, balcony: true, tree: 'mix', treeP: 0.4,
-      tallP: 0.07, tw: [20, 28], th: [30, 70], tallColors: [0xe4dccb, 0xd9ceb6, 0x8fa9bb] }
+    stone: { rows: 4, w: [12, 20], d: [12, 18], h: [10, 24], setback: 10, rowGap: 22, jitter: 4, spacing: [15, 25], skew: 0.14,
+      colors: [0xf5efe2, 0xeee5d2, 0xfaf6ed, 0xe5dac2, 0xf0e8d6, 0xdfd2b5], tanks: true, balcony: true, tree: 'mix', treeP: 0.55 },
+    old: { rows: 6, w: [8, 13], d: [8, 12], h: [7, 16], setback: 8, rowGap: 15, jitter: 3, spacing: [10, 15], skew: 0.28,
+      colors: [0xf2ead9, 0xe6dbc2, 0xdfd0b0, 0xd6c098, 0xf6f1e6, 0xebe2ce], tanks: true, balcony: true, tree: 'cypress', treeP: 0.25 },
+    tower: { rows: 4, w: [13, 22], d: [13, 20], h: [12, 28], setback: 12, rowGap: 26, jitter: 4, spacing: [18, 28], skew: 0.1,
+      colors: [0xf5efe2, 0xeee5d2, 0xfaf6ed, 0xe5dac2], tanks: true, balcony: true, tree: 'mix', treeP: 0.45,
+      tallP: 0.14, tw: [22, 30], th: [38, 88], tallColors: [0x6b92b5, 0x88adc9, 0x4f7596, 0xd8cfc0] }
   },
   radars: [0.08, 0.3, 0.55, 0.8],
   bumps: [0.18, 0.43, 0.68, 0.9],
@@ -46,11 +46,18 @@ window.CITY = {
     { lat: 31.9845, lon: 35.8800, build: 'shops', clear: 140 }
   ],
   cars: [
-    { kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0 },
-    { kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3 },
-    { kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55 }
+    { kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0, role: 'taxi', paxCap: 4 },
+    { kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3, role: 'weave' },
+    { kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55, role: 'tough' },
+    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x1f6e43 }, vmax: 150, accel: 3.6, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 }
   ],
-  colors: [0xf2f2ee, 0xb9bec4, 0x1d1f22, 0xb3202a, 0x4a6b3a, 0x24365c],
+  stickers: ['', 'ما شاء الله', 'الصبر مفتاح الفرج', 'عمان في القلب', 'لا تلزق وراي', 'عين الحسود فيها عود', 'دعاء السفر'],
+  barks: {
+    honk: ['طيب هيني زحتلك!', 'ع مهلك يا معلم!', 'افتح طريق للنشامى!', 'رادار قدامك خفف!', 'يا ساتر مالك مستعجل؟'],
+    cut: ['حشّير والله!', 'شوي شوي عالدهان!', 'أحلى تحشيرة يا كابتن!', 'وحد الله يا زلمة!', 'معلم سواقة!'],
+    pax: ['عالداخليّة يا كابتن!', 'وصّلني العبدلي بالله', 'نازل عند الدوار الجاي', 'يسلموا إيديك يا نشمي!']
+  },
+  colors: [0xf2f2ee, 0xb9bec4, 0x1d1f22, 0xb3202a, 0x4a6b3a, 0x24365c, 0xd4af37, 0x1d6b8a],
   traffic: [
     { kind: 'taxi', colors: [0xf2c12e], speed: [70, 100], wild: 0.5 },
     { kind: 'taxi', colors: [0xf2c12e], speed: [70, 100], wild: 0.5 },
