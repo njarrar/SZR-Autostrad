@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.4** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.5** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -100,7 +100,7 @@ Every sound is made live in the browser. There are no sound files.
 - **Road.** Tyre roar and wind grow with your speed, the tyres squeal when you brake hard or take a curve too fast, and the city hums in the background.
 - **Traffic.** You hear cars whoosh past on the side they pass you. A car stuck behind you honks, and horns sound from where the car is.
 - **Crashes.** A thump, crunching metal and, on a big hit, breaking glass.
-- **Radio.** Press the radio button under the pause button to change station. Each city has three stations, and after the last one the radio turns off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
+- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
 
 | Amman | Dubai |
 | --- | --- |
@@ -202,6 +202,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.5 (October 2026)
+
+- **Easier radio.** The radio button now opens a short list: each station, then **Radio off**. The station that's playing is marked, and a line across the radio icon shows when it's off. Before, each tap moved to the next station, so turning it off meant tapping through all of them.
 
 ### 2.4 (October 2026)
 

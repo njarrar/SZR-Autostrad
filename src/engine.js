@@ -2489,7 +2489,7 @@ function countdown(dt) {
     if (n <= 0) { player.cruise = 40 / 3.6; setTimeout(() => { if (game.count <= 0) el.hidden = true; }, 800); }
   }
 }
-// the car radio: picks up where you left it; the button moves to the next station and then off
+// the car radio: picks up where you left it; the button lists the stations and Off
 function radioStart() {
   if (!settings.music || !(C.radio || []).length || settings.station < 0) { SND.radio.stop(); radioLabel(); return; }
   if (SND.radio.current !== settings.station) SND.radio.play(settings.station);
@@ -2500,13 +2500,27 @@ function radioLabel() {
   const i = settings.music ? SND.radio.current : -1, b = $('#btnRadio');
   $('#radioName').textContent = i >= 0 ? T['radio' + i] : T.radioOff; b.classList.toggle('on', i >= 0);
 }
-$('#btnRadio').onclick = () => {
-  audioInit();
-  if (!settings.music) { settings.music = 1; settings.station = Math.max(0, settings.station); saveSettings(); SND.apply(settings); SND.radio.play(settings.station); }
-  else { const i = SND.radio.next(); settings.station = i == null ? settings.station : i; saveSettings(); }
-  const b = $('#btnRadio'); b.classList.remove('tuning'); void b.offsetWidth; b.classList.add('tuning');
-  setTimeout(() => { radioLabel(); toast(settings.station >= 0 && settings.music ? '\u266A ' + T['radio' + settings.station] : T.radioOff); }, 380);
+// the radio button opens a short list: each station, then Off
+const radioMenu = $('#radioMenu');
+function radioMenuOpen(open) {
+  if (open) {
+    const cur = settings.music ? SND.radio.current : -1;
+    radioMenu.innerHTML = (C.radio || []).map((_, i) => `<button type="button" role="menuitemradio" aria-checked="${i === cur}" data-i="${i}"><i></i>${T['radio' + i]}</button>`).join('') +
+      `<button type="button" class="off" role="menuitemradio" aria-checked="${cur < 0}" data-i="-1"><i></i>${T.radioOff}</button>`;
+  }
+  radioMenu.hidden = !open; $('#btnRadio').setAttribute('aria-expanded', open);
+}
+$('#btnRadio').onclick = () => { audioInit(); radioMenuOpen(radioMenu.hidden); };
+radioMenu.onclick = (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  const i = +b.dataset.i;
+  settings.station = i; if (i >= 0) settings.music = 1; saveSettings(); SND.apply(settings);
+  if (i >= 0) SND.radio.play(i); else SND.radio.stop();
+  radioMenuOpen(false); radioLabel();
+  toast(i >= 0 ? '\u266A ' + T['radio' + i] : T.radioOff);
 };
+// a tap anywhere else closes the list
+document.addEventListener('pointerdown', (e) => { if (!radioMenu.hidden && !e.target.closest('#radioMenu, #btnRadio')) radioMenuOpen(false); });
 const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck' : k === 'pickup' || k === 'suv' ? 'van' : 'car');
 // engine, road and wind follow the car every frame; the dashboard shows the gear the engine is in
 function soundFrame() {
@@ -2548,12 +2562,12 @@ function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.we
 function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
   if (game.mode !== 'drive' || tourEndShown()) return;
-  game.paused = !game.paused; game.nitroReq = false;
+  game.paused = !game.paused; game.nitroReq = false; radioMenuOpen(false);
   SND.radio.pause(game.paused); if (game.paused) { SND.siren(null); hud.beam.dataset.c = ''; }
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { clearFx(); evEnd(); SND.radio.stop(); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { clearFx(); evEnd(); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 

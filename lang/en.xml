@@ -160,7 +160,7 @@
     <string key="page.T_VIB1">Light</string>
     <string key="page.T_VIB2">Normal</string>
     <string key="page.T_VIB3">Strong</string>
-    <string key="page.T_RADIONOTE">Tap the radio button while you drive to change station. The music is made up as you go, so no two trips sound the same.</string>
+    <string key="page.T_RADIONOTE">Tap the radio button while you drive to pick a station or turn the radio off. The music is made up as you go, so no two trips sound the same.</string>
     <string key="page.T_AUTOQ">Auto quality</string>
     <string key="page.T_AUTOQ_D">If the game runs slow, it draws fewer pixels so it stays smooth.</string>
     <string key="text.go">Go!</string>
