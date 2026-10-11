@@ -212,8 +212,13 @@
     <string key="page.T_FUEL">Fuel</string>
     <string key="text.serviceMode">Taxi &amp; Service Shift</string>
     <string key="text.serviceSub">Pick up roadside passengers, drop them off &amp; refuel</string>
-    <string key="text.paxPick">Passengers aboard! Head to the green drop-off</string>
-    <string key="text.paxDrop">Passengers dropped off! Fare bonus +</string>
+    <string key="text.paxPick">Passengers on board</string>
+    <string key="text.paxDrop">Passengers off · fare</string>
+    <string key="text.paxAhead">Passenger stop</string>
+    <string key="text.paxHow">keep right and slow down</string>
+    <string key="text.paxOff">getting off</string>
+    <string key="text.paxOn">getting on</string>
+    <string key="text.paxMissed">You drove past the stop</string>
     <string key="text.refuel">Tank refilled at the station! +100</string>
     <string key="text.fuelLow">Low fuel! Pull into the next right-lane station</string>
     <string key="text.cardUnlocked">Unlocked landmark postcard:</string>

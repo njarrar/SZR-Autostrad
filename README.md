@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.9** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.10** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -172,7 +172,11 @@ Damage from crashes, the barrier and speed bumps grows or shrinks with the car's
 
 The taxis and the Coaster bus work a service shift. Green stops wait near each landmark.
 
-- Pass a stop in the right lane, or below 105 km/h, to pick people up and drop off the ones on board. Each drop pays a fare, and fares add points.
+- Keep to the right lane and slow below 75 km/h as a stop comes up. The car pulls onto the shoulder and stops by the shelter.
+- People on board climb out and walk off, then the ones waiting walk over and get in. The car sets off again once they are all in. Each drop pays a fare, and fares add points.
+- Press the gas to skip a stop. Drive past and the people are left waiting.
+
+![A taxi stopped at a passenger stop in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
 - The taxi carries 4 people. The bus carries 14, but each fare pays less.
 - Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
 - Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
@@ -237,6 +241,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.10 (October 2026)
+
+- **Passengers get on and off.** At a stop the taxi or Coaster now pulls over and stands still. You see people step out and walk away, then the ones at the shelter walk to the door and get in, in Amman, Dubai and Riyadh. Before, they just vanished as you drove past.
 
 ### 2.9 (October 2026)
 
