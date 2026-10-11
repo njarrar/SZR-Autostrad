@@ -18,6 +18,8 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
+**Version 2.0** (October 2026). See [What's new](#whats-new) for the changes.
+
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
 ![Phone screens: driving upright, the settings screen, and driving sideways](docs/screenshots/phone.png)
@@ -162,7 +164,7 @@ About once a minute something happens on the road:
 ### Watch out for
 
 - **Speed cameras.** A yellow warning shows before each one. Amman fines you above 90 km/h (80 limit plus 10). Dubai fines you above 120 km/h (100 limit plus 20).
-- **Crashes.** Hitting a car costs points, a fine and damage.
+- **Crashes.** Hitting a car costs a fine and damage, and ends your pass streak. Cameras and crashes never take away points.
 - **The barrier.** Scraping it slows you down and adds damage.
 - **Speed bumps (Amman).** Take them under 35 km/h.
 - **Salik gates (Dubai).** Each one adds 4 dirhams to your trip.
@@ -175,6 +177,30 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - Curves only push you outward when you take them faster than your car's grip allows.
 - The garage lets you change the car's color and your plate number.
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
+
+## What's new
+
+### 2.0 (October 2026)
+
+- **Sound made live.** Each car has its own engine sound that climbs through the gears. You also hear tyre roar, wind, squeal, cars passing on their side, horns from where they are, and a fuller crash. There are no sound files.
+- **Car radio.** Each city has three stations playing music made up as you drive, from Arab rhythms and maqam scales. Tap the radio button to change station.
+- **Steering wheel.** A new touch mode with a wheel under one thumb and pedals under the other.
+- **Countdown, gears and rev bar.** Each trip starts with 3, 2, 1. Your gear and a rev bar sit next to your speed.
+- **Time of day and weather.** Pick morning, afternoon, sunset or night. Night has stars, lit windows and headlights. Amman has winter rain and Dubai has a sandstorm.
+- **Nitro.** Fill the gauge with close passes and by driving behind cars, then fire it. Fire it in the gold part for a perfect nitro.
+- **Road events.** Make way for an ambulance, honk next to a wedding convoy, and let a tailgater pass, all for points.
+- **Horn sound.** Pick normal, deep, truck or a tune.
+- **More settings.** Separate volumes for engine, horn, effects and radio, how strong the phone vibrates, and auto quality that keeps the game smooth on slow phones.
+- **Fair score.** Cameras and crashes cost fines and damage but no longer take away points, so your score no longer drops back to 0.
+- **City folders.** Each city lives in its own folder under `cities/`, so adding a city means adding a folder.
+
+### 1.0 (October 2026)
+
+- Amman and Dubai loops with landmarks, traffic, speed cameras, speed bumps and Salik gates.
+- Six cars with their own speed, grip and toughness, and a garage for paint and plates.
+- Touch stick, one hand, tilt and button controls, plus the keyboard.
+- English and Arabic in each city's dialect, a welcome screen and a guided tour.
+- Shiny cars and a look of its own for each city. Plays on GitHub Pages.
 
 ## Project layout
 
