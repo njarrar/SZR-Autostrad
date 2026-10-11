@@ -70,8 +70,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .goBar .go { flex: 1; }
 .goBar .walkGo { flex: 0 0 auto; margin-inline-start: 8px; display: flex; align-items: center; gap: 6px; font-size: 19px; background: var(--chip); color: var(--ink); padding: 8px 12px 6px; }
 .walkGo svg { width: 22px; height: 22px; flex: none; }
-/* Haitham Mode: no gears, nitro, limit, fuel or damage while walking */
-#hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .nbar, #hud.walk .limit, #touch.walk #btnNitro { display: none; }
+/* Haitham Mode: no gears, limit, fuel or damage while walking; nitro lets the dog loose */
+#hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .limit { display: none; }
 .chip .ic { display: none; }
 .carStats { display: none; }
 .carStats .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }

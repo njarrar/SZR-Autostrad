@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.11** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.12** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -188,11 +188,14 @@ Leave the car and walk. Press **Haitham Mode** next to the start button in the m
 - People walk toward you and ahead of you, kids run about, street sellers stand by their carts, and rubbish bags, bins, boxes and banana peels lie in the way. Trees are kept off the sidewalk, but bus shelters, poles and fuel pumps still stand on it.
 - Left and right move you across the sidewalk. Up walks a little faster, 7.5 km/h, and down stops you.
 - The horn (Space) says "excuse me". Most people ahead step aside; some are on their phone and don't.
+- Nitro (N or Shift, or the N2O button) sets a street dog on Haitham's heels, and he runs at 16 km/h until the dog gives up. The gauge starts half full and fills as you slip past things. Running is fast but makes bumps easy.
 - Each bump costs points and stops you for a moment. A banana peel spins you round. After 6 bumps Haitham gives up and goes home.
 - Points come from the distance you walk and from slipping close past people and things without touching them, more for a chain of them.
 - People talk back in the city's own dialect, and the sellers call out what they sell: ka'ak and corn in Amman, karak tea in Dubai, dates and coffee in Riyadh.
 
 ![Haitham walking past a ka'ak seller in Amman](docs/screenshots/haitham-mode.png)
+
+![A street dog chasing Haitham along the sidewalk](docs/screenshots/haitham-dog.png)
 
 ### Garage
 
@@ -254,6 +257,11 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.12 (October 2026)
+
+- **Haitham's nitro.** Nitro in Haitham Mode now sends a barking street dog after him, and he runs for it until the dog gives up and trots off.
+- **Kerb on the road side.** The black and white (yellow and black in Riyadh) kerb stones now run along the road edge of the sidewalk instead of the far side.
 
 ### 2.11 (October 2026)
 

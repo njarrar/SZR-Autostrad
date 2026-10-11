@@ -350,6 +350,8 @@ const SND = (() => {
     click: () => blip(1500, 0.03, 'triangle', 0.025),
     // walking: a soft shoe on paving, and a sliding whistle for a banana peel
     step: () => burst(now(), 0.05, 0.035 + Math.random() * 0.015, [filt('bandpass', 600 + Math.random() * 300, 1.4)], bus.fx, 3),
+    // a street dog: two rough barks
+    bark: () => { const t0 = now(); for (const k of [0, 0.17]) { const t = t0 + k, o = ac.createOscillator(), g = gainN(0.0001); o.type = 'sawtooth'; o.frequency.setValueAtTime(520, t); o.frequency.exponentialRampToValueAtTime(240, t + 0.11); g.gain.exponentialRampToValueAtTime(0.1, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.13); chain(o, filt('lowpass', 1600, 1), g, bus.fx); o.start(t); o.stop(t + 0.16); burst(t, 0.08, 0.05, [filt('bandpass', 1100, 1)], bus.fx, 3); } },
     slip: () => { const t = now(), o = ac.createOscillator(), g = gainN(0.0001); o.type = 'sine'; o.frequency.setValueAtTime(1400, t); o.frequency.exponentialRampToValueAtTime(260, t + 0.5); g.gain.exponentialRampToValueAtTime(0.09, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.55); chain(o, g, bus.fx); o.start(t); o.stop(t + 0.6); }
   };
   // near misses climb a semitone each step of the chain

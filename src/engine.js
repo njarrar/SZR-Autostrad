@@ -1549,7 +1549,7 @@ function buildVerge() {
 }
 
 // ---------- sidewalks ----------
-// paving slabs from the barrier out to a painted kerb, with a face down to the ground where the road sits up high
+// a painted kerb along the road side, paving slabs out from it, and a face down to the ground where the road sits up high
 function buildSidewalk() {
   const pave = C.look.paving || '#b8b1a4', kerb = C.look.kerb || ['#f2f2ee', '#1c1c1c'];
   const tex = canvasTex(256, 256, (g, w, h) => {
@@ -1560,7 +1560,7 @@ function buildSidewalk() {
     g.fillStyle = 'rgba(0,0,0,0.25)'; for (let i = 0; i <= n; i++) { g.fillRect(i * sz - 1.5, 0, 3, h); g.fillRect(0, i * sz - 1.5, w, 3); }
   }, true);
   const kerbTex = canvasTex(64, 128, (g, w, h) => { g.fillStyle = kerb[0]; g.fillRect(0, 0, w, h / 2); g.fillStyle = kerb[1]; g.fillRect(0, h / 2, w, h / 2); }, true);
-  const K0 = SW_OUT - 0.28; // the kerb stone along the outer edge
+  const K0 = SW_IN + 0.3; // the kerb stone next to the road
   const P = [], U = [], I = [], KP = [], KU = [], KI = [], FP = [], FI = [];
   const a = {}, b = {}, c = {};
   for (const side of [-1, 1]) {
@@ -1569,9 +1569,9 @@ function buildSidewalk() {
       const s = i * ds;
       curveAt(s, side * SW_IN, a); curveAt(s, side * K0, b); curveAt(s, side * SW_OUT, c);
       const y = a.y + SW_Y;
-      P.push(a.x, y, a.z, b.x, y, b.z); U.push(0, s / 4, (K0 - SW_IN) / 4, s / 4);
-      KP.push(b.x, y + 0.04, b.z, c.x, y + 0.04, c.z, c.x, y - 0.3, c.z); KU.push(0, s / 2, 0.5, s / 2, 1, s / 2);
-      FP.push(c.x, y - 0.3, c.z, c.x, Math.max(groundH(c.x, c.z) - 0.4, y - 9), c.z);
+      P.push(b.x, y, b.z, c.x, y, c.z); U.push(0, s / 4, (SW_OUT - K0) / 4, s / 4);
+      KP.push(b.x, y + 0.04, b.z, a.x, y + 0.04, a.z, a.x, a.y - 0.05, a.z); KU.push(0, s / 2, 0.5, s / 2, 1, s / 2);
+      FP.push(c.x, y, c.z, c.x, Math.max(groundH(c.x, c.z) - 0.4, y - 9), c.z);
       if (i < N) {
         const q = base + i * 2; I.push(q, q + 1, q + 2, q + 1, q + 3, q + 2);
         const k = kb + i * 3; KI.push(k, k + 1, k + 3, k + 1, k + 4, k + 3, k + 1, k + 2, k + 4, k + 2, k + 5, k + 4);
@@ -1851,7 +1851,7 @@ function resetStops() { game.stop = null; stepTimers.length = 0; clearWalkers();
 
 // ---------- Haitham Mode: walk the sidewalk and keep out of everyone's way ----------
 // people, kids, street sellers and rubbish stand or move on the sidewalk in travel coords (t, d)
-const WALK_GOAL = 400, WALK_MAX_BUMPS = 6, WALK_V = 1.4, WALK_FAST = 2.1;
+const WALK_GOAL = 400, WALK_MAX_BUMPS = 6, WALK_V = 1.4, WALK_FAST = 2.1, WALK_RUN = 4.6;
 const WD_MIN = SW_IN + 0.3, WD_MAX = SW_OUT - 0.32;
 function makeFigure(cloth, skin, pants) {
   const g = new THREE.Group(), body = new THREE.Mesh(WK_BODY, wkMat(cloth)), head = new THREE.Mesh(WK_HEAD, wkMat(skin)), legs = [], arms = [];
@@ -1875,6 +1875,48 @@ function getHaitham() {
   f.g.visible = false; scene.add(f.g);
   return (haitham = f);
 }
+// nitro in Haitham Mode: a street dog runs after him and he runs for it
+let dog = null;
+function getDog() {
+  if (dog) return dog;
+  const fur = wkMat(0xa8784a), dark = wkMat(0x5a3d25), g = new THREE.Group(), legs = [];
+  g.add(mesh(new THREE.BoxGeometry(0.3, 0.3, 0.75), fur, 0, 0.55, 0), mesh(new THREE.BoxGeometry(0.26, 0.26, 0.3), fur, 0, 0.78, 0.45), mesh(new THREE.BoxGeometry(0.14, 0.12, 0.16), dark, 0, 0.72, 0.65));
+  for (const x of [-0.09, 0.09]) g.add(mesh(new THREE.BoxGeometry(0.07, 0.13, 0.05), dark, x, 0.96, 0.4));
+  const tail = mesh(new THREE.BoxGeometry(0.06, 0.06, 0.3), fur, 0, 0.72, -0.48); tail.rotation.x = -0.6; g.add(tail);
+  const LEG = new THREE.BoxGeometry(0.08, 0.42, 0.08); LEG.translate(0, -0.21, 0);
+  for (const [x, z] of [[-0.1, 0.28], [0.1, 0.28], [-0.1, -0.28], [0.1, -0.28]]) { const l = mesh(LEG, fur, x, 0.44, z); g.add(l); legs.push(l); }
+  g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  g.visible = false; scene.add(g);
+  return (dog = { g, legs, tail, t: 0, d: 0, v: 0, ph: 0, on: false, leave: 0 });
+}
+// fire the nitro: the dog turns up behind and Haitham runs while the boost lasts
+function walkNitro(W) {
+  game.nitroReq = false;
+  if (game.boost > 0 || game.nitro < 0.25) return;
+  game.boost = 2 + game.nitro * 4; game.nitro = 0;
+  const D = getDog(); Object.assign(D, { t: player.t - 6, d: player.d, v: WALK_RUN, on: true, leave: 0 }); D.g.visible = true;
+  toast(T.walkDog, 'bad'); SND.cue('bark'); spawnBark({ mesh: D.g }, T.walkWoof); vibrate([20, 30, 20]); W.barkT = 1.2;
+}
+function dogStep(W, dt) {
+  const D = dog; if (!D || !D.on) return;
+  if (D.leave > 0) {
+    // the dog gives up, trots back the way it came and is gone
+    D.leave -= dt; D.v = -2.2; D.t += D.v * dt;
+    if (D.leave <= 0) { D.on = false; D.g.visible = false; }
+  } else {
+    const want = player.t - (W.stun > 0 ? 0.9 : 1.8);
+    D.v = clamp((want - D.t) * 3, 0, WALK_RUN + 1.5); D.t += D.v * dt;
+    D.d += clamp(player.d - D.d, -2 * dt, 2 * dt);
+    if ((W.barkT -= dt) <= 0) { W.barkT = mr(0.9, 1.8); SND.cue('bark'); if (Math.random() < 0.4) spawnBark({ mesh: D.g }, T.walkWoof); }
+    if (game.boost <= 0) { D.leave = 4; toast(T.walkDogGone, 'good'); SND.cue('bark'); }
+  }
+  D.ph += dt * Math.abs(D.v) * 4.5; const sw = Math.sin(D.ph) * 0.7;
+  D.legs[0].rotation.x = D.legs[3].rotation.x = sw; D.legs[1].rotation.x = D.legs[2].rotation.x = -sw;
+  D.tail.rotation.y = Math.sin(D.ph * 1.7) * 0.5;
+  trackAt(D.t, D.d, WQ); D.g.position.set(WQ.x, WQ.y + SW_Y + Math.abs(Math.cos(D.ph)) * 0.05, WQ.z);
+  D.g.rotation.y = yawOf(WQ.fx, WQ.fz) + (D.v >= 0 ? Math.PI : 0);
+}
+function hideDog() { if (dog) { dog.on = false; dog.g.visible = false; } }
 // one shared model for each thing that stands still
 const WALK_GEO = {};
 function walkGeo(kind) {
@@ -1928,6 +1970,7 @@ function walkAdd(W, kind, t, d, extra) {
   W.items.push(o); return o;
 }
 function walkClear() {
+  hideDog();
   const W = game.walk; if (!W) return;
   for (const o of W.items) { if (o.fig) { o.fig.on = false; o.fig.g.visible = false; } else if (o.own) scene.remove(o.obj); }
   W.items.length = 0;
@@ -1969,7 +2012,7 @@ function walkSetup() {
     t += mr(4, 9) + 7 * (1 - (t - player.t) / WALK_GOAL);
   }
   player.d = (WD_MIN + WD_MAX) / 2; player.v = 0; player.lat = 0;
-  game.warnTxt = ''; game.weavePts = 0; game.weaves = 0;
+  game.warnTxt = ''; game.weavePts = 0; game.weaves = 0; game.nitro = 0.5; game.boost = 0; hideDog();
   getHaitham().g.visible = true;
 }
 const sayAt = (o, text) => { if (o.obj && text) spawnBark({ mesh: o.obj }, text); };
@@ -1999,8 +2042,11 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
   if (W.spin > 0) W.spin -= dt;
   if (W.cool > 0) W.cool -= dt;
   if (W.comboT > 0) W.comboT -= dt;
-  const vWant = W.stun > 0 || brake ? 0 : gas ? WALK_FAST : WALK_V;
-  player.v += clamp(vWant - player.v, -5 * dt, 2.4 * dt);
+  if (game.nitroReq) walkNitro(W);
+  if (game.boost > 0) game.boost -= dt;
+  const vWant = W.stun > 0 ? 0 : game.boost > 0 ? WALK_RUN : brake ? 0 : gas ? WALK_FAST : WALK_V;
+  player.v += clamp(vWant - player.v, -5 * dt, (game.boost > 0 ? 6 : 2.4) * dt);
+  dogStep(W, dt);
   player.lat += (steerIn * 1.8 - player.lat) * Math.min(1, dt * (W.stun > 0 ? 2 : 9));
   player.d = clamp(player.d + player.lat * dt, WD_MIN, WD_MAX);
   player.t += player.v * dt; game.dist += player.v * dt;
@@ -2053,7 +2099,7 @@ function walkStep(dt, gas, brake, steerIn, hornTap) {
         W.dodges++; W.combo = W.comboT > 0 ? W.combo + 1 : 1; W.comboT = 3.5;
         const pts = 10 * W.combo; game.weavePts += pts; game.weaves = W.dodges;
         hud.weave.textContent = T.walkDodge + (W.combo > 1 ? ' x' + W.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
-        SND.combo(W.combo); vibrate(10);
+        SND.combo(W.combo); vibrate(10); game.nitro = Math.min(1, game.nitro + 0.12);
       }
     } else if (o.passed && rel > o.hl + 0.3) o.passed = false;
   }
@@ -2920,7 +2966,7 @@ function updateFxCanvas(dt) {
   if (!fxDrawn && !fxSparks.length && !fxBarks.length && !fxTexts.length && !(game.mode === 'drive' && game.boost > 0)) return;
   fxCtx.clearRect(0, 0, w, h);
   fxDrawn = fxSparks.length + fxBarks.length + fxTexts.length > 0;
-  if (game.mode === 'drive' && game.boost > 0 && Math.random() < dt * 60) {
+  if (game.mode === 'drive' && !game.walk && game.boost > 0 && Math.random() < dt * 60) {
     for (const side of [-0.45, 0.45]) {
       spawnSparks(P.x + side, P.y + 0.35, P.z, 2, game.boostK > 1.1 ? '#38bdf8' : '#a855f7');
     }
@@ -3388,6 +3434,8 @@ function drawHud() {
   if (game.walk) {
     setText(hud.speed, Math.round(player.v * 3.6)); setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(walkScore()));
     setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS);
+    const nShow = (game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro).toFixed(2);
+    setStyle(hud.nitro, '--n', nShow); setStyle(hud.nitroBtn, '--n', nShow); setClass(hud.nitro, 'on', game.boost > 0); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
     const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
     setText(hud.remain, Math.max(0, Math.ceil(WALK_GOAL - game.dist)) + ' ' + T.meters);
     return;
@@ -3412,6 +3460,7 @@ function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offse
 
 const fxEl = document.querySelector('#fx'), garageEl = document.querySelector('#garage');
 const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(), wantPos = new THREE.Vector3(), wantLook = new THREE.Vector3();
+let walkCamBack = 0;
 let camInit = false, orbit = 0, camRoll = 0, nitroFov = 0;
 const tmpEuler = new THREE.Euler();
 let miniTick = 0, lastSpd = '';
@@ -3462,7 +3511,9 @@ function render(dt) {
   if (game.walk && (game.mode === 'drive' || game.mode === 'done')) {
     // just behind and above Haitham's shoulder, looking down the sidewalk
     const tall = camera.aspect < 0.8 ? 1.35 : 1; // an upright phone sits a step further back
-    const dist = [2.6, 3.6, 5.4][settings.cam] * tall, hgt = [1.85, 2.3, 3.3][settings.cam] * tall;
+    // with the dog on his heels the camera pulls back, so you see both of them
+    walkCamBack += ((dog && dog.on && !dog.leave ? 3.2 : 0) - walkCamBack) * (1 - Math.exp(-dt * 2.5));
+    const dist = [2.6, 3.6, 5.4][settings.cam] * tall + walkCamBack, hgt = [1.85, 2.3, 3.3][settings.cam] * tall + walkCamBack * 0.3;
     trackAt(player.t - dist, player.d - 0.35, Q); wantPos.set(Q.x, Q.y + SW_Y + hgt, Q.z);
     trackAt(player.t + 7, player.d - 0.2, Q); wantLook.set(Q.x, Q.y + SW_Y + 1.15, Q.z);
     if (!camInit || camPos.distanceTo(wantPos) > 30) { camPos.copy(wantPos); camLook.copy(wantLook); camInit = true; }
