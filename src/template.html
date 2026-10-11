@@ -356,6 +356,8 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   #tourTitle { font-size: 24px; }
 }
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
+/* version and build time under the blurb */
+.brand .ver { display: block; margin: 0; font-size: 11px; opacity: .6; direction: ltr; unicode-bidi: isolate; }
 </style>
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
@@ -422,6 +424,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <h1>__NAME__</h1>
       <div class="flagbar"></div>
       <p>__BLURB__</p>
+      <p class="ver">__STAMP__</p>
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">

@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.0** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.1** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -179,6 +179,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.1 (October 2026)
+
+- **Real traffic colors.** Fewer white cars. Amman city buses are blue and the rapid bus line is green. Dubai has white public buses and yellow school buses.
+- **Blue road fixed.** On part of Sheikh Zayed Road the sea showed through the road and turned it blue.
+- **Version on screen.** Each city's start screen and landing card shows the version and when it was built.
 
 ### 2.0 (October 2026)
 
