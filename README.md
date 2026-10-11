@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.5** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.6** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -72,6 +72,8 @@ The car drives on its own and keeps its speed. You speed it up, slow it down and
 | Horn | `Space` or `H` | Round horn button |
 | Nitro | `N` or `Shift` | N₂O button above the horn |
 | Change camera | `C` | Settings > Display |
+| Next radio station | `R` | Radio button, then pick a station |
+| Radio on or off | `M` | Radio button, then Radio off |
 | Pause | `P` or `Esc` | Pause button |
 
 Let go and the car holds its current speed. A quick tap left or right moves you one lane over, and the car settles in the middle of that lane. Hold it to cross several lanes.
@@ -100,7 +102,7 @@ Every sound is made live in the browser. There are no sound files.
 - **Road.** Tyre roar and wind grow with your speed, the tyres squeal when you brake hard or take a curve too fast, and the city hums in the background.
 - **Traffic.** You hear cars whoosh past on the side they pass you. A car stuck behind you honks, and horns sound from where the car is.
 - **Crashes.** A thump, crunching metal and, on a big hit, breaking glass.
-- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
+- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. On a keyboard, press `R` for the next station or `M` to turn the radio on or off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
 
 | Amman | Dubai |
 | --- | --- |
@@ -202,6 +204,11 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.6 (October 2026)
+
+- **Radio keys.** Press `R` for the next station and `M` to turn the radio on or off, so you don't need the mouse while driving.
+- **Signs read right.** Road signs seen from behind, across the road, now show a plain metal back instead of mirrored writing.
 
 ### 2.5 (October 2026)
 

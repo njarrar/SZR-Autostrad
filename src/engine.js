@@ -1543,8 +1543,10 @@ function addGantry(sCurve, dir, tex, spanBoth) {
   for (const s of [-1, 1]) { const p = new THREE.Mesh(CYL(0.25, 0.3, 7.5), frame); p.position.set(s * span / 2, 3.75, 0); g.add(p); }
   if (tex) {
     const pw = Math.min(14, CW * 0.95);
-    const panel = new THREE.Mesh(new THREE.PlaneGeometry(pw, pw * 360 / 1024), new THREE.MeshBasicMaterial({ map: tex, side: THREE.DoubleSide }));
-    panel.position.set(0, 7.2 + pw * 0.176 - 0.2, 0.35); g.add(panel);
+    // text on the front only; from behind you see the plain metal back, like a real sign, not mirrored writing
+    const pg = new THREE.PlaneGeometry(pw, pw * 360 / 1024), py = 7.2 + pw * 0.176 - 0.2;
+    const panel = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ map: tex })); panel.position.set(0, py, 0.35); g.add(panel);
+    const back = new THREE.Mesh(pg, frame); back.position.set(0, py, 0.33); back.rotation.y = Math.PI; g.add(back);
   }
   g.position.set(o.x, o.y, o.z);
   // panel normal (+z local) must face incoming traffic: -dir * tangent
@@ -2171,6 +2173,7 @@ addEventListener('keydown', (e) => {
   if (e.repeat && ['KeyC', 'KeyP', 'Escape'].includes(e.code)) return;
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
   if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused) game.nitroReq = true;
+  if ((e.code === 'KeyR' || e.code === 'KeyM') && !e.repeat && game.mode === 'drive') radioKey(e.code);
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
   if ((e.code === 'KeyP' || e.code === 'Escape') && game.mode === 'drive') togglePause();
 });
@@ -2506,19 +2509,29 @@ function radioMenuOpen(open) {
   if (open) {
     const cur = settings.music ? SND.radio.current : -1;
     radioMenu.innerHTML = (C.radio || []).map((_, i) => `<button type="button" role="menuitemradio" aria-checked="${i === cur}" data-i="${i}"><i></i>${T['radio' + i]}</button>`).join('') +
-      `<button type="button" class="off" role="menuitemradio" aria-checked="${cur < 0}" data-i="-1"><i></i>${T.radioOff}</button>`;
+      `<button type="button" class="off" role="menuitemradio" aria-checked="${cur < 0}" data-i="-1"><i></i>${T.radioOff}</button>` +
+      (isTouch() ? '' : `<p class="rkeys">${T.radioKeys}</p>`);
   }
   radioMenu.hidden = !open; $('#btnRadio').setAttribute('aria-expanded', open);
 }
 $('#btnRadio').onclick = () => { audioInit(); radioMenuOpen(radioMenu.hidden); };
-radioMenu.onclick = (e) => {
-  const b = e.target.closest('button'); if (!b) return;
-  const i = +b.dataset.i;
-  settings.station = i; if (i >= 0) settings.music = 1; saveSettings(); SND.apply(settings);
+// pick a station by number, or -1 for off; the list, the R key and the M key all come here
+let radioLast = Math.max(0, settings.station);
+function setStation(i) {
+  audioInit();
+  settings.station = i; if (i >= 0) { settings.music = 1; radioLast = i; } saveSettings(); SND.apply(settings);
   if (i >= 0) SND.radio.play(i); else SND.radio.stop();
   radioMenuOpen(false); radioLabel();
   toast(i >= 0 ? '\u266A ' + T['radio' + i] : T.radioOff);
-};
+}
+radioMenu.onclick = (e) => { const b = e.target.closest('button'); if (b) setStation(+b.dataset.i); };
+// keyboard: R moves to the next station and then off, M turns the radio on or off
+function radioKey(code) {
+  const n = (C.radio || []).length; if (!n) return;
+  const cur = settings.music ? SND.radio.current : -1;
+  if (code === 'KeyR') setStation(cur + 1 >= n ? -1 : cur + 1);
+  else setStation(cur >= 0 ? -1 : radioLast);
+}
 // a tap anywhere else closes the list
 document.addEventListener('pointerdown', (e) => { if (!radioMenu.hidden && !e.target.closest('#radioMenu, #btnRadio')) radioMenuOpen(false); });
 const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck' : k === 'pickup' || k === 'suv' ? 'van' : 'car');
