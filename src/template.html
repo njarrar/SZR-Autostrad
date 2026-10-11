@@ -192,6 +192,31 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #touch[data-mode=wheel] .horn { bottom: calc(var(--pad) + 124px); }
 #touch[data-mode=wheel].horn-left #wheel { left: auto; right: 16px; }
 #touch[data-mode=wheel].horn-left .lanesUI { justify-content: flex-start; }
+/* nitro: a gauge under the speed and a round button above the horn; the gold part is the sweet spot */
+.speedo { position: relative; }
+.nbar { position: absolute; left: 12px; right: 12px; bottom: -8px; height: 6px; border-radius: 3px; direction: ltr; overflow: hidden;
+  background: linear-gradient(90deg, transparent 70%, rgba(255,201,64,.6) 70% 86%, transparent 86%), rgba(0,0,0,.5); box-shadow: 0 0 0 1.5px rgba(255,255,255,.22); }
+.nbar i { display: block; height: 100%; width: calc(var(--n, 0) * 100%); background: linear-gradient(90deg, #3fa9f5, #8fdcff); }
+.nbar.sweet i { background: linear-gradient(90deg, #f5b73f, #ffe08a); }
+.nbar.on i { background: #fff; }
+#btnNitro { position: absolute; bottom: calc(var(--pad) + 92px); right: 22px; width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22); padding: 0;
+  pointer-events: auto; touch-action: none; color: var(--hud-ink); font-weight: 800; font-size: 13px; display: grid; place-items: center; opacity: .6;
+  background: radial-gradient(circle, rgba(18,20,26,.85) 60%, transparent 62%), conic-gradient(#7fd3ff calc(var(--n, 0) * 1turn), rgba(0,0,0,.4) 0); }
+#btnNitro::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(transparent 0 .7turn, rgba(255,201,64,.95) .7turn .86turn, transparent .86turn);
+  -webkit-mask: radial-gradient(circle, transparent 64%, #000 66%); mask: radial-gradient(circle, transparent 64%, #000 66%); }
+#btnNitro.ready { opacity: 1; }
+#btnNitro sub { font-size: .7em; }
+#btnNitro.sweet { box-shadow: 0 0 0 3px rgba(255,201,64,.9), 0 0 18px rgba(255,201,64,.6); }
+#btnNitro.on { background: var(--accent); color: var(--on-accent); }
+#touch.horn-left #btnNitro { right: auto; left: 22px; }
+#touch.horn-small #btnNitro { bottom: calc(var(--pad) + 74px); }
+#touch[data-mode=lanes] #btnNitro, #touch[data-mode=wheel] #btnNitro { bottom: calc(var(--pad) + 210px); }
+/* light from behind: an ambulance's red and blue, or a car flashing its high beams */
+#beam { position: fixed; inset: 0; pointer-events: none; z-index: 2; opacity: 0; transition: opacity .06s; }
+#beam[data-c=red] { opacity: 1; background: radial-gradient(ellipse 80% 55% at 50% 115%, rgba(255,40,40,.42), transparent 70%); }
+#beam[data-c=blue] { opacity: 1; background: radial-gradient(ellipse 80% 55% at 50% 115%, rgba(50,110,255,.42), transparent 70%); }
+#beam[data-c=white] { opacity: 1; background: radial-gradient(ellipse 90% 60% at 50% 115%, rgba(255,250,230,.6), transparent 72%); }
 
 /* ---------- results / pause ---------- */
 #result, #pause { justify-content: center; align-items: center; }
@@ -312,6 +337,10 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .lanesUI .tb { width: 58px; height: 58px; }
   .lanesUI .tb.gas { height: 84px; }
   #touch[data-mode=lanes] .horn { bottom: calc(var(--pad) + 96px); }
+  #btnNitro { width: 54px; height: 54px; bottom: calc(var(--pad) + 8px); right: calc(max(16px, env(safe-area-inset-right, 0px)) + 74px); }
+  #touch.horn-left #btnNitro { right: auto; left: calc(max(16px, env(safe-area-inset-left, 0px)) + 74px); }
+  #touch.horn-small #btnNitro { bottom: calc(var(--pad) + 8px); }
+  #touch[data-mode=lanes] #btnNitro, #touch[data-mode=wheel] #btnNitro { bottom: calc(var(--pad) + 100px); }
   .sheet { padding: 14px 16px; gap: 10px; }
   .brand h1 { font-size: 34px; }
   .brand p { display: none; }
@@ -333,12 +362,13 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 <div id="fx" aria-hidden="true"><div class="vig"></div><div class="streaks"></div></div>
 <canvas id="wx" aria-hidden="true" hidden></canvas>
 <div id="flash"></div>
+<div id="beam" aria-hidden="true"></div>
 <div id="count" aria-live="assertive" hidden></div>
 
 <div id="hud" hidden>
   <div class="hbar">
     <div class="trip-hud"><span class="lbl">__T_NEXT__</span><b id="hNext"></b><span class="rem" id="hRemain">0.0</span></div>
-    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit">__T_KMH__</div></div><div class="gearbox"><b id="hGear">1</b><div class="rpm"><i id="hRpm"></i></div></div></div>
+    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit">__T_KMH__</div></div><div class="gearbox"><b id="hGear">1</b><div class="rpm"><i id="hRpm"></i></div></div><div class="nbar" id="hNitro" aria-hidden="true"><i></i></div></div>
   </div>
   <div class="stats">
     <div class="chip"><span>__T_TIME__</span><b id="hTime">0:00</b></div>
@@ -380,6 +410,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="grp"><button class="tb" data-hold="left" type="button" aria-label="__T_LEFT__">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="__T_RIGHT__">&#9654;</button></div>
     <div class="grp"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button">__T_GAS__</button></div>
   </div>
+  <button id="btnNitro" type="button" aria-label="__T_NITRO__"><span>N<sub>2</sub>O</span></button>
   <button class="horn" data-hold="horn" type="button" aria-label="__T_HORN__"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></button>
 </div>
 
@@ -462,6 +493,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <div><div class="label"><label for="rEngine">__T_VOLENG__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rEngine" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
       <div><div class="label"><label for="rHorn">__T_VOLHORN__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rHorn" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
       <div><div class="label"><label for="rFx">__T_VOLFX__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rFx" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
+      <div><div class="label">__T_HORNSTYLE__</div><div class="seg" id="segHornStyle"><button type="button" data-v="city">__T_HCITY__</button><button type="button" data-v="deep">__T_HDEEP__</button><button type="button" data-v="truck">__T_HTRUCK__</button><button type="button" data-v="melody">__T_HTUNE__</button></div></div>
       <div><div class="label">__T_MUSIC__</div><div class="seg" id="segMusic"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
       <div><div class="label"><label for="rMusic">__T_VOLMUSIC__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rMusic" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
       <div id="vibRow"><div class="label">__T_VIB__</div><div class="seg" id="segVib"><button type="button" data-v="0">__T_OFF__</button><button type="button" data-v="1">__T_VIB1__</button><button type="button" data-v="2">__T_VIB2__</button><button type="button" data-v="3">__T_VIB3__</button></div></div>

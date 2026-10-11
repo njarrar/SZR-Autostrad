@@ -56,7 +56,7 @@
     <string key="page.T_SOUND">الصوت</string>
     <string key="page.T_ON">شغّال</string>
     <string key="page.T_OFF">طافي</string>
-    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الهرن <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>]]></string>
     <string key="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية في دبي. الهرن يخلّي السيارة اللي قدامك تفسح لك.</string>
     <string key="page.T_PAUSED">استراحة</string>
     <string key="page.T_RESUME">كمّل</string>
@@ -180,6 +180,10 @@
     <string key="page.T_C_LANES_D">أسهم لتغيير المسار، كل ضغطة مسار، مع زر دعس وزر بريك.</string>
     <string key="page.T_TILTPERM">اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.</string>
     <string key="page.T_NOTILT">هالجهاز ما فيه حسّاس إمالة، فالعصا بتسوق بداله.</string>
-    <string key="page.T_KEYSNOTE"><![CDATA[على الكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للهرن.]]></string>
-  </city>
+    <string key="page.T_KEYSNOTE"><![CDATA[على الكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للهرن و<kbd>N</kbd> أو <kbd>Shift</kbd> للنيترو.]]></string>
+      <string key="text.wedAhead">عرس قدّامك، هرّن جنبهم</string>
+    <string key="text.tailBehind">سيارة تغمّز وراك، وسّع لها</string>
+    <string key="text.tailOk">خلّيتها تعدّي +120</string>
+    <string key="text.ambBehind">إسعاف وراك، وسّع له</string>
+</city>
 </language>
