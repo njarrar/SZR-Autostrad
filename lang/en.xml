@@ -115,7 +115,7 @@
     <string key="tour.5.title">Where to</string>
     <string key="tour.5.body">This shows where you're going and how far is left. In free drive it shows how far you've gone.</string>
     <string key="tour.6.title">Points and fines</string>
-    <string key="tour.6.body">Points grow with distance and close passes. Cameras and crashes take them away. If damage fills up, the car breaks down.</string>
+    <string key="tour.6.body">Points grow with distance and close passes. Cameras and crashes cost fines instead. If damage fills up, the car breaks down.</string>
     <string key="tour.7.title">Map</string>
     <string key="tour.8.title">Close passes</string>
     <string key="tour.8.body">Pass cars close while going faster than them to earn points. Several in a row multiply the points.</string>
@@ -208,7 +208,7 @@
     <string key="how2t">Points</string>
     <string key="how2">Every kilometer earns points. Close, fast passes earn more, and passes in a row multiply them.</string>
     <string key="how3t">Fines</string>
-    <string key="how3">Speed cameras, crashes, scraping the barrier and speed bumps cost points and damage the car.</string>
+    <string key="how3">Speed cameras, crashes, scraping the barrier and speed bumps cost fines and damage the car.</string>
     <string key="how4t">First time?</string>
     <string key="how4">The game starts with a short guided tour that teaches every control while you drive.</string>
     <string key="footer">The roads roughly follow real places.</string>
