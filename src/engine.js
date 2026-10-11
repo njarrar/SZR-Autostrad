@@ -204,10 +204,14 @@ scene.add(sun); scene.add(sun.target);
 const SUN_DIR = new THREE.Vector3().fromArray(C.look.sunDir).normalize();
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // quality: high = real shadows and sharper pixels, low = faster on phones
+// auto: when frames run slow for a few seconds, draw fewer pixels, then drop the shadows
+const autoQ = { step: 0, slow: 0, all: 0, t: 0, told: false };
+const AUTO_SCALE = [1, 0.85, 0.72, 0.6];
 function applyQuality() {
   const hi = settings.quality === 'high';
-  renderer.shadowMap.enabled = hi;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1));
+  if (!settings.autoQ) autoQ.step = 0;
+  renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SCALE.length;
+  renderer.setPixelRatio(Math.max(0.5, Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1) * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]));
   scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
   if (typeof resize === 'function') resize();
 }
@@ -1237,7 +1241,11 @@ function updateTraffic(dt, honk) {
     // leader search
     let gap = 1e9, lv = 0;
     for (const o of all) { if (o === c) continue; if (Math.abs(o.d - c.d) < 2.2) { const g = o.t - c.t - (o.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = o.v; } } }
-    if (Math.abs(player.d - c.d) < 2.2) { const g = player.t - c.t - (player.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = player.v; } }
+    if (Math.abs(player.d - c.d) < 2.2) {
+      const g = player.t - c.t - (player.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = player.v; }
+      // a car stuck behind you lets you know
+      if (game.mode === 'drive' && !game.tour && g > -1 && g < 14 && c.vt > player.v + 4 && game.time > (c.honkT || 0)) { c.honkT = game.time + mr(5, 9); SND.otherHorn(c.d - player.d, g + 4, C.horn); }
+    }
     let target = c.vt;
     const safe = 8 + c.v * 0.9;
     if (gap < safe) target = Math.min(target, lv * (gap < safe * 0.5 ? 0.85 : 1));
@@ -1268,7 +1276,7 @@ function updateTraffic(dt, honk) {
 }
 
 // ---------- player ----------
-const player = { t: 0, d: laneD(0), v: 0, cruise: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
+const player = { t: 0, d: laneD(0), v: 0, cruise: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null, input: {}, slip: 0 };
 const brakeMat = new THREE.MeshBasicMaterial({ color: 0x550000, toneMapped: false });
 let plateTex = null;
 function drawPlate() {
@@ -1301,10 +1309,10 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1 }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1 }, store.get('settings', {}));
 function saveSettings() { store.set('settings', settings); }
 
-const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false };
+const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0 };
 
 // ---------- input ----------
 const keys = {};
@@ -1324,13 +1332,12 @@ addEventListener('keyup', (e) => { keys[e.code] = false; });
 function resetInputs() {
   for (const k of Object.keys(keys)) keys[k] = false;
   for (const k of Object.keys(touch)) touch[k] = false;
-  stickRelease();
+  stickRelease(); if (typeof wheelRelease === 'function') wheelRelease();
   document.querySelectorAll('[data-hold]').forEach((el) => el.classList.remove('on'));
 }
 addEventListener('blur', () => { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); if (AC) AC.suspend(); }
-  else if (AC) AC.resume();
+  if (document.hidden) { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); }
 });
 function bindHold(el, key) {
   const on = (e) => { e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } touch[key] = true; el.classList.add('on'); audioInit(); };
@@ -1390,6 +1397,29 @@ addEventListener('deviceorientation', (e) => {
   const deg = a === 90 ? e.beta : a === -90 || a === 270 ? -e.beta : a === 180 ? -e.gamma : e.gamma;
   tilt.x = clamp(Math.abs(deg) < 3 ? 0 : (deg - Math.sign(deg) * 3) / 22, -1, 1);
 });
+// the wheel: drag around its middle to turn it, up to about a third of a turn each way; let go and it springs back
+const wheelEl = $('#wheel'), wheelSvg = wheelEl.querySelector('svg');
+const wheelIn = { on: false, x: 0, ang: 0, last: 0, id: null };
+const angAt = (e) => { const b = wheelEl.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)); };
+wheelEl.addEventListener('pointerdown', (e) => {
+  if (game.mode !== 'drive' || wheelIn.on) return;
+  e.preventDefault(); audioInit(); wheelIn.on = true; wheelIn.id = e.pointerId; wheelIn.last = angAt(e); wheelEl.classList.add('held');
+  try { wheelEl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+});
+wheelEl.addEventListener('pointermove', (e) => {
+  if (!wheelIn.on || e.pointerId !== wheelIn.id) return;
+  e.preventDefault();
+  const a = angAt(e); let da = a - wheelIn.last; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI; wheelIn.last = a;
+  const before = Math.abs(wheelIn.ang) > 1.9;
+  wheelIn.ang = clamp(wheelIn.ang + da, -2.27, 2.27);
+  if (!before && Math.abs(wheelIn.ang) > 1.9) vibrate(10);
+  // a little dead zone in the middle, then a gentle curve so small turns stay small
+  const r = Math.max(0, Math.abs(wheelIn.ang) - 0.08) / 1.75;
+  wheelIn.x = Math.sign(wheelIn.ang) * Math.min(1, Math.pow(r, 1.3));
+  wheelSvg.style.transform = `rotate(${wheelIn.ang}rad)`;
+});
+for (const ev of ['pointerup', 'pointercancel']) wheelEl.addEventListener(ev, (e) => { if (e.pointerId === wheelIn.id) wheelRelease(); });
+function wheelRelease() { wheelIn.on = false; wheelIn.id = null; wheelIn.x = 0; wheelIn.ang = 0; wheelSvg.style.transform = ''; wheelEl.classList.remove('held'); }
 function askTilt() {
   try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(() => {}); } catch (e) { /* ignore */ }
 }
@@ -1402,41 +1432,16 @@ function applyControls() {
   $('#mini').hidden = !settings.mini;
 }
 
-// ---------- audio ----------
-let AC = null, engOsc = null, engGain = null, hornGain = null, master = null;
-function audioInit() {
-  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
-  try {
-    AC = new (window.AudioContext || window.webkitAudioContext)();
-    master = AC.createGain(); master.gain.value = settings.sound ? 1 : 0; master.connect(AC.destination);
-    engOsc = AC.createOscillator(); engOsc.type = 'sawtooth'; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
-    engGain = AC.createGain(); engGain.gain.value = 0.0; engOsc.connect(lp); lp.connect(engGain); engGain.connect(master); engOsc.start();
-    hornGain = AC.createGain(); hornGain.gain.value = 0; const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.8;
-    for (const f of C.horn) { const o = AC.createOscillator(); o.type = 'square'; o.frequency.value = f; o.connect(bp); o.start(); }
-    bp.connect(hornGain); hornGain.connect(master);
-  } catch (e) { AC = null; }
-}
-const fxVol = () => settings.volFx / 80;
-function beep(freq, dur, vol, type) {
-  if (!AC || !settings.sound) return;
-  vol *= fxVol(); if (vol <= 0.0005) return;
-  const o = AC.createOscillator(); const g = AC.createGain(); o.type = type || 'sine'; o.frequency.value = freq;
-  g.gain.setValueAtTime(vol, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + dur);
-  o.connect(g); g.connect(master); o.start(); o.stop(AC.currentTime + dur);
-}
-function otherHorn() { if (!AC) return; const f = mr(300, 520); beep(f, 0.35, 0.06, 'square'); beep(f * 1.26, 0.35, 0.05, 'square'); }
-function crashSound() {
-  if (!AC || !settings.sound) return;
-  const len = AC.sampleRate * 0.4; const buf = AC.createBuffer(1, len, AC.sampleRate); const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
-  const s = AC.createBufferSource(); s.buffer = buf; const g = AC.createGain(); g.gain.value = 0.35 * fxVol(); s.connect(g); g.connect(master); s.start();
-}
-function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignore */ } }
+// ---------- sound (see audio.js) ----------
+function audioInit() { SND.unlock(); SND.apply(settings); }
+const vibrate = (p) => SND.vibrate(p);
+SND.radio.setStations(C.radio || []);
+SND.apply(settings);
 
 // ---------- HUD ----------
 const hud = {
   speed: $('#hSpeed'), limit: $('#hLimit'), time: $('#hTime'), score: $('#hScore'), viol: $('#hViol'), dmg: $('#hDmgBar'),
-  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave')
+  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave'), gear: $('#hGear'), rpm: $('#hRpm')
 };
 let toastTimer = 0;
 function toast(msg, kind) { hud.toast.textContent = msg; hud.toast.className = 'toast show ' + (kind || ''); toastTimer = 2.4; }
@@ -1491,9 +1496,49 @@ function startTrip(opts) {
   hud.limit.textContent = C.limit;
   hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
   if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name);
+  game.count = opts.tour ? 0 : 3; game.countN = 4; player.cruise = opts.tour ? player.cruise : 0;
+  radioStart();
+}
+// 3, 2, 1, go: the car waits at the line, then sets off
+function countdown(dt) {
+  game.count -= dt;
+  const n = Math.ceil(game.count), el = $('#count');
+  if (n !== game.countN) {
+    game.countN = n; el.hidden = false; el.textContent = n > 0 ? n : T.go;
+    el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
+    SND.cue(n > 0 ? 'count' : 'go'); vibrate(n > 0 ? 8 : [12, 30, 12]);
+    if (n <= 0) { player.cruise = 40 / 3.6; setTimeout(() => { if (game.count <= 0) el.hidden = true; }, 800); }
+  }
+}
+// the car radio: picks up where you left it; the button moves to the next station and then off
+function radioStart() {
+  if (!settings.music || !(C.radio || []).length || settings.station < 0) { SND.radio.stop(); radioLabel(); return; }
+  if (SND.radio.current !== settings.station) SND.radio.play(settings.station);
+  SND.radio.pause(false);
+  radioLabel();
+}
+function radioLabel() {
+  const i = settings.music ? SND.radio.current : -1, b = $('#btnRadio');
+  $('#radioName').textContent = i >= 0 ? T['radio' + i] : T.radioOff; b.classList.toggle('on', i >= 0);
+}
+$('#btnRadio').onclick = () => {
+  audioInit();
+  if (!settings.music) { settings.music = 1; settings.station = Math.max(0, settings.station); saveSettings(); SND.apply(settings); SND.radio.play(settings.station); }
+  else { const i = SND.radio.next(); settings.station = i == null ? settings.station : i; saveSettings(); }
+  const b = $('#btnRadio'); b.classList.remove('tuning'); void b.offsetWidth; b.classList.add('tuning');
+  setTimeout(() => { radioLabel(); toast(settings.station >= 0 && settings.music ? '\u266A ' + T['radio' + settings.station] : T.radioOff); }, 380);
+};
+const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck' : k === 'pickup' || k === 'suv' ? 'van' : 'car');
+// engine, road and wind follow the car every frame; the dashboard shows the gear the engine is in
+function soundFrame() {
+  const live = game.mode === 'drive' && !game.paused;
+  const car = CARS[settings.car] || CARS[0];
+  const d = SND.drive({ live, idle: !live, kind: car.kind, kmh: player.v * 3.6, vmax: car.vmax, gas: !!player.input.gas && game.count <= 0, brake: !!player.input.brake, brakeAmt: player.input.brakeAmt || 0, cruising: player.input.cruising, slip: player.slip });
+  if (live) { hud.gear.textContent = d.gear; hud.rpm.style.width = Math.round(d.rpm * 100) + '%'; }
+  if (!live) SND.horn(false);
 }
 function finishTrip(reason) {
-  game.mode = 'done'; resetInputs();
+  game.mode = 'done'; resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
   const score = computeScore();
   const key = 'best:' + settings.dir + ':' + settings.trip;
@@ -1517,10 +1562,11 @@ function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
   if (game.mode !== 'drive' || tourEndShown()) return;
   game.paused = !game.paused;
+  SND.radio.pause(game.paused);
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { SND.radio.stop(); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -1528,6 +1574,7 @@ const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' 
 const P = {}, Q = {};
 function step(dt) {
   if (game.mode !== 'drive' || game.paused) return;
+  if (game.count > 0) { countdown(dt); return; }
   game.time += dt;
   // keyboard, buttons and the stick all feed the same three amounts
   let gasAmt = keys.ArrowUp || keys.KeyW || touch.gas ? 1 : 0;
@@ -1541,6 +1588,7 @@ function step(dt) {
     if (settings.control !== 'tilt' && Math.abs(sx) > 0.22 && !steerIn) steerIn = Math.sign(sx) * Math.min(1, (Math.abs(sx) - 0.22) / 0.45);
   }
   if (settings.control === 'tilt' && tilt.ok && !steerIn) steerIn = tilt.x;
+  if (settings.control === 'wheel' && wheelIn.on && !steerIn) steerIn = wheelIn.x;
   const gas = gasAmt > 0, brake = brakeAmt > 0;
   const horn = keys.Space || keys.KeyH || touch.horn;
   // speed: the car cruises on its own; gas raises the cruise speed, brake lowers it
@@ -1570,6 +1618,7 @@ function step(dt) {
   // curves only push you outward when you take them faster than the car's grip allows
   const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
   if (need > cap) player.lat -= Math.sign(P.k) * (need - cap) * 0.6 * dt;
+  player.slip = need > cap ? (need - cap) / cap : Math.abs(player.lat) > 2.5 && player.v > 15 ? (Math.abs(player.lat) - 2.5) / 4 : 0;
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
@@ -1590,20 +1639,27 @@ function step(dt) {
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
       if (Math.abs(dd) > 1) player.laneT = clamp(Math.round((player.d - MED - SH) / LW - 0.5 - Math.sign(dd) * 0.5), 0, LANES - 1);
-      toast(T.crash, 'bad'); crashSound(); vibrate(150); otherHorn();
+      toast(T.crash, 'bad'); SND.crash(Math.abs(player.v - c.v) * 3.6 / 50 + 0.25); vibrate([60, 30, 90]); SND.otherHorn(dd * 2, Math.abs(dt2) + 3, C.horn);
     }
     // weaving: passing close
     if (!c.passed && dt2 < -lenSum) {
       c.passed = true;
+      if (Math.abs(dd) < 6.5 && player.v > c.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5);
       if (Math.abs(dd) < 3.8 && player.v > c.v + 3 && player.v > 15) {
         game.weaves++; game.combo = game.comboT > 0 ? game.combo + 1 : 1; game.comboT = 3;
         const pts = 40 * game.combo; game.weavePts += pts;
         hud.weave.textContent = T.weave + (game.combo > 1 ? ' x' + game.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
-        if (Math.random() < 0.3) otherHorn();
+        SND.combo(game.combo); vibrate(game.combo >= 3 ? [20, 30, 20] : 12);
+        if (Math.random() < 0.3) SND.otherHorn(dd, 8, C.horn);
       }
-    } else if (c.passed && dt2 > lenSum) c.passed = false;
+    } else if (c.passed && dt2 > lenSum) { c.passed = false; if (Math.abs(dd) < 6.5 && c.v > player.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5); }
   }
   if (game.comboT > 0) game.comboT -= dt;
+  for (const c of ONC) {
+    const ahead = c.t > player.t;
+    if (c.ahead && !ahead) { const gap = Math.abs(c.d - player.d); if (gap < 16) SND.passBy(-1, sizeOf(c.kind), 1 - (gap - 3) / 15); }
+    c.ahead = ahead;
+  }
   // events
   const sNow = sOfT(player.t); const moved = player.t - prevT;
   let warnTxt = '';
@@ -1614,22 +1670,22 @@ function step(dt) {
       ev.lastT = player.t;
       const kmh = player.v * 3.6;
       if (ev.type === 'radar') {
-        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); beep(1800, 0.2, 0.08); }
-        else toast(T.radarOk, 'good');
+        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
+        else { toast(T.radarOk, 'good'); SND.cue('ok'); }
       } else if (ev.type === 'bump') {
-        if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); vibrate(80); } else toast(T.bumpOk, 'good');
+        if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); SND.bump((kmh - 35) / 15); vibrate(80); } else toast(T.bumpOk, 'good');
       } else if (ev.type === 'toll') {
-        game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); beep(1200, 0.12, 0.05);
+        game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); SND.cue('toll');
       }
     }
   }
   hud.warn.textContent = warnTxt; hud.warn.hidden = !warnTxt;
   // distance milestones
-  if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); beep(880, 0.15, 0.06); beep(1320, 0.2, 0.05); }
+  if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
   if (game.free && game.dist >= game.nextShop) { game.nextShop += 25000; player.dmg = 0; toast(T.workshop, 'good'); }
   // horn
-  if (hornGain) hornGain.gain.setTargetAtTime(horn && settings.sound ? 0.16 * fxVol() : 0, AC.currentTime, 0.02);
-  if (engOsc) { const gear = Math.floor(player.v / 13); engOsc.frequency.setTargetAtTime(55 + (player.v - gear * 13) * 7 + gear * 10, AC.currentTime, 0.05); engGain.gain.setTargetAtTime(settings.sound ? (0.035 + player.v * 0.0006) * settings.volEngine / 70 : 0, AC.currentTime, 0.1); }
+  SND.horn(horn, C.horn, CARS[settings.car].kind);
+  Object.assign(player.input, { gas, brake, brakeAmt, cruising: !gas && !brake && player.v > 2 });
   player.brakeMat.color.set(brake ? 0xff2a1a : 0x550000);
   // destination
   if (!game.free) {
@@ -1726,11 +1782,23 @@ addEventListener('resize', resize);
 
 let last = performance.now();
 const STEP = 1 / 120; let stepAcc = 0;
+function watchSpeed(ms) {
+  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { autoQ.t = autoQ.slow = autoQ.all = 0; return; }
+  autoQ.all++; if (ms > 26) autoQ.slow++; autoQ.t += ms;
+  if (autoQ.t < 3000) return;
+  // more than a quarter of frames slow for three seconds: step down once, then measure again
+  if (autoQ.slow / autoQ.all > 0.25 && autoQ.step < AUTO_SCALE.length) {
+    autoQ.step++; applyQuality();
+    if (!autoQ.told) { autoQ.told = true; toast(T.autoLow); }
+  }
+  autoQ.t = autoQ.slow = autoQ.all = 0;
+}
 function loop(now) {
+  watchSpeed(now - last);
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   // physics runs in even steps so a slow or uneven frame rate drives the same
   stepAcc += dt; while (stepAcc >= STEP) { step(STEP); stepAcc -= STEP; }
-  if ((game.mode !== 'drive' || game.paused) && AC) { hornGain.gain.setTargetAtTime(0, AC.currentTime, 0.03); engGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
+  soundFrame();
   if (game.mode === 'menu' && !game.paused) { updateTrafficIdle(dt); }
   render(dt);
   requestAnimationFrame(loop);
@@ -1770,17 +1838,21 @@ function syncSettingsUI() {
   segmented('#segQual', 'quality', applyQuality);
   segmented('#segFx', 'fx', applyControls);
   segmented('#segMini', 'mini', applyControls);
-  segmented('#segSound', 'sound', () => { if (master) master.gain.value = settings.sound ? 1 : 0; });
-  for (const [id, key] of [['#rSteer', 'steerFeel'], ['#rBrake', 'brakeFeel'], ['#rEngine', 'volEngine'], ['#rFx', 'volFx']]) {
+  segmented('#segSound', 'sound', () => SND.apply(settings));
+  segmented('#segMusic', 'music', () => { SND.apply(settings); if (game.mode === 'drive') radioStart(); });
+  segmented('#segVib', 'vib', () => { SND.apply(settings); vibrate([20, 40, 20]); });
+  segmented('#segAutoQ', 'autoQ', applyQuality);
+  $('#vibRow').hidden = !SND.canVibrate;
+  for (const [id, key] of [['#rSteer', 'steerFeel'], ['#rBrake', 'brakeFeel'], ['#rEngine', 'volEngine'], ['#rFx', 'volFx'], ['#rHorn', 'volHorn'], ['#rMusic', 'volMusic']]) {
     const el = $(id); el.value = settings[key];
-    el.oninput = () => { settings[key] = +el.value; saveSettings(); };
-    el.onchange = () => { if (key === 'volFx') beep(880, 0.12, 0.08); };
+    el.oninput = () => { settings[key] = +el.value; saveSettings(); SND.apply(settings); };
+    el.onchange = () => { if (key === 'volFx') SND.cue('ok'); if (key === 'volHorn') SND.otherHorn(0, 4, C.horn, [[0, 0.25]]); };
   }
   document.querySelectorAll('#ctlModes .mode').forEach((b) => {
     b.classList.toggle('sel', b.dataset.v === settings.control); b.setAttribute('aria-pressed', b.dataset.v === settings.control);
     b.onclick = () => { settings.control = b.dataset.v; saveSettings(); if (settings.control === 'tilt') askTilt(); syncSettingsUI(); };
   });
-  const noteKey = { stick: 'T_C_STICK_D', onehand: 'T_C_ONE_D', tilt: 'T_C_TILT_D', lanes: 'T_C_LANES_D' }[settings.control];
+  const noteKey = { stick: 'T_C_STICK_D', onehand: 'T_C_ONE_D', tilt: 'T_C_TILT_D', lanes: 'T_C_LANES_D', wheel: 'T_C_WHEEL_D' }[settings.control];
   $('#modeNote').innerHTML = S['page.' + noteKey] + (settings.control === 'tilt' && !tilt.ok && isTouch() ? '<br>' + (window.DeviceOrientationEvent ? S['page.T_TILTPERM'] : S['page.T_NOTILT']) : '');
   $('#langList').innerHTML = Object.entries(LANGS).map(([k, l]) => `<button type="button" lang="${k}" dir="${l.dir}" data-v="${k}" class="${k === LANG ? 'sel' : ''}">${l.name}</button>`).join('');
   $('#langList').querySelectorAll('button').forEach((b) => b.onclick = () => switchLang(b.dataset.v));
@@ -1893,7 +1965,7 @@ function tourCheck(inp) {
   if (st.wait === 'brake') ok = inp.brake && (player.v < tour.v0 - 3 || player.v < 1);
   if (st.wait === 'horn') ok = inp.horn;
   if (ok) {
-    tour.done = true; $('#tourTry').textContent = TT.nice; $('#tourTry').classList.add('ok'); beep(990, 0.12, 0.05);
+    tour.done = true; $('#tourTry').textContent = TT.nice; $('#tourTry').classList.add('ok'); SND.cue('ok');
     const cur = tour, ci = tour.i; setTimeout(() => { if (tour === cur && tour.i === ci) nextTourStep(); }, 900);
   }
 }

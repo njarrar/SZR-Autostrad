@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 const here = new URL('.', import.meta.url).pathname;
 const tpl = fs.readFileSync(here + 'src/template.html', 'utf8');
-const engine = fs.readFileSync(here + 'src/engine.js', 'utf8');
+const engine = fs.readFileSync(here + 'src/audio.js', 'utf8') + '\n' + fs.readFileSync(here + 'src/engine.js', 'utf8');
 const links = fs.existsSync(here + 'links.json') ? JSON.parse(fs.readFileSync(here + 'links.json', 'utf8')) : {};
 const CITIES = ['amman', 'dubai'];
 const DEFAULT_LANG = 'ar';

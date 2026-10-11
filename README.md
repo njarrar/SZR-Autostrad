@@ -84,9 +84,28 @@ Open **Settings** from the menu or the pause screen. It has four tabs:
   - **One hand**: put your thumb anywhere on the lower screen and drag.
   - **Tilt**: turn the phone like a steering wheel to change lanes, and drag up or down to change speed. On iPhone the game asks for motion access the first time.
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
-- **Sound**: sound on or off, engine volume, and horn and effects volume.
-- **Display**: graphics quality, camera distance, speed effects and the map.
+  - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
+- **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, and how strong the phone vibrates (off, light, normal or strong).
+- **Display**: graphics quality, auto quality, camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
+
+## Sound and radio
+
+Every sound is made live in the browser. There are no sound files.
+
+- **Engine.** Each car has its own engine sound. The Hilux sounds like a diesel, the Patrol like a big V8, the Huracán screams, and the Prius hums. The engine climbs through the gears as you speed up, and you hear each shift. The gear and a rev bar sit next to your speed.
+- **Road.** Tyre roar and wind grow with your speed, the tyres squeal when you brake hard or take a curve too fast, and the city hums in the background.
+- **Traffic.** You hear cars whoosh past on the side they pass you. A car stuck behind you honks, and horns sound from where the car is.
+- **Crashes.** A thump, crunching metal and, on a big hit, breaking glass.
+- **Radio.** Press the radio button under the pause button to change station. Each city has three stations, and after the last one the radio turns off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
+
+| Amman | Dubai |
+| --- | --- |
+| Dawar FM: qanun over a maqsum beat | Creek FM: oud over a khaleeji beat |
+| Jabal Radio: nay over a dabke beat | Marina Nights: dance beat with a synth lead |
+| Downtown Beats: synth over a baladi beat | Desert Wind: slow nay in maqam saba |
+
+Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a buzz on crashes, close passes, camera flashes and lane changes.
 
 ## How to play
 
@@ -146,8 +165,9 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 ## Project layout
 
 ```
-src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, sound, HUD and guided tour
-src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, limits, fines and colors
+src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
+src/audio.js           Engine, road, horn and crash sounds, phone buzz, and the car radio
+src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, radio stations, limits, fines and colors
 src/cities/dubai.js    Dubai: the same for Dubai
 lang/en.xml            English text for both games and the start page
 lang/ar.xml            Arabic text (Jordanian for Amman, Gulf for Dubai)
