@@ -183,7 +183,10 @@ const LMS = C.landmarks.map((lm) => {
 
 // ---------- three setup ----------
 const canvas = $('#gl');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+// phones skip MSAA: it costs a lot of memory bandwidth on mobile GPUs
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: !matchMedia('(pointer: coarse)').matches, powerPreference: 'high-performance' }); }
+catch (e) { $('#loading').textContent = T.noWebGL; return; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = C.look.exposure || 1;
@@ -210,9 +213,11 @@ const AUTO_SCALE = [1, 0.85, 0.72, 0.6];
 function applyQuality() {
   const hi = settings.quality === 'high';
   if (!settings.autoQ) autoQ.step = 0;
+  const shadowsWere = renderer.shadowMap.enabled;
   renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SCALE.length;
   renderer.setPixelRatio(Math.max(0.5, Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1) * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]));
-  scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
+  // materials only need a rebuild when shadows turn on or off
+  if (shadowsWere !== renderer.shadowMap.enabled) scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
   if (typeof resize === 'function') resize();
 }
 
@@ -941,10 +946,10 @@ function applyTime() {
   SND.weather(W ? C.weather : null);
 }
 // rain streaks or blowing sand, drawn flat over the picture
-const wxEl = $('#wx'), wxG = wxEl.getContext('2d'); const wxP = [];
+const wxEl = $('#wx'), wxG = wxEl.getContext('2d'); const wxP = []; let wxW = innerWidth, wxH = innerHeight;
 function drawWeather(dt) {
   if (!atm.wx || wxEl.hidden) return;
-  const w = wxEl.clientWidth, h = wxEl.clientHeight;
+  const w = wxW, h = wxH;
   if (wxEl.width !== w || wxEl.height !== h) { wxEl.width = w; wxEl.height = h; wxP.length = 0; }
   const rain = atm.wx === 'rain', n = rain ? 170 : 90, spd = game.mode === 'drive' ? player.v : 0;
   while (wxP.length < n) wxP.push({ x: Math.random() * w, y: Math.random() * h, z: 0.4 + Math.random() * 0.6, s: Math.random() });
@@ -965,7 +970,12 @@ function drawWeather(dt) {
     for (const p of wxP) {
       p.x -= (120 + spd * 6) * p.z * dt * (p.s > 0.5 ? 1 : 0.7); p.y += Math.sin(p.x * 0.01 + p.s * 6) * 20 * dt;
       if (p.x < -20) { p.x = w + 20; p.y = Math.random() * h; }
-      wxG.fillStyle = `rgba(214,178,118,${0.18 + 0.3 * p.z})`; wxG.beginPath(); wxG.arc(p.x, p.y, 1 + 2.4 * p.z, 0, 6.283); wxG.fill();
+    }
+    // one path per shade instead of one per grain
+    for (let b = 0; b < 3; b++) {
+      wxG.fillStyle = `rgba(214,178,118,${0.23 + 0.1 * b})`; wxG.beginPath();
+      for (const p of wxP) { if (Math.min(2, Math.floor((p.z - 0.4) / 0.2)) !== b) continue; const r = 1 + 2.4 * p.z; wxG.moveTo(p.x + r, p.y); wxG.arc(p.x, p.y, r, 0, 6.283); }
+      wxG.fill();
     }
   }
 }
@@ -1360,7 +1370,8 @@ function updateTraffic(dt, honk) {
 // one at a time, every minute or so; each pays points when you do the right thing
 const NITRO_SWEET = [0.7, 0.86];
 const ev = { kind: null, cars: [], t: 0, scored: false, warned: false, blockT: 0, flashT: 0, honkT: 0, last: '' };
-const glowMat = (color) => new THREE.MeshBasicMaterial({ color, toneMapped: false });
+const GLOW = new Map(); // shared, so road events don't make new materials each time
+const glowMat = (color) => { let m = GLOW.get(color); if (!m) { m = new THREE.MeshBasicMaterial({ color, toneMapped: false }); GLOW.set(color, m); } return m; };
 function evCar(kind, body, extra, lane, t, v) {
   const c = makeTrafficCar(false), cg = carGeo(kind, body, extra);
   c.mesh.geometry = cg.g; c.mesh.userData.lights.geometry = cg.lg;
@@ -1469,7 +1480,7 @@ function drawPlate() {
 }
 function buildPlayer() {
   if (player.group) {
-    player.group.traverse((o) => { if (o.userData.own) o.geometry.dispose(); });
+    player.group.traverse((o) => { if (o.userData.own) { o.geometry.dispose(); if (o.material !== brakeMat) o.material.dispose(); } });
     scene.remove(player.group);
   }
   const car = CARS[settings.car] || CARS[0];
@@ -1508,7 +1519,7 @@ addEventListener('keydown', (e) => {
   keys[e.code] = true;
   if (e.repeat && ['KeyC', 'KeyP', 'Escape'].includes(e.code)) return;
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
-  if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) game.nitroReq = true;
+  if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused) game.nitroReq = true;
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
   if ((e.code === 'KeyP' || e.code === 'Escape') && game.mode === 'drive') togglePause();
 });
@@ -1529,7 +1540,7 @@ function bindHold(el, key) {
   el.addEventListener('pointerdown', on); el.addEventListener('pointerup', off); el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off);
 }
 document.querySelectorAll('[data-hold]').forEach((el) => bindHold(el, el.dataset.hold));
-$('#btnNitro').addEventListener('pointerdown', (e) => { e.preventDefault(); game.nitroReq = true; audioInit(); });
+$('#btnNitro').addEventListener('pointerdown', (e) => { e.preventDefault(); if (game.mode === 'drive' && !game.paused) game.nitroReq = true; audioInit(); });
 
 // the stick: fixed at the bottom ("stick"), or it jumps under your thumb ("onehand", "tilt")
 const stickEl = $('#stick'), knobEl = $('#knob');
@@ -1638,13 +1649,23 @@ function prepMini() {
   miniPath = new Path2D();
   for (let i = 0; i <= N; i += 4) { const x = PX[i] * miniScale + miniOff[0], y = PZ[i] * miniScale + miniOff[1]; if (i === 0) miniPath.moveTo(x, y); else miniPath.lineTo(x, y); }
   miniPath.closePath();
+  miniBase = null;
 }
+// the road and landmarks only change when the destination does, so keep them in a second canvas
+let miniBase = null, miniDest;
 function drawMini(px, pz) {
-  const g = mctx; g.clearRect(0, 0, 300, 300);
-  g.lineJoin = 'round'; g.strokeStyle = 'rgba(0,0,0,0.35)'; g.lineWidth = 11; g.stroke(miniPath);
-  g.strokeStyle = C.look.miniRoad; g.lineWidth = 6; g.stroke(miniPath);
-  for (const lm of LMS) { g.fillStyle = (game.dest && game.dest === lm) ? C.look.miniDest : C.look.miniDot; const x = lm.x * miniScale + miniOff[0], y = lm.z * miniScale + miniOff[1]; g.beginPath(); g.arc(x, y, game.dest === lm ? 9 : 5, 0, 7); g.fill(); }
+  if (!miniBase || miniDest !== game.dest) {
+    miniDest = game.dest; miniBase = miniBase || document.createElement('canvas'); miniBase.width = miniBase.height = 300;
+    const b = miniBase.getContext('2d'); b.clearRect(0, 0, 300, 300);
+    b.lineJoin = 'round'; b.strokeStyle = 'rgba(0,0,0,0.35)'; b.lineWidth = 11; b.stroke(miniPath);
+    b.strokeStyle = C.look.miniRoad; b.lineWidth = 6; b.stroke(miniPath);
+    drawMiniDots(b);
+  }
+  const g = mctx; g.clearRect(0, 0, 300, 300); g.drawImage(miniBase, 0, 0);
   g.fillStyle = C.look.miniMe; g.strokeStyle = '#fff'; g.lineWidth = 3; g.beginPath(); g.arc(px * miniScale + miniOff[0], pz * miniScale + miniOff[1], 9, 0, 7); g.fill(); g.stroke();
+}
+function drawMiniDots(g) {
+  for (const lm of LMS) { g.fillStyle = (game.dest && game.dest === lm) ? C.look.miniDest : C.look.miniDot; const x = lm.x * miniScale + miniOff[0], y = lm.z * miniScale + miniOff[1]; g.beginPath(); g.arc(x, y, game.dest === lm ? 9 : 5, 0, 7); g.fill(); }
 }
 
 // ---------- trips ----------
@@ -1699,7 +1720,7 @@ function countdown(dt) {
 function radioStart() {
   if (!settings.music || !(C.radio || []).length || settings.station < 0) { SND.radio.stop(); radioLabel(); return; }
   if (SND.radio.current !== settings.station) SND.radio.play(settings.station);
-  SND.radio.pause(false);
+  SND.radio.pause(game.paused || game.mode !== 'drive');
   radioLabel();
 }
 function radioLabel() {
@@ -1718,10 +1739,15 @@ const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck'
 function soundFrame() {
   const live = game.mode === 'drive' && !game.paused;
   const car = CARS[settings.car] || CARS[0];
-  const d = SND.drive({ live, idle: !live, kind: car.kind, kmh: player.v * 3.6, vmax: car.vmax, gas: !!player.input.gas && game.count <= 0, brake: !!player.input.brake, brakeAmt: player.input.brakeAmt || 0, cruising: player.input.cruising, slip: player.slip });
-  if (live) { hud.gear.textContent = d.gear; hud.rpm.style.width = Math.round(d.rpm * 100) + '%'; }
-  if (!live) SND.horn(false);
+  const s = driveIn; s.live = live; s.idle = !live; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
+  s.gas = !!player.input.gas && game.count <= 0; s.brake = !!player.input.brake; s.brakeAmt = player.input.brakeAmt || 0; s.cruising = player.input.cruising; s.slip = player.slip;
+  const d = SND.drive(s);
+  if (live) { setText(hud.gear, d.gear); setStyle(hud.rpm, 'width', Math.round(d.rpm * 100) + '%'); }
+  // release the horn once when driving stops, so the settings preview can still play
+  if (!live && wasLive) { SND.horn(false); player.input.brake = false; if (player.brakeMat) player.brakeMat.color.set(0x550000); }
+  wasLive = live;
 }
+const driveIn = {}; let wasLive = false;
 function finishTrip(reason) {
   game.mode = 'done'; evEnd(); resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
@@ -1748,7 +1774,7 @@ function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.we
 function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
   if (game.mode !== 'drive' || tourEndShown()) return;
-  game.paused = !game.paused;
+  game.paused = !game.paused; game.nitroReq = false;
   SND.radio.pause(game.paused); if (game.paused) { SND.siren(null); hud.beam.dataset.c = ''; }
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
@@ -1889,41 +1915,49 @@ function step(dt) {
     }
   }
   if (!warnTxt) warnTxt = evTxt;
-  hud.warn.textContent = warnTxt; hud.warn.hidden = !warnTxt;
+  game.warnTxt = warnTxt;
   // distance milestones
   if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
   if (game.free && game.dist >= game.nextShop) { game.nextShop += 25000; player.dmg = 0; toast(T.workshop, 'good'); }
   // horn
   SND.horn(horn, C.horn, CARS[settings.car].kind);
-  Object.assign(player.input, { gas, brake, brakeAmt, cruising: !gas && !brake && player.v > 2 });
-  player.brakeMat.color.set(brake ? 0xff2a1a : 0x550000);
+  const pin = player.input; pin.gas = gas; pin.brakeAmt = brakeAmt; pin.cruising = !gas && !brake && player.v > 2;
+  if (pin.brake !== brake) { pin.brake = brake; player.brakeMat.color.set(brake ? 0xff2a1a : 0x550000); }
   // destination
   if (!game.free) {
     const remain = game.tripLen - (player.t - game.startT);
-    hud.remain.textContent = (Math.max(0, remain) / 1000).toFixed(1) + ' ' + T.km;
     if (remain <= 0) { finishTrip('arrive'); return; }
-  } else {
-    hud.remain.textContent = (game.dist / 1000).toFixed(1) + ' ' + T.km;
   }
   if (player.dmg >= 100) { player.dmg = 100; finishTrip('wreck'); return; }
   if (tour) tourCheck({ gas, brake, horn });
-  // hud
-  const kmh = Math.round(player.v * 3.6);
-  hud.speed.textContent = kmh; hud.speed.closest('.speedo').classList.toggle('over', kmh > C.limit + C.tolerance);
-  hud.time.textContent = fmtTime(game.time); hud.score.textContent = fmt(computeScore()); hud.viol.textContent = game.radar + game.crashes;
-  hud.dmg.style.width = player.dmg + '%';
-  const sweet = game.boost <= 0 && game.nitro >= NITRO_SWEET[0] && game.nitro <= NITRO_SWEET[1];
-  const nShow = game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro;
-  hud.nitro.style.setProperty('--n', nShow.toFixed(3)); hud.nitroBtn.style.setProperty('--n', nShow.toFixed(3));
-  hud.nitro.classList.toggle('sweet', sweet); hud.nitro.classList.toggle('on', game.boost > 0);
-  hud.nitroBtn.classList.toggle('sweet', sweet); hud.nitroBtn.classList.toggle('on', game.boost > 0); hud.nitroBtn.classList.toggle('ready', game.boost <= 0 && game.nitro >= 0.25);
   if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) hud.toast.className = 'toast'; }
+}
+// the HUD is drawn once per frame (physics can step several times), and each value is written only when it changes
+const hudLast = new Map();
+function setText(el, v) { v = String(v); if (hudLast.get(el) !== v) { hudLast.set(el, v); el.textContent = v; } }
+function setStyle(el, k, v) { const key = k + '|'; let m = hudLast.get(key); if (!m) hudLast.set(key, m = new Map()); if (m.get(el) !== v) { m.set(el, v); if (k[0] === '-') el.style.setProperty(k, v); else el.style[k] = v; } }
+function setClass(el, c, on) { if (el.classList.contains(c) !== on) el.classList.toggle(c, on); }
+let speedoEl = null;
+function drawHud() {
+  const kmh = Math.round(player.v * 3.6);
+  setText(hud.speed, kmh); speedoEl = speedoEl || hud.speed.closest('.speedo'); setClass(speedoEl, 'over', kmh > C.limit + C.tolerance);
+  setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(computeScore())); setText(hud.viol, game.radar + game.crashes);
+  setStyle(hud.dmg, 'width', Math.round(player.dmg) + '%');
+  const sweet = game.boost <= 0 && game.nitro >= NITRO_SWEET[0] && game.nitro <= NITRO_SWEET[1];
+  const nShow = (game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro).toFixed(2);
+  setStyle(hud.nitro, '--n', nShow); setStyle(hud.nitroBtn, '--n', nShow);
+  setClass(hud.nitro, 'sweet', sweet); setClass(hud.nitro, 'on', game.boost > 0);
+  setClass(hud.nitroBtn, 'sweet', sweet); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
+  const w = game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
+  const km = game.free ? game.dist : Math.max(0, game.tripLen - (player.t - game.startT));
+  setText(hud.remain, (km / 1000).toFixed(1) + ' ' + T.km);
 }
 function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
 const fxEl = document.querySelector('#fx');
 const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0; let camRoll = 0; let nitroFov = 0;
-const tmpEuler = new THREE.Euler();
+const tmpEuler = new THREE.Euler(); const camWant = new THREE.Vector3(), camAim = new THREE.Vector3();
+let miniTick = 0, lastSpd = '';
 function render(dt) {
   // player
   trackAt(player.t, player.d, P);
@@ -1937,22 +1971,25 @@ function render(dt) {
   sun.target.position.set(P.x, P.y, P.z); sun.position.set(P.x + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, P.z + SUN_DIR.z * 400);
   let si = 0; const setShadow = (x, y, z, yw, w, l) => { if (si >= MAXS) return; tmpQ.setFromAxisAngle(UP, yw); tmpM.compose(tmpV.set(x, y + 0.04, z), tmpQ, tmpS.set(w * 1.3, 1, l * 1.15)); shadows.setMatrixAt(si++, tmpM); };
   setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
+  // cars further than this are a pixel or two; skip drawing them
+  const far = settings.quality === 'high' ? 1100 : 700;
   for (const c of SAME) {
+    c.mesh.visible = Math.abs(c.t - player.t) < far; if (!c.mesh.visible) continue;
     trackAt(c.t, c.d, Q);
     c.mesh.position.set(Q.x, Q.y, Q.z);
     const dy = c.tl !== c.lane ? Math.sign(laneD(c.tl) - c.d) * 0.08 : 0;
     c.mesh.rotation.set(0, yawOf(Q.fx, Q.fz) - dy, 0);
     if (Math.abs(c.t - player.t) < 600) setShadow(Q.x, Q.y, Q.z, c.mesh.rotation.y, c.wid, c.len);
   }
-  for (const c of ONC) { trackAt(c.t, c.d, Q); c.mesh.position.set(Q.x, Q.y, Q.z); c.mesh.rotation.set(0, yawOf(-Q.fx, -Q.fz), 0); }
+  for (const c of ONC) { c.mesh.visible = Math.abs(c.t - player.t) < far; if (!c.mesh.visible) continue; trackAt(c.t, c.d, Q); c.mesh.position.set(Q.x, Q.y, Q.z); c.mesh.rotation.set(0, yawOf(-Q.fx, -Q.fz), 0); }
   updateMetro(dt);
   shadows.count = si; shadows.instanceMatrix.needsUpdate = true;
   // camera
   if (game.mode === 'drive' || game.mode === 'done') {
     const dist = [6.5, 9, 13][settings.cam], hgt = [2.4, 3.4, 5.2][settings.cam];
     trackAt(player.t - dist, player.d * 0.85 + laneD(0) * 0.15, Q);
-    const want = new THREE.Vector3(Q.x, Q.y + hgt, Q.z);
-    trackAt(player.t + 14, player.d, Q); const look = new THREE.Vector3(Q.x, Q.y + 1.2, Q.z);
+    const want = camWant.set(Q.x, Q.y + hgt, Q.z);
+    trackAt(player.t + 14, player.d, Q); const look = camAim.set(Q.x, Q.y + 1.2, Q.z);
     if (!camInit || camPos.distanceTo(want) > 60) { camPos.copy(want); camLook.copy(look); camInit = true; }
     camPos.lerp(want, Math.min(1, dt * 8)); camLook.lerp(look, Math.min(1, dt * 10));
     camera.position.copy(camPos);
@@ -1972,14 +2009,15 @@ function render(dt) {
   if (window.__cam) { camera.position.fromArray(window.__cam[0]); camera.lookAt(new THREE.Vector3().fromArray(window.__cam[1])); camera.fov = 55; camera.updateProjectionMatrix(); }
   scene.userData.sky.position.copy(camera.position);
   // flag wave
-  if (flagMesh) {
+  if (flagMesh && flagMesh.getWorldPosition(tmpV).distanceToSquared(camera.position) < 2500 * 2500) {
     const pa = flagMesh.geometry.attributes.position; const base = flagMesh.userData.base; const tt = performance.now() / 1000;
     for (let i = 0; i < pa.count; i++) { const x = base[i * 3]; pa.setZ(i, Math.sin(x * 0.12 - tt * 2.4) * x * 0.06 + Math.sin(base[i * 3 + 1] * 0.2 + tt) * 0.4); }
     pa.needsUpdate = true;
   }
   if (wheel) wheel.rotation.z += dt * 0.02;
-  if (game.mode === 'drive') drawMini(P.x, P.z);
-  fxEl.style.setProperty('--spd', game.mode === 'drive' ? clamp(Math.max((player.v * 3.6 - 90) / 90, game.boost > 0 ? 0.8 : 0), 0, 1).toFixed(2) : 0);
+  if (game.mode === 'drive') { drawHud(); if (settings.mini && (++miniTick & 1) === 0) drawMini(P.x, P.z); }
+  const spd = game.mode === 'drive' ? clamp(Math.max((player.v * 3.6 - 90) / 90, game.boost > 0 ? 0.8 : 0), 0, 1).toFixed(2) : '0.00';
+  if (spd !== lastSpd) { lastSpd = spd; fxEl.style.setProperty('--spd', spd); setClass(fxEl, 'fast', spd !== '0.00'); }
   renderer.render(scene, camera);
 }
 
@@ -1991,7 +2029,7 @@ function placeMenuCar() {
 }
 
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
+  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; wxW = w; wxH = h;
   // upright phone: lift the picture so the car sits above the stick
   if (h > w * 1.2 && isTouch()) camera.setViewOffset(w, h, 0, h * 0.11, w, h); else camera.clearViewOffset();
   camera.updateProjectionMatrix();
@@ -1999,7 +2037,7 @@ function resize() {
 addEventListener('resize', resize);
 
 let last = performance.now();
-const STEP = 1 / 120; let stepAcc = 0;
+const STEP = 1 / 120; let stepAcc = 0; let pauseTick = 0;
 function watchSpeed(ms) {
   if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { autoQ.t = autoQ.slow = autoQ.all = 0; return; }
   autoQ.all++; if (ms > 26) autoQ.slow++; autoQ.t += ms;
@@ -2018,6 +2056,8 @@ function loop(now) {
   stepAcc += dt; while (stepAcc >= STEP) { step(STEP); stepAcc -= STEP; }
   soundFrame();
   if (game.mode === 'menu' && !game.paused) { updateTrafficIdle(dt); }
+  // behind the pause screen the picture is still, so save the battery
+  if (game.paused && camInit && (pauseTick = (pauseTick + 1) % 15)) { requestAnimationFrame(loop); return; }
   render(dt);
   requestAnimationFrame(loop);
 }
@@ -2055,7 +2095,7 @@ function syncSettingsUI() {
   segmented('#segWx', 'weather', applyTime);
   segmented('#segHorn', 'hornSide', applyControls);
   segmented('#segHornSize', 'hornSize', applyControls);
-  segmented('#segQual', 'quality', applyQuality);
+  segmented('#segQual', 'quality', () => { autoQ.step = 0; autoQ.t = autoQ.slow = autoQ.all = 0; applyQuality(); });
   segmented('#segFx', 'fx', applyControls);
   segmented('#segMini', 'mini', applyControls);
   segmented('#segSound', 'sound', () => SND.apply(settings));
@@ -2126,6 +2166,7 @@ let tour = null;
 const TT = C.tour;
 function tourBody(st) { return isTouch() ? (st.touch || st.body) : (st.keys || st.body); }
 function startTour() {
+  if (settings.control === 'tilt') askTilt();
   showScreen(null);
   startTrip({ free: true, traffic: 0, tour: true });
   tour = { i: -1 };
@@ -2192,7 +2233,7 @@ function tourCheck(inp) {
 }
 function endTour() {
   tour = null; $('#tour').hidden = true; store.set('toured', 1);
-  game.paused = true; resetInputs(); $('#touch').hidden = true; showScreen('#tourEnd');
+  game.paused = true; SND.radio.pause(true); resetInputs(); $('#touch').hidden = true; showScreen('#tourEnd');
 }
 function skipTour() {
   tour = null; $('#tour').hidden = true; store.set('toured', 1); game.tour = false; toMenu();
@@ -2221,7 +2262,7 @@ async function boot() {
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  window.__game = { scene, trackAt, game, player, L, LMS, settings, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud };
+  window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud };
 }
 boot();
 })();

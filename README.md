@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.1** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.2** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -179,6 +179,24 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.2 (October 2026)
+
+Smoother and fewer small bugs, after a full code review.
+
+- The HUD now updates once per frame, and only the parts that changed. Each physics step in Amman takes about half the time it did.
+- Far-off traffic (more than 700 m away, or 1.1 km on High) is no longer drawn, which cuts draw calls by about a fifth.
+- The minimap keeps the road in a saved image and only draws your dot each frame. It stops drawing when the map is off.
+- Rain and dust no longer force the page to re-measure itself every frame, and dust grains draw in three batches.
+- Phones skip anti-aliasing, the game draws only a few frames a second while paused, and the speed streaks stop animating when you are slow.
+- Picking High quality in Settings now works again after the game has lowered it on its own.
+- The horn preview in Settings plays in full, and the melody horn plays all its notes.
+- Tilt steering asks for motion access when you start the tour, so it works on iPhone.
+- The radio stays quiet behind the pause screen when you turn music on there.
+- Nitro presses made while paused or in the menu no longer fire when you start driving.
+- Brake lights go off when a trip ends.
+- Road event lights reuse their materials, and the old number plate is freed when you change cars.
+- A clear message shows if the device can't draw 3D graphics, instead of a stuck loading screen.
 
 ### 2.1 (October 2026)
 

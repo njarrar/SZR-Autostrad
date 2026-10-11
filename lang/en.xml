@@ -197,6 +197,7 @@
     <string key="text.tailBehind">Car flashing behind you. Move over</string>
     <string key="text.tailOk">You let it pass +120</string>
     <string key="text.rExtra">Road events</string>
+    <string key="text.noWebGL">This device can&apos;t show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
