@@ -5,6 +5,10 @@ Two 3D driving games that run in the browser, set on real roads in two Arab citi
 - **لفّة عمّان (Amman Loop):** a 22 km loop over the hills of Amman, past Abdali, the King Abdullah I Mosque, the Citadel, the Raghadan flagpole, the Roman Theatre, Rainbow Street, Abdoun Bridge, the 7th Circle and Mecca Mall.
 - **لفّة دبي (Dubai Loop):** a 47 km loop at sunset, down Sheikh Zayed Road past the Dubai Frame, the Museum of the Future, Emirates Towers, Burj Khalifa and Mall of the Emirates to the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab and Jumeirah Mosque.
 
+Each city has its own look. Amman has white and beige stone houses stacked up the hills on both sides of the road, with balconies, black and white water tanks, solar heaters and dishes on the roofs, and steel bars left on top for the next floor. Dubai has a wall of glass towers along Sheikh Zayed Road that mirror the sunset sky, the Metro running beside the road on its raised track with gold stations and a moving train, and green lawns and palms along the road.
+
+The cars have shiny paint that reflects the sky, rounded bodies, wheel arches and five spoke wheels.
+
 The games come in English and Arabic. The Arabic text uses each city's own dialect, and the layout flips right to left.
 
 ![Amman welcome screen](docs/screenshots/amman-welcome.png)
@@ -68,6 +72,8 @@ The car drives on its own and keeps its speed. You speed it up, slow it down and
 | Pause | `P` or `Esc` | Pause button |
 
 Let go and the car holds its current speed. A quick tap left or right moves you one lane over, and the car settles in the middle of that lane. Hold it to cross several lanes.
+
+The stick lights up as you push: the yellow arc fills as you speed up, the red arc as you brake, and the arrows glow when you change lanes. A push that is mostly up or down won't change lanes by mistake. On phones that support it, you feel a small tick when you start to speed up or brake and when you move a lane. Let go and the knob springs back to the middle.
 
 ### Settings
 

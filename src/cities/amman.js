@@ -1,5 +1,5 @@
 window.CITY = {
-  id: 'amman', seed: 11, hills: true, lanes: 3, limit: 80, tolerance: 10,
+  id: 'amman', seed: 11, hills: true, valley: 28, stone: true, lanes: 3, limit: 80, tolerance: 10,
   fines: { radar: 30, crash: 50 }, tripHop: 3,
   origin: [31.962, 35.900],
   horn: [415, 520],
@@ -15,12 +15,12 @@ window.CITY = {
   defaultZone: 'stone',
   zones: {
     stone: { rows: 4, w: [12, 20], d: [12, 18], h: [9, 22], setback: 10, rowGap: 22, jitter: 4, spacing: [15, 26], skew: 0.15,
-      colors: [0xeadfca, 0xddcfb2, 0xf1e9d8, 0xd4c4a3, 0xe5d7ba, 0xcbb894], tanks: true, tree: 'mix', treeP: 0.5 },
+      colors: [0xefe9dc, 0xe6dcc6, 0xf4f0e6, 0xdcd0b6, 0xe9e1cd, 0xd6c8a8], tanks: true, balcony: true, tree: 'mix', treeP: 0.5 },
     old: { rows: 6, w: [8, 13], d: [8, 12], h: [6, 15], setback: 8, rowGap: 15, jitter: 3, spacing: [10, 15], skew: 0.3,
-      colors: [0xeadfca, 0xddcfb2, 0xd4c4a3, 0xc9a77c, 0xbfa07a, 0xe9e2d4], tanks: true, tree: 'cypress', treeP: 0.2 },
+      colors: [0xebe3d0, 0xddd1b6, 0xd8caa9, 0xcdb48c, 0xc9b08a, 0xeee8db], tanks: true, balcony: true, tree: 'cypress', treeP: 0.2 },
     tower: { rows: 4, w: [12, 20], d: [12, 18], h: [10, 24], setback: 12, rowGap: 26, jitter: 4, spacing: [18, 30], skew: 0.1,
-      colors: [0xeadfca, 0xddcfb2, 0xf1e9d8, 0xd4c4a3], tanks: true, tree: 'mix', treeP: 0.4,
-      tallP: 0.3, tw: [22, 34], th: [40, 170], tallColors: [0x7fa3bd, 0x9bb7c9, 0x5f7f97, 0xc9d3db] }
+      colors: [0xefe9dc, 0xe6dcc6, 0xf4f0e6, 0xdcd0b6], tanks: true, balcony: true, tree: 'mix', treeP: 0.4,
+      tallP: 0.07, tw: [20, 28], th: [30, 70], tallColors: [0xe4dccb, 0xd9ceb6, 0x8fa9bb] }
   },
   radars: [0.08, 0.3, 0.55, 0.8],
   bumps: [0.18, 0.43, 0.68, 0.9],

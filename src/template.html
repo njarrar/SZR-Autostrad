@@ -118,15 +118,30 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #touch[data-mode=onehand] #stick, #touch[data-mode=tilt] #stick { pointer-events: none; opacity: .55; transition: opacity .15s; }
 #touch.held #stick { opacity: 1; }
 #stick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-#stick .base { fill: var(--hud); }
-#stick .rim { fill: none; stroke: rgba(255,255,255,.28); stroke-width: 2.5; }
-#stick .up { fill: none; stroke: #f6c445; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1 11; }
-#stick .dn { fill: none; stroke: #e2452b; stroke-width: 6; stroke-linecap: round; }
-#stick .chev { fill: none; stroke: rgba(255,255,255,.65); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
-#stick.gas .up { stroke-dasharray: none; filter: drop-shadow(0 0 6px #f6c445); }
-#stick.brake .dn { filter: drop-shadow(0 0 6px #e2452b); }
-#knob { position: absolute; left: 50%; top: 50%; width: 38%; height: 38%; margin: -19% 0 0 -19%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #ffffff, #d9dde2 55%, #a9b0b8); box-shadow: 0 4px 14px rgba(0,0,0,.45), inset 0 -3px 6px rgba(0,0,0,.18); }
-#stick .lbl { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--hud-ink); text-shadow: 0 1px 3px rgba(0,0,0,.7); white-space: nowrap; pointer-events: none; }
+#stick .base { fill: rgba(16,18,24,.38); }
+#stick .rim { fill: none; stroke: rgba(255,255,255,.34); stroke-width: 2; }
+#stick::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 52%, rgba(255,255,255,.07) 70%, rgba(255,255,255,.16) 98%), radial-gradient(circle at 35% 25%, rgba(255,255,255,.12), rgba(255,255,255,0) 45%);
+  box-shadow: 0 6px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.18); }
+#stick .dead { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 1.5; stroke-dasharray: 3 5; }
+#stick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .32; }
+#stick .trk.up { stroke: #f6c445; } #stick .trk.dn { stroke: #ff5a3c; }
+#stick .fil { fill: none; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 0 200; }
+#stick .fil.up { stroke: #ffd256; filter: drop-shadow(0 0 5px rgba(255,210,86,.9)); }
+#stick .fil.dn { stroke: #ff5a3c; filter: drop-shadow(0 0 5px rgba(255,90,60,.9)); }
+#stick .chev path { fill: none; stroke: rgba(255,255,255,.5); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; transition: stroke .12s, opacity .12s; }
+#stick .chev path:last-child { opacity: .35; }
+#stick.left .chev.l path, #stick.right .chev.r path { stroke: #fff; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,.8)); }
+#knob { position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; margin: -20% 0 0 -20%; border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 44%, rgba(0,0,0,.14) 47%, rgba(0,0,0,0) 52%), radial-gradient(circle at 38% 30%, #ffffff, #eef0f3 30%, #c9ced5 70%, #9aa2ac);
+  box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 0 2px rgba(255,255,255,.25), inset 0 -4px 8px rgba(0,0,0,.2), inset 0 2px 3px rgba(255,255,255,.9);
+  transition: transform .26s cubic-bezier(.34,1.56,.64,1), background-color .15s; will-change: transform; }
+#knob::after { content: ''; position: absolute; inset: 36%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #c7ccd3); box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+#touch.held #knob { transition: none; }
+#stick.gas #knob { box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 0 3px rgba(255,210,86,.85), 0 0 18px rgba(255,210,86,.6), inset 0 -4px 8px rgba(0,0,0,.2), inset 0 2px 3px rgba(255,255,255,.9); }
+#stick.brake #knob { box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 0 3px rgba(255,90,60,.85), 0 0 18px rgba(255,90,60,.6), inset 0 -4px 8px rgba(0,0,0,.2), inset 0 2px 3px rgba(255,255,255,.9); }
+#stick .lbl { position: absolute; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 700; color: var(--hud-ink); text-shadow: 0 1px 3px rgba(0,0,0,.7); white-space: nowrap; pointer-events: none; opacity: .75; transition: opacity .12s, color .12s; }
+#stick.gas .lbl.u { opacity: 1; color: #ffd256; } #stick.brake .lbl.d { opacity: 1; color: #ff7a5c; }
 #stick .lbl.u { top: 7%; } #stick .lbl.d { bottom: 7%; }
 .lanesUI { position: absolute; inset: auto 0 var(--pad) 0; padding: 0 14px; display: none; justify-content: space-between; align-items: flex-end; pointer-events: none; }
 #touch[data-mode=lanes] .lanesUI { display: flex; }
@@ -300,10 +315,12 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   <div id="ctl"></div>
   <div id="stick" role="img" aria-label="__T_C_STICK__">
     <svg viewBox="-100 -100 200 200" aria-hidden="true">
-      <circle class="base" r="92"/><circle class="rim" r="92"/>
-      <path class="up" d="M-52 -60 A80 80 0 0 1 52 -60"/>
-      <path class="dn" d="M-46 66 A80 80 0 0 0 46 66"/>
-      <path class="chev" d="M-66 -12 L-78 0 L-66 12"/><path class="chev" d="M66 -12 L78 0 L66 12"/>
+      <circle class="base" r="94"/><circle class="rim" r="94"/><circle class="dead" r="26"/>
+      <path class="trk up" d="M-46 -65.5 A80 80 0 0 1 46 -65.5"/><path class="trk dn" d="M-46 65.5 A80 80 0 0 0 46 65.5"/>
+      <path class="fil up" pathLength="100" d="M0 -80 A80 80 0 0 0 -46 -65.5"/><path class="fil up" pathLength="100" d="M0 -80 A80 80 0 0 1 46 -65.5"/>
+      <path class="fil dn" pathLength="100" d="M0 80 A80 80 0 0 1 -46 65.5"/><path class="fil dn" pathLength="100" d="M0 80 A80 80 0 0 0 46 65.5"/>
+      <g class="chev l"><path d="M-58 -11 L-70 0 L-58 11"/><path d="M-70 -11 L-82 0 L-70 11"/></g>
+      <g class="chev r"><path d="M58 -11 L70 0 L58 11"/><path d="M70 -11 L82 0 L70 11"/></g>
     </svg>
     <div id="knob"></div>
     <span class="lbl u">__T_GAS__</span><span class="lbl d">__T_BRAKE__</span>
