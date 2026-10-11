@@ -247,6 +247,9 @@
     <string key="text.walkDog">The dog is after you! Run!</string>
     <string key="text.walkDogGone">The dog gave up</string>
     <string key="text.walkWoof">Woof woof!</string>
+    <string key="text.walkFalafel">Falafel sandwich! One bump forgiven</string>
+    <string key="text.walkLemon">Lemon and mint! Walking faster</string>
+    <string key="text.walkCoffee">Coffee! Everyone makes way</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
