@@ -161,7 +161,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #touch[data-mode=lanes] .lanesUI { display: flex; }
 #touch[data-mode=lanes] #stick { display: none; }
 .lanesUI .grp { display: flex; gap: 10px; pointer-events: auto; }
-.tb { width: 74px; height: 74px; border-radius: 18px; border: 0; background: var(--hud); color: var(--hud-ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; touch-action: none; }
+.tb { width: 74px; height: 74px; border-radius: 18px; border: 2px solid rgba(255,255,255,.22); box-shadow: 0 6px 16px rgba(0,0,0,.3); background: var(--hud); color: var(--hud-ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; touch-action: none; }
 .tb.on { background: var(--accent); color: var(--on-accent); }
 .tb.gas { height: 110px; }
 .horn { position: absolute; bottom: calc(var(--pad) + 6px); right: 16px; width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22); background: var(--hud); color: var(--hud-ink); display: grid; place-items: center; pointer-events: auto; touch-action: none; }
@@ -170,6 +170,38 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #touch.horn-left .horn { right: auto; left: 16px; }
 #touch.horn-small .horn { width: 58px; height: 58px; }
 #touch[data-mode=lanes] .horn { bottom: calc(var(--pad) + 124px); }
+
+.gearbox { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 26px; }
+.gearbox b { font-family: var(--display); font-size: 20px; line-height: 1; color: var(--accent-hud); }
+.rpm { width: 26px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.2); overflow: hidden; }
+.rpm i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #7fd36b, #f6c445 70%, #e2452b); }
+#btnRadio { pointer-events: auto; position: absolute; top: calc(env(safe-area-inset-top, 0px) + 250px); inset-inline-end: 12px; background: var(--hud); color: var(--hud-ink); border: 0; border-radius: 10px; padding: 6px 10px; display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 12px; max-width: 46vw; }
+#btnRadio svg { width: 20px; height: 20px; flex: none; }
+#btnRadio span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#btnRadio.on { color: var(--accent-hud); }
+#btnRadio.tuning { animation: tuneGlow .7s ease-out; }
+@keyframes tuneGlow { 0% { box-shadow: 0 0 0 0 rgba(255,210,86,.9); } 100% { box-shadow: 0 0 0 14px rgba(255,210,86,0); } }
+#count { position: fixed; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; font-family: var(--display); font-size: min(30vmin, 180px); color: var(--accent-hud); text-shadow: 0 4px 24px rgba(0,0,0,.55), 0 0 2px #000; }
+#count.tick { animation: cnt .9s ease-out; }
+@keyframes cnt { 0% { opacity: 0; transform: scale(1.6); } 20% { opacity: 1; transform: scale(1); } 80% { opacity: 1; } 100% { opacity: 0; transform: scale(.9); } }
+/* the wheel: turn it with one thumb; the pedals sit on the other side */
+#wheel { position: absolute; display: none; width: min(46vmin, 200px); height: min(46vmin, 200px); left: 16px; bottom: var(--pad); pointer-events: auto; touch-action: none; }
+#wheel svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 6px 14px rgba(0,0,0,.4)); transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+#wheel.held svg { transition: none; }
+#wheel .rimO { fill: none; stroke: rgba(22,24,30,.85); stroke-width: 16; }
+#wheel .rimO + .rimI { stroke: rgba(255,255,255,.28); }
+#wheel::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; border: 2px solid rgba(255,255,255,.3); pointer-events: none; }
+#wheel .rimI { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 2; }
+#wheel .spoke { fill: rgba(30,33,40,.85); stroke: rgba(255,255,255,.22); stroke-width: 1.5; }
+#wheel .hub { fill: rgba(40,44,52,.95); stroke: rgba(255,255,255,.3); stroke-width: 2; }
+#wheel .mark { fill: var(--accent-hud); }
+#touch[data-mode=wheel] #wheel { display: block; }
+#touch[data-mode=wheel] #stick { display: none; }
+#touch[data-mode=wheel] .lanesUI { display: flex; justify-content: flex-end; }
+#touch[data-mode=wheel] .lanesUI .grp:first-child { display: none; }
+#touch[data-mode=wheel] .horn { bottom: calc(var(--pad) + 124px); }
+#touch[data-mode=wheel].horn-left #wheel { left: auto; right: 16px; }
+#touch[data-mode=wheel].horn-left .lanesUI { justify-content: flex-start; }
 
 /* ---------- results / pause ---------- */
 #result, #pause { justify-content: center; align-items: center; }
@@ -259,6 +291,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .speedo .num { font-size: 36px; }
   #mini { width: 92px; height: 92px; }
   #btnPause { top: calc(env(safe-area-inset-top, 0px) + 180px); }
+  #btnRadio { top: calc(env(safe-area-inset-top, 0px) + 220px); }
 }
 
 /* phone on its side: short screen, so the HUD and sheets get compact */
@@ -275,6 +308,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .dmg { width: 80px; }
   #mini { top: calc(env(safe-area-inset-top, 0px) + 60px); width: 76px; height: 76px; inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); }
   #btnPause { top: calc(env(safe-area-inset-top, 0px) + 144px); inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); padding: 5px 12px; }
+  #btnRadio { top: calc(env(safe-area-inset-top, 0px) + 180px); inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); padding: 4px 8px; }
+  #touch[data-mode=wheel] .horn { bottom: calc(var(--pad) + 96px); }
+  #wheel { width: min(40vmin, 160px); height: min(40vmin, 160px); left: max(16px, env(safe-area-inset-left, 0px)); }
   #touch { --stick: min(44vmin, 168px); --pad: calc(env(safe-area-inset-bottom, 0px) + 8px); }
   /* sideways the stick sits under the left thumb and the horn under the right, so the car stays in view */
   #touch[data-mode=stick] #stick { left: max(24px, env(safe-area-inset-left, 0px)); transform: none; }
@@ -306,11 +342,12 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 <canvas id="gl" aria-label="Driving through Amman"></canvas>
 <div id="fx" aria-hidden="true"><div class="vig"></div><div class="streaks"></div></div>
 <div id="flash"></div>
+<div id="count" aria-live="assertive" hidden></div>
 
 <div id="hud" hidden>
   <div class="hbar">
     <div class="trip-hud"><span class="lbl"><span data-t="page.T_NEXT">رايحين على</span></span><b id="hNext"></b><span class="rem" id="hRemain">0.0</span></div>
-    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit"><span data-t="page.T_KMH">كم/س</span></div></div></div>
+    <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit"><span data-t="page.T_KMH">كم/س</span></div></div><div class="gearbox"><b id="hGear">1</b><div class="rpm"><i id="hRpm"></i></div></div></div>
   </div>
   <div class="stats">
     <div class="chip"><span><span data-t="page.T_TIME">الوقت</span></span><b id="hTime">0:00</b></div>
@@ -320,6 +357,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
   <button id="btnPause" type="button"><span data-t="page.T_PAUSE">وقّف</span></button>
+  <button id="btnRadio" type="button" aria-label="راديو" data-t-aria="page.T_RADIO"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8 17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14.5" r="3" fill="currentColor"/><path d="M5.5 12.5h5M5.5 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="radioName"></span></button>
   <div id="warn" hidden></div>
   <div id="hWeave"></div>
   <div id="toast" class="toast"></div>
@@ -338,6 +376,14 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     </svg>
     <div id="knob"></div>
     <span class="lbl u"><span data-t="page.T_GAS">بنزين</span></span><span class="lbl d"><span data-t="page.T_BRAKE">بريك</span></span>
+  </div>
+  <div id="wheel" role="img" aria-label="دركسيون" data-t-aria="page.T_C_WHEEL">
+    <svg viewBox="-100 -100 200 200" aria-hidden="true">
+      <circle class="rimO" r="90"/><circle class="rimI" r="72"/>
+      <path class="spoke" d="M-72 4 C-40 4 -26 18 -18 30 L18 30 C26 18 40 4 72 4 L72 -8 C40 -8 24 -14 0 -14 C-24 -14 -40 -8 -72 -8 Z"/>
+      <path class="spoke" d="M-14 30 L-10 72 L10 72 L14 30 Z"/>
+      <circle class="hub" r="22"/><path class="mark" d="M-6 -88 h12 v14 h-12 z"/>
+    </svg>
   </div>
   <div class="lanesUI">
     <div class="grp"><button class="tb" data-hold="left" type="button" aria-label="يسار" data-t-aria="page.T_LEFT">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="يمين" data-t-aria="page.T_RIGHT">&#9654;</button></div>
@@ -413,7 +459,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="setHead"><h2><span data-t="page.T_SETTINGS">الإعدادات</span></h2><button class="btn" id="setClose" type="button"><span data-t="page.T_CLOSE">تمام</span></button></div>
     <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="ctl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><path d="M3.5 10.5h6M14.5 10.5h6M12 14.5V21" stroke="currentColor" stroke-width="2.2"/></svg><span><span data-t="page.T_SET_CONTROLS">التحكم</span></span></button><button type="button" role="tab" data-tab="snd"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span><span data-t="page.T_SET_SOUND">الصوت</span></span></button><button type="button" role="tab" data-tab="dsp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 20h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span><span data-t="page.T_SET_DISPLAY">الشاشة</span></span></button><button type="button" role="tab" data-tab="lng"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span><span data-t="page.T_LANG">اللغة</span></span></button></div>
     <div class="panel" data-panel="ctl">
-      <div><div class="label"><span data-t="page.T_CTRL">طريقة السواقة على شاشة اللمس</span></div><div class="modes" id="ctlModes"><button type="button" class="mode" data-v="stick"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="20" cy="15" r="6" fill="currentColor"/></svg><b><span data-t="page.T_C_STICK">عصا</span></b></button><button type="button" class="mode" data-v="onehand"><svg viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20h12M14 20l3-3M14 20l3 3M26 20l-3-3M26 20l-3 3" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b><span data-t="page.T_C_ONE">إيد وحدة</span></b></button><button type="button" class="mode" data-v="tilt"><svg viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="28" rx="4" transform="rotate(-20 20 20)" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5 14a16 16 0 0 0 0 12M35 14a16 16 0 0 1 0 12" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b><span data-t="page.T_C_TILT">إمالة</span></b></button><button type="button" class="mode" data-v="lanes"><svg viewBox="0 0 40 40"><path d="M10 36 15 4M30 36 25 4" stroke="currentColor" stroke-width="3" fill="none"/><path d="M20 30v-6M20 18v-6" stroke="currentColor" stroke-width="2.4"/></svg><b><span data-t="page.T_C_LANES">أزرار</span></b></button></div><p class="note" id="modeNote"></p></div>
+      <div><div class="label"><span data-t="page.T_CTRL">طريقة السواقة على شاشة اللمس</span></div><div class="modes" id="ctlModes"><button type="button" class="mode" data-v="stick"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="20" cy="15" r="6" fill="currentColor"/></svg><b><span data-t="page.T_C_STICK">عصا</span></b></button><button type="button" class="mode" data-v="onehand"><svg viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20h12M14 20l3-3M14 20l3 3M26 20l-3-3M26 20l-3 3" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b><span data-t="page.T_C_ONE">إيد وحدة</span></b></button><button type="button" class="mode" data-v="tilt"><svg viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="28" rx="4" transform="rotate(-20 20 20)" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5 14a16 16 0 0 0 0 12M35 14a16 16 0 0 1 0 12" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b><span data-t="page.T_C_TILT">إمالة</span></b></button><button type="button" class="mode" data-v="lanes"><svg viewBox="0 0 40 40"><path d="M10 36 15 4M30 36 25 4" stroke="currentColor" stroke-width="3" fill="none"/><path d="M20 30v-6M20 18v-6" stroke="currentColor" stroke-width="2.4"/></svg><b><span data-t="page.T_C_LANES">أزرار</span></b></button><button type="button" class="mode" data-v="wheel"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3.4"/><circle cx="20" cy="21" r="4" fill="currentColor"/><path d="M5.5 19h10M24.5 19h10M20 25v10" stroke="currentColor" stroke-width="3"/></svg><b><span data-t="page.T_C_WHEEL">دركسيون</span></b></button></div><p class="note" id="modeNote"></p></div>
       <div><div class="label"><label for="rSteer"><span data-t="page.T_STEERFEEL">الدركسيون</span></label></div><div class="slider"><span><span data-t="page.T_LIGHT">خفيف</span></span><input type="range" id="rSteer" min="0" max="100" step="1"><span><span data-t="page.T_HEAVY">ثقيل</span></span></div></div>
       <div><div class="label"><label for="rBrake"><span data-t="page.T_BRAKEFEEL">البريك</span></label></div><div class="slider"><span><span data-t="page.T_SOFT">ناعم</span></span><input type="range" id="rBrake" min="0" max="100" step="1"><span><span data-t="page.T_HARD">قوي</span></span></div></div>
       <div><div class="label"><span data-t="page.T_HORNSIDE">مكان الزامور</span></div><div class="seg segHorn" id="segHorn"><button type="button" data-v="left"><span data-t="page.T_LEFT">يسار</span></button><button type="button" data-v="right"><span data-t="page.T_RIGHT">يمين</span></button></div></div>
@@ -423,10 +469,16 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="panel" data-panel="snd" hidden>
       <div><div class="label"><span data-t="page.T_SOUND">الصوت</span></div><div class="seg segSound" id="segSound"><button type="button" data-v="1"><span data-t="page.T_ON">شغّال</span></button><button type="button" data-v="0"><span data-t="page.T_OFF">مسكّر</span></button></div></div>
       <div><div class="label"><label for="rEngine"><span data-t="page.T_VOLENG">صوت الماتور</span></label></div><div class="slider"><span><span data-t="page.T_QUIET">واطي</span></span><input type="range" id="rEngine" min="0" max="100" step="1"><span><span data-t="page.T_LOUD">عالي</span></span></div></div>
-      <div><div class="label"><label for="rFx"><span data-t="page.T_VOLFX">الزامور والمؤثرات</span></label></div><div class="slider"><span><span data-t="page.T_QUIET">واطي</span></span><input type="range" id="rFx" min="0" max="100" step="1"><span><span data-t="page.T_LOUD">عالي</span></span></div></div>
+      <div><div class="label"><label for="rHorn"><span data-t="page.T_VOLHORN">الزامور</span></label></div><div class="slider"><span><span data-t="page.T_QUIET">واطي</span></span><input type="range" id="rHorn" min="0" max="100" step="1"><span><span data-t="page.T_LOUD">عالي</span></span></div></div>
+      <div><div class="label"><label for="rFx"><span data-t="page.T_VOLFX">المؤثرات</span></label></div><div class="slider"><span><span data-t="page.T_QUIET">واطي</span></span><input type="range" id="rFx" min="0" max="100" step="1"><span><span data-t="page.T_LOUD">عالي</span></span></div></div>
+      <div><div class="label"><span data-t="page.T_MUSIC">أغاني الراديو</span></div><div class="seg" id="segMusic"><button type="button" data-v="1"><span data-t="page.T_ON">شغّال</span></button><button type="button" data-v="0"><span data-t="page.T_OFF">مسكّر</span></button></div></div>
+      <div><div class="label"><label for="rMusic"><span data-t="page.T_VOLMUSIC">صوت الراديو</span></label></div><div class="slider"><span><span data-t="page.T_QUIET">واطي</span></span><input type="range" id="rMusic" min="0" max="100" step="1"><span><span data-t="page.T_LOUD">عالي</span></span></div></div>
+      <div id="vibRow"><div class="label"><span data-t="page.T_VIB">الاهتزاز</span></div><div class="seg" id="segVib"><button type="button" data-v="0"><span data-t="page.T_OFF">مسكّر</span></button><button type="button" data-v="1"><span data-t="page.T_VIB1">خفيف</span></button><button type="button" data-v="2"><span data-t="page.T_VIB2">عادي</span></button><button type="button" data-v="3"><span data-t="page.T_VIB3">قوي</span></button></div></div>
+      <p class="note"><span data-t="page.T_RADIONOTE">كبّس زر الراديو وانت سايق عشان تغيّر المحطة. الموسيقى بتنعزف وانت ماشي، فكل مشوار إله لحن.</span></p>
     </div>
     <div class="panel" data-panel="dsp" hidden>
       <div><div class="label"><span data-t="page.T_QUALITY">الرسومات</span></div><div class="seg segQual" id="segQual"><button type="button" data-v="high"><span data-t="page.T_QHIGH">عالية</span></button><button type="button" data-v="low"><span data-t="page.T_QLOW">سريعة</span></button></div></div>
+      <div><div class="label"><span data-t="page.T_AUTOQ">جودة تلقائية</span></div><div class="seg" id="segAutoQ"><button type="button" data-v="1"><span data-t="page.T_ON">شغّال</span></button><button type="button" data-v="0"><span data-t="page.T_OFF">مسكّر</span></button></div><p class="note"><span data-t="page.T_AUTOQ_D">إذا اللعبة ثقلت، بتخفف الرسم عشان تضل سلسة.</span></p></div>
       <div><div class="label"><span data-t="page.T_CAM">الكاميرا</span></div><div class="seg segCam" id="segCam"><button type="button" data-v="0"><span data-t="page.T_CAM0">قريبة</span></button><button type="button" data-v="1"><span data-t="page.T_CAM1">عادية</span></button><button type="button" data-v="2"><span data-t="page.T_CAM2">بعيدة</span></button></div></div>
       <div><div class="label"><span data-t="page.T_SPEEDFX">مؤثرات السرعة</span></div><div class="seg " id="segFx"><button type="button" data-v="1"><span data-t="page.T_SHOW">بيّن</span></button><button type="button" data-v="0"><span data-t="page.T_HIDE">خبّي</span></button></div></div>
       <div><div class="label"><span data-t="page.T_MINIMAP">الخريطة</span></div><div class="seg " id="segMini"><button type="button" data-v="1"><span data-t="page.T_SHOW">بيّن</span></button><button type="button" data-v="0"><span data-t="page.T_HIDE">خبّي</span></button></div></div>
@@ -457,7 +509,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"اللغة","page.T_SET_CONTROLS":"التحكم","page.T_SET_SOUND":"الصوت","page.T_SET_DISPLAY":"الشاشة","page.T_CLOSE":"تمام","page.T_CTRL":"طريقة السواقة على شاشة اللمس","page.T_C_STICK":"عصا","page.T_C_ONE":"إيد وحدة","page.T_C_TILT":"إمالة","page.T_C_LANES":"أزرار","page.T_STEERFEEL":"الدركسيون","page.T_LIGHT":"خفيف","page.T_HEAVY":"ثقيل","page.T_BRAKEFEEL":"البريك","page.T_SOFT":"ناعم","page.T_HARD":"قوي","page.T_HORNSIZE":"حجم زر الزامور","page.T_SMALL":"صغير","page.T_NORMAL":"عادي","page.T_VOLENG":"صوت الماتور","page.T_VOLFX":"الزامور والمؤثرات","page.T_QUIET":"واطي","page.T_LOUD":"عالي","page.T_SPEEDFX":"مؤثرات السرعة","page.T_MINIMAP":"الخريطة","page.T_SHOW":"بيّن","page.T_HIDE":"خبّي","page.title":"لفّة عمّان","page.name":"لفّة عمّان","page.eyebrow":"Amman · عمّان","page.alt":"Driving through Amman","page.blurb":"من العبدلي للقلعة لجبل عمّان، بين الطلعات والنزلات. انتبه عالرادار والمطبات، وحشّر بين السيارات بس بدون ما تضرب.","page.T_NEXT":"رايحين على","page.T_KMH":"كم/س","page.T_TIME":"الوقت","page.T_SCORE":"النقاط","page.T_VIOL":"مخالفات","page.T_DMG":"الضرر","page.T_PAUSE":"وقّف","page.T_HORN":"زامور","page.T_BRAKE":"بريك","page.T_GAS":"بنزين","page.T_DIR":"الاتجاه","page.T_CW":"مع عقارب الساعة","page.T_CCW":"عكس عقارب الساعة","page.T_TRIP":"المشوار","page.T_TRAFFIC":"أزمة السير","page.T_TR0":"فاضية","page.T_TR1":"عادية","page.T_TR2":"أزمة","page.T_GO":"يلا نطلع","page.T_GARAGE":"الكراج","page.T_SETTINGS":"الإعدادات","page.T_CARS":"السيارة","page.T_COLOR":"اللون","page.T_FIXEDCOLOR":"التكسي لونه أصفر وبس","page.T_PLATE":"النمرة","page.T_CAM":"الكاميرا","page.T_CAM0":"قريبة","page.T_CAM1":"عادية","page.T_CAM2":"بعيدة","page.T_HORNSIDE":"مكان الزامور","page.T_LEFT":"يسار","page.T_RIGHT":"يمين","page.T_SOUND":"الصوت","page.T_ON":"شغّال","page.T_OFF":"مسكّر","page.T_KEYS":"السواقة بالأسهم أو \u003ckbd>WASD\u003c/kbd> · الزامور \u003ckbd>Space\u003c/kbd> · الكاميرا \u003ckbd>C\u003c/kbd> · وقوف \u003ckbd>P\u003c/kbd>","page.T_MAPNOTE":"الطريق مرسوم بشكل تقريبي على أماكن حقيقية بعمّان. الزامور بخلّي السيارة اللي قدامك توسّعلك.","page.T_PAUSED":"استراحة","page.T_RESUME":"كمّل","page.T_QUIT":"رجوع للقائمة","page.T_AGAIN":"عيدها","page.T_NEWTRIP":"مشوار ثاني","page.T_HOWTO":"كيف ألعب؟","page.T_R1":"وصّل مشوارك","page.T_R1S":"اختار مشوار بين معالم عمّان، من العبدلي للقلعة لمكة مول، ووصل لآخره.","page.T_R2":"حشّر وجمّع نقاط","page.T_R2S":"كل ما تتجاوز سيارة من قريب وبسرعة بتاخذ نقاط، وإذا ورا بعض بتتضاعف.","page.T_R3":"انتبه للمخالفات","page.T_R3S":"الرادار بصوّر فوق 90 كم/س، والمطبات والحوادث بتخرّب السيارة.","page.T_WTOUR":"جولة تعليمية","page.T_WSKIP":"بعرف أسوق، بدي ألعب","page.T_TSKIP":"تخطّي الجولة","page.T_TNEXT":"التالي","page.T_TEND":"جاهز!","page.T_TENDS":"خلصت الجولة. بدك تختار مشوار ولا تكمّل سواقة حرة؟","page.T_TEMENU":"اختار مشوار","page.T_TEDRIVE":"كمّل سواقة حرة","page.T_QUALITY":"الرسومات","page.T_QHIGH":"عالية","page.T_QLOW":"سريعة","page.otherLabel":"جرّب دبي","text.stSpeed":"سرعة","text.stAccel":"تسارع","text.stGrip":"ثبات","text.stTough":"تحمّل","text.meters":"م","text.km":"كم","text.kmh":"كم/س","text.to":"على","text.bumpSign":"مطب","text.tollName":"","text.tollPrice":"","text.freeDrive":"سواقة حرة","text.freeSub":"بلا نهاية، صيانة كل 25 كم","text.freeHint":"سوق براحتك، كل 25 كم في صيانة","text.fullLap":"لفّة كاملة","text.goTo":"يلا على","text.arrived":"وصلنا!","text.wrecked":"السيارة خربت","text.wreckedSub":"بدها ونش","text.rTime":"الوقت","text.rDist":"المسافة","text.rAvg":"معدل السرعة","text.rWeave":"تحشيرات","text.rRadar":"رادار","text.rCrash":"حوادث","text.rFines":"المخالفات","text.newBest":"رقم قياسي جديد","text.best":"أحسن نتيجة","text.rateTop":"معلّم سواقة!","text.rateMid":"مش بطال","text.rateBad":"بدك دروس سواقة","text.scrape":"حكّيت بالحاجز!","text.crash":"ضربت سيارة!","text.radarAhead":"رادار بعد","text.flash":"صوّرك الرادار!","text.radarOk":"مرقت عالرادار تمام","text.bumpHit":"مطب! خفّف شوي","text.bumpOk":"نزلت عالمطب بهدوء","text.bonus":"+500 كل 10 كم","text.workshop":"صيانة: رجعت السيارة جديدة","text.weave":"تحشيرة","text.loadRoad":"بنرسم الشارع...","text.loadCity":"بنبني عمّان...","text.currency":"د.أ","tour.tryIt":"جرّبها هلأ","tour.nice":"تمام!","tour.0.title":"دوس بنزين","tour.0.keys":"اضغط على \u003ckbd>↑\u003c/kbd> أو \u003ckbd>W\u003c/kbd> لحد ما السرعة تطلع فوق 45. لما تشيل إيدك السيارة بتضل ماشية على نفس السرعة.","tour.0.touch":"ادفع العصا لفوق لحد ما السرعة تطلع فوق 45. لما تتركها السيارة بتضل ماشية على نفس السرعة.","tour.1.title":"غيّر المسرب","tour.1.keys":"استعمل \u003ckbd>←\u003c/kbd> و\u003ckbd>→\u003c/kbd> (أو \u003ckbd>A\u003c/kbd> و\u003ckbd>D\u003c/kbd>) وانقل لمسرب ثاني.","tour.1.touch":"حرّك العصا يمين أو شمال وانقل لمسرب ثاني. دفشة قصيرة بتنقلك مسرب واحد.","tour.2.title":"البريك","tour.2.keys":"اضغط \u003ckbd>↓\u003c/kbd> أو \u003ckbd>S\u003c/kbd> وخفّف السرعة. السيارة بتضل على السرعة الجديدة.","tour.2.touch":"اسحب العصا لتحت وخفّف السرعة. السيارة بتضل على السرعة الجديدة.","tour.3.title":"الزامور","tour.3.keys":"اضغط \u003ckbd>Space\u003c/kbd>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.","tour.3.touch":"اضغط على زر \u003cb>الزامور\u003c/b> المدوّر. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.","tour.4.title":"العداد","tour.4.body":"الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر يعني الرادار رح يصوّرك. قبل كل رادار بتطلعلك إشارة صفرا.","tour.5.title":"وين رايحين","tour.5.body":"هون اسم وجهتك وقديش ضايل للوصول. بالسواقة الحرة بتشوف قديش سقت.","tour.6.title":"النقاط والمخالفات","tour.6.body":"النقاط بتزيد مع المسافة والتحشيرات، والرادار والحوادث بنقصوا منها. إذا الضرر وصل للآخر السيارة بتخرب.","tour.7.title":"الخريطة","tour.7.body":"النقطة الحمرا إنت، والنقاط الخضرا المعالم. وجهتك بتبيّن أكبر.","tour.8.title":"التحشيرة","tour.8.body":"مرّ جنب السيارات من قريب وإنت أسرع منها لتاخذ نقاط. كذا وحدة ورا بعض بتضاعف النقاط.","tour.9.title":"الاستراحة","tour.9.keys":"من هون بتوقّف اللعبة وبتغيّر الكاميرا والصوت. \u003ckbd>C\u003c/kbd> بتغيّر الكاميرا و\u003ckbd>P\u003c/kbd> بتوقّف.","tour.9.touch":"من هون بتوقّف اللعبة وبتغيّر الكاميرا ومكان الزامور والصوت.","car.0.name":"هيونداي إلنترا","car.0.sub":"Hyundai Elantra","car.0.pros":"متوازنة وبتحشّر بسهولة","car.0.cons":"ما بتتميّز بإشي","car.1.name":"تويوتا بريوس","car.1.sub":"Toyota Prius","car.1.pros":"ثابتة بالكوع وبتلف بسهولة","car.1.cons":"تسارعها بطيء وبتخرب بسرعة","car.2.name":"تويوتا هايلكس","car.2.sub":"Toyota Hilux","car.2.pros":"تقيلة، الضربات والمطبات ما بتأثر فيها كثير","car.2.cons":"بطيئة ولفّتها صعبة","place.0":"دوار الداخلية","place.1":"بوليفارد العبدلي","place.2":"مسجد الملك عبدالله","place.3":"جبل القلعة","place.4":"سارية رغدان","place.5":"المدرج الروماني","place.6":"شارع الرينبو","place.7":"جسر عبدون","place.8":"الدوار السابع","place.9":"الصويفية","place.10":"مكة مول","place.11":"شارع الجاردنز","page.T_C_STICK_D":"عصا مدوّرة تحت. ادفعها لفوق لتسرّع، اسحبها لتحت للبريك، وحرّكها يمين وشمال لتغيّر المسرب. لما تتركها السيارة بتضل على نفس السرعة.","page.T_C_ONE_D":"حط إصبعك بأي مكان بالنص اللي تحت من الشاشة واسحب: لفوق لتسرّع، لتحت للبريك، ويمين وشمال لتغيّر المسرب.","page.T_C_TILT_D":"ميّل التلفون زي الدركسيون لتغيّر المسرب. اسحب لفوق بأي مكان لتسرّع ولتحت للبريك.","page.T_C_LANES_D":"أسهم لتغيير المسرب، كل كبسة مسرب، مع زر بنزين وزر بريك.","page.T_TILTPERM":"اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.","page.T_NOTILT":"هالجهاز ما فيه حسّاس إمالة، فالعصا رح تسوق بداله.","page.T_KEYSNOTE":"عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو \u003ckbd>WASD\u003c/kbd> للسواقة و\u003ckbd>Space\u003c/kbd> للزامور."}},"en":{"name":"English","dir":"ltr","s":{"page.T_NEXT":"Heading to","page.T_KMH":"km/h","page.T_TIME":"Time","page.T_SCORE":"Points","page.T_VIOL":"Fines","page.T_DMG":"Damage","page.T_PAUSE":"Pause","page.T_HORN":"Horn","page.T_BRAKE":"Brake","page.T_GAS":"Gas","page.T_DIR":"Direction","page.T_CW":"Clockwise","page.T_CCW":"Counterclockwise","page.T_TRIP":"Trip","page.T_TRAFFIC":"Traffic","page.T_TR0":"Light","page.T_TR1":"Normal","page.T_TR2":"Heavy","page.T_GO":"Let's go","page.T_GARAGE":"Garage","page.T_SETTINGS":"Settings","page.T_CARS":"Car","page.T_COLOR":"Color","page.T_FIXEDCOLOR":"The taxi keeps its own color","page.T_PLATE":"Plate number","page.T_CAM":"Camera","page.T_CAM0":"Close","page.T_CAM1":"Normal","page.T_CAM2":"Far","page.T_HORNSIDE":"Horn button side","page.T_LEFT":"Left","page.T_RIGHT":"Right","page.T_SOUND":"Sound","page.T_ON":"On","page.T_OFF":"Off","page.T_KEYS":"Drive with the arrow keys or \u003ckbd>WASD\u003c/kbd> · Horn \u003ckbd>Space\u003c/kbd> · Camera \u003ckbd>C\u003c/kbd> · Pause \u003ckbd>P\u003c/kbd>","page.T_PAUSED":"Paused","page.T_RESUME":"Resume","page.T_QUIT":"Back to menu","page.T_AGAIN":"Again","page.T_NEWTRIP":"New trip","page.T_HOWTO":"How to play","page.T_R1":"Finish your trip","page.T_R2":"Pass cars for points","page.T_R2S":"Pass a car close and faster than it to earn points. Passes in a row multiply them.","page.T_R3":"Watch for fines","page.T_WTOUR":"Guided tour","page.T_WSKIP":"I can drive, let me play","page.T_TSKIP":"Skip tour","page.T_TNEXT":"Next","page.T_TEND":"Ready!","page.T_TENDS":"That's the tour. Pick a trip, or keep driving freely?","page.T_TEMENU":"Pick a trip","page.T_TEDRIVE":"Keep driving","page.T_QUALITY":"Graphics","page.T_QHIGH":"High","page.T_QLOW":"Fast","page.T_LANG":"Language","text.stSpeed":"Speed","text.stAccel":"Pick up","text.stGrip":"Grip","text.stTough":"Toughness","text.meters":"m","text.km":"km","text.kmh":"km/h","text.to":"to","text.freeDrive":"Free drive","text.freeSub":"No end, repairs every 25 km","text.freeHint":"Drive as long as you like, repairs every 25 km","text.fullLap":"Full lap","text.goTo":"Off to","text.arrived":"You made it!","text.wrecked":"Your car broke down","text.rTime":"Time","text.rDist":"Distance","text.rAvg":"Average speed","text.rWeave":"Passes","text.rRadar":"Cameras","text.rCrash":"Crashes","text.rFines":"Fines","text.newBest":"New best score","text.best":"Best score","text.scrape":"You scraped the barrier!","text.crash":"Crash!","text.radarAhead":"Speed camera in","text.flash":"Speed camera got you!","text.radarOk":"Clean pass under the camera","text.bonus":"+500 every 10 km","text.workshop":"Repair: your car is like new","text.weave":"Close pass","text.loadRoad":"Drawing the road...","tour.tryIt":"Try it now","tour.nice":"Nice!","tour.0.title":"Hit the gas","tour.0.keys":"Hold \u003ckbd>↑\u003c/kbd> or \u003ckbd>W\u003c/kbd> until your speed passes 45. Let go and the car keeps that speed.","tour.1.title":"Change lanes","tour.1.keys":"Use \u003ckbd>←\u003c/kbd> and \u003ckbd>→\u003c/kbd> (or \u003ckbd>A\u003c/kbd> and \u003ckbd>D\u003c/kbd>) to move to another lane.","tour.1.touch":"Move the stick left or right to change lanes. A short push moves you one lane.","tour.2.title":"Brake","tour.2.keys":"Press \u003ckbd>↓\u003c/kbd> or \u003ckbd>S\u003c/kbd> to slow down. The car keeps the new speed.","tour.2.touch":"Pull the stick down to slow down. The car keeps the new speed.","tour.3.title":"Horn","tour.3.keys":"Press \u003ckbd>Space\u003c/kbd>. The car ahead moves over if the lane next to it is free.","tour.3.touch":"Press the round \u003cb>horn\u003c/b> button. The car ahead moves over if the lane next to it is free.","tour.4.title":"Speed","tour.4.body":"The big number is your speed and the red circle is the limit. When the number turns red, the camera will catch you. A yellow sign shows before each camera.","tour.5.title":"Where to","tour.5.body":"This shows where you're going and how far is left. In free drive it shows how far you've gone.","tour.6.title":"Points and fines","tour.6.body":"Points grow with distance and close passes. Cameras and crashes take them away. If damage fills up, the car breaks down.","tour.7.title":"Map","tour.8.title":"Close passes","tour.8.body":"Pass cars close while going faster than them to earn points. Several in a row multiply the points.","tour.9.title":"Pause","tour.9.keys":"Pause the game here and change the camera and sound. \u003ckbd>C\u003c/kbd> changes the camera and \u003ckbd>P\u003c/kbd> pauses.","tour.9.touch":"Pause the game here and change the camera, horn side and sound.","text.rateMid":"Not bad","page.T_SET_CONTROLS":"Controls","page.T_SET_SOUND":"Sound","page.T_SET_DISPLAY":"Display","page.T_CLOSE":"Done","page.T_CTRL":"How you drive on a touch screen","page.T_C_STICK":"Stick","page.T_C_ONE":"One hand","page.T_C_TILT":"Tilt","page.T_C_LANES":"Buttons","page.T_C_STICK_D":"A round stick at the bottom. Push up to speed up, pull down to brake, and move it sideways to change lanes. Let go and the car keeps its speed.","page.T_C_ONE_D":"Put your thumb anywhere on the lower part of the screen and drag: up to speed up, down to brake, sideways to change lanes.","page.T_C_TILT_D":"Tilt the phone like a steering wheel to change lanes. Drag up anywhere to speed up and down to brake.","page.T_C_LANES_D":"Arrow buttons change lanes, one tap per lane, with separate gas and brake pedals.","page.T_TILTPERM":"Allow motion access to steer by tilting.","page.T_NOTILT":"This device has no tilt sensor, so the stick steers instead.","page.T_STEERFEEL":"Steering","page.T_LIGHT":"Light","page.T_HEAVY":"Heavy","page.T_BRAKEFEEL":"Brakes","page.T_SOFT":"Soft","page.T_HARD":"Strong","page.T_HORNSIZE":"Horn button size","page.T_SMALL":"Small","page.T_NORMAL":"Normal","page.T_KEYSNOTE":"On a computer the keyboard always works: arrows or \u003ckbd>WASD\u003c/kbd> to drive, \u003ckbd>Space\u003c/kbd> for the horn.","page.T_VOLENG":"Engine","page.T_VOLFX":"Horn and effects","page.T_QUIET":"Quiet","page.T_LOUD":"Loud","page.T_SPEEDFX":"Speed effects","page.T_MINIMAP":"Map","page.T_SHOW":"Show","page.T_HIDE":"Hide","tour.0.touch":"Push the stick up until your speed passes 45. Let go and the car keeps that speed.","page.title":"Amman Loop","page.name":"Amman Loop","page.eyebrow":"Amman · عمّان","page.alt":"Driving through Amman","page.blurb":"From Abdali to the Citadel and Jabal Amman, up and down the hills. Watch for cameras and speed bumps, and weave through traffic without a crash.","page.T_MAPNOTE":"The road roughly follows real places in Amman. The horn makes the car ahead move over.","page.T_R1S":"Pick a trip between Amman landmarks, from Abdali to the Citadel to Mecca Mall, and reach the end.","page.T_R3S":"Cameras flash above 90 km/h. Speed bumps and crashes damage the car.","page.otherLabel":"Try Dubai","text.bumpSign":"BUMP","text.tollName":"","text.tollPrice":"","text.wreckedSub":"Call the tow truck","text.rateTop":"Driving master!","text.rateBad":"Time for driving lessons","text.bumpHit":"Speed bump! Slow down","text.bumpOk":"Smooth over the bump","text.loadCity":"Building Amman...","text.currency":"JOD","tour.7.body":"The red dot is you and the green dots are landmarks. Your destination shows bigger.","car.0.name":"Hyundai Elantra","car.0.sub":"Yellow taxi","car.0.pros":"Even all round and easy to weave","car.0.cons":"Nothing stands out","car.1.name":"Toyota Prius","car.1.sub":"Hybrid","car.1.pros":"Steady in curves and easy to turn","car.1.cons":"Slow to pick up and damages easily","car.2.name":"Toyota Hilux","car.2.sub":"Pickup","car.2.pros":"Heavy, so crashes and bumps barely hurt it","car.2.cons":"Slow and hard to turn","place.0":"Interior Circle","place.1":"Abdali Boulevard","place.2":"King Abdullah I Mosque","place.3":"Amman Citadel","place.4":"Raghadan Flagpole","place.5":"Roman Theatre","place.6":"Rainbow Street","place.7":"Abdoun Bridge","place.8":"7th Circle","place.9":"Sweifieh","place.10":"Mecca Mall","place.11":"Gardens Street"}}};
+window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"اللغة","page.T_SET_CONTROLS":"التحكم","page.T_SET_SOUND":"الصوت","page.T_SET_DISPLAY":"الشاشة","page.T_CLOSE":"تمام","page.T_CTRL":"طريقة السواقة على شاشة اللمس","page.T_C_STICK":"عصا","page.T_C_ONE":"إيد وحدة","page.T_C_TILT":"إمالة","page.T_C_LANES":"أزرار","page.T_STEERFEEL":"الدركسيون","page.T_LIGHT":"خفيف","page.T_HEAVY":"ثقيل","page.T_BRAKEFEEL":"البريك","page.T_SOFT":"ناعم","page.T_HARD":"قوي","page.T_HORNSIZE":"حجم زر الزامور","page.T_SMALL":"صغير","page.T_NORMAL":"عادي","page.T_VOLENG":"صوت الماتور","page.T_VOLFX":"المؤثرات","page.T_VOLHORN":"الزامور","page.T_RADIO":"راديو","page.T_C_WHEEL":"دركسيون","page.T_MUSIC":"أغاني الراديو","page.T_VOLMUSIC":"صوت الراديو","page.T_VIB":"الاهتزاز","page.T_VIB1":"خفيف","page.T_VIB2":"عادي","page.T_VIB3":"قوي","page.T_AUTOQ":"جودة تلقائية","text.go":"يلا!","page.T_QUIET":"واطي","page.T_LOUD":"عالي","page.T_SPEEDFX":"مؤثرات السرعة","page.T_MINIMAP":"الخريطة","page.T_SHOW":"بيّن","page.T_HIDE":"خبّي","text.radio0":"إذاعة الدوّار","text.radio1":"راديو الجبل","text.radio2":"إيقاع البلد","page.T_C_WHEEL_D":"لف الدركسيون بإصبع وحدة عشان تلف، وزر البنزين والبريك عالجهة الثانية.","page.T_RADIONOTE":"كبّس زر الراديو وانت سايق عشان تغيّر المحطة. الموسيقى بتنعزف وانت ماشي، فكل مشوار إله لحن.","page.T_AUTOQ_D":"إذا اللعبة ثقلت، بتخفف الرسم عشان تضل سلسة.","text.radioOff":"الراديو مسكّر","text.autoLow":"خففنا الرسم عشان تضل سلسة","page.title":"لفّة عمّان","page.name":"لفّة عمّان","page.eyebrow":"Amman · عمّان","page.alt":"Driving through Amman","page.blurb":"من العبدلي للقلعة لجبل عمّان، بين الطلعات والنزلات. انتبه عالرادار والمطبات، وحشّر بين السيارات بس بدون ما تضرب.","page.T_NEXT":"رايحين على","page.T_KMH":"كم/س","page.T_TIME":"الوقت","page.T_SCORE":"النقاط","page.T_VIOL":"مخالفات","page.T_DMG":"الضرر","page.T_PAUSE":"وقّف","page.T_HORN":"زامور","page.T_BRAKE":"بريك","page.T_GAS":"بنزين","page.T_DIR":"الاتجاه","page.T_CW":"مع عقارب الساعة","page.T_CCW":"عكس عقارب الساعة","page.T_TRIP":"المشوار","page.T_TRAFFIC":"أزمة السير","page.T_TR0":"فاضية","page.T_TR1":"عادية","page.T_TR2":"أزمة","page.T_GO":"يلا نطلع","page.T_GARAGE":"الكراج","page.T_SETTINGS":"الإعدادات","page.T_CARS":"السيارة","page.T_COLOR":"اللون","page.T_FIXEDCOLOR":"التكسي لونه أصفر وبس","page.T_PLATE":"النمرة","page.T_CAM":"الكاميرا","page.T_CAM0":"قريبة","page.T_CAM1":"عادية","page.T_CAM2":"بعيدة","page.T_HORNSIDE":"مكان الزامور","page.T_LEFT":"يسار","page.T_RIGHT":"يمين","page.T_SOUND":"الصوت","page.T_ON":"شغّال","page.T_OFF":"مسكّر","page.T_KEYS":"السواقة بالأسهم أو \u003ckbd>WASD\u003c/kbd> · الزامور \u003ckbd>Space\u003c/kbd> · الكاميرا \u003ckbd>C\u003c/kbd> · وقوف \u003ckbd>P\u003c/kbd>","page.T_MAPNOTE":"الطريق مرسوم بشكل تقريبي على أماكن حقيقية بعمّان. الزامور بخلّي السيارة اللي قدامك توسّعلك.","page.T_PAUSED":"استراحة","page.T_RESUME":"كمّل","page.T_QUIT":"رجوع للقائمة","page.T_AGAIN":"عيدها","page.T_NEWTRIP":"مشوار ثاني","page.T_HOWTO":"كيف ألعب؟","page.T_R1":"وصّل مشوارك","page.T_R1S":"اختار مشوار بين معالم عمّان، من العبدلي للقلعة لمكة مول، ووصل لآخره.","page.T_R2":"حشّر وجمّع نقاط","page.T_R2S":"كل ما تتجاوز سيارة من قريب وبسرعة بتاخذ نقاط، وإذا ورا بعض بتتضاعف.","page.T_R3":"انتبه للمخالفات","page.T_R3S":"الرادار بصوّر فوق 90 كم/س، والمطبات والحوادث بتخرّب السيارة.","page.T_WTOUR":"جولة تعليمية","page.T_WSKIP":"بعرف أسوق، بدي ألعب","page.T_TSKIP":"تخطّي الجولة","page.T_TNEXT":"التالي","page.T_TEND":"جاهز!","page.T_TENDS":"خلصت الجولة. بدك تختار مشوار ولا تكمّل سواقة حرة؟","page.T_TEMENU":"اختار مشوار","page.T_TEDRIVE":"كمّل سواقة حرة","page.T_QUALITY":"الرسومات","page.T_QHIGH":"عالية","page.T_QLOW":"سريعة","page.otherLabel":"جرّب دبي","text.stSpeed":"سرعة","text.stAccel":"تسارع","text.stGrip":"ثبات","text.stTough":"تحمّل","text.meters":"م","text.km":"كم","text.kmh":"كم/س","text.to":"على","text.bumpSign":"مطب","text.tollName":"","text.tollPrice":"","text.freeDrive":"سواقة حرة","text.freeSub":"بلا نهاية، صيانة كل 25 كم","text.freeHint":"سوق براحتك، كل 25 كم في صيانة","text.fullLap":"لفّة كاملة","text.goTo":"يلا على","text.arrived":"وصلنا!","text.wrecked":"السيارة خربت","text.wreckedSub":"بدها ونش","text.rTime":"الوقت","text.rDist":"المسافة","text.rAvg":"معدل السرعة","text.rWeave":"تحشيرات","text.rRadar":"رادار","text.rCrash":"حوادث","text.rFines":"المخالفات","text.newBest":"رقم قياسي جديد","text.best":"أحسن نتيجة","text.rateTop":"معلّم سواقة!","text.rateMid":"مش بطال","text.rateBad":"بدك دروس سواقة","text.scrape":"حكّيت بالحاجز!","text.crash":"ضربت سيارة!","text.radarAhead":"رادار بعد","text.flash":"صوّرك الرادار!","text.radarOk":"مرقت عالرادار تمام","text.bumpHit":"مطب! خفّف شوي","text.bumpOk":"نزلت عالمطب بهدوء","text.bonus":"+500 كل 10 كم","text.workshop":"صيانة: رجعت السيارة جديدة","text.weave":"تحشيرة","text.loadRoad":"بنرسم الشارع...","text.loadCity":"بنبني عمّان...","text.currency":"د.أ","tour.tryIt":"جرّبها هلأ","tour.nice":"تمام!","tour.0.title":"دوس بنزين","tour.0.keys":"اضغط على \u003ckbd>↑\u003c/kbd> أو \u003ckbd>W\u003c/kbd> لحد ما السرعة تطلع فوق 45. لما تشيل إيدك السيارة بتضل ماشية على نفس السرعة.","tour.0.touch":"ادفع العصا لفوق لحد ما السرعة تطلع فوق 45. لما تتركها السيارة بتضل ماشية على نفس السرعة.","tour.1.title":"غيّر المسرب","tour.1.keys":"استعمل \u003ckbd>←\u003c/kbd> و\u003ckbd>→\u003c/kbd> (أو \u003ckbd>A\u003c/kbd> و\u003ckbd>D\u003c/kbd>) وانقل لمسرب ثاني.","tour.1.touch":"حرّك العصا يمين أو شمال وانقل لمسرب ثاني. دفشة قصيرة بتنقلك مسرب واحد.","tour.2.title":"البريك","tour.2.keys":"اضغط \u003ckbd>↓\u003c/kbd> أو \u003ckbd>S\u003c/kbd> وخفّف السرعة. السيارة بتضل على السرعة الجديدة.","tour.2.touch":"اسحب العصا لتحت وخفّف السرعة. السيارة بتضل على السرعة الجديدة.","tour.3.title":"الزامور","tour.3.keys":"اضغط \u003ckbd>Space\u003c/kbd>. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.","tour.3.touch":"اضغط على زر \u003cb>الزامور\u003c/b> المدوّر. السيارة اللي قدامك بتوسّعلك إذا المسرب اللي جنبها فاضي.","tour.4.title":"العداد","tour.4.body":"الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر يعني الرادار رح يصوّرك. قبل كل رادار بتطلعلك إشارة صفرا.","tour.5.title":"وين رايحين","tour.5.body":"هون اسم وجهتك وقديش ضايل للوصول. بالسواقة الحرة بتشوف قديش سقت.","tour.6.title":"النقاط والمخالفات","tour.6.body":"النقاط بتزيد مع المسافة والتحشيرات، والرادار والحوادث بنقصوا منها. إذا الضرر وصل للآخر السيارة بتخرب.","tour.7.title":"الخريطة","tour.7.body":"النقطة الحمرا إنت، والنقاط الخضرا المعالم. وجهتك بتبيّن أكبر.","tour.8.title":"التحشيرة","tour.8.body":"مرّ جنب السيارات من قريب وإنت أسرع منها لتاخذ نقاط. كذا وحدة ورا بعض بتضاعف النقاط.","tour.9.title":"الاستراحة","tour.9.keys":"من هون بتوقّف اللعبة وبتغيّر الكاميرا والصوت. \u003ckbd>C\u003c/kbd> بتغيّر الكاميرا و\u003ckbd>P\u003c/kbd> بتوقّف.","tour.9.touch":"من هون بتوقّف اللعبة وبتغيّر الكاميرا ومكان الزامور والصوت.","car.0.name":"هيونداي إلنترا","car.0.sub":"Hyundai Elantra","car.0.pros":"متوازنة وبتحشّر بسهولة","car.0.cons":"ما بتتميّز بإشي","car.1.name":"تويوتا بريوس","car.1.sub":"Toyota Prius","car.1.pros":"ثابتة بالكوع وبتلف بسهولة","car.1.cons":"تسارعها بطيء وبتخرب بسرعة","car.2.name":"تويوتا هايلكس","car.2.sub":"Toyota Hilux","car.2.pros":"تقيلة، الضربات والمطبات ما بتأثر فيها كثير","car.2.cons":"بطيئة ولفّتها صعبة","place.0":"دوار الداخلية","place.1":"بوليفارد العبدلي","place.2":"مسجد الملك عبدالله","place.3":"جبل القلعة","place.4":"سارية رغدان","place.5":"المدرج الروماني","place.6":"شارع الرينبو","place.7":"جسر عبدون","place.8":"الدوار السابع","place.9":"الصويفية","place.10":"مكة مول","place.11":"شارع الجاردنز","page.T_C_STICK_D":"عصا مدوّرة تحت. ادفعها لفوق لتسرّع، اسحبها لتحت للبريك، وحرّكها يمين وشمال لتغيّر المسرب. لما تتركها السيارة بتضل على نفس السرعة.","page.T_C_ONE_D":"حط إصبعك بأي مكان بالنص اللي تحت من الشاشة واسحب: لفوق لتسرّع، لتحت للبريك، ويمين وشمال لتغيّر المسرب.","page.T_C_TILT_D":"ميّل التلفون زي الدركسيون لتغيّر المسرب. اسحب لفوق بأي مكان لتسرّع ولتحت للبريك.","page.T_C_LANES_D":"أسهم لتغيير المسرب، كل كبسة مسرب، مع زر بنزين وزر بريك.","page.T_TILTPERM":"اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.","page.T_NOTILT":"هالجهاز ما فيه حسّاس إمالة، فالعصا رح تسوق بداله.","page.T_KEYSNOTE":"عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو \u003ckbd>WASD\u003c/kbd> للسواقة و\u003ckbd>Space\u003c/kbd> للزامور."}},"en":{"name":"English","dir":"ltr","s":{"page.T_NEXT":"Heading to","page.T_KMH":"km/h","page.T_TIME":"Time","page.T_SCORE":"Points","page.T_VIOL":"Fines","page.T_DMG":"Damage","page.T_PAUSE":"Pause","page.T_HORN":"Horn","page.T_BRAKE":"Brake","page.T_GAS":"Gas","page.T_DIR":"Direction","page.T_CW":"Clockwise","page.T_CCW":"Counterclockwise","page.T_TRIP":"Trip","page.T_TRAFFIC":"Traffic","page.T_TR0":"Light","page.T_TR1":"Normal","page.T_TR2":"Heavy","page.T_GO":"Let's go","page.T_GARAGE":"Garage","page.T_SETTINGS":"Settings","page.T_CARS":"Car","page.T_COLOR":"Color","page.T_FIXEDCOLOR":"The taxi keeps its own color","page.T_PLATE":"Plate number","page.T_CAM":"Camera","page.T_CAM0":"Close","page.T_CAM1":"Normal","page.T_CAM2":"Far","page.T_HORNSIDE":"Horn button side","page.T_LEFT":"Left","page.T_RIGHT":"Right","page.T_SOUND":"Sound","page.T_ON":"On","page.T_OFF":"Off","page.T_KEYS":"Drive with the arrow keys or \u003ckbd>WASD\u003c/kbd> · Horn \u003ckbd>Space\u003c/kbd> · Camera \u003ckbd>C\u003c/kbd> · Pause \u003ckbd>P\u003c/kbd>","page.T_PAUSED":"Paused","page.T_RESUME":"Resume","page.T_QUIT":"Back to menu","page.T_AGAIN":"Again","page.T_NEWTRIP":"New trip","page.T_HOWTO":"How to play","page.T_R1":"Finish your trip","page.T_R2":"Pass cars for points","page.T_R2S":"Pass a car close and faster than it to earn points. Passes in a row multiply them.","page.T_R3":"Watch for fines","page.T_WTOUR":"Guided tour","page.T_WSKIP":"I can drive, let me play","page.T_TSKIP":"Skip tour","page.T_TNEXT":"Next","page.T_TEND":"Ready!","page.T_TENDS":"That's the tour. Pick a trip, or keep driving freely?","page.T_TEMENU":"Pick a trip","page.T_TEDRIVE":"Keep driving","page.T_QUALITY":"Graphics","page.T_QHIGH":"High","page.T_QLOW":"Fast","page.T_LANG":"Language","text.stSpeed":"Speed","text.stAccel":"Pick up","text.stGrip":"Grip","text.stTough":"Toughness","text.meters":"m","text.km":"km","text.kmh":"km/h","text.to":"to","text.freeDrive":"Free drive","text.freeSub":"No end, repairs every 25 km","text.freeHint":"Drive as long as you like, repairs every 25 km","text.fullLap":"Full lap","text.goTo":"Off to","text.arrived":"You made it!","text.wrecked":"Your car broke down","text.rTime":"Time","text.rDist":"Distance","text.rAvg":"Average speed","text.rWeave":"Passes","text.rRadar":"Cameras","text.rCrash":"Crashes","text.rFines":"Fines","text.newBest":"New best score","text.best":"Best score","text.scrape":"You scraped the barrier!","text.crash":"Crash!","text.radarAhead":"Speed camera in","text.flash":"Speed camera got you!","text.radarOk":"Clean pass under the camera","text.bonus":"+500 every 10 km","text.workshop":"Repair: your car is like new","text.weave":"Close pass","text.loadRoad":"Drawing the road...","tour.tryIt":"Try it now","tour.nice":"Nice!","tour.0.title":"Hit the gas","tour.0.keys":"Hold \u003ckbd>↑\u003c/kbd> or \u003ckbd>W\u003c/kbd> until your speed passes 45. Let go and the car keeps that speed.","tour.1.title":"Change lanes","tour.1.keys":"Use \u003ckbd>←\u003c/kbd> and \u003ckbd>→\u003c/kbd> (or \u003ckbd>A\u003c/kbd> and \u003ckbd>D\u003c/kbd>) to move to another lane.","tour.1.touch":"Move the stick left or right to change lanes. A short push moves you one lane.","tour.2.title":"Brake","tour.2.keys":"Press \u003ckbd>↓\u003c/kbd> or \u003ckbd>S\u003c/kbd> to slow down. The car keeps the new speed.","tour.2.touch":"Pull the stick down to slow down. The car keeps the new speed.","tour.3.title":"Horn","tour.3.keys":"Press \u003ckbd>Space\u003c/kbd>. The car ahead moves over if the lane next to it is free.","tour.3.touch":"Press the round \u003cb>horn\u003c/b> button. The car ahead moves over if the lane next to it is free.","tour.4.title":"Speed","tour.4.body":"The big number is your speed and the red circle is the limit. When the number turns red, the camera will catch you. A yellow sign shows before each camera.","tour.5.title":"Where to","tour.5.body":"This shows where you're going and how far is left. In free drive it shows how far you've gone.","tour.6.title":"Points and fines","tour.6.body":"Points grow with distance and close passes. Cameras and crashes take them away. If damage fills up, the car breaks down.","tour.7.title":"Map","tour.8.title":"Close passes","tour.8.body":"Pass cars close while going faster than them to earn points. Several in a row multiply the points.","tour.9.title":"Pause","tour.9.keys":"Pause the game here and change the camera and sound. \u003ckbd>C\u003c/kbd> changes the camera and \u003ckbd>P\u003c/kbd> pauses.","tour.9.touch":"Pause the game here and change the camera, horn side and sound.","text.rateMid":"Not bad","page.T_SET_CONTROLS":"Controls","page.T_SET_SOUND":"Sound","page.T_SET_DISPLAY":"Display","page.T_CLOSE":"Done","page.T_CTRL":"How you drive on a touch screen","page.T_C_STICK":"Stick","page.T_C_ONE":"One hand","page.T_C_TILT":"Tilt","page.T_C_LANES":"Buttons","page.T_C_STICK_D":"A round stick at the bottom. Push up to speed up, pull down to brake, and move it sideways to change lanes. Let go and the car keeps its speed.","page.T_C_ONE_D":"Put your thumb anywhere on the lower part of the screen and drag: up to speed up, down to brake, sideways to change lanes.","page.T_C_TILT_D":"Tilt the phone like a steering wheel to change lanes. Drag up anywhere to speed up and down to brake.","page.T_C_LANES_D":"Arrow buttons change lanes, one tap per lane, with separate gas and brake pedals.","page.T_TILTPERM":"Allow motion access to steer by tilting.","page.T_NOTILT":"This device has no tilt sensor, so the stick steers instead.","page.T_STEERFEEL":"Steering","page.T_LIGHT":"Light","page.T_HEAVY":"Heavy","page.T_BRAKEFEEL":"Brakes","page.T_SOFT":"Soft","page.T_HARD":"Strong","page.T_HORNSIZE":"Horn button size","page.T_SMALL":"Small","page.T_NORMAL":"Normal","page.T_KEYSNOTE":"On a computer the keyboard always works: arrows or \u003ckbd>WASD\u003c/kbd> to drive, \u003ckbd>Space\u003c/kbd> for the horn.","page.T_VOLENG":"Engine","page.T_VOLFX":"Effects","page.T_VOLHORN":"Horn","page.T_RADIO":"Radio","page.T_C_WHEEL":"Wheel","page.T_C_WHEEL_D":"Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.","page.T_MUSIC":"Radio music","page.T_VOLMUSIC":"Radio volume","page.T_VIB":"Vibration","page.T_VIB1":"Light","page.T_VIB2":"Normal","page.T_VIB3":"Strong","page.T_RADIONOTE":"Tap the radio button while you drive to change station. The music is made up as you go, so no two trips sound the same.","page.T_AUTOQ":"Auto quality","page.T_AUTOQ_D":"If the game runs slow, it draws fewer pixels so it stays smooth.","text.go":"Go!","text.radioOff":"Radio off","text.autoLow":"Lowered the quality to keep it smooth","page.T_QUIET":"Quiet","page.T_LOUD":"Loud","page.T_SPEEDFX":"Speed effects","page.T_MINIMAP":"Map","page.T_SHOW":"Show","page.T_HIDE":"Hide","tour.0.touch":"Push the stick up until your speed passes 45. Let go and the car keeps that speed.","text.radio0":"Dawar FM","text.radio1":"Jabal Radio","text.radio2":"Downtown Beats","page.title":"Amman Loop","page.name":"Amman Loop","page.eyebrow":"Amman · عمّان","page.alt":"Driving through Amman","page.blurb":"From Abdali to the Citadel and Jabal Amman, up and down the hills. Watch for cameras and speed bumps, and weave through traffic without a crash.","page.T_MAPNOTE":"The road roughly follows real places in Amman. The horn makes the car ahead move over.","page.T_R1S":"Pick a trip between Amman landmarks, from Abdali to the Citadel to Mecca Mall, and reach the end.","page.T_R3S":"Cameras flash above 90 km/h. Speed bumps and crashes damage the car.","page.otherLabel":"Try Dubai","text.bumpSign":"BUMP","text.tollName":"","text.tollPrice":"","text.wreckedSub":"Call the tow truck","text.rateTop":"Driving master!","text.rateBad":"Time for driving lessons","text.bumpHit":"Speed bump! Slow down","text.bumpOk":"Smooth over the bump","text.loadCity":"Building Amman...","text.currency":"JOD","tour.7.body":"The red dot is you and the green dots are landmarks. Your destination shows bigger.","car.0.name":"Hyundai Elantra","car.0.sub":"Yellow taxi","car.0.pros":"Even all round and easy to weave","car.0.cons":"Nothing stands out","car.1.name":"Toyota Prius","car.1.sub":"Hybrid","car.1.pros":"Steady in curves and easy to turn","car.1.cons":"Slow to pick up and damages easily","car.2.name":"Toyota Hilux","car.2.sub":"Pickup","car.2.pros":"Heavy, so crashes and bumps barely hurt it","car.2.cons":"Slow and hard to turn","place.0":"Interior Circle","place.1":"Abdali Boulevard","place.2":"King Abdullah I Mosque","place.3":"Amman Citadel","place.4":"Raghadan Flagpole","place.5":"Roman Theatre","place.6":"Rainbow Street","place.7":"Abdoun Bridge","place.8":"7th Circle","place.9":"Sweifieh","place.10":"Mecca Mall","place.11":"Gardens Street"}}};
 </script>
 <script>
 window.CITY = {
@@ -465,6 +517,12 @@ window.CITY = {
   fines: { radar: 30, crash: 50 }, tripHop: 3,
   origin: [31.962, 35.900],
   horn: [415, 520],
+  // the car radio: made-up stations, each with its own rhythm, maqam and lead sound
+  radio: [
+    { seed: 101, bpm: 104, rhythm: 'maqsum', maqam: 'hijaz', root: 146.83, lead: 'qanun', riq: true, ghost: 0.15, chord2: 3 },
+    { seed: 202, bpm: 118, rhythm: 'fallahi', maqam: 'bayati', root: 146.83, lead: 'nay', riq: true, sparse: true, chord2: 3 },
+    { seed: 303, bpm: 98, rhythm: 'baladi', maqam: 'nahawand', root: 130.81, lead: 'synth', ghost: 0.2, swing: 0.08, chord2: 5 }
+  ],
   defaultPlate: '12-34567',
   route: [
     [31.9690, 35.9070, 'stone'], [31.9640, 35.9105, 'tower'], [31.9600, 35.9220, 'old'], [31.9575, 35.9325, 'old'],
@@ -563,6 +621,500 @@ window.CITY = {
 
 </script>
 <script>
+// ---------- sound: engine, road, horns, effects and a car radio, all made live in Web Audio ----------
+// Nothing here loads a sound file. Every sound is built from oscillators and noise.
+const SND = (() => {
+  let ac = null, out = null, comp = null, bus = {}, musicOut = null, musicLP = null, musicGain = null;
+  let white = null, pink = null, tanhCurve = null;
+  const vol = { engine: 0.7, horn: 0.8, fx: 0.8, music: 0.6 };
+  let sfxOn = true, musicOn = true, gestured = false;
+  const clampN = (v, a, b) => (v < a ? a : v > b ? b : v);
+  const now = () => ac.currentTime;
+  // only write a value when it really changed, so we don't pile up automation events
+  function set(p, v, tau, t) { if (Math.abs((p._last == null ? p.value : p._last) - v) < 1e-4 + Math.abs(v) * 1e-3) return; p._last = v; p.setTargetAtTime(v, t == null ? now() : t, tau || 0.05); }
+
+  function make() {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return false;
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) { /* ignore */ }
+    ac = new Ctx({ latencyHint: 'interactive' });
+    comp = ac.createDynamicsCompressor(); comp.threshold.value = -12; comp.ratio.value = 3.5; comp.attack.value = 0.004; comp.release.value = 0.2;
+    out = ac.createGain(); out.gain.value = 0.9; out.connect(comp); comp.connect(ac.destination);
+    for (const k of ['engine', 'horn', 'fx']) { bus[k] = ac.createGain(); bus[k].connect(out); }
+    // the radio skips the compressor so the effects can't pump it
+    musicGain = ac.createGain(); musicGain.gain.value = 0;
+    musicLP = ac.createBiquadFilter(); musicLP.type = 'lowpass'; musicLP.frequency.value = 18000; musicLP.Q.value = 0.5;
+    musicOut = ac.createGain(); musicOut.gain.value = 1;
+    musicOut.connect(musicLP); musicLP.connect(musicGain); musicGain.connect(ac.destination);
+    // shared noise: two seconds of white, four of pink
+    const sr = ac.sampleRate;
+    white = ac.createBuffer(1, sr * 2, sr); { const d = white.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+    pink = ac.createBuffer(1, sr * 4, sr); {
+      const d = pink.getChannelData(0); let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < d.length; i++) { const w = Math.random() * 2 - 1; b0 = 0.99765 * b0 + w * 0.099; b1 = 0.963 * b1 + w * 0.2965; b2 = 0.57 * b2 + w * 1.0527; d[i] = (b0 + b1 + b2 + w * 0.1848) * 0.12; }
+    }
+    tanhCurve = new Float32Array(512); for (let i = 0; i < 512; i++) { const x = i / 255.5 - 1; tanhCurve[i] = Math.tanh(2.2 * x) / Math.tanh(2.2); }
+    applyVolumes();
+    return true;
+  }
+  function applyVolumes() {
+    if (!ac) return;
+    set(bus.engine.gain, sfxOn ? vol.engine : 0, 0.02);
+    set(bus.horn.gain, sfxOn ? vol.horn : 0, 0.02);
+    set(bus.fx.gain, sfxOn ? vol.fx : 0, 0.02);
+    radio.level();
+  }
+  // the first touch, click or key wakes the sound (phones won't play before that)
+  function unlock() {
+    gestured = true;
+    if (!ac && !make()) return;
+    if (ac.state !== 'running') ac.resume().catch(() => {});
+  }
+  for (const ev of ['pointerdown', 'touchend', 'keydown', 'click']) addEventListener(ev, unlock, { capture: true, passive: true });
+  // some phones leave the sound asleep after a call or a lock; keep nudging it while the page is in view
+  setInterval(() => { if (ac && gestured && !document.hidden && ac.state !== 'running') ac.resume().catch(() => {}); }, 1000);
+  document.addEventListener('visibilitychange', () => { if (!ac) return; if (document.hidden) ac.suspend().catch(() => {}); else if (gestured) ac.resume().catch(() => {}); });
+
+  function noiseSrc(buf, loop) { const s = ac.createBufferSource(); s.buffer = buf || white; s.loop = loop !== false; if (s.loop) s.loopStart = Math.random(); return s; }
+  function filt(type, f, q, gain) { const b = ac.createBiquadFilter(); b.type = type; b.frequency.value = f; if (q != null) b.Q.value = q; if (gain != null) b.gain.value = gain; return b; }
+  function gainN(v) { const g = ac.createGain(); g.gain.value = v; return g; }
+  function chain(...n) { for (let i = 0; i < n.length - 1; i++) n[i].connect(n[i + 1]); return n[n.length - 1]; }
+  function stopAt(nodes, t) { for (const n of nodes) { try { n.stop(t); } catch (e) { /* ignore */ } } }
+  // a short decaying burst of noise
+  function burst(t, len, gain, nodes, dest, pow) {
+    const s = noiseSrc(white, false); const g = gainN(0);
+    g.gain.setValueAtTime(gain, t); g.gain.setTargetAtTime(0, t, len / (pow || 3));
+    let last = s; for (const n of nodes) { last.connect(n); last = n; } last.connect(g); g.connect(dest);
+    s.start(t, Math.random() * 1.5); s.stop(t + len + 0.05);
+  }
+  // one note with a fast attack and an exponential fall
+  function blip(freq, dur, wave, gain, dest, t) {
+    if (!ac || !sfxOn) return;
+    t = t == null ? now() : t;
+    const o = ac.createOscillator(); o.type = wave || 'triangle'; o.frequency.value = freq;
+    const g = gainN(0); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(gain, t + 0.005); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.connect(g); g.connect(dest || bus.fx); o.start(t); o.stop(t + dur + 0.02);
+  }
+
+  // ---------- engine ----------
+  // each car has its own voice: base and top pitch, how hard the firing pulse chops,
+  // how bright it gets, a short pipe echo and an optional gear whine
+  const VOICES = {
+    taxi:   { base: 30, span: 82, bite: 2, biteG: 0.32, fire: 2, fireWave: 'sine', depth: 0.38, lp: 700, lpSpan: 2300, peak: 380, peakQ: 1.2, peakG: 5, comb: 0.0021, vol: 0.085, rum: 0.022, rumF: 3, whine: 6, whineG: 0.026, gears: 5 },
+    hatch:  { base: 28, span: 70, bite: 2, biteG: 0.24, fire: 2, fireWave: 'sine', depth: 0.2, lp: 600, lpSpan: 1700, peak: 330, peakQ: 1, peakG: 3, comb: 0.0018, vol: 0.065, rum: 0.014, rumF: 3, whine: 11, whineG: 0.05, gears: 1 },
+    pickup: { base: 17, span: 44, bite: 3, biteG: 0.44, fire: 3, fireWave: 'triangle', depth: 0.55, lp: 440, lpSpan: 1300, peak: 230, peakQ: 1.5, peakG: 6, comb: 0.0033, vol: 0.11, rum: 0.06, rumF: 7, whine: 4, whineG: 0.02, gears: 5 },
+    suv:    { base: 20, span: 62, bite: 2, biteG: 0.4, fire: 2, fireWave: 'square', depth: 0.5, lp: 520, lpSpan: 1800, peak: 300, peakQ: 1.4, peakG: 6, comb: 0.0029, vol: 0.1, rum: 0.05, rumF: 4, whine: 0, whineG: 0, gears: 7 },
+    sports: { base: 42, span: 175, bite: 1.5, biteG: 0.36, fire: 2.5, fireWave: 'sawtooth', depth: 0.3, lp: 900, lpSpan: 4200, peak: 700, peakQ: 1.6, peakG: 6, comb: 0.0012, vol: 0.085, rum: 0.02, rumF: 5, whine: 8, whineG: 0.02, gears: 7 },
+    dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 }
+  };
+  let eng = null;
+  function buildEngine(kind) {
+    if (eng && eng.kind === kind) return;
+    dropEngine();
+    const V = VOICES[kind] || VOICES.taxi; const t = now();
+    const saw = ac.createOscillator(); saw.type = 'sawtooth';
+    const sub = ac.createOscillator(); sub.type = 'square';
+    const hi = ac.createOscillator(); hi.type = 'sawtooth';
+    const subG = gainN(V.biteG), hiG = gainN(0.15), drive = gainN(1);
+    const shaper = ac.createWaveShaper(); shaper.curve = tanhCurve; shaper.oversample = '2x';
+    const lp = filt('lowpass', V.lp, 1), pk = filt('peaking', V.peak, V.peakQ, V.peakG);
+    // the firing pulse: a low wave pushes the level up and down at the cylinder rate
+    const am = gainN(1 - V.depth / 2), lfo = ac.createOscillator(); lfo.type = V.fireWave; const lfoG = gainN(V.depth / 2);
+    lfo.connect(lfoG); lfoG.connect(am.gain);
+    saw.connect(drive); sub.connect(subG); subG.connect(drive); hi.connect(hiG); hiG.connect(drive);
+    chain(drive, shaper, lp, pk, am);
+    const rumble = noiseSrc(pink); const rbp = filt('bandpass', 80, 1.4); const rg = gainN(0);
+    chain(rumble, rbp, rg, am);
+    // a few milliseconds of echo give the hollow sound of an exhaust pipe
+    const dry = gainN(0.8), dl = ac.createDelay(0.01); dl.delayTime.value = V.comb; const wet = gainN(0.3);
+    const shift = gainN(1), duck = gainN(1), notch = filt('peaking', 2500, 1, 0), level = gainN(0);
+    am.connect(dry); am.connect(dl); dl.connect(wet); dry.connect(shift); wet.connect(shift);
+    chain(shift, duck, notch, level, bus.engine);
+    let whine = null, wG = null;
+    if (V.whine) { whine = ac.createOscillator(); whine.type = 'triangle'; wG = gainN(0); chain(whine, filt('bandpass', 1300, 1), wG, shift); whine.start(t); }
+    for (const o of [saw, sub, hi, lfo, rumble]) o.start(t);
+    eng = { kind, V, saw, sub, hi, lfo, lp, drive, rbp, rg, shift, duck, notch, level, whine, wG, oscs: [saw, sub, hi, lfo, rumble, whine].filter(Boolean), gear: 1, rpm: 0.15, shiftT: 0, lastT: 0 };
+  }
+  function dropEngine() {
+    if (!eng) return;
+    const e = eng; eng = null; const t = now();
+    e.level.gain.cancelScheduledValues(t); e.level.gain.setValueAtTime(e.level.gain.value, t); e.level.gain.linearRampToValueAtTime(0, t + 0.08);
+    stopAt(e.oscs, t + 0.2);
+  }
+  // pick a gear from the speed, and how far through that gear the engine has revved (0..1)
+  function gearOf(kmh, vmaxKmh, gears, cur) {
+    if (gears <= 1) return { gear: 1, rpm: clampN(0.12 + 0.88 * kmh / vmaxKmh, 0.12, 1) };
+    const top = (g) => vmaxKmh * Math.pow(g / gears, 0.85);
+    let g = cur || 1;
+    while (g < gears && kmh > top(g)) g++;
+    while (g > 1 && kmh < top(g - 1) - 3) g--;
+    const lo = g === 1 ? 0 : top(g - 1) * 0.8, hiS = top(g);
+    const idle = g === 1 ? 0.12 : 0.42;
+    return { gear: g, rpm: clampN(idle + (1 - idle) * (kmh - lo) / (hiS - lo), 0.12, 1) };
+  }
+  function shiftDip(up) {
+    const e = eng; if (!e) return; const t = now();
+    const g = e.shift.gain; g.cancelScheduledValues(t); g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(up ? 0.24 : 0.55, t + 0.012); g.setValueAtTime(up ? 0.24 : 0.55, t + (up ? 0.08 : 0.055)); g.linearRampToValueAtTime(1, t + (up ? 0.16 : 0.11)); g._last = 1;
+    // a dull knock from the gearbox
+    burst(t, 0.06, up ? 0.05 : 0.03, [filt('lowpass', 700, 0.8)], bus.engine, 2.6);
+  }
+
+  // ---------- road, wind, city and tyres ----------
+  let amb = null;
+  function buildAmb() {
+    if (amb) return; const t = now();
+    const road = noiseSrc(white), roadG = gainN(0); chain(road, filt('lowpass', 260, 0.7), roadG, bus.fx);
+    const wind = noiseSrc(white), windBP = filt('bandpass', 900, 0.5), windG = gainN(0); chain(wind, windBP, windG, bus.fx);
+    const city = noiseSrc(pink), cityG = gainN(0.07), cityBreath = ac.createOscillator(); cityBreath.frequency.value = 0.05; const cbG = gainN(0.028); cityBreath.connect(cbG); cbG.connect(cityG.gain);
+    const cityOut = gainN(0); chain(city, filt('bandpass', 350, 0.8), cityG, cityOut, bus.fx);
+    const hiss = noiseSrc(white), hissG = gainN(0); chain(hiss, filt('highpass', 4000, 1), hissG, bus.fx);
+    // tyre squeal: a narrow band of noise that chatters
+    const sq = noiseSrc(white), sqBP = filt('bandpass', 2400, 8), sqG = gainN(0), chat = ac.createOscillator(); chat.type = 'square'; chat.frequency.value = 18; const chatG = gainN(300);
+    chat.connect(chatG); chatG.connect(sqBP.frequency); chain(sq, sqBP, sqG, bus.fx);
+    const oscs = [road, wind, city, cityBreath, hiss, sq, chat]; for (const o of oscs) o.start(t);
+    amb = { roadG, windBP, windG, cityOut, hissG, sqG, oscs };
+  }
+  function dropAmb() { if (!amb) return; const a = amb; amb = null; const t = now(); for (const g of [a.roadG, a.windG, a.cityOut, a.hissG, a.sqG]) { g.gain.cancelScheduledValues(t); g.gain.setTargetAtTime(0, t, 0.1); } stopAt(a.oscs, t + 0.8); }
+
+  // called every frame while driving; returns the gear and engine speed so the dashboard can show them
+  const dash = { gear: 1, rpm: 0 };
+  function drive(s) {
+    if (!ac || ac.state !== 'running') return dash;
+    const t = now();
+    if (!s.live || !sfxOn) {
+      if (eng) { set(eng.level.gain, 0, 0.1); if (!s.live && !s.idle) { dropEngine(); } }
+      if (amb) { set(amb.roadG.gain, 0, 0.2); set(amb.windG.gain, 0, 0.2); set(amb.sqG.gain, 0, 0.05); set(amb.cityOut.gain, s.idle && sfxOn ? 0.5 : 0, 0.4); }
+      if (!s.live && !s.idle) dropAmb();
+      return dash;
+    }
+    buildEngine(s.kind); buildAmb();
+    const e = eng, V = e.V;
+    if (t - e.lastT < 0.045) return dash; e.lastT = t; // 20 updates a second is plenty
+    const kmh = s.kmh, g = gearOf(kmh, s.vmax, V.gears, e.gear);
+    if (g.gear !== e.gear) { shiftDip(g.gear > e.gear); e.gear = g.gear; }
+    // let the needle drop a little when coasting
+    const rpm = s.gas ? g.rpm : Math.max(0.12, g.rpm - (s.brake ? 0.08 : 0.03));
+    e.rpm += (rpm - e.rpm) * 0.5;
+    const load = s.brake ? 0.15 : s.gas ? 1 : s.cruising ? 0.5 : 0.35;
+    const c = 0.55 + 0.45 * load;
+    const f = V.base + V.span * e.rpm;
+    set(e.saw.frequency, f, 0.04); set(e.sub.frequency, f * V.bite, 0.04); set(e.hi.frequency, f * 2.01, 0.04);
+    set(e.lfo.frequency, f * V.fire, 0.03);
+    e.saw.detune.setTargetAtTime((Math.random() * 2 - 1) * 5 * (1 - e.rpm), t, 0.25); // a rough idle that smooths out higher up
+    set(e.drive.gain, 0.6 + 2 * c, 0.08); // push harder into the clipper on throttle for a grittier tone
+    set(e.lp.frequency, (V.lp + e.rpm * V.lpSpan) * (0.72 + 0.28 * c), 0.08);
+    set(e.rbp.frequency, Math.max(70, f * V.rumF), 0.08); set(e.rg.gain, V.rum * (0.45 + e.rpm) * c, 0.1);
+    if (e.whine) { set(e.whine.frequency, f * V.whine, 0.05); set(e.wG.gain, V.whineG * Math.max(0, e.rpm - 0.25) * 1.4 * (s.gas || V.gears <= 1 ? 1 : 0.4), 0.1); }
+    set(e.level.gain, V.vol * (0.55 + 0.45 * e.rpm) * c / (0.7 + 0.5 * c) * 6, 0.08);
+    const v = clampN(kmh / s.vmax, 0, 1.3);
+    set(amb.roadG.gain, 0.06 * v * (1 + 0.5 * Math.min(1.5, s.slip || 0)), 0.25);
+    set(amb.windBP.frequency, 800 + 8 * kmh, 0.2); set(amb.windG.gain, Math.min(0.2 * Math.pow(kmh / 160, 2), 0.2), 0.25);
+    set(amb.cityOut.gain, 0.25, 0.4); set(amb.hissG.gain, 0.012 + 0.02 * v, 0.3);
+    let sq = 0;
+    if (s.brake && s.brakeAmt > 0.5 && kmh > 50) sq = 0.05 * v * s.brakeAmt;
+    else if ((s.slip || 0) > 0.15 && kmh > 40) sq = 0.045 * Math.min(1, (s.slip - 0.15) / 0.6);
+    set(amb.sqG.gain, sq, 0.05);
+    dash.gear = e.gear; dash.rpm = e.rpm;
+    return dash;
+  }
+
+  // ---------- horns ----------
+  // a horn note: a chord of buzzy tones that start slightly sharp, a diaphragm rattle, and two bright peaks
+  function hornVoice(freqs, dest, opts) {
+    const t = now(); const sum = gainN(1 / freqs.length); const oscs = [];
+    for (const f of freqs) {
+      const o = ac.createOscillator(); o.type = opts.wave || 'sawtooth';
+      o.frequency.setValueAtTime(f * 1.04, t); o.frequency.setTargetAtTime(f, t, 0.012);
+      o.connect(sum); o.start(t); oscs.push(o);
+    }
+    const shaper = ac.createWaveShaper(); shaper.curve = tanhCurve;
+    const buzz = gainN(0.97), lfo = ac.createOscillator(); lfo.frequency.value = 65; const lg = gainN(0.03); lfo.connect(lg); lg.connect(buzz.gain); lfo.start(t); oscs.push(lfo);
+    const env = gainN(0);
+    chain(sum, shaper, filt('peaking', opts.throat || 900, 2, 8), filt('peaking', opts.bell || 2800, 1.5, 6), filt('lowpass', opts.lp || 4500, 0.7), buzz, env, dest);
+    env.gain.setValueAtTime(0.0001, t); env.gain.exponentialRampToValueAtTime(opts.gain, t + 0.008);
+    // a click as the horn opens
+    burst(t, 0.015, opts.gain * 1.2, [filt('highpass', 2500, 0.7)], dest, 2);
+    return { oscs, env, t0: t };
+  }
+  function hornOff(h, at) { const t = Math.max(now(), at || 0); h.env.gain.cancelScheduledValues(t); h.env.gain.setValueAtTime(Math.max(h.env.gain.value, 0.0001), t); h.env.gain.exponentialRampToValueAtTime(0.0001, t + 0.03); stopAt(h.oscs, t + 0.05); }
+  // the player's horn sounds while held, and for at least a short honk on a quick tap
+  let myHorn = null;
+  function horn(on, chord, kind) {
+    if (!ac || !sfxOn) { if (myHorn) { hornOff(myHorn); myHorn = null; } return; }
+    if (on && !myHorn) {
+      const k = { pickup: 0.85, suv: 0.82, sports: 1.12, hatch: 1.06 }[kind] || 1;
+      myHorn = hornVoice(chord.map((f) => f * k), bus.horn, { gain: 0.11, wave: kind === 'hatch' ? 'square' : 'sawtooth' });
+      duckEngine(1); radio.duck(1.2);
+    } else if (!on && myHorn) { hornOff(myHorn, myHorn.t0 + 0.16); myHorn = null; }
+  }
+  // a horn from another car: panned to its side and dulled with distance, with an echo off the buildings when far
+  function placeAt(dx, dist, dest) {
+    const pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+    const lp = filt('lowpass', Math.max(1800, 5000 - 16 * dist), 0.7), hp = filt('highpass', Math.min(260, 160 + 0.8 * dist), 0.7);
+    const g = gainN(1 / (1 + Math.pow(dist / 55, 1.05)));
+    const head = chain(lp, hp, g);
+    if (pan) { pan.pan.value = clampN(dx / 9, -0.9, 0.9); head.connect(pan); pan.connect(dest); } else head.connect(dest);
+    if (dist > 30) { const d = ac.createDelay(0.1); d.delayTime.value = 0.035; const dg = gainN(0.5 * clampN((dist - 30) / 40, 0, 1)); g.connect(d); d.connect(dg); dg.connect(dest); }
+    return lp;
+  }
+  function otherHorn(dx, dist, chord, pattern) {
+    if (!ac || !sfxOn) return;
+    dist = dist == null ? 20 : dist;
+    const input = placeAt(dx || 0, dist, bus.horn);
+    const base = (chord || [400, 500]).map((f) => f * (0.85 + Math.random() * 0.4));
+    const notes = pattern || (Math.random() < 0.5 ? [[0, 0.12], [0.2, 0.28]] : [[0, 0.4]]);
+    for (const [at, len] of notes) setTimeout(() => { if (!ac) return; const h = hornVoice(base, input, { gain: 0.08 }); hornOff(h, now() + len); }, at * 1000);
+    duckEngine(1 / (1 + Math.pow(dist / 20, 1.5)));
+  }
+  // horns cut a little hole in the engine so they come through
+  function duckEngine(w) {
+    if (!eng || w < 0.15) return; const t = now();
+    eng.duck.gain.cancelScheduledValues(t); eng.duck.gain.setTargetAtTime(1 - 0.29 * w, t, 0.01); eng.duck.gain.setTargetAtTime(1, t + 0.25, 0.15); eng.duck.gain._last = 1;
+    eng.notch.gain.cancelScheduledValues(t); eng.notch.gain.setTargetAtTime(-6 * w, t, 0.01); eng.notch.gain.setTargetAtTime(0, t + 0.25, 0.15); eng.notch.gain._last = 0;
+  }
+
+  // ---------- effects ----------
+  function crash(i) {
+    if (!ac || !sfxOn) return;
+    i = clampN(i, 0.2, 1); const t = now();
+    const o = ac.createOscillator(); o.frequency.setValueAtTime(95, t); o.frequency.exponentialRampToValueAtTime(36, t + 0.28);
+    const og = gainN(0); og.gain.setValueAtTime(0.25 + 0.28 * i, t); og.gain.setTargetAtTime(0, t + 0.02, 0.13); chain(o, og, bus.fx); o.start(t); o.stop(t + 0.5);
+    // crunching metal: noise whose level is shaken by slower noise
+    const n = noiseSrc(white), bp = filt('bandpass', 1400, 0.5), cg = gainN(0);
+    cg.gain.setValueAtTime(0.3 + 0.28 * i, t); cg.gain.setTargetAtTime(0, t + 0.05, 0.13);
+    const shake = noiseSrc(white), slp = filt('lowpass', 90, 0.7), sg = gainN(0.6 * (0.3 + 0.28 * i)); chain(shake, slp, sg, cg.gain);
+    chain(n, bp, cg, bus.fx); n.start(t); shake.start(t); stopAt([n, shake], t + 0.7);
+    if (i > 0.45) burst(t + 0.03, 0.8, 0.12 * i, [filt('highpass', 6500, 0.7)], bus.fx, 4); // glass
+    if (eng) { const g = eng.duck.gain; g.cancelScheduledValues(t); g.setTargetAtTime(0.25, t, 0.01); g.setTargetAtTime(1, t + 0.1, 0.4); g._last = 1; }
+    radio.duck(1.5);
+  }
+  function scrape() { if (!ac || !sfxOn) return; burst(now(), 0.4, 0.14, [filt('bandpass', 1300, 1.2)], bus.fx, 1.2); }
+  function bump(level) { if (!ac || !sfxOn) return; const L = clampN(level, 0, 4); burst(now(), 0.2 + 0.05 * L, 0.06 + 0.045 * L, [filt('lowpass', 950 - 130 * L, 0.8)], bus.fx, 2.5); }
+  // a car going past: a sweep of noise that pans from one ear to the other
+  function passBy(side, size, closeness) {
+    if (!ac || !sfxOn) return;
+    const P = { car: [2200, 600, 0.7, 0.8], van: [1600, 400, 1.1, 1.5], truck: [900, 250, 2.0, 2] }[size] || [2200, 600, 0.7, 0.8];
+    const t = now(), len = P[2], peak = 0.18 * clampN(closeness, 0.2, 1);
+    const n = noiseSrc(white), bp = filt('bandpass', P[0], P[3]), g = gainN(0.0001);
+    bp.frequency.setValueAtTime(P[0], t); bp.frequency.exponentialRampToValueAtTime(P[1], t + len);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + len * 0.45); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+    let last = chain(n, bp, g);
+    if (ac.createStereoPanner) { const p = ac.createStereoPanner(); p.pan.setValueAtTime(0.9 * side, t); p.pan.linearRampToValueAtTime(-0.2 * side, t + len); last.connect(p); last = p; }
+    last.connect(bus.fx); n.start(t); n.stop(t + len + 0.05);
+  }
+  // short tunes for game events
+  const CUES = {
+    radar: () => blip(960, 0.09, 'square', 0.05),
+    radarFast: () => blip(1480, 0.08, 'square', 0.07),
+    flash: () => { blip(1200, 0.25, 'sine', 0.15); radio.duck(1.5); },
+    toll: () => { blip(1319, 0.08, 'triangle', 0.08); blip(1760, 0.12, 'triangle', 0.08, null, now() + 0.07); },
+    bonus: () => [1047, 1319, 1568, 2093].forEach((f, i) => blip(f, 0.14, 'triangle', 0.08, null, now() + i * 0.055)),
+    ok: () => { blip(784, 0.1, 'triangle', 0.07); blip(1047, 0.14, 'triangle', 0.07, null, now() + 0.08); },
+    bad: () => { blip(330, 0.14, 'square', 0.05); blip(247, 0.18, 'square', 0.05, null, now() + 0.12); },
+    count: () => blip(880, 0.16, 'triangle', 0.1),
+    go: () => blip(1320, 0.3, 'triangle', 0.12),
+    finish: () => [1047, 1319, 1568, 2093, 2637].forEach((f, i) => blip(f, 0.2, 'triangle', 0.08, null, now() + i * 0.08)),
+    wreck: () => [440, 370, 311, 262].forEach((f, i) => blip(f, 0.22, 'square', 0.05, null, now() + i * 0.14)),
+    tick: () => blip(2400, 0.02, 'triangle', 0.03),
+    click: () => blip(1500, 0.03, 'triangle', 0.025)
+  };
+  // near misses climb a semitone each step of the chain
+  function combo(n) { const f = 1245 * Math.pow(2, Math.min(7, n - 1) / 12); blip(f, 0.1, 'triangle', 0.08); blip(f * 1.5, 0.12, 'triangle', 0.06, null, now() + 0.09); }
+  function cue(name) { if (!ac || !sfxOn) return; const c = CUES[name]; if (c) c(); }
+
+  // ---------- radio: music made up on the spot ----------
+  // a station has a rhythm, a maqam (scale, with quarter tones where the maqam has them), a tempo and a lead sound.
+  // each station builds a short tune from its seed, repeats it with small changes, then writes a new one.
+  const MAQAM = {
+    hijaz: [0, 100, 400, 500, 700, 800, 1000], nahawand: [0, 200, 300, 500, 700, 800, 1100], bayati: [0, 150, 300, 500, 700, 800, 1000],
+    ajam: [0, 200, 400, 500, 700, 900, 1100], kurd: [0, 100, 300, 500, 700, 800, 1000], rast: [0, 200, 350, 500, 700, 900, 1050], saba: [0, 150, 300, 400, 700, 800, 1000]
+  };
+  // D = deep drum, T = sharp drum, k = soft hit, C = hand clap, . = rest; sixteen steps a bar
+  const RHYTHM = {
+    maqsum:  'D.T...T.D...T...', baladi: 'D.D...T.D...T...', saidi: 'D.T...D.D...T...',
+    khaleeji: 'D..CT.C.D..CT.C.', fallahi: 'D.T.D.T.D.T.D.T.', chobi: 'D..TD.T.D..TD.TT'
+  };
+  const radio = (() => {
+    let stations = [], cur = -1, timer = null, nextT = 0, step = 0, bar = 0, motif = null, rng = Math.random, duckUntil = 0, level = 0, mixG = null;
+    function seeded(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    const st = () => stations[cur];
+    const hz = (deg, oct) => { const S = MAQAM[st().maqam] || MAQAM.hijaz; const n = S.length; const o = Math.floor(deg / n); const i = ((deg % n) + n) % n; return st().root * Math.pow(2, (S[i] + 1200 * (o + (oct || 0))) / 1200); };
+    // a tune is eight beats of scale steps; null is a rest, and a note can hold over the next beat
+    function newMotif() {
+      const m = []; let d = Math.floor(rng() * 3);
+      for (let i = 0; i < 8; i++) {
+        if (i > 0 && rng() < 0.18) { m.push(null); continue; }
+        d += [-2, -1, -1, 0, 1, 1, 2, 3][Math.floor(rng() * 8)] * (rng() < 0.8 ? 1 : 0);
+        d = clampN(d, -2, 9); m.push(d);
+      }
+      m[7] = rng() < 0.6 ? 0 : 4; // land on the home note or the fifth
+      return m;
+    }
+    function vary(m) { return m.map((d, i) => (d == null || i === 7 || rng() > 0.3 ? d : d + (rng() < 0.5 ? 1 : -1))); }
+    // instruments
+    function drum(type, t, accent) {
+      const dest = mixG;
+      if (type === 'D') {
+        const o = ac.createOscillator(); o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(48, t + 0.18);
+        const g = gainN(0); g.gain.setValueAtTime(0.5 * accent, t); g.gain.setTargetAtTime(0, t + 0.01, 0.09); chain(o, g, dest); o.start(t); o.stop(t + 0.5);
+        burst(t, 0.03, 0.08 * accent, [filt('lowpass', 900, 0.7)], dest, 2);
+      } else if (type === 'T' || type === 'k') {
+        const v = type === 'T' ? 0.22 : 0.08;
+        burst(t, type === 'T' ? 0.07 : 0.04, v * accent, [filt('bandpass', 2600, 1.2)], dest, 3);
+        const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(300, t + 0.03);
+        const g = gainN(0); g.gain.setValueAtTime(v * 0.7 * accent, t); g.gain.setTargetAtTime(0, t, 0.015); chain(o, g, dest); o.start(t); o.stop(t + 0.1);
+      } else if (type === 'C') {
+        for (let i = 0; i < 3; i++) burst(t + i * 0.009, 0.05, 0.12 * accent, [filt('bandpass', 1200, 1.5)], dest, 3);
+      } else if (type === 'r') { // riq jingles
+        burst(t, 0.05, 0.035 * accent, [filt('highpass', 7000, 0.7)], dest, 3);
+      }
+    }
+    function bass(f, t, len) {
+      const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = f;
+      const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = f / 2;
+      const g = gainN(0); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.01); g.gain.setTargetAtTime(0, t + len * 0.6, len * 0.3);
+      const lp = filt('lowpass', 500, 0.8); o.connect(lp); o2.connect(lp); chain(lp, g, mixG); o.start(t); o2.start(t); stopAt([o, o2], t + len + 0.3);
+    }
+    function lead(f, t, len, kind) {
+      const g = gainN(0), dest = mixG; const oscs = [];
+      if (kind === 'qanun' || kind === 'oud') {
+        // plucked strings: a bright attack that dulls quickly
+        const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f;
+        const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * (kind === 'oud' ? 1 : 2); o2.detune.value = 4;
+        const lp = filt('lowpass', kind === 'oud' ? 1800 : 3200, 2); lp.frequency.setValueAtTime(kind === 'oud' ? 2600 : 5200, t); lp.frequency.setTargetAtTime(kind === 'oud' ? 500 : 900, t, 0.08);
+        const og = gainN(kind === 'oud' ? 0.6 : 0.35); o2.connect(og); og.connect(lp); o.connect(lp); lp.connect(g);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.12, t + 0.004); g.gain.setTargetAtTime(0, t + 0.02, kind === 'oud' ? 0.22 : 0.16);
+        oscs.push(o, o2); len = Math.max(len, 0.9);
+      } else if (kind === 'nay') {
+        // breathy flute: soft tone, a little air, and a vibrato that grows in
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * 2; const o2g = gainN(0.12); o2.connect(o2g); o2g.connect(g);
+        const vib = ac.createOscillator(); vib.frequency.value = 5.2; const vg = gainN(0); vg.gain.setValueAtTime(0, t); vg.gain.linearRampToValueAtTime(f * 0.012, t + len * 0.6);
+        vib.connect(vg); vg.connect(o.frequency); vg.connect(o2.frequency);
+        const air = noiseSrc(white); const ab = filt('bandpass', f * 2, 2); const ag = gainN(0.05); chain(air, ab, ag, g);
+        o.connect(g);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.1, t + 0.06); g.gain.setValueAtTime(0.1, t + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + len + 0.1);
+        oscs.push(o, o2, vib, air);
+      } else {
+        // a bright synth lead for the dance stations
+        const o = ac.createOscillator(); o.type = 'square'; o.frequency.setValueAtTime(f * 0.97, t); o.frequency.setTargetAtTime(f, t, 0.02);
+        const o2 = ac.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = f; o2.detune.value = 9;
+        const vib = ac.createOscillator(); vib.frequency.value = 6; const vg = gainN(f * 0.008); vib.connect(vg); vg.connect(o.frequency);
+        const lp = filt('lowpass', 2600, 3); o.connect(lp); o2.connect(lp); lp.connect(g);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06, t + 0.01); g.gain.setValueAtTime(0.06, t + len * 0.7); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+        oscs.push(o, o2, vib);
+      }
+      g.connect(dest); for (const o of oscs) o.start(t); stopAt(oscs, t + len + 0.2);
+    }
+    let pad = null;
+    function padOn(f) {
+      const t = now();
+      if (pad) { const p = pad; p.g.gain.setTargetAtTime(0, t, 0.4); stopAt(p.oscs, t + 2); }
+      const g = gainN(0); const lp = filt('lowpass', 700, 0.6); const oscs = [];
+      for (const [r, d] of [[1, -6], [1, 7], [1.5, 3], [0.5, 0]]) { const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f * r; o.detune.value = d; o.connect(lp); o.start(t); oscs.push(o); }
+      chain(lp, g, mixG); g.gain.setTargetAtTime(0.03, t, 0.6);
+      pad = { g, oscs };
+    }
+    function padOff() { if (!pad) return; const t = now(); pad.g.gain.setTargetAtTime(0, t, 0.3); stopAt(pad.oscs, t + 1.5); pad = null; }
+    // the scheduler looks a little ahead and books each sixteenth note on the audio clock
+    function tick() {
+      if (!ac || cur < 0) return;
+      const S = st(), sixteenth = 60 / S.bpm / 4;
+      while (nextT < now() + 0.15) {
+        const t = nextT, pat = RHYTHM[S.rhythm] || RHYTHM.maqsum, ch = pat[step % 16];
+        const accent = step % 4 === 0 ? 1 : 0.8;
+        if (ch !== '.') drum(ch, t, accent);
+        else if (S.ghost && rng() < S.ghost) drum('k', t, 0.6);
+        if (S.riq && step % 2 === 0) drum('r', t, step % 4 === 0 ? 1 : 0.6);
+        if (step % 16 === 0) {
+          // a new tune every eight bars; a new chord every two
+          if (bar % 8 === 0) motif = newMotif();
+          if (bar % 2 === 0) padOn(hz(bar % 4 === 2 ? S.chord2 || 3 : 0, -1));
+        }
+        if (ch === 'D') bass(hz(step % 16 >= 8 && rng() < 0.4 ? 4 : 0, -1), t, sixteenth * 3);
+        if (step % 2 === 0) {
+          const phrase = (bar % 4 === 3) ? vary(motif) : motif;
+          const beat = (step % 16) / 2, d = phrase[beat];
+          // the second half of each four-bar line answers an octave up on even bars
+          if (d != null && !(S.sparse && bar % 2 === 1 && beat > 4)) {
+            let len = sixteenth * 2;
+            if (beat < 7 && phrase[beat + 1] == null) len *= 2;
+            if (S.lead !== 'nay' && rng() < 0.15 && beat < 7) { lead(hz(d + 1, 1), t, sixteenth * 0.6, S.lead); lead(hz(d, 1), t + sixteenth * 0.5, len, S.lead); }
+            else lead(hz(d, 1), t, S.lead === 'nay' ? len * 1.6 : len, S.lead);
+          }
+        }
+        nextT += sixteenth * (S.swing && step % 2 === 0 ? 1 + S.swing : S.swing && step % 2 === 1 ? 1 - S.swing : 1);
+        step++; if (step % 16 === 0) bar++;
+      }
+    }
+    // static between stations
+    function tune() {
+      const t = now(); const n = noiseSrc(white); const bp = filt('bandpass', 600, 3); const g = gainN(0);
+      bp.frequency.setValueAtTime(400 + Math.random() * 300, t); bp.frequency.exponentialRampToValueAtTime(2500 + Math.random() * 1500, t + 0.35); bp.frequency.exponentialRampToValueAtTime(900, t + 0.6);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.09 * vol.music * 1.5, t + 0.05); g.gain.setValueAtTime(0.09 * vol.music * 1.5, t + 0.45); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.7);
+      const crackle = ac.createOscillator(); crackle.type = 'square'; crackle.frequency.value = 23; const cg = gainN(0.04); crackle.connect(cg); cg.connect(g.gain);
+      chain(n, bp, g, ac.destination); n.start(t); crackle.start(t); stopAt([n, crackle], t + 0.75);
+      const wh = ac.createOscillator(); wh.frequency.setValueAtTime(1800, t); wh.frequency.exponentialRampToValueAtTime(700, t + 0.5); const wg = gainN(0); wg.gain.setValueAtTime(0.012 * vol.music, t + 0.1); wg.gain.setTargetAtTime(0, t + 0.4, 0.06);
+      chain(wh, wg, ac.destination); wh.start(t); wh.stop(t + 0.7);
+    }
+    function start(i) {
+      if (!ac) return;
+      const old = mixG; if (old) { const t = now(); old.gain.setTargetAtTime(0, t, 0.15); setTimeout(() => { try { old.disconnect(); } catch (e) { /* ignore */ } }, 1500); }
+      padOff();
+      cur = i;
+      if (cur < 0) { clearInterval(timer); timer = null; level = 0; levelNow(); return; }
+      mixG = gainN(0); mixG.connect(musicOut); mixG.gain.setTargetAtTime(1, now() + 0.4, 0.4);
+      const S = st(); rng = seeded(S.seed + Math.floor(Math.random() * 1e6));
+      step = 0; bar = 0; nextT = now() + 0.45; motif = newMotif();
+      if (!timer) timer = setInterval(tick, 25);
+      level = 1; levelNow();
+    }
+    function levelNow() {
+      if (!ac) return; const t = now();
+      const ducked = t < duckUntil ? 0.45 : 1;
+      const v = musicOn && cur >= 0 ? 0.55 * vol.music * ducked * level : 0;
+      musicGain.gain.cancelScheduledValues(t); musicGain.gain.setTargetAtTime(v, t, ducked < 1 ? 0.05 : 0.3);
+    }
+    return {
+      setStations(list) { stations = list || []; },
+      // go to the next station; after the last one the radio turns off
+      next() { if (!ac || !stations.length) return null; tune(); musicLP.frequency.setTargetAtTime(1200, now(), 0.05); musicLP.frequency.setTargetAtTime(18000, now() + 0.6, 0.2); const i = cur + 1 >= stations.length ? -1 : cur + 1; setTimeout(() => start(i), 350); return i; },
+      play(i) { if (!ac || !stations.length) return; start(clampN(i, -1, stations.length - 1)); },
+      stop() { start(-1); },
+      get current() { return cur; },
+      duck(sec) { if (!ac) return; duckUntil = Math.max(duckUntil, now() + (sec || 1.2)); levelNow(); setTimeout(levelNow, (sec || 1.2) * 1000 + 30); },
+      level: levelNow,
+      // the radio dims while the game is paused
+      pause(p) { level = p ? 0.25 : 1; levelNow(); }
+    };
+  })();
+
+  // ---------- phone buzz ----------
+  const VIB = [0, 0.6, 1, 1.5];
+  let vibLevel = 2, lastVib = 0;
+  function vibrate(p) {
+    if (!vibLevel || !gestured) return;
+    const t = performance.now(); if (t - lastVib < 50) return; lastVib = t;
+    const k = VIB[vibLevel];
+    const pat = (Array.isArray(p) ? p : [p]).map((v, i) => (i % 2 ? v : clampN(Math.round(v * k), 8, 90)));
+    try { if (navigator.vibrate) navigator.vibrate(pat); else if (ac && sfxOn) cue('tick'); } catch (e) { /* ignore */ }
+  }
+
+  return {
+    unlock, drive, horn, otherHorn, crash, scrape, bump, passBy, cue, combo, blip: (f, d, v, w) => blip(f, d, w || 'sine', v), radio, vibrate,
+    get ready() { return !!ac; },
+    // settings: volumes are 0..100
+    apply(s) {
+      vol.engine = s.volEngine / 100; vol.horn = s.volHorn / 100; vol.fx = s.volFx / 100; vol.music = s.volMusic / 100;
+      sfxOn = !!s.sound; musicOn = !!s.music; vibLevel = s.vib;
+      if (!sfxOn && myHorn) { hornOff(myHorn); myHorn = null; }
+      applyVolumes();
+    },
+    canVibrate: !!navigator.vibrate
+  };
+})();
+
 /* Ring road driving game engine. City data comes from window.CITY. */
 (function () {
 'use strict';
@@ -769,10 +1321,14 @@ scene.add(sun); scene.add(sun.target);
 const SUN_DIR = new THREE.Vector3().fromArray(C.look.sunDir).normalize();
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // quality: high = real shadows and sharper pixels, low = faster on phones
+// auto: when frames run slow for a few seconds, draw fewer pixels, then drop the shadows
+const autoQ = { step: 0, slow: 0, all: 0, t: 0, told: false };
+const AUTO_SCALE = [1, 0.85, 0.72, 0.6];
 function applyQuality() {
   const hi = settings.quality === 'high';
-  renderer.shadowMap.enabled = hi;
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1));
+  if (!settings.autoQ) autoQ.step = 0;
+  renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SCALE.length;
+  renderer.setPixelRatio(Math.max(0.5, Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1) * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]));
   scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
   if (typeof resize === 'function') resize();
 }
@@ -1802,7 +2358,11 @@ function updateTraffic(dt, honk) {
     // leader search
     let gap = 1e9, lv = 0;
     for (const o of all) { if (o === c) continue; if (Math.abs(o.d - c.d) < 2.2) { const g = o.t - c.t - (o.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = o.v; } } }
-    if (Math.abs(player.d - c.d) < 2.2) { const g = player.t - c.t - (player.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = player.v; } }
+    if (Math.abs(player.d - c.d) < 2.2) {
+      const g = player.t - c.t - (player.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = player.v; }
+      // a car stuck behind you lets you know
+      if (game.mode === 'drive' && !game.tour && g > -1 && g < 14 && c.vt > player.v + 4 && game.time > (c.honkT || 0)) { c.honkT = game.time + mr(5, 9); SND.otherHorn(c.d - player.d, g + 4, C.horn); }
+    }
     let target = c.vt;
     const safe = 8 + c.v * 0.9;
     if (gap < safe) target = Math.min(target, lv * (gap < safe * 0.5 ? 0.85 : 1));
@@ -1833,7 +2393,7 @@ function updateTraffic(dt, honk) {
 }
 
 // ---------- player ----------
-const player = { t: 0, d: laneD(0), v: 0, cruise: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null };
+const player = { t: 0, d: laneD(0), v: 0, cruise: 0, lat: 0, steer: 0, laneT: 0, len: 4.6, wid: 1.85, dmg: 0, group: null, brakeMat: null, input: {}, slip: 0 };
 const brakeMat = new THREE.MeshBasicMaterial({ color: 0x550000, toneMapped: false });
 let plateTex = null;
 function drawPlate() {
@@ -1866,10 +2426,10 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1 }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1 }, store.get('settings', {}));
 function saveSettings() { store.set('settings', settings); }
 
-const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false };
+const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0 };
 
 // ---------- input ----------
 const keys = {};
@@ -1889,13 +2449,12 @@ addEventListener('keyup', (e) => { keys[e.code] = false; });
 function resetInputs() {
   for (const k of Object.keys(keys)) keys[k] = false;
   for (const k of Object.keys(touch)) touch[k] = false;
-  stickRelease();
+  stickRelease(); if (typeof wheelRelease === 'function') wheelRelease();
   document.querySelectorAll('[data-hold]').forEach((el) => el.classList.remove('on'));
 }
 addEventListener('blur', () => { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); });
 document.addEventListener('visibilitychange', () => {
-  if (document.hidden) { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); if (AC) AC.suspend(); }
-  else if (AC) AC.resume();
+  if (document.hidden) { resetInputs(); if (game.mode === 'drive' && !game.paused && !tourEndShown()) togglePause(); }
 });
 function bindHold(el, key) {
   const on = (e) => { e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } touch[key] = true; el.classList.add('on'); audioInit(); };
@@ -1955,6 +2514,29 @@ addEventListener('deviceorientation', (e) => {
   const deg = a === 90 ? e.beta : a === -90 || a === 270 ? -e.beta : a === 180 ? -e.gamma : e.gamma;
   tilt.x = clamp(Math.abs(deg) < 3 ? 0 : (deg - Math.sign(deg) * 3) / 22, -1, 1);
 });
+// the wheel: drag around its middle to turn it, up to about a third of a turn each way; let go and it springs back
+const wheelEl = $('#wheel'), wheelSvg = wheelEl.querySelector('svg');
+const wheelIn = { on: false, x: 0, ang: 0, last: 0, id: null };
+const angAt = (e) => { const b = wheelEl.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)); };
+wheelEl.addEventListener('pointerdown', (e) => {
+  if (game.mode !== 'drive' || wheelIn.on) return;
+  e.preventDefault(); audioInit(); wheelIn.on = true; wheelIn.id = e.pointerId; wheelIn.last = angAt(e); wheelEl.classList.add('held');
+  try { wheelEl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+});
+wheelEl.addEventListener('pointermove', (e) => {
+  if (!wheelIn.on || e.pointerId !== wheelIn.id) return;
+  e.preventDefault();
+  const a = angAt(e); let da = a - wheelIn.last; if (da > Math.PI) da -= 2 * Math.PI; if (da < -Math.PI) da += 2 * Math.PI; wheelIn.last = a;
+  const before = Math.abs(wheelIn.ang) > 1.9;
+  wheelIn.ang = clamp(wheelIn.ang + da, -2.27, 2.27);
+  if (!before && Math.abs(wheelIn.ang) > 1.9) vibrate(10);
+  // a little dead zone in the middle, then a gentle curve so small turns stay small
+  const r = Math.max(0, Math.abs(wheelIn.ang) - 0.08) / 1.75;
+  wheelIn.x = Math.sign(wheelIn.ang) * Math.min(1, Math.pow(r, 1.3));
+  wheelSvg.style.transform = `rotate(${wheelIn.ang}rad)`;
+});
+for (const ev of ['pointerup', 'pointercancel']) wheelEl.addEventListener(ev, (e) => { if (e.pointerId === wheelIn.id) wheelRelease(); });
+function wheelRelease() { wheelIn.on = false; wheelIn.id = null; wheelIn.x = 0; wheelIn.ang = 0; wheelSvg.style.transform = ''; wheelEl.classList.remove('held'); }
 function askTilt() {
   try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(() => {}); } catch (e) { /* ignore */ }
 }
@@ -1967,41 +2549,16 @@ function applyControls() {
   $('#mini').hidden = !settings.mini;
 }
 
-// ---------- audio ----------
-let AC = null, engOsc = null, engGain = null, hornGain = null, master = null;
-function audioInit() {
-  if (AC) { if (AC.state === 'suspended') AC.resume(); return; }
-  try {
-    AC = new (window.AudioContext || window.webkitAudioContext)();
-    master = AC.createGain(); master.gain.value = settings.sound ? 1 : 0; master.connect(AC.destination);
-    engOsc = AC.createOscillator(); engOsc.type = 'sawtooth'; const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 420;
-    engGain = AC.createGain(); engGain.gain.value = 0.0; engOsc.connect(lp); lp.connect(engGain); engGain.connect(master); engOsc.start();
-    hornGain = AC.createGain(); hornGain.gain.value = 0; const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.8;
-    for (const f of C.horn) { const o = AC.createOscillator(); o.type = 'square'; o.frequency.value = f; o.connect(bp); o.start(); }
-    bp.connect(hornGain); hornGain.connect(master);
-  } catch (e) { AC = null; }
-}
-const fxVol = () => settings.volFx / 80;
-function beep(freq, dur, vol, type) {
-  if (!AC || !settings.sound) return;
-  vol *= fxVol(); if (vol <= 0.0005) return;
-  const o = AC.createOscillator(); const g = AC.createGain(); o.type = type || 'sine'; o.frequency.value = freq;
-  g.gain.setValueAtTime(vol, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.001, AC.currentTime + dur);
-  o.connect(g); g.connect(master); o.start(); o.stop(AC.currentTime + dur);
-}
-function otherHorn() { if (!AC) return; const f = mr(300, 520); beep(f, 0.35, 0.06, 'square'); beep(f * 1.26, 0.35, 0.05, 'square'); }
-function crashSound() {
-  if (!AC || !settings.sound) return;
-  const len = AC.sampleRate * 0.4; const buf = AC.createBuffer(1, len, AC.sampleRate); const d = buf.getChannelData(0);
-  for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2);
-  const s = AC.createBufferSource(); s.buffer = buf; const g = AC.createGain(); g.gain.value = 0.35 * fxVol(); s.connect(g); g.connect(master); s.start();
-}
-function vibrate(ms) { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) { /* ignore */ } }
+// ---------- sound (see audio.js) ----------
+function audioInit() { SND.unlock(); SND.apply(settings); }
+const vibrate = (p) => SND.vibrate(p);
+SND.radio.setStations(C.radio || []);
+SND.apply(settings);
 
 // ---------- HUD ----------
 const hud = {
   speed: $('#hSpeed'), limit: $('#hLimit'), time: $('#hTime'), score: $('#hScore'), viol: $('#hViol'), dmg: $('#hDmgBar'),
-  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave')
+  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave'), gear: $('#hGear'), rpm: $('#hRpm')
 };
 let toastTimer = 0;
 function toast(msg, kind) { hud.toast.textContent = msg; hud.toast.className = 'toast show ' + (kind || ''); toastTimer = 2.4; }
@@ -2056,9 +2613,49 @@ function startTrip(opts) {
   hud.limit.textContent = C.limit;
   hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
   if (!opts.tour) toast(tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name);
+  game.count = opts.tour ? 0 : 3; game.countN = 4; player.cruise = opts.tour ? player.cruise : 0;
+  radioStart();
+}
+// 3, 2, 1, go: the car waits at the line, then sets off
+function countdown(dt) {
+  game.count -= dt;
+  const n = Math.ceil(game.count), el = $('#count');
+  if (n !== game.countN) {
+    game.countN = n; el.hidden = false; el.textContent = n > 0 ? n : T.go;
+    el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
+    SND.cue(n > 0 ? 'count' : 'go'); vibrate(n > 0 ? 8 : [12, 30, 12]);
+    if (n <= 0) { player.cruise = 40 / 3.6; setTimeout(() => { if (game.count <= 0) el.hidden = true; }, 800); }
+  }
+}
+// the car radio: picks up where you left it; the button moves to the next station and then off
+function radioStart() {
+  if (!settings.music || !(C.radio || []).length || settings.station < 0) { SND.radio.stop(); radioLabel(); return; }
+  if (SND.radio.current !== settings.station) SND.radio.play(settings.station);
+  SND.radio.pause(false);
+  radioLabel();
+}
+function radioLabel() {
+  const i = settings.music ? SND.radio.current : -1, b = $('#btnRadio');
+  $('#radioName').textContent = i >= 0 ? T['radio' + i] : T.radioOff; b.classList.toggle('on', i >= 0);
+}
+$('#btnRadio').onclick = () => {
+  audioInit();
+  if (!settings.music) { settings.music = 1; settings.station = Math.max(0, settings.station); saveSettings(); SND.apply(settings); SND.radio.play(settings.station); }
+  else { const i = SND.radio.next(); settings.station = i == null ? settings.station : i; saveSettings(); }
+  const b = $('#btnRadio'); b.classList.remove('tuning'); void b.offsetWidth; b.classList.add('tuning');
+  setTimeout(() => { radioLabel(); toast(settings.station >= 0 && settings.music ? '\u266A ' + T['radio' + settings.station] : T.radioOff); }, 380);
+};
+const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck' : k === 'pickup' || k === 'suv' ? 'van' : 'car');
+// engine, road and wind follow the car every frame; the dashboard shows the gear the engine is in
+function soundFrame() {
+  const live = game.mode === 'drive' && !game.paused;
+  const car = CARS[settings.car] || CARS[0];
+  const d = SND.drive({ live, idle: !live, kind: car.kind, kmh: player.v * 3.6, vmax: car.vmax, gas: !!player.input.gas && game.count <= 0, brake: !!player.input.brake, brakeAmt: player.input.brakeAmt || 0, cruising: player.input.cruising, slip: player.slip });
+  if (live) { hud.gear.textContent = d.gear; hud.rpm.style.width = Math.round(d.rpm * 100) + '%'; }
+  if (!live) SND.horn(false);
 }
 function finishTrip(reason) {
-  game.mode = 'done'; resetInputs();
+  game.mode = 'done'; resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
   const score = computeScore();
   const key = 'best:' + settings.dir + ':' + settings.trip;
@@ -2082,10 +2679,11 @@ function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
   if (game.mode !== 'drive' || tourEndShown()) return;
   game.paused = !game.paused;
+  SND.radio.pause(game.paused);
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { SND.radio.stop(); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -2093,6 +2691,7 @@ const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' 
 const P = {}, Q = {};
 function step(dt) {
   if (game.mode !== 'drive' || game.paused) return;
+  if (game.count > 0) { countdown(dt); return; }
   game.time += dt;
   // keyboard, buttons and the stick all feed the same three amounts
   let gasAmt = keys.ArrowUp || keys.KeyW || touch.gas ? 1 : 0;
@@ -2106,6 +2705,7 @@ function step(dt) {
     if (settings.control !== 'tilt' && Math.abs(sx) > 0.22 && !steerIn) steerIn = Math.sign(sx) * Math.min(1, (Math.abs(sx) - 0.22) / 0.45);
   }
   if (settings.control === 'tilt' && tilt.ok && !steerIn) steerIn = tilt.x;
+  if (settings.control === 'wheel' && wheelIn.on && !steerIn) steerIn = wheelIn.x;
   const gas = gasAmt > 0, brake = brakeAmt > 0;
   const horn = keys.Space || keys.KeyH || touch.horn;
   // speed: the car cruises on its own; gas raises the cruise speed, brake lowers it
@@ -2135,6 +2735,7 @@ function step(dt) {
   // curves only push you outward when you take them faster than the car's grip allows
   const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
   if (need > cap) player.lat -= Math.sign(P.k) * (need - cap) * 0.6 * dt;
+  player.slip = need > cap ? (need - cap) / cap : Math.abs(player.lat) > 2.5 && player.v > 15 ? (Math.abs(player.lat) - 2.5) / 4 : 0;
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
@@ -2155,20 +2756,27 @@ function step(dt) {
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
       if (Math.abs(dd) > 1) player.laneT = clamp(Math.round((player.d - MED - SH) / LW - 0.5 - Math.sign(dd) * 0.5), 0, LANES - 1);
-      toast(T.crash, 'bad'); crashSound(); vibrate(150); otherHorn();
+      toast(T.crash, 'bad'); SND.crash(Math.abs(player.v - c.v) * 3.6 / 50 + 0.25); vibrate([60, 30, 90]); SND.otherHorn(dd * 2, Math.abs(dt2) + 3, C.horn);
     }
     // weaving: passing close
     if (!c.passed && dt2 < -lenSum) {
       c.passed = true;
+      if (Math.abs(dd) < 6.5 && player.v > c.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5);
       if (Math.abs(dd) < 3.8 && player.v > c.v + 3 && player.v > 15) {
         game.weaves++; game.combo = game.comboT > 0 ? game.combo + 1 : 1; game.comboT = 3;
         const pts = 40 * game.combo; game.weavePts += pts;
         hud.weave.textContent = T.weave + (game.combo > 1 ? ' x' + game.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
-        if (Math.random() < 0.3) otherHorn();
+        SND.combo(game.combo); vibrate(game.combo >= 3 ? [20, 30, 20] : 12);
+        if (Math.random() < 0.3) SND.otherHorn(dd, 8, C.horn);
       }
-    } else if (c.passed && dt2 > lenSum) c.passed = false;
+    } else if (c.passed && dt2 > lenSum) { c.passed = false; if (Math.abs(dd) < 6.5 && c.v > player.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5); }
   }
   if (game.comboT > 0) game.comboT -= dt;
+  for (const c of ONC) {
+    const ahead = c.t > player.t;
+    if (c.ahead && !ahead) { const gap = Math.abs(c.d - player.d); if (gap < 16) SND.passBy(-1, sizeOf(c.kind), 1 - (gap - 3) / 15); }
+    c.ahead = ahead;
+  }
   // events
   const sNow = sOfT(player.t); const moved = player.t - prevT;
   let warnTxt = '';
@@ -2179,22 +2787,22 @@ function step(dt) {
       ev.lastT = player.t;
       const kmh = player.v * 3.6;
       if (ev.type === 'radar') {
-        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); beep(1800, 0.2, 0.08); }
-        else toast(T.radarOk, 'good');
+        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
+        else { toast(T.radarOk, 'good'); SND.cue('ok'); }
       } else if (ev.type === 'bump') {
-        if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); vibrate(80); } else toast(T.bumpOk, 'good');
+        if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); SND.bump((kmh - 35) / 15); vibrate(80); } else toast(T.bumpOk, 'good');
       } else if (ev.type === 'toll') {
-        game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); beep(1200, 0.12, 0.05);
+        game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); SND.cue('toll');
       }
     }
   }
   hud.warn.textContent = warnTxt; hud.warn.hidden = !warnTxt;
   // distance milestones
-  if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); beep(880, 0.15, 0.06); beep(1320, 0.2, 0.05); }
+  if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
   if (game.free && game.dist >= game.nextShop) { game.nextShop += 25000; player.dmg = 0; toast(T.workshop, 'good'); }
   // horn
-  if (hornGain) hornGain.gain.setTargetAtTime(horn && settings.sound ? 0.16 * fxVol() : 0, AC.currentTime, 0.02);
-  if (engOsc) { const gear = Math.floor(player.v / 13); engOsc.frequency.setTargetAtTime(55 + (player.v - gear * 13) * 7 + gear * 10, AC.currentTime, 0.05); engGain.gain.setTargetAtTime(settings.sound ? (0.035 + player.v * 0.0006) * settings.volEngine / 70 : 0, AC.currentTime, 0.1); }
+  SND.horn(horn, C.horn, CARS[settings.car].kind);
+  Object.assign(player.input, { gas, brake, brakeAmt, cruising: !gas && !brake && player.v > 2 });
   player.brakeMat.color.set(brake ? 0xff2a1a : 0x550000);
   // destination
   if (!game.free) {
@@ -2291,11 +2899,23 @@ addEventListener('resize', resize);
 
 let last = performance.now();
 const STEP = 1 / 120; let stepAcc = 0;
+function watchSpeed(ms) {
+  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { autoQ.t = autoQ.slow = autoQ.all = 0; return; }
+  autoQ.all++; if (ms > 26) autoQ.slow++; autoQ.t += ms;
+  if (autoQ.t < 3000) return;
+  // more than a quarter of frames slow for three seconds: step down once, then measure again
+  if (autoQ.slow / autoQ.all > 0.25 && autoQ.step < AUTO_SCALE.length) {
+    autoQ.step++; applyQuality();
+    if (!autoQ.told) { autoQ.told = true; toast(T.autoLow); }
+  }
+  autoQ.t = autoQ.slow = autoQ.all = 0;
+}
 function loop(now) {
+  watchSpeed(now - last);
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   // physics runs in even steps so a slow or uneven frame rate drives the same
   stepAcc += dt; while (stepAcc >= STEP) { step(STEP); stepAcc -= STEP; }
-  if ((game.mode !== 'drive' || game.paused) && AC) { hornGain.gain.setTargetAtTime(0, AC.currentTime, 0.03); engGain.gain.setTargetAtTime(0, AC.currentTime, 0.1); }
+  soundFrame();
   if (game.mode === 'menu' && !game.paused) { updateTrafficIdle(dt); }
   render(dt);
   requestAnimationFrame(loop);
@@ -2335,17 +2955,21 @@ function syncSettingsUI() {
   segmented('#segQual', 'quality', applyQuality);
   segmented('#segFx', 'fx', applyControls);
   segmented('#segMini', 'mini', applyControls);
-  segmented('#segSound', 'sound', () => { if (master) master.gain.value = settings.sound ? 1 : 0; });
-  for (const [id, key] of [['#rSteer', 'steerFeel'], ['#rBrake', 'brakeFeel'], ['#rEngine', 'volEngine'], ['#rFx', 'volFx']]) {
+  segmented('#segSound', 'sound', () => SND.apply(settings));
+  segmented('#segMusic', 'music', () => { SND.apply(settings); if (game.mode === 'drive') radioStart(); });
+  segmented('#segVib', 'vib', () => { SND.apply(settings); vibrate([20, 40, 20]); });
+  segmented('#segAutoQ', 'autoQ', applyQuality);
+  $('#vibRow').hidden = !SND.canVibrate;
+  for (const [id, key] of [['#rSteer', 'steerFeel'], ['#rBrake', 'brakeFeel'], ['#rEngine', 'volEngine'], ['#rFx', 'volFx'], ['#rHorn', 'volHorn'], ['#rMusic', 'volMusic']]) {
     const el = $(id); el.value = settings[key];
-    el.oninput = () => { settings[key] = +el.value; saveSettings(); };
-    el.onchange = () => { if (key === 'volFx') beep(880, 0.12, 0.08); };
+    el.oninput = () => { settings[key] = +el.value; saveSettings(); SND.apply(settings); };
+    el.onchange = () => { if (key === 'volFx') SND.cue('ok'); if (key === 'volHorn') SND.otherHorn(0, 4, C.horn, [[0, 0.25]]); };
   }
   document.querySelectorAll('#ctlModes .mode').forEach((b) => {
     b.classList.toggle('sel', b.dataset.v === settings.control); b.setAttribute('aria-pressed', b.dataset.v === settings.control);
     b.onclick = () => { settings.control = b.dataset.v; saveSettings(); if (settings.control === 'tilt') askTilt(); syncSettingsUI(); };
   });
-  const noteKey = { stick: 'T_C_STICK_D', onehand: 'T_C_ONE_D', tilt: 'T_C_TILT_D', lanes: 'T_C_LANES_D' }[settings.control];
+  const noteKey = { stick: 'T_C_STICK_D', onehand: 'T_C_ONE_D', tilt: 'T_C_TILT_D', lanes: 'T_C_LANES_D', wheel: 'T_C_WHEEL_D' }[settings.control];
   $('#modeNote').innerHTML = S['page.' + noteKey] + (settings.control === 'tilt' && !tilt.ok && isTouch() ? '<br>' + (window.DeviceOrientationEvent ? S['page.T_TILTPERM'] : S['page.T_NOTILT']) : '');
   $('#langList').innerHTML = Object.entries(LANGS).map(([k, l]) => `<button type="button" lang="${k}" dir="${l.dir}" data-v="${k}" class="${k === LANG ? 'sel' : ''}">${l.name}</button>`).join('');
   $('#langList').querySelectorAll('button').forEach((b) => b.onclick = () => switchLang(b.dataset.v));
@@ -2458,7 +3082,7 @@ function tourCheck(inp) {
   if (st.wait === 'brake') ok = inp.brake && (player.v < tour.v0 - 3 || player.v < 1);
   if (st.wait === 'horn') ok = inp.horn;
   if (ok) {
-    tour.done = true; $('#tourTry').textContent = TT.nice; $('#tourTry').classList.add('ok'); beep(990, 0.12, 0.05);
+    tour.done = true; $('#tourTry').textContent = TT.nice; $('#tourTry').classList.add('ok'); SND.cue('ok');
     const cur = tour, ci = tour.i; setTimeout(() => { if (tour === cur && tour.i === ci) nextTourStep(); }, 900);
   }
 }

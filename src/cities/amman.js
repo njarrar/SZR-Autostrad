@@ -3,6 +3,12 @@ window.CITY = {
   fines: { radar: 30, crash: 50 }, tripHop: 3,
   origin: [31.962, 35.900],
   horn: [415, 520],
+  // the car radio: made-up stations, each with its own rhythm, maqam and lead sound
+  radio: [
+    { seed: 101, bpm: 104, rhythm: 'maqsum', maqam: 'hijaz', root: 146.83, lead: 'qanun', riq: true, ghost: 0.15, chord2: 3 },
+    { seed: 202, bpm: 118, rhythm: 'fallahi', maqam: 'bayati', root: 146.83, lead: 'nay', riq: true, sparse: true, chord2: 3 },
+    { seed: 303, bpm: 98, rhythm: 'baladi', maqam: 'nahawand', root: 130.81, lead: 'synth', ghost: 0.2, swing: 0.08, chord2: 5 }
+  ],
   defaultPlate: '12-34567',
   route: [
     [31.9690, 35.9070, 'stone'], [31.9640, 35.9105, 'tower'], [31.9600, 35.9220, 'old'], [31.9575, 35.9325, 'old'],

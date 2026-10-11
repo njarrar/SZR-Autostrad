@@ -149,7 +149,23 @@
     <string key="page.T_NORMAL">Normal</string>
     <string key="page.T_KEYSNOTE"><![CDATA[On a computer the keyboard always works: arrows or <kbd>WASD</kbd> to drive, <kbd>Space</kbd> for the horn.]]></string>
     <string key="page.T_VOLENG">Engine</string>
-    <string key="page.T_VOLFX">Horn and effects</string>
+    <string key="page.T_VOLFX">Effects</string>
+    <string key="page.T_VOLHORN">Horn</string>
+    <string key="page.T_RADIO">Radio</string>
+    <string key="page.T_C_WHEEL">Wheel</string>
+    <string key="page.T_C_WHEEL_D">Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.</string>
+    <string key="page.T_MUSIC">Radio music</string>
+    <string key="page.T_VOLMUSIC">Radio volume</string>
+    <string key="page.T_VIB">Vibration</string>
+    <string key="page.T_VIB1">Light</string>
+    <string key="page.T_VIB2">Normal</string>
+    <string key="page.T_VIB3">Strong</string>
+    <string key="page.T_RADIONOTE">Tap the radio button while you drive to change station. The music is made up as you go, so no two trips sound the same.</string>
+    <string key="page.T_AUTOQ">Auto quality</string>
+    <string key="page.T_AUTOQ_D">If the game runs slow, it draws fewer pixels so it stays smooth.</string>
+    <string key="text.go">Go!</string>
+    <string key="text.radioOff">Radio off</string>
+    <string key="text.autoLow">Lowered the quality to keep it smooth</string>
     <string key="page.T_QUIET">Quiet</string>
     <string key="page.T_LOUD">Loud</string>
     <string key="page.T_SPEEDFX">Speed effects</string>
@@ -159,6 +175,9 @@
     <string key="tour.0.touch">Push the stick up until your speed passes 45. Let go and the car keeps that speed.</string>
   </common>
   <city id="amman">
+    <string key="text.radio0">Dawar FM</string>
+    <string key="text.radio1">Jabal Radio</string>
+    <string key="text.radio2">Downtown Beats</string>
     <string key="page.title">Amman Loop</string>
     <string key="page.name">Amman Loop</string>
     <string key="page.eyebrow">Amman · عمّان</string>
@@ -205,6 +224,9 @@
     <string key="place.11">Gardens Street</string>
   </city>
   <city id="dubai">
+    <string key="text.radio0">Creek FM</string>
+    <string key="text.radio1">Marina Nights</string>
+    <string key="text.radio2">Desert Wind</string>
     <string key="page.title">Dubai Loop</string>
     <string key="page.name">Dubai Loop</string>
     <string key="page.eyebrow">Dubai · دبي</string>

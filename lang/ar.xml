@@ -26,7 +26,18 @@
     <string key="page.T_SMALL">صغير</string>
     <string key="page.T_NORMAL">عادي</string>
     <string key="page.T_VOLENG">صوت الماتور</string>
-    <string key="page.T_VOLFX">الهرن والمؤثرات</string>
+    <string key="page.T_VOLFX">المؤثرات</string>
+    <string key="page.T_VOLHORN">الهرن</string>
+    <string key="page.T_RADIO">راديو</string>
+    <string key="page.T_C_WHEEL">دركسيون</string>
+    <string key="page.T_MUSIC">أغاني الراديو</string>
+    <string key="page.T_VOLMUSIC">صوت الراديو</string>
+    <string key="page.T_VIB">الاهتزاز</string>
+    <string key="page.T_VIB1">خفيف</string>
+    <string key="page.T_VIB2">عادي</string>
+    <string key="page.T_VIB3">قوي</string>
+    <string key="page.T_AUTOQ">جودة تلقائية</string>
+    <string key="text.go">يلا!</string>
     <string key="page.T_QUIET">واطي</string>
     <string key="page.T_LOUD">عالي</string>
     <string key="page.T_SPEEDFX">مؤثرات السرعة</string>
@@ -35,6 +46,14 @@
     <string key="page.T_HIDE">خبّي</string>
   </common>
   <city id="amman">
+    <string key="text.radio0">إذاعة الدوّار</string>
+    <string key="text.radio1">راديو الجبل</string>
+    <string key="text.radio2">إيقاع البلد</string>
+    <string key="page.T_C_WHEEL_D">لف الدركسيون بإصبع وحدة عشان تلف، وزر البنزين والبريك عالجهة الثانية.</string>
+    <string key="page.T_RADIONOTE">كبّس زر الراديو وانت سايق عشان تغيّر المحطة. الموسيقى بتنعزف وانت ماشي، فكل مشوار إله لحن.</string>
+    <string key="page.T_AUTOQ_D">إذا اللعبة ثقلت، بتخفف الرسم عشان تضل سلسة.</string>
+    <string key="text.radioOff">الراديو مسكّر</string>
+    <string key="text.autoLow">خففنا الرسم عشان تضل سلسة</string>
     <string key="page.title">لفّة عمّان</string>
     <string key="page.name">لفّة عمّان</string>
     <string key="page.eyebrow">Amman · عمّان</string>
@@ -198,7 +217,8 @@
     <string key="place.11">شارع الجاردنز</string>
     <string key="page.T_C_ONE">إيد وحدة</string>
     <string key="page.T_HORNSIZE">حجم زر الزامور</string>
-    <string key="page.T_VOLFX">الزامور والمؤثرات</string>
+    <string key="page.T_VOLFX">المؤثرات</string>
+    <string key="page.T_VOLHORN">الزامور</string>
     <string key="page.T_C_STICK_D">عصا مدوّرة تحت. ادفعها لفوق لتسرّع، اسحبها لتحت للبريك، وحرّكها يمين وشمال لتغيّر المسرب. لما تتركها السيارة بتضل على نفس السرعة.</string>
     <string key="page.T_C_ONE_D">حط إصبعك بأي مكان بالنص اللي تحت من الشاشة واسحب: لفوق لتسرّع، لتحت للبريك، ويمين وشمال لتغيّر المسرب.</string>
     <string key="page.T_C_TILT_D">ميّل التلفون زي الدركسيون لتغيّر المسرب. اسحب لفوق بأي مكان لتسرّع ولتحت للبريك.</string>
@@ -208,6 +228,15 @@
     <string key="page.T_KEYSNOTE"><![CDATA[عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للزامور.]]></string>
   </city>
   <city id="dubai">
+    <string key="text.radio0">إذاعة الخور</string>
+    <string key="text.radio1">ليالي المارينا</string>
+    <string key="text.radio2">هوا البر</string>
+    <string key="page.T_C_WHEEL">سكّان</string>
+    <string key="page.T_C_WHEEL_D">لف السكّان بصبع واحد عشان تلف، ودعسة البانزين والبريك على الصوب الثاني.</string>
+    <string key="page.T_RADIONOTE">دوس زر الراديو وانت تسوق عشان تغيّر المحطة. الموسيقى تنعزف وانت تسوق، فكل مشوار له لحن غير.</string>
+    <string key="page.T_AUTOQ_D">إذا ثقلت اللعبة، تخفف الرسم عشان تبقى سلسة.</string>
+    <string key="text.radioOff">الراديو مقفول</string>
+    <string key="text.autoLow">خففنا الرسم عشان تبقى سلسة</string>
     <string key="page.title">لفّة دبي</string>
     <string key="page.name">لفّة دبي</string>
     <string key="page.eyebrow">Dubai · دبي</string>
