@@ -225,8 +225,8 @@
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
-    <string key="h1">Drive the roads of Amman and Dubai</string>
-    <string key="intro">Two 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera. Plays in the browser on a computer or a phone.</string>
+    <string key="h1">Drive the roads of Amman, Dubai and Riyadh</string>
+    <string key="intro">Three 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera. Plays in the browser on a computer or a phone.</string>
     <string key="play">Play</string>
     <string key="how1t">Driving</string>
     <string key="how1"><![CDATA[<kbd>↑</kbd> gas, <kbd>↓</kbd> brake, <kbd>←</kbd> <kbd>→</kbd> change lane, <kbd>Space</kbd> horn, <kbd>N</kbd> nitro. On a phone, use the buttons on screen.]]></string>

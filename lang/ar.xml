@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Arabic strings. Amman uses Jordanian Arabic, Dubai uses Gulf Arabic.
+  Arabic strings. Amman uses Jordanian Arabic, Dubai uses Gulf Arabic, Riyadh uses Najdi Arabic.
   Each <string> has a key the game looks up. A city entry wins over the same key in <common>.
   Values with HTML tags (like <kbd>) sit inside CDATA.
 -->
@@ -95,8 +95,8 @@
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
-    <string key="h1">سوق بشوارع عمّان ودبي</string>
-    <string key="intro">لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</string>
+    <string key="h1">سوق بشوارع عمّان ودبي والرياض</string>
+    <string key="intro">ثلاث ألعاب سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</string>
     <string key="play">العب</string>
     <string key="how1t">السواقة</string>
     <string key="how1"><![CDATA[<kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور، <kbd>N</kbd> نيترو. عالموبايل في أزرار عالشاشة.]]></string>
