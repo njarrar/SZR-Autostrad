@@ -83,7 +83,8 @@ const SND = (() => {
     pickup: { base: 17, span: 44, bite: 3, biteG: 0.44, fire: 3, fireWave: 'triangle', depth: 0.55, lp: 440, lpSpan: 1300, peak: 230, peakQ: 1.5, peakG: 6, comb: 0.0033, vol: 0.11, rum: 0.06, rumF: 7, whine: 4, whineG: 0.02, gears: 5 },
     suv:    { base: 20, span: 62, bite: 2, biteG: 0.4, fire: 2, fireWave: 'square', depth: 0.5, lp: 520, lpSpan: 1800, peak: 300, peakQ: 1.4, peakG: 6, comb: 0.0029, vol: 0.1, rum: 0.05, rumF: 4, whine: 0, whineG: 0, gears: 7 },
     sports: { base: 42, span: 175, bite: 1.5, biteG: 0.36, fire: 2.5, fireWave: 'sawtooth', depth: 0.3, lp: 900, lpSpan: 4200, peak: 700, peakQ: 1.6, peakG: 6, comb: 0.0012, vol: 0.085, rum: 0.02, rumF: 5, whine: 8, whineG: 0.02, gears: 7 },
-    dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 }
+    dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 },
+    coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
   function buildEngine(kind) {
@@ -222,7 +223,7 @@ const SND = (() => {
     city: {},
     deep: { k: 0.68, throat: 560, bell: 1900, lp: 3200, gain: 0.12 },
     truck: { chord: [155, 196, 233], throat: 480, bell: 1500, lp: 3000, wave: 'square', gain: 0.14 },
-    melody: { tune: [1, 1.26, 1.5, 1.26, 1.68, 1.5, 1.26, 1], wave: 'square', gain: 0.09 }
+    melody: { tune: [1, 1.122, 1.26, 1.335, 1.5, 1.335, 1.26, 1.122, 1], wave: 'sawtooth', gain: 0.1 }
   };
   let myHorn = null, hornStyle = 'city';
   function hornStop(at) {
@@ -340,6 +341,9 @@ const SND = (() => {
     go: () => blip(1320, 0.3, 'triangle', 0.12),
     finish: () => [1047, 1319, 1568, 2093, 2637].forEach((f, i) => blip(f, 0.2, 'triangle', 0.08, null, now() + i * 0.08)),
     wreck: () => [440, 370, 311, 262].forEach((f, i) => blip(f, 0.22, 'square', 0.05, null, now() + i * 0.14)),
+    paxPick: () => { [1175, 1568, 1976].forEach((f, i) => blip(f, 0.11, 'sine', 0.08, null, now() + i * 0.055)); },
+    paxDrop: () => { [1047, 1319, 1568, 2093].forEach((f, i) => blip(f, 0.14, 'triangle', 0.09, null, now() + i * 0.05)); },
+    refuel: () => { blip(880, 0.1, 'sine', 0.07); blip(1175, 0.15, 'sine', 0.08, null, now() + 0.09); },
     tick: () => blip(2400, 0.02, 'triangle', 0.03),
     click: () => blip(1500, 0.03, 'triangle', 0.025)
   };

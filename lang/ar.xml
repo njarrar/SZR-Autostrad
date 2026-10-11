@@ -45,7 +45,7 @@
     <string key="page.T_SHOW">بيّن</string>
     <string key="page.T_HIDE">خبّي</string>
     <string key="page.tryCity">جرّب {city}</string>
-    <string key="page.T_TIME">وقت اليوم</string>
+    <string key="page.T_TOD">وقت اليوم</string>
     <string key="page.T_TAUTO">تلقائي</string>
     <string key="page.T_TMORN">الصبح</string>
     <string key="page.T_TNOON">العصر</string>
@@ -69,6 +69,25 @@
     <string key="text.tailOk">خلّيتها تمرق +120</string>
     <string key="text.rExtra">مواقف الطريق</string>
     <string key="text.noWebGL">هذا الجهاز لا يعرض الرسوم ثلاثية الأبعاد (WebGL متوقف). جرّب متصفحاً آخر أو فعّل تسريع الرسوم.</string>
+    <string key="page.T_LED">إضاءة نيون تحت السيارة</string>
+    <string key="page.T_STICKER">ملصق الزجاج الخلفي</string>
+    <string key="page.T_CHARM">تعليقة المراية</string>
+    <string key="page.T_GARAGE_HINT">اسحب الشاشة يمين أو شمال عشان تلف السيارة 360°</string>
+    <string key="page.T_ALBUM">ألبوم المعالم</string>
+    <string key="page.T_PAX">الركّاب</string>
+    <string key="page.T_FUEL">البنزين</string>
+    <string key="text.serviceMode">ورديّة سرفيس وتاكسي</string>
+    <string key="text.serviceSub">حمّل ركّاب من الطريق، نزّلهم عالمحطات، وعبّي بنزين</string>
+    <string key="text.paxPick">ركبوا معك! وصّلهم عالمحطة الجاية</string>
+    <string key="text.paxDrop">نزّلت الركّاب! أجرة التوصيلة +</string>
+    <string key="text.refuel">فلّلت التانكي من المحطة! +100</string>
+    <string key="text.fuelLow">البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين</string>
+    <string key="text.cardUnlocked">فتحت بطاقة معلم جديدة:</string>
+    <string key="page.T_NONE">بدون</string>
+    <string key="page.T_CHARM_1">سبحة</string>
+    <string key="page.T_CHARM_2">خمسة</string>
+    <string key="page.T_CHARM_3">ميدالية</string>
+    <string key="text.rFares">الأجرة</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>

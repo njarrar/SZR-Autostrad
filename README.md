@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.2** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.3** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -120,7 +120,7 @@ Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a
 
 ### Cars
 
-Each city has three cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly.
+Each city has four cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly.
 
 ![Car picker in the Amman menu](docs/screenshots/amman-menu.png)
 
@@ -131,6 +131,7 @@ Each city has three cars you see on its roads every day. Each one has four bars 
 | Hyundai Elantra (yellow taxi) | 175 km/h | Even all round, easy to weave | Nothing stands out |
 | Toyota Prius | 165 km/h | Best grip in curves | Slowest pick up, takes the most damage |
 | Toyota Hilux | 160 km/h | Takes the least damage | Slow and heavy in curves |
+| Toyota Coaster (service bus) | 150 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 
 **Dubai**
 
@@ -138,9 +139,31 @@ Each city has three cars you see on its roads every day. Each one has four bars 
 | --- | --- | --- | --- |
 | Nissan Patrol | 210 km/h | Tough, shrugs off crashes | Heavy and hard to turn |
 | Lamborghini Huracán | 300 km/h | Fastest and best grip | One crash hurts a lot |
-| Toyota Camry (taxi) | 190 km/h | Even all round | Nothing stands out |
+| Toyota Camry (taxi) | 190 km/h | Even all round, carries 4 passengers | Nothing stands out |
+| Toyota Coaster (minibus) | 165 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 
 Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
+
+### Passengers, fares and fuel
+
+The taxis and the Coaster bus work a service shift. Green stops wait near each landmark.
+
+- Pass a stop in the right lane, or below 105 km/h, to pick people up and drop off the ones on board. Each drop pays a fare, and fares add points.
+- The taxi carries 4 people. The bus carries 14, but each fare pays less.
+- Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
+- Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
+
+### Garage
+
+Open **Garage** in the menu to change the paint, the plate, a neon glow under the car, a sticker on the back window and a charm that swings from the mirror. Drag across the road to spin the car.
+
+![The Amman garage](docs/screenshots/amman-garage.png)
+
+### Landmark album
+
+Drive past a landmark to collect its postcard. Open **Landmark Album** in the menu to see the ones you have.
+
+![The landmark album](docs/screenshots/amman-album.png)
 
 ### Points
 
@@ -148,6 +171,7 @@ Damage from crashes, the barrier and speed bumps grows or shrinks with the car's
 - Pass a car close and faster than it to earn bonus points. Passes in a row multiply the bonus.
 - Every 10 km gives 500 bonus points.
 - Road events pay extra points (see below).
+- Passenger fares pay extra points.
 
 ### Nitro
 
@@ -179,6 +203,17 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.3 (October 2026)
+
+- **Service shift.** Taxis and a new Toyota Coaster bus in each city pick up passengers at stops by each landmark and earn fares.
+- **Fuel.** A fuel bar, a low fuel warning, and fuel stations every 4.8 km that fill the tank and fix some damage.
+- **Garage extras.** Neon underglow, back window stickers in Arabic, mirror charms, and drag to spin the car.
+- **Landmark album.** Collect a postcard for each landmark you pass.
+- **More detail.** Rounder car bodies with grilles, mirrors, wipers and lights; concrete barriers; richer landmarks such as Burj Khalifa, Burj Al Arab, Museum of the Future, the Citadel and Abdoun Bridge.
+- **On-screen effects.** Sparks on crashes and nitro, drivers who shout back, and floating fare and score popups.
+- **Smoother.** Car shapes are built once at load and only recolored after, so new traffic no longer stutters. Far cars use a simpler model. Stops and fuel stations share merged parts. The camera follows at the same pace on any screen rate.
+- **Fixes.** Landmark towers keep their windows and no longer glow solid at night, the game starts on older Safari and Firefox, effects clear between trips, effects text is sharp on phones, and the HUD says "Time" again instead of "Time of day".
 
 ### 2.2 (October 2026)
 

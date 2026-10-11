@@ -41,6 +41,10 @@
     <string key="car.2.sub">Taxi</string>
     <string key="car.2.pros">Even all round, good at everything</string>
     <string key="car.2.cons">Nothing stands out</string>
+    <string key="car.3.name">Toyota Coaster</string>
+    <string key="car.3.sub">Minibus</string>
+    <string key="car.3.pros">Carries many passengers for big fare bonuses</string>
+    <string key="car.3.cons">Wide and heavy to weave</string>
     <string key="place.0">Dubai Frame</string>
     <string key="place.1">World Trade Centre</string>
     <string key="place.2">Museum of the Future</string>

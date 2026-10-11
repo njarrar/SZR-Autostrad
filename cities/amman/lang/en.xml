@@ -41,6 +41,10 @@
     <string key="car.2.sub">Pickup</string>
     <string key="car.2.pros">Heavy, so crashes and bumps barely hurt it</string>
     <string key="car.2.cons">Slow and hard to turn</string>
+    <string key="car.3.name">Toyota Coaster</string>
+    <string key="car.3.sub">Service bus</string>
+    <string key="car.3.pros">Carries many passengers for big fare bonuses</string>
+    <string key="car.3.cons">Wide and heavy to weave</string>
     <string key="place.0">Interior Circle</string>
     <string key="place.1">Abdali Boulevard</string>
     <string key="place.2">King Abdullah I Mosque</string>
