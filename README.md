@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.10** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.11** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -181,6 +181,19 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 - Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
 - Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
 
+### Haitham Mode
+
+Leave the car and walk. Press **Haitham Mode** next to the start button in the menu, in any city. Haitham sets off on the sidewalk beside the ring road at walking speed, 5 km/h, and has to reach the corner shop 400 m away.
+
+- People walk toward you and ahead of you, kids run about, street sellers stand by their carts, and rubbish bags, bins, boxes and banana peels lie in the way. Trees are kept off the sidewalk, but bus shelters, poles and fuel pumps still stand on it.
+- Left and right move you across the sidewalk. Up walks a little faster, 7.5 km/h, and down stops you.
+- The horn (Space) says "excuse me". Most people ahead step aside; some are on their phone and don't.
+- Each bump costs points and stops you for a moment. A banana peel spins you round. After 6 bumps Haitham gives up and goes home.
+- Points come from the distance you walk and from slipping close past people and things without touching them, more for a chain of them.
+- People talk back in the city's own dialect, and the sellers call out what they sell: ka'ak and corn in Amman, karak tea in Dubai, dates and coffee in Riyadh.
+
+![Haitham walking past a ka'ak seller in Amman](docs/screenshots/haitham-mode.png)
+
 ### Garage
 
 Open **Garage** under **More options** in the menu to change the paint, the plate, a neon glow under the car, a sticker on the back window and a charm that swings from the mirror. Drag across the road to spin the car.
@@ -241,6 +254,11 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.11 (October 2026)
+
+- **Haitham Mode.** A walking game in every city. Haitham walks 400 m along the sidewalk to the corner shop and has to get past people, kids, street sellers and rubbish. The horn says "excuse me", and people answer in the local dialect.
+- **Sidewalks.** Every road now has a paved sidewalk outside the barrier with a painted kerb, so you also see it while driving.
 
 ### 2.10 (October 2026)
 

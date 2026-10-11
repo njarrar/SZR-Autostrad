@@ -65,6 +65,13 @@ window.CITY = {
     { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x0b6e3a }, vmax: 155, accel: 3.8, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 }
   ],
   stickers: ['', 'ما شاء الله', 'هذا من فضل ربي', 'لا تسرع يا شيخ', 'عز الرياض', 'طويق', 'الله يحفظك'],
+  // Haitham Mode: what people on the sidewalk say, and the street seller's cart
+  walk: {
+    bump: ['انتبه يا رجّال!', 'وش فيك؟', 'على هونك!', 'الله يهديك!', 'وين عيونك يا الحبيب؟'],
+    kid: ['آسف عمي!', 'ما قصدت!', 'هههه'],
+    vendor: ['تمر! تمر سكري!', 'قهوة! قهوة عربية!', 'تفضّل يا الطيب!', 'رطب! رطب طازج!'],
+    cart: { body: 0x1f6e43, goods: 0x6b3a1e, shade: 0xe8dcc0 }, bin: 0x6b6f76
+  },
   barks: {
     honk: ['وسّع يا شيخ!', 'هوّن هوّن!', 'ساهر قدامك خفف!', 'افسح الله يرضى عليك!', 'يا رجّال وش العجلة؟'],
     cut: ['يا ساتر وش ذا؟!', 'تفحيط ولا وش؟', 'كفو والله!', 'انتبه للمسار يا خوي!', 'شوي شوي يا ولد الحلال!'],
@@ -109,7 +116,7 @@ window.CITY = {
     skyLight: 0xd8e4f0, groundLight: 0xc2a578, hemi: 1.2, sunColor: 0xffe2b0, sun: 2.0, sunDir: [0.6, 0.5, -0.35],
     winLit: '#ffd58a', winGlass: '#3e4f60', windows: { floor: 3.5, bay: 2.8, size: 0.5 },
     ground: ['#d4b685', '#c9a974', '#ab9a7e'], asphalt: '#505156', median: '#a39a88', lineEdge: '#f2e7c4', lineLane: '#f2f2f2',
-    barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0xe8e8e8, 0xd8d8d0],
+    paving: '#cdb894', kerb: ['#e8c22a', '#1c1c1c'], barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0xe8e8e8, 0xd8d8d0],
     treeDark: 0x3e5a33, treeLight: 0x7d8a5a, signColor: '#0a6b45', warnColor: '#a8740a', radarColor: 0xdedede,
     miniRoad: '#f3e3c4', miniDot: '#6fd49a', miniDest: '#ff5a4a', miniMe: '#ffffff'
   },

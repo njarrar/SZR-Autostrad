@@ -227,6 +227,23 @@
     <string key="page.T_CHARM_2">Hamsa</string>
     <string key="page.T_CHARM_3">Medallion</string>
     <string key="text.rFares">Fares</string>
+    <!-- Haitham Mode: walking on the sidewalk -->
+    <string key="page.T_WALK">Haitham Mode</string>
+    <string key="page.T_BUMPS">Bumps</string>
+    <string key="text.walkGoal">The corner shop</string>
+    <string key="text.walkHow">Haitham Mode: walk 400 m to the shop. Left and right to dodge, up walks faster, Space says excuse me</string>
+    <string key="text.walkHowTouch">Haitham Mode: walk 400 m to the shop. Slide to dodge, the horn says excuse me</string>
+    <string key="text.walkBump">Bump!</string>
+    <string key="text.walkTrash">Mind the rubbish!</string>
+    <string key="text.walkPole">Ouch!</string>
+    <string key="text.walkSlip">Slipped on a banana peel!</string>
+    <string key="text.walkExcuse">Excuse me!</string>
+    <string key="text.walkDodge">Close one</string>
+    <string key="text.walkArrived">Haitham made it</string>
+    <string key="text.walkTired">Too many bumps</string>
+    <string key="text.walkTiredSub">Haitham went back home</string>
+    <string key="text.walkDodges">Close dodges</string>
+    <string key="text.walkBumps">Bumps</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
