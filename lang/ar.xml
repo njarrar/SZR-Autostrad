@@ -101,8 +101,8 @@
     <string key="page.T_WALK">وضع هيثم</string>
     <string key="page.T_BUMPS">خبطات</string>
     <string key="text.walkGoal">الدكّانة</string>
-    <string key="text.walkHow">وضع هيثم: امشِ 400 م للدكّانة. يمين ويسار لتتفادى، لفوق أسرع، والمسافة بتقول عن إذنك</string>
-    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للدكّانة. حرّك لتتفادى، والزامور بقول عن إذنك</string>
+    <string key="text.walkHow">وضع هيثم: امشِ 400 م للدكّانة. يمين ويسار لتتفادى، لفوق أسرع، المسافة بتقول عن إذنك، وN بيطلّع الكلب وراك</string>
+    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للدكّانة. حرّك لتتفادى، الزامور بقول عن إذنك، والنيترو بيطلّع الكلب وراك</string>
     <string key="text.walkBump">خبطة!</string>
     <string key="text.walkTrash">انتبه للزبالة!</string>
     <string key="text.walkPole">آخ!</string>
@@ -114,6 +114,9 @@
     <string key="text.walkTiredSub">هيثم رجع عالبيت</string>
     <string key="text.walkDodges">تفاديات</string>
     <string key="text.walkBumps">خبطات</string>
+    <string key="text.walkDog">الكلب لاحقك! اركض!</string>
+    <string key="text.walkDogGone">الكلب رجع</string>
+    <string key="text.walkWoof">هاو هاو!</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
