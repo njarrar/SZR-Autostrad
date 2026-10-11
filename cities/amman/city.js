@@ -49,7 +49,8 @@ window.CITY = {
     { kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0, role: 'taxi', paxCap: 4 },
     { kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3, role: 'weave' },
     { kind: 'pickup', vmax: 160, accel: 4.0, grip: 0.82, tough: 0.55, role: 'tough' },
-    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x1f6e43 }, vmax: 150, accel: 3.6, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 }
+    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x1f6e43 }, vmax: 150, accel: 3.6, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 },
+    { kind: 'bmw', vmax: 215, accel: 5.8, grip: 1.16, tough: 1.1, role: 'sport' }
   ],
   stickers: ['', 'ما شاء الله', 'الصبر مفتاح الفرج', 'عمان في القلب', 'لا تلزق وراي', 'عين الحسود فيها عود', 'دعاء السفر'],
   barks: {

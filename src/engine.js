@@ -731,6 +731,7 @@ function sculptBody(g, len, wid, y0, top, r, fw, rw, ra) {
 const SHAPES = {
   sedan: { len: 4.64, wid: 1.84, y0: 0.28, bh: 0.72, hood: 1.26, trunk: 0.94, ws: 0.80, rs: 0.66, roof: 0.60, r: 0.34, nose: 0.22 },
   sports: { len: 4.54, wid: 1.98, y0: 0.19, bh: 0.56, hood: 1.38, trunk: 0.52, ws: 1.06, rs: 1.28, roof: 0.46, r: 0.35, nose: 0.32 },
+  bmw: { len: 4.71, wid: 1.83, y0: 0.24, bh: 0.66, hood: 1.42, trunk: 0.86, ws: 0.92, rs: 0.80, roof: 0.56, r: 0.34, nose: 0.20 },
   hatch: { len: 4.58, wid: 1.82, y0: 0.28, bh: 0.69, hood: 1.16, trunk: 0.52, ws: 0.88, rs: 0.96, roof: 0.58, r: 0.33, nose: 0.24 },
   suv: { len: 5.05, wid: 2.02, y0: 0.42, bh: 0.94, hood: 1.24, trunk: 0.22, ws: 0.64, rs: 0.28, roof: 0.80, r: 0.43, nose: 0.10 },
   pickup: { len: 5.35, wid: 1.92, y0: 0.42, bh: 0.84, hood: 1.32, trunk: 2.02, ws: 0.58, rs: 0.14, roof: 0.74, r: 0.41, nose: 0.12 }
@@ -823,6 +824,24 @@ function shapedCar(kind, body, roofCol, P) {
     P.push(box(0x0b0d10, s * wid * 0.34, lo + 0.14, fZ + 0.025, wid * 0.15, 0.11, 0.04, { ry: s * 0.16 }));
     P.push(box(CHROME, s * wid * 0.34, lo + 0.14, fZ + 0.015, wid * 0.13, 0.022, 0.03, { ry: s * 0.16 }));
   }
+  if (kind === 'bmw') {
+    // Twin kidney grilles with chrome rims and slats, and the round blue and white badge on the hood
+    const kW = wid * 0.15, kH = grH * 1.15, kY = grY + grH * 0.05;
+    for (const s of [-1, 1]) {
+      const kx = s * (kW / 2 + 0.03);
+      P.push(box(0x07090b, kx, kY, fZ - 0.014, kW, kH, 0.04));
+      P.push(box(CHROME, kx, kY + kH / 2, fZ - 0.024, kW + 0.03, 0.024, 0.035));
+      P.push(box(CHROME, kx, kY - kH / 2, fZ - 0.024, kW + 0.03, 0.024, 0.035));
+      for (const e of [-1, 1]) P.push(box(CHROME, kx + e * kW / 2, kY, fZ - 0.024, 0.024, kH, 0.035));
+      for (let k = -2; k <= 2; k++) P.push(box(0x2a2e33, kx + k * kW * 0.18, kY, fZ - 0.022, 0.012, kH * 0.9, 0.03));
+    }
+    const bz0 = f + 0.2, by = top + 0.02;
+    P.push({ g: HUB_G, c: CHROME, x: 0, y: by, z: bz0, sx: 0.07, sy: 0.02, sz: 0.07 });
+    P.push({ g: HUB_G, c: 0x111317, x: 0, y: by + 0.006, z: bz0, sx: 0.058, sy: 0.02, sz: 0.058 });
+    for (const [dx, dz, c] of [[-1, -1, 0x1c69d4], [1, 1, 0x1c69d4], [1, -1, 0xf4f6f8], [-1, 1, 0xf4f6f8]]) {
+      P.push(box(c, dx * 0.017, by + 0.012, bz0 + dz * 0.017, 0.032, 0.012, 0.032));
+    }
+  } else {
   // Main radiator grille cavity + chrome frame + horizontal slats + center chrome emblem
   P.push(box(0x090b0d, 0, grY, fZ - 0.012, grW, grH, 0.04));
   P.push(box(CHROME, 0, grY + grH * 0.5, fZ - 0.022, grW + 0.03, 0.028, 0.035));
@@ -830,6 +849,7 @@ function shapedCar(kind, body, roofCol, P) {
   for (const s of [-1, 1]) P.push(box(CHROME, s * grW * 0.5, grY, fZ - 0.022, 0.03, grH + 0.02, 0.035));
   for (let k = -1; k <= 1; k++) P.push(box(kind === 'sports' ? TRIM : CHROME, 0, grY + k * grH * 0.27, fZ - 0.024, grW * 0.94, 0.02, 0.03));
   P.push({ g: HUB_G, c: CHROME, x: 0, y: grY + 0.01, z: fZ - 0.032, rx: Math.PI / 2, sx: 0.068, sy: 0.08, sz: 0.068 });
+  }
   if (kind === 'suv') {
     // Front silver skid plate & V-motion thick chrome bars
     P.push(box(CHROME, 0, lo + 0.04, fZ + 0.02, wid * 0.46, 0.07, 0.10));
@@ -882,7 +902,7 @@ function shapedCar(kind, body, roofCol, P) {
     P.push(box(CHROME, 0, top + 0.68, ge + 0.12, wid * 0.80, 0.055, 0.055));
     P.push(box(TRIM, 0, top + 0.42, ge - 0.04, wid * 0.78, 0.56, 0.05));
   }
-  if (kind === 'hatch' || kind === 'sedan') {
+  if (kind === 'hatch' || kind === 'sedan' || kind === 'bmw') {
     // Subtle trunk deck lip spoiler
     P.push(box(kind === 'hatch' ? TRIM : body, 0, top + 0.045, b - 0.08, wid * 0.82, 0.035, 0.11, { rx: -0.15 }));
   }
@@ -911,7 +931,7 @@ function carParts(kind, body, extra) {
       Lp.push(box(TAIL, 0, y + 0.025, len / 2 + 0.016, wid * 0.52, 0.032, 0.028));
     }
   };
-  const shaped = { sedan: 'sedan', taxi: 'sedan', dtaxi: 'sedan', sports: 'sports', hatch: 'hatch', suv: 'suv', pickup: 'pickup' }[kind];
+  const shaped = { sedan: 'sedan', taxi: 'sedan', dtaxi: 'sedan', sports: 'sports', bmw: 'bmw', hatch: 'hatch', suv: 'suv', pickup: 'pickup' }[kind];
   if (shaped) {
     const S = shapedCar(shaped, body, kind === 'dtaxi' ? extra.roof : body, P);
     const top = S.y0 + S.bh, gb = -S.len / 2 + S.hood, ge = S.len / 2 - S.trunk;

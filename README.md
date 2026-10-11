@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.6** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.7** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -133,6 +133,7 @@ Each city has four cars you see on its roads every day. Each one has four bars o
 | Toyota Prius | 165 km/h | Best grip in curves | Slowest pick up, takes the most damage |
 | Toyota Hilux | 160 km/h | Takes the least damage | Slow and heavy in curves |
 | Toyota Coaster (service bus) | 150 km/h | Carries up to 14 passengers | Wide and heavy to weave |
+| Lana BMW (BMW 3 Series) | 215 km/h | Fast, quick to pick up and sure in curves | Low and soft, so bumps and crashes hurt |
 
 **Dubai**
 
@@ -204,6 +205,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.7 (October 2026)
+
+- **Lana BMW.** Amman has a fifth car, a BMW 3 Series called **Lana BMW** (سيارة لانا in Arabic). It has twin kidney grilles, a blue and white badge on the hood, a smooth six cylinder engine sound with eight gears, and the best top speed in Amman. Pick it in the Garage.
 
 ### 2.6 (October 2026)
 

@@ -168,6 +168,10 @@
     <string key="car.3.sub">Toyota Coaster</string>
     <string key="car.3.pros">بيحمّل ركّاب كثير وبيطلع نقاط مضاعفة بالورديّة</string>
     <string key="car.3.cons">كبير وتقيل بالتجاوز</string>
+    <string key="car.4.name">سيارة لانا</string>
+    <string key="car.4.sub">BMW 3 Series</string>
+    <string key="car.4.pros">سريعة وبتشد منيح وثابتة بالكوع</string>
+    <string key="car.4.cons">واطية وناعمة، المطبات والضربات بتأثر فيها</string>
     <string key="place.0">دوار الداخلية</string>
     <string key="place.1">بوليفارد العبدلي</string>
     <string key="place.2">مسجد الملك عبدالله</string>
