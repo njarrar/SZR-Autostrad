@@ -68,6 +68,7 @@
     <string key="text.tailBehind">سيارة بتغمّز وراك، وسّعلها</string>
     <string key="text.tailOk">خلّيتها تمرق +120</string>
     <string key="text.rExtra">مواقف الطريق</string>
+    <string key="text.noWebGL">هذا الجهاز لا يعرض الرسوم ثلاثية الأبعاد (WebGL متوقف). جرّب متصفحاً آخر أو فعّل تسريع الرسوم.</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
