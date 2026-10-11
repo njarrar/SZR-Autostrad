@@ -2,6 +2,7 @@
 <!-- amman: names, places, cars, tour and card text. A key here wins over the same key in lang/ar.xml. -->
 <language code="ar" name="العربية" dir="rtl">
   <city>
+    <string key="page.T_WXON">شتوية</string>
     <string key="card.tag">AMMAN LOOP · 22 KM</string>
     <string key="card.name">لفّة عمّان</string>
     <string key="card.text">العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</string>

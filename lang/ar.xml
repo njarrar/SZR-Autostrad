@@ -45,6 +45,14 @@
     <string key="page.T_SHOW">بيّن</string>
     <string key="page.T_HIDE">خبّي</string>
     <string key="page.tryCity">جرّب {city}</string>
+    <string key="page.T_TIME">وقت اليوم</string>
+    <string key="page.T_TAUTO">تلقائي</string>
+    <string key="page.T_TMORN">الصبح</string>
+    <string key="page.T_TNOON">العصر</string>
+    <string key="page.T_TSUN">المغرب</string>
+    <string key="page.T_TNIGHT">الليل</string>
+    <string key="page.T_WX">الطقس</string>
+    <string key="page.T_WXOFF">صافي</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>

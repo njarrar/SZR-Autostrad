@@ -201,7 +201,7 @@ sun.shadow.mapSize.set(2048, 2048);
 Object.assign(sun.shadow.camera, { left: -70, right: 70, top: 70, bottom: -70, near: 10, far: 900 });
 sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.6;
 scene.add(sun); scene.add(sun.target);
-const SUN_DIR = new THREE.Vector3().fromArray(C.look.sunDir).normalize();
+const SUN_DIR = new THREE.Vector3().fromArray(C.look.sunDir).normalize(); // changes with the time of day
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // quality: high = real shadows and sharper pixels, low = faster on phones
 // auto: when frames run slow for a few seconds, draw fewer pixels, then drop the shadows
@@ -221,9 +221,9 @@ function applyQuality() {
   const g = new THREE.SphereGeometry(30000, 32, 16);
   const m = new THREE.ShaderMaterial({
     side: THREE.BackSide, depthWrite: false, fog: false,
-    uniforms: { top: { value: new THREE.Color(C.look.skyTop) }, hor: { value: new THREE.Color(C.look.fog) }, glow: { value: new THREE.Color(C.look.sunGlow) }, sdir: { value: new THREE.Vector3().fromArray(C.look.sunDir).normalize() }, clouds: { value: C.look.clouds || 0 }, cloudCol: { value: new THREE.Color(C.look.cloudColor || '#ffffff') } },
+    uniforms: { top: { value: new THREE.Color(C.look.skyTop) }, hor: { value: new THREE.Color(C.look.fog) }, glow: { value: new THREE.Color(C.look.sunGlow) }, sdir: { value: new THREE.Vector3().fromArray(C.look.sunDir).normalize() }, clouds: { value: C.look.clouds || 0 }, cloudCol: { value: new THREE.Color(C.look.cloudColor || '#ffffff') }, stars: { value: 0 } },
     vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }',
-    fragmentShader: `uniform vec3 top; uniform vec3 hor; uniform vec3 glow; uniform vec3 sdir; uniform float clouds; uniform vec3 cloudCol; varying vec3 vP;
+    fragmentShader: `uniform vec3 top; uniform vec3 hor; uniform vec3 glow; uniform vec3 sdir; uniform float clouds; uniform vec3 cloudCol; uniform float stars; varying vec3 vP;
       float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
       float n2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f); return mix(mix(h2(i), h2(i+vec2(1,0)), f.x), mix(h2(i+vec2(0,1)), h2(i+vec2(1,1)), f.x), f.y); }
       float fbm(vec2 p){ float v = 0.0, a = 0.5; for (int i = 0; i < 5; i++) { v += a * n2(p); p *= 2.03; a *= 0.5; } return v; }
@@ -239,6 +239,7 @@ function applyQuality() {
           vec3 cc = mix(cloudCol, glow, pow(sd, 6.0) * 0.6);
           c = mix(c, cc, cl);
         }
+        if (stars > 0.0 && vP.y > 0.02) { vec2 sp = floor(vP.xz / (vP.y + 0.35) * 260.0); float st = step(0.9975, h2(sp)) * (0.5 + 0.5 * h2(sp + 3.1)); c += vec3(st) * stars * smoothstep(0.02, 0.25, vP.y) * (1.0 - clouds * 0.8); }
         gl_FragColor = vec4(c, 1.0);
         #include <colorspace_fragment>
       }`
@@ -247,14 +248,16 @@ function applyQuality() {
   scene.userData.sky = sky;
 }
 
+// shared by every building, so the time of day can light the windows and tint the glass
+const ATM_U = { top: { value: new THREE.Color(C.look.skyTop) }, hor: { value: new THREE.Color(C.look.fog) }, night: { value: C.look.night } };
 // window shader for buildings
 function windowMaterial(opts, curtain) {
   const m = new THREE.MeshLambertMaterial({ color: 0xffffff });
   m.defines = {}; if (curtain) m.defines.CURTAIN = 1; if (C.stone) m.defines.STONE = 1;
   m.onBeforeCompile = (sh) => {
-    sh.uniforms.uTop = { value: new THREE.Color(C.look.skyTop) };
-    sh.uniforms.uHor = { value: new THREE.Color(C.look.fog) };
-    sh.uniforms.uNight = { value: C.look.night };
+    sh.uniforms.uTop = ATM_U.top;
+    sh.uniforms.uHor = ATM_U.hor;
+    sh.uniforms.uNight = ATM_U.night;
     sh.uniforms.uLit = { value: new THREE.Color(C.look.winLit) };
     sh.uniforms.uGlass = { value: new THREE.Color(C.look.winGlass) };
     sh.uniforms.uWin = { value: new THREE.Vector3(opts.floor, opts.bay, opts.size) };
@@ -885,8 +888,82 @@ function buildScenery() {
   const pg = mergeParts([{ g: CYL(0.11, 0.2, 11.2, 8), c: C.look.pole, y: 5.6 }, box(C.look.pole, 0, 0.15, 0, 0.6, 0.3, 0.6), ...arm(1), ...arm(-1)]);
   // rotate so arm points toward the road: arm is along +x, poles yaw set so +x faces road
   makeInstanced(pg, new THREE.MeshLambertMaterial({ vertexColors: true }), poles, false);
-  const lampMat = new THREE.MeshBasicMaterial({ color: C.look.night > 0.3 ? 0xffd9a0 : 0xd8d8d0 });
-  makeInstanced(new THREE.BoxGeometry(1.4, 0.22, 0.55), lampMat, lamps, false);
+  LAMP_MAT.color.set(C.look.night > 0.3 ? 0xffd9a0 : 0xd8d8d0);
+  makeInstanced(new THREE.BoxGeometry(1.4, 0.22, 0.55), LAMP_MAT, lamps, false);
+}
+
+const LAMP_MAT = new THREE.MeshBasicMaterial({ color: 0xd8d8d0, toneMapped: false });
+
+// ---------- time of day and weather ----------
+// "auto" keeps the city's own light; the others swap the sky, sun, fog and how many windows are lit
+const TIMES = {
+  morning: { skyTop: '#5f97d6', fog: '#d6dfe6', sunGlow: '#fff1cf', sunDir: [0.75, 0.42, 0.35], sunColor: 0xfff0d8, sun: 2.0, skyLight: 0xd8e8f6, groundLight: 0xa3957c, hemi: 1.15, night: 0, exposure: 1.0, clouds: 0.35, cloudColor: '#ffffff' },
+  noon: { skyTop: '#6f9fcf', fog: '#dccaa6', sunGlow: '#ffd59a', sunDir: [-0.7, 0.45, 0.25], sunColor: 0xffe1b0, sun: 1.9, skyLight: 0xcfe1f2, groundLight: 0xb59c73, hemi: 1.15, night: 0, exposure: 1.0, clouds: 0.5, cloudColor: '#fbf7f0' },
+  sunset: { skyTop: '#26295a', fog: '#e3a98a', sunGlow: '#ffb070', sunDir: [-0.8, 0.12, -0.45], sunColor: 0xffa26b, sun: 1.7, skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.55, night: 0.8, exposure: 1.2, clouds: 0.3, cloudColor: '#f1b49a' },
+  night: { skyTop: '#03061a', fog: '#1a2238', sunGlow: '#7d8dbf', sunDir: [0.35, 0.55, -0.6], sunColor: 0x9fb4e6, sun: 0.45, skyLight: 0x5a6a99, groundLight: 0x221c18, hemi: 0.8, night: 1, exposure: 1.2, clouds: 0.12, cloudColor: '#2c3452', stars: 1, fogK: 0.75 }
+};
+// weather: Amman gets winter rain and mist, Dubai a sandstorm (CITY.weather picks which)
+const WEATHER = {
+  rain: { fogTo: '#8e979f', fogMix: 0.65, fogK: 0.32, sunK: 0.3, hemiK: 0.85, clouds: 1, cloudColor: '#9aa1a8', skyMix: 0.55 },
+  dust: { fogTo: '#c9a26a', fogMix: 0.8, fogK: 0.14, sunK: 0.45, hemiK: 0.95, clouds: 0, cloudColor: '#c9a26a', skyMix: 0.75 }
+};
+const headlight = new THREE.SpotLight(0xfff1d6, 0, 90, 0.48, 0.65, 1.1);
+scene.add(headlight); scene.add(headlight.target);
+const atm = { night: C.look.night, wx: null };
+const mixHex = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t);
+function applyTime() {
+  const L = Object.assign({}, C.look, TIMES[settings.time] || {});
+  const W = settings.weather ? WEATHER[C.weather] : null;
+  const fogK = (L.fogK || 1) * (W ? W.fogK : 1);
+  const fog = W ? mixHex(L.fog, W.fogTo, W.fogMix) : new THREE.Color(L.fog);
+  scene.fog.color.copy(fog); scene.background.copy(fog);
+  scene.fog.near = C.look.fogNear * fogK; scene.fog.far = C.look.fogFar * fogK;
+  hemi.color.set(L.skyLight); hemi.groundColor.set(L.groundLight); hemi.intensity = L.hemi * (W ? W.hemiK : 1);
+  sun.color.set(L.sunColor); sun.intensity = L.sun * (W ? W.sunK : 1);
+  SUN_DIR.fromArray(L.sunDir).normalize();
+  renderer.toneMappingExposure = L.exposure || 1;
+  const u = scene.userData.sky.material.uniforms;
+  u.top.value.copy(W ? mixHex(L.skyTop, fog, W.skyMix) : new THREE.Color(L.skyTop)); u.hor.value.copy(fog);
+  u.glow.value.copy(W ? mixHex(L.sunGlow, fog, 0.7) : new THREE.Color(L.sunGlow)); u.sdir.value.copy(SUN_DIR);
+  u.clouds.value = W ? W.clouds : L.clouds || 0; u.cloudCol.value.set(W ? W.cloudColor : L.cloudColor || '#ffffff');
+  u.stars.value = W ? 0 : L.stars || 0;
+  ATM_U.top.value.copy(u.top.value); ATM_U.hor.value.copy(fog);
+  // dark skies switch on more windows, the street lamps and your headlights
+  const night = Math.min(1, L.night + (W ? 0.25 : 0));
+  ATM_U.night.value = night; atm.night = night; atm.wx = W ? C.weather : null;
+  LAMP_MAT.color.set(night > 0.3 ? 0xffd9a0 : 0xd8d8d0);
+  headlight.intensity = night > 0.5 ? 3.2 * night : 0;
+  $('#wx').hidden = !W; $('#wx').dataset.kind = W ? C.weather : '';
+  SND.weather(W ? C.weather : null);
+}
+// rain streaks or blowing sand, drawn flat over the picture
+const wxEl = $('#wx'), wxG = wxEl.getContext('2d'); const wxP = [];
+function drawWeather(dt) {
+  if (!atm.wx || wxEl.hidden) return;
+  const w = wxEl.clientWidth, h = wxEl.clientHeight;
+  if (wxEl.width !== w || wxEl.height !== h) { wxEl.width = w; wxEl.height = h; wxP.length = 0; }
+  const rain = atm.wx === 'rain', n = rain ? 170 : 90, spd = game.mode === 'drive' ? player.v : 0;
+  while (wxP.length < n) wxP.push({ x: Math.random() * w, y: Math.random() * h, z: 0.4 + Math.random() * 0.6, s: Math.random() });
+  wxG.clearRect(0, 0, w, h);
+  if (rain) {
+    wxG.strokeStyle = 'rgba(210,222,235,0.42)'; wxG.lineWidth = 1.2; wxG.beginPath();
+    const slant = 0.12 + spd * 0.012;
+    for (const p of wxP) {
+      // drops fall and, at speed, fly out from the middle of the screen
+      const len = (14 + spd * 0.5) * p.z;
+      const dx = (p.x - w / 2) / w * spd * 0.02 * p.z;
+      p.y += (900 + spd * 14) * p.z * dt; p.x += (dx * 60 + slant * 300 * p.z) * dt;
+      if (p.y > h || p.x < 0 || p.x > w) { p.y = -20; p.x = Math.random() * w; }
+      wxG.moveTo(p.x, p.y); wxG.lineTo(p.x - slant * len, p.y - len);
+    }
+    wxG.stroke();
+  } else {
+    for (const p of wxP) {
+      p.x -= (120 + spd * 6) * p.z * dt * (p.s > 0.5 ? 1 : 0.7); p.y += Math.sin(p.x * 0.01 + p.s * 6) * 20 * dt;
+      if (p.x < -20) { p.x = w + 20; p.y = Math.random() * h; }
+      wxG.fillStyle = `rgba(214,178,118,${0.18 + 0.3 * p.z})`; wxG.beginPath(); wxG.arc(p.x, p.y, 1 + 2.4 * p.z, 0, 6.283); wxG.fill();
+    }
+  }
 }
 
 // ---------- Dubai Metro: an elevated line beside the road, with gold stations and a moving train ----------
@@ -1309,7 +1386,7 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1 }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city' }, store.get('settings', {}));
 function saveSettings() { store.set('settings', settings); }
 
 const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0 };
@@ -1717,6 +1794,8 @@ function render(dt) {
   // pitch from slope
   trackAt(player.t + 3, player.d, Q); const pitch = Math.atan2(Q.y - P.y, 3);
   player.group.rotation.set(0, 0, 0); player.group.rotateY(yaw); player.group.rotateX(pitch); player.group.rotateZ(clamp(-player.lat * 0.025, -0.07, 0.07));
+  if (headlight.intensity > 0) { trackAt(player.t + 1.8, player.d, Q); headlight.position.set(Q.x, Q.y + 0.75, Q.z); trackAt(player.t + 26, player.d, Q); headlight.target.position.set(Q.x, Q.y, Q.z); }
+  drawWeather(dt);
   sun.target.position.set(P.x, P.y, P.z); sun.position.set(P.x + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, P.z + SUN_DIR.z * 400);
   let si = 0; const setShadow = (x, y, z, yw, w, l) => { if (si >= MAXS) return; tmpQ.setFromAxisAngle(UP, yw); tmpM.compose(tmpV.set(x, y + 0.04, z), tmpQ, tmpS.set(w * 1.3, 1, l * 1.15)); shadows.setMatrixAt(si++, tmpM); };
   setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
@@ -1833,6 +1912,8 @@ function syncSettingsUI() {
   segmented('#segDir', 'dir', () => { settings.trip = Math.min(settings.trip, tripList().length - 1); renderTrips(); placeMenuCar(); });
   segmented('#segTraffic', 'traffic', placeMenuCar);
   segmented('#segCam', 'cam');
+  segmented('#segTime', 'time', applyTime);
+  segmented('#segWx', 'weather', applyTime);
   segmented('#segHorn', 'hornSide', applyControls);
   segmented('#segHornSize', 'hornSize', applyControls);
   segmented('#segQual', 'quality', applyQuality);
@@ -1995,7 +2076,7 @@ async function boot() {
   const stage = (msg) => new Promise((r) => { status.textContent = msg; setTimeout(r, 16); });
   await stage(T.loadRoad); buildRoad(); buildTerrain();
   await stage(T.loadCity); buildScenery(); buildMetro(); buildVerge(); buildLandmarks(); buildSigns(); buildEvents();
-  prepMini(); buildPlayer(); placeMenuCar(); applyQuality();
+  prepMini(); buildPlayer(); placeMenuCar(); applyQuality(); applyTime();
   renderTrips(); renderGarage(); syncSettingsUI();
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   if (!store.get('welcomed', 0)) showScreen('#welcome');

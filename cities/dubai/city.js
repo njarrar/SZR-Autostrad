@@ -2,6 +2,7 @@ window.CITY = {
   id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20,
   fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
   origin: [25.16, 55.22],
+  weather: 'dust', // what the weather setting brings: 'rain' or 'dust'
   horn: [330, 415],
   // the car radio: made-up stations, each with its own rhythm, maqam and lead sound
   radio: [

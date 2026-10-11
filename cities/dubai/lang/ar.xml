@@ -2,6 +2,7 @@
 <!-- dubai: names, places, cars, tour and card text. A key here wins over the same key in lang/ar.xml. -->
 <language code="ar" name="العربية" dir="rtl">
   <city>
+    <string key="page.T_WXON">غبار</string>
     <string key="card.tag">DUBAI LOOP · 47 KM</string>
     <string key="card.name">لفّة دبي</string>
     <string key="card.text">برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</string>
