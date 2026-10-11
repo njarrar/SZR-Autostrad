@@ -190,5 +190,10 @@
     <string key="text.tailBehind">سيارة تغمّز وراك، وسّع لها</string>
     <string key="text.tailOk">خلّيتها تعدّي +120</string>
     <string key="text.ambBehind">إسعاف وراك، وسّع له</string>
+    <string key="text.walkGoal">البقالة</string>
+    <string key="text.walkTiredSub">هيثم رجع البيت</string>
+    <string key="text.walkHow">وضع هيثم: امشِ 400 م للبقالة. يمين ويسار عشان تتفادى، لفوق أسرع، والمسافة تقول لو سمحت</string>
+    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، والهرن يقول لو سمحت</string>
+    <string key="text.walkExcuse">لو سمحت!</string>
 </city>
 </language>

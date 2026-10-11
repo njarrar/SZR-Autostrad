@@ -97,6 +97,23 @@
     <string key="page.T_CHARM_2">خمسة</string>
     <string key="page.T_CHARM_3">ميدالية</string>
     <string key="text.rFares">الأجرة</string>
+    <!-- Haitham Mode: walking on the sidewalk -->
+    <string key="page.T_WALK">وضع هيثم</string>
+    <string key="page.T_BUMPS">خبطات</string>
+    <string key="text.walkGoal">الدكّانة</string>
+    <string key="text.walkHow">وضع هيثم: امشِ 400 م للدكّانة. يمين ويسار لتتفادى، لفوق أسرع، والمسافة بتقول عن إذنك</string>
+    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للدكّانة. حرّك لتتفادى، والزامور بقول عن إذنك</string>
+    <string key="text.walkBump">خبطة!</string>
+    <string key="text.walkTrash">انتبه للزبالة!</string>
+    <string key="text.walkPole">آخ!</string>
+    <string key="text.walkSlip">تزحلقت بقشرة موز!</string>
+    <string key="text.walkExcuse">عن إذنك!</string>
+    <string key="text.walkDodge">حركة حلوة</string>
+    <string key="text.walkArrived">هيثم وصل</string>
+    <string key="text.walkTired">خبطات كثير</string>
+    <string key="text.walkTiredSub">هيثم رجع عالبيت</string>
+    <string key="text.walkDodges">تفاديات</string>
+    <string key="text.walkBumps">خبطات</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>

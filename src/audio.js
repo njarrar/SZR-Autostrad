@@ -347,7 +347,10 @@ const SND = (() => {
     paxDrop: () => { [1047, 1319, 1568, 2093].forEach((f, i) => blip(f, 0.14, 'triangle', 0.09, null, now() + i * 0.05)); },
     refuel: () => { blip(880, 0.1, 'sine', 0.07); blip(1175, 0.15, 'sine', 0.08, null, now() + 0.09); },
     tick: () => blip(2400, 0.02, 'triangle', 0.03),
-    click: () => blip(1500, 0.03, 'triangle', 0.025)
+    click: () => blip(1500, 0.03, 'triangle', 0.025),
+    // walking: a soft shoe on paving, and a sliding whistle for a banana peel
+    step: () => burst(now(), 0.05, 0.035 + Math.random() * 0.015, [filt('bandpass', 600 + Math.random() * 300, 1.4)], bus.fx, 3),
+    slip: () => { const t = now(), o = ac.createOscillator(), g = gainN(0.0001); o.type = 'sine'; o.frequency.setValueAtTime(1400, t); o.frequency.exponentialRampToValueAtTime(260, t + 0.5); g.gain.exponentialRampToValueAtTime(0.09, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.55); chain(o, g, bus.fx); o.start(t); o.stop(t + 0.6); }
   };
   // near misses climb a semitone each step of the chain
   function combo(n) { const f = 1245 * Math.pow(2, Math.min(7, n - 1) / 12); blip(f, 0.1, 'triangle', 0.08); blip(f * 1.5, 0.12, 'triangle', 0.06, null, now() + 0.09); }

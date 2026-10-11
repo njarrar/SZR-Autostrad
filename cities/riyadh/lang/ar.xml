@@ -195,5 +195,10 @@
       <string key="car.4.pros">يشيل ركّاب كثير ويعطيك نقاط مضاعفة بالأجرة</string>
       <string key="car.4.cons">كبير وثقيل في التجاوز</string>
       <string key="place.10">الدرعية</string>
-  </city>
+      <string key="text.walkGoal">البقالة</string>
+    <string key="text.walkTiredSub">هيثم رجع البيت</string>
+    <string key="text.walkHow">وضع هيثم: امشِ 400 م للبقالة. يمين ويسار عشان تتفادى، لفوق أسرع، والمسافة تقول لو سمحت</string>
+    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، والهرن يقول لو سمحت</string>
+    <string key="text.walkExcuse">لو سمحت!</string>
+</city>
 </language>

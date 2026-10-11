@@ -82,6 +82,10 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .moreBox .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .goBar { position: sticky; bottom: -20px; margin: 0 -20px -20px; padding: 10px 20px 20px; background: var(--panel); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 0 0 var(--r) var(--r); display: flex; }
 .goBar .go { flex: 1; }
+.goBar .walkGo { flex: 0 0 auto; margin-inline-start: 8px; display: flex; align-items: center; gap: 6px; font-size: 19px; background: var(--chip); color: var(--ink); padding: 8px 12px 6px; }
+.walkGo svg { width: 22px; height: 22px; flex: none; }
+/* Haitham Mode: no gears, nitro, limit, fuel or damage while walking */
+#hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .nbar, #hud.walk .limit, #touch.walk #btnNitro { display: none; }
 .chip .ic { display: none; }
 .carStats { display: none; }
 .carStats .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
@@ -467,10 +471,10 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   <div class="stats">
     <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_TIME">الوقت</span></span><b id="hTime">0:00</b></div>
     <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 16.9 6.4 20l1.3-6.2L3 9.5l6.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_SCORE">النقاط</span></span><b id="hScore">0</b></div>
-    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_VIOL">مخالفات</span></span><b id="hViol">0</b></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="dOnly"><span data-t="page.T_VIOL">مخالفات</span></span><span class="wOnly"><span data-t="page.T_BUMPS">خبطات</span></span><b id="hViol">0</b></div>
     <div class="chip" id="chipPax" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_PAX">الركّاب</span></span><b id="hPax">0/4</b></div>
     <div class="chip" id="chipFuel" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v16M3 21h13M8 9h3M14 10h2a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0V8l-3-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_FUEL">البنزين</span></span><div class="fuel"><div id="hFuelBar"></div></div></div>
-    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_DMG">الضرر</span></span><div class="dmg"><div id="hDmgBar"></div></div></div>
+    <div class="chip dOnly"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_DMG">الضرر</span></span><div class="dmg"><div id="hDmgBar"></div></div></div>
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
   <button id="btnPause" type="button"><span data-t="page.T_PAUSE">وقّف</span></button>
@@ -519,7 +523,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <h1><span data-t="page.name">لفّة الرياض</span></h1>
       <div class="flagbar"></div>
       <p><span data-t="page.blurb">من قصر المصمك في الديرة على طريق الملك فهد جنب الفيصلية وبرج المملكة، وبعدين غرب للدرعية ونرجع. ساهر يشوف كل شي.</span></p>
-      <p class="ver">v2.10 · 2026-10-11 16:15 UTC</p>
+      <p class="ver">v2.11 · 2026-10-11 19:03 UTC</p>
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
@@ -545,7 +549,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
           <a href="../amman/" data-local><span data-t="page.otherLabel">جرّب لفّة عمّان</span></a>
         </div>
       </div>
-      <div class="goBar"><button class="go" id="btnStart" type="button"><span data-t="page.T_GO">يالله نمشي</span></button></div>
+      <div class="goBar"><button class="go" id="btnStart" type="button"><span data-t="page.T_GO">يالله نمشي</span></button><button class="go walkGo" id="btnWalk" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4" r="2.2" fill="currentColor"/><path d="m9.5 21 2.2-6.5 2.8 2.5V21M8 12l2.5-4.5 4 1 2.5 3.5M11.7 14.5 10.5 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span><span data-t="page.T_WALK">وضع هيثم</span></span></button></div>
     </div>
   </div>
 </div>
@@ -647,7 +651,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
-window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"اللغة","page.T_SET_CONTROLS":"التحكم","page.T_SET_SOUND":"الصوت","page.T_SET_DISPLAY":"الشاشة","page.T_CLOSE":"تمام","page.T_CTRL":"طريقة السواقة على شاشة اللمس","page.T_C_STICK":"عصا","page.T_C_ONE":"يد وحدة","page.T_C_TILT":"إمالة","page.T_C_LANES":"أزرار","page.T_STEERFEEL":"الدركسيون","page.T_LIGHT":"خفيف","page.T_HEAVY":"ثقيل","page.T_BRAKEFEEL":"البريك","page.T_SOFT":"ناعم","page.T_HARD":"قوي","page.T_HORNSIZE":"حجم زر الهرن","page.T_SMALL":"صغير","page.T_NORMAL":"عادي","page.T_VOLENG":"صوت الماتور","page.T_VOLFX":"المؤثرات","page.T_VOLHORN":"الهرن","page.T_RADIO":"راديو","page.T_C_WHEEL":"دركسون","page.T_MUSIC":"أغاني الراديو","page.T_VOLMUSIC":"صوت الراديو","page.T_VIB":"الاهتزاز","page.T_VIB1":"خفيف","page.T_VIB2":"عادي","page.T_VIB3":"قوي","page.T_AUTOQ":"جودة تلقائية","text.go":"يلا!","page.T_QUIET":"واطي","page.T_LOUD":"عالي","page.T_SPEEDFX":"مؤثرات السرعة","page.T_MINIMAP":"الخريطة","page.T_SHOW":"بيّن","page.T_HIDE":"خبّي","page.tryCity":"جرّب {city}","page.T_TOD":"وقت اليوم","page.T_TAUTO":"تلقائي","page.T_TMORN":"الصبح","page.T_TNOON":"العصر","page.T_TSUN":"المغرب","page.T_TNIGHT":"الليل","page.T_WX":"الطقس","page.T_WXOFF":"صافي","page.T_NITRO":"نيترو","page.T_HORNSTYLE":"صوت الهرن","page.T_HCITY":"عادي","page.T_HDEEP":"غليظ","page.T_HTRUCK":"شاحنة","page.T_HTUNE":"نغمة","text.nitroPerfect":"نيترو مضبوط! +150","text.ambBehind":"إسعاف وراك، وسّع له","text.ambThanks":"وسّعت للإسعاف +250","text.ambBlock":"سكّرت طريق الإسعاف!","text.wedAhead":"زفّة قدّامك، بوّر جنبهم","text.mabrook":"مبروك! +100","text.tailBehind":"سيارة تفلّش وراك، وسّع لها","text.tailOk":"خلّيتها تعدّي +120","text.rExtra":"مواقف الطريق","text.noWebGL":"هذا الجهاز لا يعرض الرسوم ثلاثية الأبعاد (WebGL متوقف). جرّب متصفحاً آخر أو فعّل تسريع الرسوم.","page.T_LED":"إضاءة نيون تحت السيارة","page.T_STICKER":"ملصق الزجاج الخلفي","page.T_CHARM":"تعليقة المراية","page.T_GARAGE_HINT":"اسحب الشاشة يمين أو شمال عشان تلف السيارة 360°","page.T_ALBUM":"ألبوم المعالم","page.T_MORE":"خيارات أكثر","page.T_LESS":"خيارات أقل","text.prevTrip":"المشوار السابق","text.nextTrip":"المشوار التالي","page.T_PAX":"الركّاب","page.T_FUEL":"البنزين","text.serviceMode":"ورديّة سرفيس وتاكسي","text.serviceSub":"حمّل ركّاب من الطريق، نزّلهم عالمحطات، وعبّي بنزين","text.paxPick":"ركبوا الركّاب","text.paxDrop":"نزلوا الركّاب · الأجرة","text.paxAhead":"موقف ركّاب","text.paxHow":"خلّيك يمين وخفّف","text.paxOff":"نازلين","text.paxOn":"طالعين","text.paxMissed":"فاتك الموقف","text.refuel":"فلّلت التانكي من المحطة! +100","text.fuelLow":"البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين","text.cardUnlocked":"فتحت بطاقة معلم جديدة:","page.T_NONE":"بدون","page.T_CHARM_1":"سبحة","page.T_CHARM_2":"خمسة","page.T_CHARM_3":"ميدالية","text.rFares":"الأجرة","page.T_WXON":"غبار","card.tag":"RIYADH LOOP · 43 KM","card.name":"لفّة الرياض","card.text":"قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.","card.alt":"لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض","text.radio0":"طويق إف إم","text.radio1":"ليالي العليا","text.radio2":"طبول نجد","page.T_C_WHEEL_D":"لف الدركسون بصبع واحد عشان تلف، ودعسة البنزين والبريك على الجهة الثانية.","page.T_RADIONOTE":"دوس زر الراديو وانت تسوق عشان تختار محطة أو تسكّر الراديو. الموسيقى تنعزف وانت تسوق، فكل مشوار له لحن غير.","page.T_AUTOQ_D":"إذا ثقلت اللعبة، تخفف الرسم عشان تبقى سلسة.","text.radioOff":"الراديو مقفول","text.radioKeys":"\u003ckbd>R\u003c/kbd> المحطة اللي بعدها · \u003ckbd>M\u003c/kbd> شغّل أو سكّر","text.autoLow":"خففنا الرسم عشان تبقى سلسة","page.title":"لفّة الرياض","page.name":"لفّة الرياض","page.eyebrow":"Riyadh · الرياض","page.alt":"Driving through Riyadh","page.blurb":"من قصر المصمك في الديرة على طريق الملك فهد جنب الفيصلية وبرج المملكة، وبعدين غرب للدرعية ونرجع. ساهر يشوف كل شي.","page.T_NEXT":"الوجهة","page.T_KMH":"كم/س","page.T_TIME":"الوقت","page.T_SCORE":"النقاط","page.T_VIOL":"مخالفات","page.T_DMG":"الضرر","page.T_PAUSE":"وقّف","page.T_HORN":"بوري","page.T_BRAKE":"بريك","page.T_GAS":"دعس","page.T_DIR":"الاتجاه","page.T_CW":"مع عقارب الساعة","page.T_CCW":"عكس عقارب الساعة","page.T_TRIP":"المشوار","page.T_TRAFFIC":"الزحمة","page.T_TR0":"خفيفة","page.T_TR1":"عادية","page.T_TR2":"زحمة","page.T_GO":"يالله نمشي","page.T_GARAGE":"الكراج","page.T_SETTINGS":"الإعدادات","page.T_CARS":"السيارة","page.T_COLOR":"اللون","page.T_FIXEDCOLOR":"لون التاكسي ثابت","page.T_PLATE":"رقم اللوحة","page.T_CAM":"الكاميرا","page.T_CAM0":"قريبة","page.T_CAM1":"عادية","page.T_CAM2":"بعيدة","page.T_HORNSIDE":"مكان البوري","page.T_LEFT":"يسار","page.T_RIGHT":"يمين","page.T_SOUND":"الصوت","page.T_ON":"شغّال","page.T_OFF":"طافي","page.T_KEYS":"السواقة بالأسهم أو \u003ckbd>WASD\u003c/kbd> · البوري \u003ckbd>Space\u003c/kbd> · نيترو \u003ckbd>N\u003c/kbd> · الكاميرا \u003ckbd>C\u003c/kbd> · الراديو \u003ckbd>R\u003c/kbd> · وقوف \u003ckbd>P\u003c/kbd>","page.T_MAPNOTE":"الطريق مرسوم تقريباً على أماكن حقيقية في الرياض. البوري يخلّي السيارة اللي قدامك توسّع لك.","page.T_PAUSED":"استراحة","page.T_RESUME":"كمّل","page.T_QUIT":"رجوع للقائمة","page.T_AGAIN":"عيدها","page.T_NEWTRIP":"مشوار ثاني","page.T_HOWTO":"كيف ألعب؟","page.T_R1":"وصّل مشوارك","page.T_R1S":"اختر مشوار بين معالم الرياض، من المصمك لبرج المملكة لين الدرعية، ووصّل للنهاية.","page.T_R2":"تجاوز واجمع نقاط","page.T_R2S":"كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.","page.T_R3":"انتبه للمخالفات","page.T_R3S":"ساهر يصوّر فوق 120 كم/س، والحوادث تخرّب السيارة.","page.T_WTOUR":"جولة تعليمية","page.T_WSKIP":"أعرف أسوق، أبي ألعب","page.T_TSKIP":"تخطّى الجولة","page.T_TNEXT":"التالي","page.T_TEND":"جاهز!","page.T_TENDS":"خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟","page.T_TEMENU":"اختار مشوار","page.T_TEDRIVE":"كمّل سواقة حرة","page.T_QUALITY":"الرسومات","page.T_QHIGH":"عالية","page.T_QLOW":"سريعة","text.stSpeed":"سرعة","text.stAccel":"تسارع","text.stGrip":"ثبات","text.stTough":"تحمّل","text.meters":"م","text.km":"كم","text.kmh":"كم/س","text.to":"إلى","text.bumpSign":"","text.tollName":"","text.tollPrice":"","text.freeDrive":"سواقة حرة","text.freeSub":"بلا نهاية، صيانة كل 25 كم","text.freeHint":"سوق على راحتك، كل 25 كم صيانة","text.fullLap":"لفّة كاملة","text.goTo":"يلا إلى","text.arrived":"وصلنا!","text.wrecked":"السيارة خربت","text.wreckedSub":"تبي لها سطحة","text.rTime":"الوقت","text.rDist":"المسافة","text.rAvg":"معدل السرعة","text.rWeave":"تجاوزات","text.rRadar":"رادار","text.rCrash":"حوادث","text.rFines":"المخالفات","text.newBest":"رقم قياسي جديد","text.best":"أحسن نتيجة","text.rateTop":"كفو!","text.rateMid":"زين","text.rateBad":"تبي لك تدريب","text.scrape":"لا تحك بالحاجز!","text.crash":"حادث!","text.radarAhead":"ساهر بعد","text.flash":"ساهر صوّرك!","text.radarOk":"عدّيت ساهر على خير","text.bumpHit":"","text.bumpOk":"","text.bonus":"+500 كل 10 كم","text.workshop":"صيانة: السيارة رجعت جديدة","text.weave":"تجاوز","text.loadRoad":"جالسين نرسم الطريق...","text.loadCity":"جالسين نبني الرياض...","text.currency":"ريال","tour.tryIt":"جربها الحين","tour.nice":"زين!","tour.0.title":"دعس","tour.0.keys":"اضغط \u003ckbd>↑\u003c/kbd> أو \u003ckbd>W\u003c/kbd> لين السرعة تعدي 45. لين تفك السيارة تظل ماشية على نفس السرعة.","tour.0.touch":"ادفع العصا لفوق لين السرعة تعدي 45. لين تفكها السيارة تظل ماشية على نفس السرعة.","tour.1.title":"غيّر المسار","tour.1.keys":"استخدم \u003ckbd>←\u003c/kbd> و\u003ckbd>→\u003c/kbd> (أو \u003ckbd>A\u003c/kbd> و\u003ckbd>D\u003c/kbd>) وانتقل لمسار ثاني.","tour.1.touch":"حرّك العصا يمين أو يسار وانتقل لمسار ثاني. دفة قصيرة تنقلك مسار واحد.","tour.2.title":"البريك","tour.2.keys":"اضغط \u003ckbd>↓\u003c/kbd> أو \u003ckbd>S\u003c/kbd> وهدّي السرعة. السيارة تظل على السرعة الجديدة.","tour.2.touch":"اسحب العصا لتحت وهدّي السرعة. السيارة تظل على السرعة الجديدة.","tour.3.title":"البوري","tour.3.keys":"اضغط \u003ckbd>Space\u003c/kbd>. السيارة اللي قدامك توسّع لك إذا المسار اللي جنبها فاضي.","tour.3.touch":"اضغط زر \u003cb>البوري\u003c/b> المدوّر. السيارة اللي قدامك توسّع لك إذا المسار اللي جنبها فاضي.","tour.4.title":"العداد","tour.4.body":"الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر ساهر بيصوّرك. قبل كل كاميرا تطلع لك لوحة صفرا.","tour.5.title":"الوجهة","tour.5.body":"هنا اسم وجهتك وكم باقي لين توصل. في السواقة الحرة تشوف كم سقت.","tour.6.title":"النقاط والمخالفات","tour.6.body":"النقاط تزيد مع المسافة والتجاوزات، والرادار والحوادث عليهم مخالفات. إذا الضرر وصل للنهاية السيارة تخرب.","tour.7.title":"الخريطة","tour.7.body":"النقطة البيضا انت، والنقاط الخضرا المعالم. وجهتك تبان أكبر.","tour.8.title":"التجاوز","tour.8.body":"عدّ جنب السيارات من قريب وانت أسرع منها عشان تاخذ نقاط. كم تجاوز ورا بعض يضاعف النقاط.","tour.9.title":"الاستراحة","tour.9.keys":"من هنا توقّف اللعبة وتغيّر الكاميرا والصوت. \u003ckbd>C\u003c/kbd> تغيّر الكاميرا و\u003ckbd>P\u003c/kbd> توقّف.","tour.9.touch":"من هنا توقّف اللعبة وتغيّر الكاميرا ومكان البوري والصوت.","car.0.name":"تويوتا لاندكروزر","car.0.sub":"Toyota Land Cruiser","car.0.pros":"قوية وتتحمل الصدمات","car.0.cons":"ثقيلة ولفّتها صعبة","car.1.name":"تويوتا هايلكس","car.1.sub":"Toyota Hilux","car.1.pros":"تتحمل ومصروفها خفيف","car.1.cons":"بطيئة وتزحلق في اللفّات","car.2.name":"تويوتا كامري","car.2.sub":"Toyota Camry","car.2.pros":"متوازنة وتمشي مع كل شي","car.2.cons":"ما فيها شي مميز","car.3.name":"هيونداي أكسنت","car.3.sub":"Hyundai Accent","car.3.pros":"خفيفة وسهل تحشر فيها","car.3.cons":"تسارعها ضعيف","place.0":"قصر المصمك","place.1":"جامع الإمام تركي","place.2":"قصر المربع","place.3":"برج المياه","place.4":"برج التلفزيون","place.5":"برج الفيصلية","place.6":"برج المملكة","place.7":"المركز المالي","place.8":"الرياض بارك","place.9":"البوليفارد","page.T_C_STICK_D":"عصا مدوّرة تحت. ادفعها لفوق عشان تسرّع، اسحبها لتحت للبريك، وحرّكها يمين ويسار عشان تغيّر المسار. لين تفكها السيارة تظل على نفس السرعة.","page.T_C_ONE_D":"حط صبعك في أي مكان في النص اللي تحت من الشاشة واسحب: لفوق تسرّع، لتحت بريك، ويمين ويسار تغيّر المسار.","page.T_C_TILT_D":"ميّل التلفون مثل الدركسون عشان تغيّر المسار. اسحب لفوق في أي مكان تسرّع ولتحت بريك.","page.T_C_LANES_D":"أسهم لتغيير المسار، كل ضغطة مسار، مع زر دعس وزر بريك.","page.T_TILTPERM":"اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.","page.T_NOTILT":"هالجهاز ما فيه حسّاس إمالة، فالعصا بتسوق بداله.","page.T_KEYSNOTE":"على الكمبيوتر الكيبورد دايماً شغّال: الأسهم أو \u003ckbd>WASD\u003c/kbd> للسواقة و\u003ckbd>Space\u003c/kbd> للبوري و\u003ckbd>N\u003c/kbd> أو \u003ckbd>Shift\u003c/kbd> للنيترو.","car.4.name":"باص كوستر","car.4.sub":"Toyota Coaster","car.4.pros":"يشيل ركّاب كثير ويعطيك نقاط مضاعفة بالأجرة","car.4.cons":"كبير وثقيل في التجاوز","place.10":"الدرعية","page.otherLabel":"جرّب لفّة عمّان"}},"en":{"name":"English","dir":"ltr","s":{"page.T_NEXT":"Heading to","page.T_KMH":"km/h","page.T_TIME":"Time","page.T_SCORE":"Points","page.T_VIOL":"Fines","page.T_DMG":"Damage","page.T_PAUSE":"Pause","page.T_HORN":"Horn","page.T_BRAKE":"Brake","page.T_GAS":"Gas","page.T_DIR":"Direction","page.T_CW":"Clockwise","page.T_CCW":"Counterclockwise","page.T_TRIP":"Trip","page.T_TRAFFIC":"Traffic","page.T_TR0":"Light","page.T_TR1":"Normal","page.T_TR2":"Heavy","page.T_GO":"Let's go","page.T_GARAGE":"Garage","page.T_SETTINGS":"Settings","page.T_CARS":"Car","page.T_COLOR":"Color","page.T_FIXEDCOLOR":"The taxi keeps its own color","page.T_PLATE":"Plate number","page.T_CAM":"Camera","page.T_CAM0":"Close","page.T_CAM1":"Normal","page.T_CAM2":"Far","page.T_HORNSIDE":"Horn button side","page.T_LEFT":"Left","page.T_RIGHT":"Right","page.T_SOUND":"Sound","page.T_ON":"On","page.T_OFF":"Off","page.T_KEYS":"Drive with the arrow keys or \u003ckbd>WASD\u003c/kbd> · Horn \u003ckbd>Space\u003c/kbd> · Nitro \u003ckbd>N\u003c/kbd> · Camera \u003ckbd>C\u003c/kbd> · Radio \u003ckbd>R\u003c/kbd> · Pause \u003ckbd>P\u003c/kbd>","page.T_PAUSED":"Paused","page.T_RESUME":"Resume","page.T_QUIT":"Back to menu","page.T_AGAIN":"Again","page.T_NEWTRIP":"New trip","page.T_HOWTO":"How to play","page.T_R1":"Finish your trip","page.T_R2":"Pass cars for points","page.T_R2S":"Pass a car close and faster than it to earn points. Passes in a row multiply them.","page.T_R3":"Watch for fines","page.T_WTOUR":"Guided tour","page.T_WSKIP":"I can drive, let me play","page.T_TSKIP":"Skip tour","page.T_TNEXT":"Next","page.T_TEND":"Ready!","page.T_TENDS":"That's the tour. Pick a trip, or keep driving freely?","page.T_TEMENU":"Pick a trip","page.T_TEDRIVE":"Keep driving","page.T_QUALITY":"Graphics","page.T_QHIGH":"High","page.T_QLOW":"Fast","page.T_LANG":"Language","text.stSpeed":"Speed","text.stAccel":"Pick up","text.stGrip":"Grip","text.stTough":"Toughness","text.meters":"m","text.km":"km","text.kmh":"km/h","text.to":"to","text.freeDrive":"Free drive","text.freeSub":"No end, repairs every 25 km","text.freeHint":"Drive as long as you like, repairs every 25 km","text.fullLap":"Full lap","text.goTo":"Off to","text.arrived":"You made it!","text.wrecked":"Your car broke down","text.rTime":"Time","text.rDist":"Distance","text.rAvg":"Average speed","text.rWeave":"Passes","text.rRadar":"Cameras","text.rCrash":"Crashes","text.rFines":"Fines","text.newBest":"New best score","text.best":"Best score","text.scrape":"You scraped the barrier!","text.crash":"Crash!","text.radarAhead":"Speed camera in","text.flash":"Speed camera got you!","text.radarOk":"Clean pass under the camera","text.bonus":"+500 every 10 km","text.workshop":"Repair: your car is like new","text.weave":"Close pass","text.loadRoad":"Drawing the road...","tour.tryIt":"Try it now","tour.nice":"Nice!","tour.0.title":"Hit the gas","tour.0.keys":"Hold \u003ckbd>↑\u003c/kbd> or \u003ckbd>W\u003c/kbd> until your speed passes 45. Let go and the car keeps that speed.","tour.1.title":"Change lanes","tour.1.keys":"Use \u003ckbd>←\u003c/kbd> and \u003ckbd>→\u003c/kbd> (or \u003ckbd>A\u003c/kbd> and \u003ckbd>D\u003c/kbd>) to move to another lane.","tour.1.touch":"Move the stick left or right to change lanes. A short push moves you one lane.","tour.2.title":"Brake","tour.2.keys":"Press \u003ckbd>↓\u003c/kbd> or \u003ckbd>S\u003c/kbd> to slow down. The car keeps the new speed.","tour.2.touch":"Pull the stick down to slow down. The car keeps the new speed.","tour.3.title":"Horn","tour.3.keys":"Press \u003ckbd>Space\u003c/kbd>. The car ahead moves over if the lane next to it is free.","tour.3.touch":"Press the round \u003cb>horn\u003c/b> button. The car ahead moves over if the lane next to it is free.","tour.4.title":"Speed","tour.4.body":"The big number is your speed and the red circle is the limit. When the number turns red, the camera will catch you. A yellow sign shows before each camera.","tour.5.title":"Where to","tour.5.body":"This shows where you're going and how far is left. In free drive it shows how far you've gone.","tour.6.title":"Points and fines","tour.6.body":"Points grow with distance and close passes. Cameras and crashes cost fines instead. If damage fills up, the car breaks down.","tour.7.title":"Map","tour.8.title":"Close passes","tour.8.body":"Pass cars close while going faster than them to earn points. Several in a row multiply the points.","tour.9.title":"Pause","tour.9.keys":"Pause the game here and change the camera and sound. \u003ckbd>C\u003c/kbd> changes the camera and \u003ckbd>P\u003c/kbd> pauses.","tour.9.touch":"Pause the game here and change the camera, horn side and sound.","text.rateMid":"Not bad","page.T_SET_CONTROLS":"Controls","page.T_SET_SOUND":"Sound","page.T_SET_DISPLAY":"Display","page.T_CLOSE":"Done","page.T_CTRL":"How you drive on a touch screen","page.T_C_STICK":"Stick","page.T_C_ONE":"One hand","page.T_C_TILT":"Tilt","page.T_C_LANES":"Buttons","page.T_C_STICK_D":"A round stick at the bottom. Push up to speed up, pull down to brake, and move it sideways to change lanes. Let go and the car keeps its speed.","page.T_C_ONE_D":"Put your thumb anywhere on the lower part of the screen and drag: up to speed up, down to brake, sideways to change lanes.","page.T_C_TILT_D":"Tilt the phone like a steering wheel to change lanes. Drag up anywhere to speed up and down to brake.","page.T_C_LANES_D":"Arrow buttons change lanes, one tap per lane, with separate gas and brake pedals.","page.T_TILTPERM":"Allow motion access to steer by tilting.","page.T_NOTILT":"This device has no tilt sensor, so the stick steers instead.","page.T_STEERFEEL":"Steering","page.T_LIGHT":"Light","page.T_HEAVY":"Heavy","page.T_BRAKEFEEL":"Brakes","page.T_SOFT":"Soft","page.T_HARD":"Strong","page.T_HORNSIZE":"Horn button size","page.T_SMALL":"Small","page.T_NORMAL":"Normal","page.T_KEYSNOTE":"On a computer the keyboard always works: arrows or \u003ckbd>WASD\u003c/kbd> to drive, \u003ckbd>Space\u003c/kbd> for the horn, \u003ckbd>N\u003c/kbd> or \u003ckbd>Shift\u003c/kbd> for nitro.","page.T_VOLENG":"Engine","page.T_VOLFX":"Effects","page.T_VOLHORN":"Horn","page.T_RADIO":"Radio","page.T_C_WHEEL":"Wheel","page.T_C_WHEEL_D":"Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.","page.T_MUSIC":"Radio music","page.T_VOLMUSIC":"Radio volume","page.T_VIB":"Vibration","page.T_VIB1":"Light","page.T_VIB2":"Normal","page.T_VIB3":"Strong","page.T_RADIONOTE":"Tap the radio button while you drive to pick a station or turn the radio off. The music is made up as you go, so no two trips sound the same.","page.T_AUTOQ":"Auto quality","page.T_AUTOQ_D":"If the game runs slow, it draws fewer pixels so it stays smooth.","text.go":"Go!","text.radioOff":"Radio off","text.radioKeys":"\u003ckbd>R\u003c/kbd> next station · \u003ckbd>M\u003c/kbd> on or off","text.autoLow":"Lowered the quality to keep it smooth","page.T_QUIET":"Quiet","page.T_LOUD":"Loud","page.T_SPEEDFX":"Speed effects","page.T_MINIMAP":"Map","page.T_SHOW":"Show","page.T_HIDE":"Hide","tour.0.touch":"Push the stick up until your speed passes 45. Let go and the car keeps that speed.","page.tryCity":"Try {city}","page.T_TOD":"Time of day","page.T_TAUTO":"Auto","page.T_TMORN":"Morning","page.T_TNOON":"Afternoon","page.T_TSUN":"Sunset","page.T_TNIGHT":"Night","page.T_WX":"Weather","page.T_WXOFF":"Clear","page.T_NITRO":"Nitro","page.T_HORNSTYLE":"Horn sound","page.T_HCITY":"Normal","page.T_HDEEP":"Deep","page.T_HTRUCK":"Truck","page.T_HTUNE":"Tune","text.nitroPerfect":"Perfect nitro! +150","text.ambBehind":"Ambulance behind you. Make way","text.ambThanks":"You made way +250","text.ambBlock":"You blocked the ambulance!","text.wedAhead":"Wedding convoy ahead. Honk next to it","text.mabrook":"Mabrook! +100","text.tailBehind":"Car flashing behind you. Move over","text.tailOk":"You let it pass +120","text.rExtra":"Road events","text.noWebGL":"This device can't show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.","page.T_LED":"Underbody neon glow","page.T_STICKER":"Rear window sticker","page.T_CHARM":"Mirror charm","page.T_GARAGE_HINT":"Drag left or right on the road to spin the car 360°","page.T_ALBUM":"Landmark Album","page.T_MORE":"More options","page.T_LESS":"Fewer options","text.prevTrip":"Previous trip","text.nextTrip":"Next trip","page.T_PAX":"Passengers","page.T_FUEL":"Fuel","text.serviceMode":"Taxi & Service Shift","text.serviceSub":"Pick up roadside passengers, drop them off & refuel","text.paxPick":"Passengers on board","text.paxDrop":"Passengers off · fare","text.paxAhead":"Passenger stop","text.paxHow":"keep right and slow down","text.paxOff":"getting off","text.paxOn":"getting on","text.paxMissed":"You drove past the stop","text.refuel":"Tank refilled at the station! +100","text.fuelLow":"Low fuel! Pull into the next right-lane station","text.cardUnlocked":"Unlocked landmark postcard:","page.T_NONE":"None","page.T_CHARM_1":"Prayer beads","page.T_CHARM_2":"Hamsa","page.T_CHARM_3":"Medallion","text.rFares":"Fares","page.T_WXON":"Dust storm","card.tag":"43 KM LOOP","card.name":"Riyadh Loop","card.text":"Masmak Fort, the TV Tower, Al Faisaliah, Kingdom Centre and the financial district, then out to Boulevard City and old Diriyah. Saher cameras on every stretch.","card.alt":"A white Land Cruiser on King Fahd Road between Riyadh towers","text.radio0":"Tuwaiq FM","text.radio1":"Olaya Nights","text.radio2":"Najd Drums","page.title":"Riyadh Loop","page.name":"Riyadh Loop","page.eyebrow":"Riyadh · الرياض","page.alt":"Driving through Riyadh","page.blurb":"From Masmak Fort in the old town up King Fahd Road past Al Faisaliah and Kingdom Centre, then west to Diriyah and back. Saher cameras see everything.","page.T_MAPNOTE":"The road roughly follows real places in Riyadh. The horn makes the car ahead move over.","page.T_R1S":"Pick a trip between Riyadh landmarks, from Masmak to Kingdom Centre to Diriyah, and reach the end.","page.T_R3S":"Saher cameras flash above 120 km/h, and crashes damage the car.","text.bumpSign":"","text.tollName":"","text.tollPrice":"","text.wreckedSub":"Call the tow truck","text.rateTop":"Kafu! Well done!","text.rateBad":"You need some practice","text.bumpHit":"","text.bumpOk":"","text.loadCity":"Building Riyadh...","text.currency":"SAR","tour.7.body":"The white dot is you and the green dots are landmarks. Your destination shows bigger.","car.0.name":"Toyota Land Cruiser","car.0.sub":"SUV","car.0.pros":"Strong and shrugs off crashes","car.0.cons":"Heavy and slow to turn","car.1.name":"Toyota Hilux","car.1.sub":"Pickup","car.1.pros":"Tough and cheap to run","car.1.cons":"Slow and loose in curves","car.2.name":"Toyota Camry","car.2.sub":"Taxi","car.2.pros":"Even all round, good at everything","car.2.cons":"Nothing stands out","car.3.name":"Hyundai Accent","car.3.sub":"Small sedan","car.3.pros":"Light and easy to weave","car.3.cons":"Slow to pick up","car.4.name":"Toyota Coaster","car.4.sub":"Minibus","car.4.pros":"Carries many passengers for big fare bonuses","car.4.cons":"Wide and heavy to weave","place.0":"Masmak Fort","place.1":"Grand Mosque","place.2":"Murabba Palace","place.3":"Water Tower","place.4":"TV Tower","place.5":"Al Faisaliah","place.6":"Kingdom Centre","place.7":"KAFD","place.8":"Riyadh Park","place.9":"Boulevard City","place.10":"Diriyah","page.otherLabel":"Try Amman Loop"}}};
+window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"اللغة","page.T_SET_CONTROLS":"التحكم","page.T_SET_SOUND":"الصوت","page.T_SET_DISPLAY":"الشاشة","page.T_CLOSE":"تمام","page.T_CTRL":"طريقة السواقة على شاشة اللمس","page.T_C_STICK":"عصا","page.T_C_ONE":"يد وحدة","page.T_C_TILT":"إمالة","page.T_C_LANES":"أزرار","page.T_STEERFEEL":"الدركسيون","page.T_LIGHT":"خفيف","page.T_HEAVY":"ثقيل","page.T_BRAKEFEEL":"البريك","page.T_SOFT":"ناعم","page.T_HARD":"قوي","page.T_HORNSIZE":"حجم زر الهرن","page.T_SMALL":"صغير","page.T_NORMAL":"عادي","page.T_VOLENG":"صوت الماتور","page.T_VOLFX":"المؤثرات","page.T_VOLHORN":"الهرن","page.T_RADIO":"راديو","page.T_C_WHEEL":"دركسون","page.T_MUSIC":"أغاني الراديو","page.T_VOLMUSIC":"صوت الراديو","page.T_VIB":"الاهتزاز","page.T_VIB1":"خفيف","page.T_VIB2":"عادي","page.T_VIB3":"قوي","page.T_AUTOQ":"جودة تلقائية","text.go":"يلا!","page.T_QUIET":"واطي","page.T_LOUD":"عالي","page.T_SPEEDFX":"مؤثرات السرعة","page.T_MINIMAP":"الخريطة","page.T_SHOW":"بيّن","page.T_HIDE":"خبّي","page.tryCity":"جرّب {city}","page.T_TOD":"وقت اليوم","page.T_TAUTO":"تلقائي","page.T_TMORN":"الصبح","page.T_TNOON":"العصر","page.T_TSUN":"المغرب","page.T_TNIGHT":"الليل","page.T_WX":"الطقس","page.T_WXOFF":"صافي","page.T_NITRO":"نيترو","page.T_HORNSTYLE":"صوت الهرن","page.T_HCITY":"عادي","page.T_HDEEP":"غليظ","page.T_HTRUCK":"شاحنة","page.T_HTUNE":"نغمة","text.nitroPerfect":"نيترو مضبوط! +150","text.ambBehind":"إسعاف وراك، وسّع له","text.ambThanks":"وسّعت للإسعاف +250","text.ambBlock":"سكّرت طريق الإسعاف!","text.wedAhead":"زفّة قدّامك، بوّر جنبهم","text.mabrook":"مبروك! +100","text.tailBehind":"سيارة تفلّش وراك، وسّع لها","text.tailOk":"خلّيتها تعدّي +120","text.rExtra":"مواقف الطريق","text.noWebGL":"هذا الجهاز لا يعرض الرسوم ثلاثية الأبعاد (WebGL متوقف). جرّب متصفحاً آخر أو فعّل تسريع الرسوم.","page.T_LED":"إضاءة نيون تحت السيارة","page.T_STICKER":"ملصق الزجاج الخلفي","page.T_CHARM":"تعليقة المراية","page.T_GARAGE_HINT":"اسحب الشاشة يمين أو شمال عشان تلف السيارة 360°","page.T_ALBUM":"ألبوم المعالم","page.T_MORE":"خيارات أكثر","page.T_LESS":"خيارات أقل","text.prevTrip":"المشوار السابق","text.nextTrip":"المشوار التالي","page.T_PAX":"الركّاب","page.T_FUEL":"البنزين","text.serviceMode":"ورديّة سرفيس وتاكسي","text.serviceSub":"حمّل ركّاب من الطريق، نزّلهم عالمحطات، وعبّي بنزين","text.paxPick":"ركبوا الركّاب","text.paxDrop":"نزلوا الركّاب · الأجرة","text.paxAhead":"موقف ركّاب","text.paxHow":"خلّيك يمين وخفّف","text.paxOff":"نازلين","text.paxOn":"طالعين","text.paxMissed":"فاتك الموقف","text.refuel":"فلّلت التانكي من المحطة! +100","text.fuelLow":"البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين","text.cardUnlocked":"فتحت بطاقة معلم جديدة:","page.T_NONE":"بدون","page.T_CHARM_1":"سبحة","page.T_CHARM_2":"خمسة","page.T_CHARM_3":"ميدالية","text.rFares":"الأجرة","page.T_WALK":"وضع هيثم","page.T_BUMPS":"خبطات","text.walkGoal":"البقالة","text.walkHow":"وضع هيثم: امشِ 400 م للبقالة. يمين ويسار عشان تتفادى، لفوق أسرع، والمسافة تقول لو سمحت","text.walkHowTouch":"وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، والهرن يقول لو سمحت","text.walkBump":"خبطة!","text.walkTrash":"انتبه للزبالة!","text.walkPole":"آخ!","text.walkSlip":"تزحلقت بقشرة موز!","text.walkExcuse":"لو سمحت!","text.walkDodge":"حركة حلوة","text.walkArrived":"هيثم وصل","text.walkTired":"خبطات كثير","text.walkTiredSub":"هيثم رجع البيت","text.walkDodges":"تفاديات","text.walkBumps":"خبطات","page.T_WXON":"غبار","card.tag":"RIYADH LOOP · 43 KM","card.name":"لفّة الرياض","card.text":"قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.","card.alt":"لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض","text.radio0":"طويق إف إم","text.radio1":"ليالي العليا","text.radio2":"طبول نجد","page.T_C_WHEEL_D":"لف الدركسون بصبع واحد عشان تلف، ودعسة البنزين والبريك على الجهة الثانية.","page.T_RADIONOTE":"دوس زر الراديو وانت تسوق عشان تختار محطة أو تسكّر الراديو. الموسيقى تنعزف وانت تسوق، فكل مشوار له لحن غير.","page.T_AUTOQ_D":"إذا ثقلت اللعبة، تخفف الرسم عشان تبقى سلسة.","text.radioOff":"الراديو مقفول","text.radioKeys":"\u003ckbd>R\u003c/kbd> المحطة اللي بعدها · \u003ckbd>M\u003c/kbd> شغّل أو سكّر","text.autoLow":"خففنا الرسم عشان تبقى سلسة","page.title":"لفّة الرياض","page.name":"لفّة الرياض","page.eyebrow":"Riyadh · الرياض","page.alt":"Driving through Riyadh","page.blurb":"من قصر المصمك في الديرة على طريق الملك فهد جنب الفيصلية وبرج المملكة، وبعدين غرب للدرعية ونرجع. ساهر يشوف كل شي.","page.T_NEXT":"الوجهة","page.T_KMH":"كم/س","page.T_TIME":"الوقت","page.T_SCORE":"النقاط","page.T_VIOL":"مخالفات","page.T_DMG":"الضرر","page.T_PAUSE":"وقّف","page.T_HORN":"بوري","page.T_BRAKE":"بريك","page.T_GAS":"دعس","page.T_DIR":"الاتجاه","page.T_CW":"مع عقارب الساعة","page.T_CCW":"عكس عقارب الساعة","page.T_TRIP":"المشوار","page.T_TRAFFIC":"الزحمة","page.T_TR0":"خفيفة","page.T_TR1":"عادية","page.T_TR2":"زحمة","page.T_GO":"يالله نمشي","page.T_GARAGE":"الكراج","page.T_SETTINGS":"الإعدادات","page.T_CARS":"السيارة","page.T_COLOR":"اللون","page.T_FIXEDCOLOR":"لون التاكسي ثابت","page.T_PLATE":"رقم اللوحة","page.T_CAM":"الكاميرا","page.T_CAM0":"قريبة","page.T_CAM1":"عادية","page.T_CAM2":"بعيدة","page.T_HORNSIDE":"مكان البوري","page.T_LEFT":"يسار","page.T_RIGHT":"يمين","page.T_SOUND":"الصوت","page.T_ON":"شغّال","page.T_OFF":"طافي","page.T_KEYS":"السواقة بالأسهم أو \u003ckbd>WASD\u003c/kbd> · البوري \u003ckbd>Space\u003c/kbd> · نيترو \u003ckbd>N\u003c/kbd> · الكاميرا \u003ckbd>C\u003c/kbd> · الراديو \u003ckbd>R\u003c/kbd> · وقوف \u003ckbd>P\u003c/kbd>","page.T_MAPNOTE":"الطريق مرسوم تقريباً على أماكن حقيقية في الرياض. البوري يخلّي السيارة اللي قدامك توسّع لك.","page.T_PAUSED":"استراحة","page.T_RESUME":"كمّل","page.T_QUIT":"رجوع للقائمة","page.T_AGAIN":"عيدها","page.T_NEWTRIP":"مشوار ثاني","page.T_HOWTO":"كيف ألعب؟","page.T_R1":"وصّل مشوارك","page.T_R1S":"اختر مشوار بين معالم الرياض، من المصمك لبرج المملكة لين الدرعية، ووصّل للنهاية.","page.T_R2":"تجاوز واجمع نقاط","page.T_R2S":"كل تجاوز قريب وسريع يعطيك نقاط، والتجاوزات ورا بعض تتضاعف.","page.T_R3":"انتبه للمخالفات","page.T_R3S":"ساهر يصوّر فوق 120 كم/س، والحوادث تخرّب السيارة.","page.T_WTOUR":"جولة تعليمية","page.T_WSKIP":"أعرف أسوق، أبي ألعب","page.T_TSKIP":"تخطّى الجولة","page.T_TNEXT":"التالي","page.T_TEND":"جاهز!","page.T_TENDS":"خلصت الجولة. تبي تختار مشوار ولا تكمّل سواقة حرة؟","page.T_TEMENU":"اختار مشوار","page.T_TEDRIVE":"كمّل سواقة حرة","page.T_QUALITY":"الرسومات","page.T_QHIGH":"عالية","page.T_QLOW":"سريعة","text.stSpeed":"سرعة","text.stAccel":"تسارع","text.stGrip":"ثبات","text.stTough":"تحمّل","text.meters":"م","text.km":"كم","text.kmh":"كم/س","text.to":"إلى","text.bumpSign":"","text.tollName":"","text.tollPrice":"","text.freeDrive":"سواقة حرة","text.freeSub":"بلا نهاية، صيانة كل 25 كم","text.freeHint":"سوق على راحتك، كل 25 كم صيانة","text.fullLap":"لفّة كاملة","text.goTo":"يلا إلى","text.arrived":"وصلنا!","text.wrecked":"السيارة خربت","text.wreckedSub":"تبي لها سطحة","text.rTime":"الوقت","text.rDist":"المسافة","text.rAvg":"معدل السرعة","text.rWeave":"تجاوزات","text.rRadar":"رادار","text.rCrash":"حوادث","text.rFines":"المخالفات","text.newBest":"رقم قياسي جديد","text.best":"أحسن نتيجة","text.rateTop":"كفو!","text.rateMid":"زين","text.rateBad":"تبي لك تدريب","text.scrape":"لا تحك بالحاجز!","text.crash":"حادث!","text.radarAhead":"ساهر بعد","text.flash":"ساهر صوّرك!","text.radarOk":"عدّيت ساهر على خير","text.bumpHit":"","text.bumpOk":"","text.bonus":"+500 كل 10 كم","text.workshop":"صيانة: السيارة رجعت جديدة","text.weave":"تجاوز","text.loadRoad":"جالسين نرسم الطريق...","text.loadCity":"جالسين نبني الرياض...","text.currency":"ريال","tour.tryIt":"جربها الحين","tour.nice":"زين!","tour.0.title":"دعس","tour.0.keys":"اضغط \u003ckbd>↑\u003c/kbd> أو \u003ckbd>W\u003c/kbd> لين السرعة تعدي 45. لين تفك السيارة تظل ماشية على نفس السرعة.","tour.0.touch":"ادفع العصا لفوق لين السرعة تعدي 45. لين تفكها السيارة تظل ماشية على نفس السرعة.","tour.1.title":"غيّر المسار","tour.1.keys":"استخدم \u003ckbd>←\u003c/kbd> و\u003ckbd>→\u003c/kbd> (أو \u003ckbd>A\u003c/kbd> و\u003ckbd>D\u003c/kbd>) وانتقل لمسار ثاني.","tour.1.touch":"حرّك العصا يمين أو يسار وانتقل لمسار ثاني. دفة قصيرة تنقلك مسار واحد.","tour.2.title":"البريك","tour.2.keys":"اضغط \u003ckbd>↓\u003c/kbd> أو \u003ckbd>S\u003c/kbd> وهدّي السرعة. السيارة تظل على السرعة الجديدة.","tour.2.touch":"اسحب العصا لتحت وهدّي السرعة. السيارة تظل على السرعة الجديدة.","tour.3.title":"البوري","tour.3.keys":"اضغط \u003ckbd>Space\u003c/kbd>. السيارة اللي قدامك توسّع لك إذا المسار اللي جنبها فاضي.","tour.3.touch":"اضغط زر \u003cb>البوري\u003c/b> المدوّر. السيارة اللي قدامك توسّع لك إذا المسار اللي جنبها فاضي.","tour.4.title":"العداد","tour.4.body":"الرقم الكبير سرعتك، والدائرة الحمرا الحد المسموح. إذا صار الرقم أحمر ساهر بيصوّرك. قبل كل كاميرا تطلع لك لوحة صفرا.","tour.5.title":"الوجهة","tour.5.body":"هنا اسم وجهتك وكم باقي لين توصل. في السواقة الحرة تشوف كم سقت.","tour.6.title":"النقاط والمخالفات","tour.6.body":"النقاط تزيد مع المسافة والتجاوزات، والرادار والحوادث عليهم مخالفات. إذا الضرر وصل للنهاية السيارة تخرب.","tour.7.title":"الخريطة","tour.7.body":"النقطة البيضا انت، والنقاط الخضرا المعالم. وجهتك تبان أكبر.","tour.8.title":"التجاوز","tour.8.body":"عدّ جنب السيارات من قريب وانت أسرع منها عشان تاخذ نقاط. كم تجاوز ورا بعض يضاعف النقاط.","tour.9.title":"الاستراحة","tour.9.keys":"من هنا توقّف اللعبة وتغيّر الكاميرا والصوت. \u003ckbd>C\u003c/kbd> تغيّر الكاميرا و\u003ckbd>P\u003c/kbd> توقّف.","tour.9.touch":"من هنا توقّف اللعبة وتغيّر الكاميرا ومكان البوري والصوت.","car.0.name":"تويوتا لاندكروزر","car.0.sub":"Toyota Land Cruiser","car.0.pros":"قوية وتتحمل الصدمات","car.0.cons":"ثقيلة ولفّتها صعبة","car.1.name":"تويوتا هايلكس","car.1.sub":"Toyota Hilux","car.1.pros":"تتحمل ومصروفها خفيف","car.1.cons":"بطيئة وتزحلق في اللفّات","car.2.name":"تويوتا كامري","car.2.sub":"Toyota Camry","car.2.pros":"متوازنة وتمشي مع كل شي","car.2.cons":"ما فيها شي مميز","car.3.name":"هيونداي أكسنت","car.3.sub":"Hyundai Accent","car.3.pros":"خفيفة وسهل تحشر فيها","car.3.cons":"تسارعها ضعيف","place.0":"قصر المصمك","place.1":"جامع الإمام تركي","place.2":"قصر المربع","place.3":"برج المياه","place.4":"برج التلفزيون","place.5":"برج الفيصلية","place.6":"برج المملكة","place.7":"المركز المالي","place.8":"الرياض بارك","place.9":"البوليفارد","page.T_C_STICK_D":"عصا مدوّرة تحت. ادفعها لفوق عشان تسرّع، اسحبها لتحت للبريك، وحرّكها يمين ويسار عشان تغيّر المسار. لين تفكها السيارة تظل على نفس السرعة.","page.T_C_ONE_D":"حط صبعك في أي مكان في النص اللي تحت من الشاشة واسحب: لفوق تسرّع، لتحت بريك، ويمين ويسار تغيّر المسار.","page.T_C_TILT_D":"ميّل التلفون مثل الدركسون عشان تغيّر المسار. اسحب لفوق في أي مكان تسرّع ولتحت بريك.","page.T_C_LANES_D":"أسهم لتغيير المسار، كل ضغطة مسار، مع زر دعس وزر بريك.","page.T_TILTPERM":"اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.","page.T_NOTILT":"هالجهاز ما فيه حسّاس إمالة، فالعصا بتسوق بداله.","page.T_KEYSNOTE":"على الكمبيوتر الكيبورد دايماً شغّال: الأسهم أو \u003ckbd>WASD\u003c/kbd> للسواقة و\u003ckbd>Space\u003c/kbd> للبوري و\u003ckbd>N\u003c/kbd> أو \u003ckbd>Shift\u003c/kbd> للنيترو.","car.4.name":"باص كوستر","car.4.sub":"Toyota Coaster","car.4.pros":"يشيل ركّاب كثير ويعطيك نقاط مضاعفة بالأجرة","car.4.cons":"كبير وثقيل في التجاوز","place.10":"الدرعية","page.otherLabel":"جرّب لفّة عمّان"}},"en":{"name":"English","dir":"ltr","s":{"page.T_NEXT":"Heading to","page.T_KMH":"km/h","page.T_TIME":"Time","page.T_SCORE":"Points","page.T_VIOL":"Fines","page.T_DMG":"Damage","page.T_PAUSE":"Pause","page.T_HORN":"Horn","page.T_BRAKE":"Brake","page.T_GAS":"Gas","page.T_DIR":"Direction","page.T_CW":"Clockwise","page.T_CCW":"Counterclockwise","page.T_TRIP":"Trip","page.T_TRAFFIC":"Traffic","page.T_TR0":"Light","page.T_TR1":"Normal","page.T_TR2":"Heavy","page.T_GO":"Let's go","page.T_GARAGE":"Garage","page.T_SETTINGS":"Settings","page.T_CARS":"Car","page.T_COLOR":"Color","page.T_FIXEDCOLOR":"The taxi keeps its own color","page.T_PLATE":"Plate number","page.T_CAM":"Camera","page.T_CAM0":"Close","page.T_CAM1":"Normal","page.T_CAM2":"Far","page.T_HORNSIDE":"Horn button side","page.T_LEFT":"Left","page.T_RIGHT":"Right","page.T_SOUND":"Sound","page.T_ON":"On","page.T_OFF":"Off","page.T_KEYS":"Drive with the arrow keys or \u003ckbd>WASD\u003c/kbd> · Horn \u003ckbd>Space\u003c/kbd> · Nitro \u003ckbd>N\u003c/kbd> · Camera \u003ckbd>C\u003c/kbd> · Radio \u003ckbd>R\u003c/kbd> · Pause \u003ckbd>P\u003c/kbd>","page.T_PAUSED":"Paused","page.T_RESUME":"Resume","page.T_QUIT":"Back to menu","page.T_AGAIN":"Again","page.T_NEWTRIP":"New trip","page.T_HOWTO":"How to play","page.T_R1":"Finish your trip","page.T_R2":"Pass cars for points","page.T_R2S":"Pass a car close and faster than it to earn points. Passes in a row multiply them.","page.T_R3":"Watch for fines","page.T_WTOUR":"Guided tour","page.T_WSKIP":"I can drive, let me play","page.T_TSKIP":"Skip tour","page.T_TNEXT":"Next","page.T_TEND":"Ready!","page.T_TENDS":"That's the tour. Pick a trip, or keep driving freely?","page.T_TEMENU":"Pick a trip","page.T_TEDRIVE":"Keep driving","page.T_QUALITY":"Graphics","page.T_QHIGH":"High","page.T_QLOW":"Fast","page.T_LANG":"Language","text.stSpeed":"Speed","text.stAccel":"Pick up","text.stGrip":"Grip","text.stTough":"Toughness","text.meters":"m","text.km":"km","text.kmh":"km/h","text.to":"to","text.freeDrive":"Free drive","text.freeSub":"No end, repairs every 25 km","text.freeHint":"Drive as long as you like, repairs every 25 km","text.fullLap":"Full lap","text.goTo":"Off to","text.arrived":"You made it!","text.wrecked":"Your car broke down","text.rTime":"Time","text.rDist":"Distance","text.rAvg":"Average speed","text.rWeave":"Passes","text.rRadar":"Cameras","text.rCrash":"Crashes","text.rFines":"Fines","text.newBest":"New best score","text.best":"Best score","text.scrape":"You scraped the barrier!","text.crash":"Crash!","text.radarAhead":"Speed camera in","text.flash":"Speed camera got you!","text.radarOk":"Clean pass under the camera","text.bonus":"+500 every 10 km","text.workshop":"Repair: your car is like new","text.weave":"Close pass","text.loadRoad":"Drawing the road...","tour.tryIt":"Try it now","tour.nice":"Nice!","tour.0.title":"Hit the gas","tour.0.keys":"Hold \u003ckbd>↑\u003c/kbd> or \u003ckbd>W\u003c/kbd> until your speed passes 45. Let go and the car keeps that speed.","tour.1.title":"Change lanes","tour.1.keys":"Use \u003ckbd>←\u003c/kbd> and \u003ckbd>→\u003c/kbd> (or \u003ckbd>A\u003c/kbd> and \u003ckbd>D\u003c/kbd>) to move to another lane.","tour.1.touch":"Move the stick left or right to change lanes. A short push moves you one lane.","tour.2.title":"Brake","tour.2.keys":"Press \u003ckbd>↓\u003c/kbd> or \u003ckbd>S\u003c/kbd> to slow down. The car keeps the new speed.","tour.2.touch":"Pull the stick down to slow down. The car keeps the new speed.","tour.3.title":"Horn","tour.3.keys":"Press \u003ckbd>Space\u003c/kbd>. The car ahead moves over if the lane next to it is free.","tour.3.touch":"Press the round \u003cb>horn\u003c/b> button. The car ahead moves over if the lane next to it is free.","tour.4.title":"Speed","tour.4.body":"The big number is your speed and the red circle is the limit. When the number turns red, the camera will catch you. A yellow sign shows before each camera.","tour.5.title":"Where to","tour.5.body":"This shows where you're going and how far is left. In free drive it shows how far you've gone.","tour.6.title":"Points and fines","tour.6.body":"Points grow with distance and close passes. Cameras and crashes cost fines instead. If damage fills up, the car breaks down.","tour.7.title":"Map","tour.8.title":"Close passes","tour.8.body":"Pass cars close while going faster than them to earn points. Several in a row multiply the points.","tour.9.title":"Pause","tour.9.keys":"Pause the game here and change the camera and sound. \u003ckbd>C\u003c/kbd> changes the camera and \u003ckbd>P\u003c/kbd> pauses.","tour.9.touch":"Pause the game here and change the camera, horn side and sound.","text.rateMid":"Not bad","page.T_SET_CONTROLS":"Controls","page.T_SET_SOUND":"Sound","page.T_SET_DISPLAY":"Display","page.T_CLOSE":"Done","page.T_CTRL":"How you drive on a touch screen","page.T_C_STICK":"Stick","page.T_C_ONE":"One hand","page.T_C_TILT":"Tilt","page.T_C_LANES":"Buttons","page.T_C_STICK_D":"A round stick at the bottom. Push up to speed up, pull down to brake, and move it sideways to change lanes. Let go and the car keeps its speed.","page.T_C_ONE_D":"Put your thumb anywhere on the lower part of the screen and drag: up to speed up, down to brake, sideways to change lanes.","page.T_C_TILT_D":"Tilt the phone like a steering wheel to change lanes. Drag up anywhere to speed up and down to brake.","page.T_C_LANES_D":"Arrow buttons change lanes, one tap per lane, with separate gas and brake pedals.","page.T_TILTPERM":"Allow motion access to steer by tilting.","page.T_NOTILT":"This device has no tilt sensor, so the stick steers instead.","page.T_STEERFEEL":"Steering","page.T_LIGHT":"Light","page.T_HEAVY":"Heavy","page.T_BRAKEFEEL":"Brakes","page.T_SOFT":"Soft","page.T_HARD":"Strong","page.T_HORNSIZE":"Horn button size","page.T_SMALL":"Small","page.T_NORMAL":"Normal","page.T_KEYSNOTE":"On a computer the keyboard always works: arrows or \u003ckbd>WASD\u003c/kbd> to drive, \u003ckbd>Space\u003c/kbd> for the horn, \u003ckbd>N\u003c/kbd> or \u003ckbd>Shift\u003c/kbd> for nitro.","page.T_VOLENG":"Engine","page.T_VOLFX":"Effects","page.T_VOLHORN":"Horn","page.T_RADIO":"Radio","page.T_C_WHEEL":"Wheel","page.T_C_WHEEL_D":"Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.","page.T_MUSIC":"Radio music","page.T_VOLMUSIC":"Radio volume","page.T_VIB":"Vibration","page.T_VIB1":"Light","page.T_VIB2":"Normal","page.T_VIB3":"Strong","page.T_RADIONOTE":"Tap the radio button while you drive to pick a station or turn the radio off. The music is made up as you go, so no two trips sound the same.","page.T_AUTOQ":"Auto quality","page.T_AUTOQ_D":"If the game runs slow, it draws fewer pixels so it stays smooth.","text.go":"Go!","text.radioOff":"Radio off","text.radioKeys":"\u003ckbd>R\u003c/kbd> next station · \u003ckbd>M\u003c/kbd> on or off","text.autoLow":"Lowered the quality to keep it smooth","page.T_QUIET":"Quiet","page.T_LOUD":"Loud","page.T_SPEEDFX":"Speed effects","page.T_MINIMAP":"Map","page.T_SHOW":"Show","page.T_HIDE":"Hide","tour.0.touch":"Push the stick up until your speed passes 45. Let go and the car keeps that speed.","page.tryCity":"Try {city}","page.T_TOD":"Time of day","page.T_TAUTO":"Auto","page.T_TMORN":"Morning","page.T_TNOON":"Afternoon","page.T_TSUN":"Sunset","page.T_TNIGHT":"Night","page.T_WX":"Weather","page.T_WXOFF":"Clear","page.T_NITRO":"Nitro","page.T_HORNSTYLE":"Horn sound","page.T_HCITY":"Normal","page.T_HDEEP":"Deep","page.T_HTRUCK":"Truck","page.T_HTUNE":"Tune","text.nitroPerfect":"Perfect nitro! +150","text.ambBehind":"Ambulance behind you. Make way","text.ambThanks":"You made way +250","text.ambBlock":"You blocked the ambulance!","text.wedAhead":"Wedding convoy ahead. Honk next to it","text.mabrook":"Mabrook! +100","text.tailBehind":"Car flashing behind you. Move over","text.tailOk":"You let it pass +120","text.rExtra":"Road events","text.noWebGL":"This device can't show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.","page.T_LED":"Underbody neon glow","page.T_STICKER":"Rear window sticker","page.T_CHARM":"Mirror charm","page.T_GARAGE_HINT":"Drag left or right on the road to spin the car 360°","page.T_ALBUM":"Landmark Album","page.T_MORE":"More options","page.T_LESS":"Fewer options","text.prevTrip":"Previous trip","text.nextTrip":"Next trip","page.T_PAX":"Passengers","page.T_FUEL":"Fuel","text.serviceMode":"Taxi & Service Shift","text.serviceSub":"Pick up roadside passengers, drop them off & refuel","text.paxPick":"Passengers on board","text.paxDrop":"Passengers off · fare","text.paxAhead":"Passenger stop","text.paxHow":"keep right and slow down","text.paxOff":"getting off","text.paxOn":"getting on","text.paxMissed":"You drove past the stop","text.refuel":"Tank refilled at the station! +100","text.fuelLow":"Low fuel! Pull into the next right-lane station","text.cardUnlocked":"Unlocked landmark postcard:","page.T_NONE":"None","page.T_CHARM_1":"Prayer beads","page.T_CHARM_2":"Hamsa","page.T_CHARM_3":"Medallion","text.rFares":"Fares","page.T_WALK":"Haitham Mode","page.T_BUMPS":"Bumps","text.walkGoal":"The corner shop","text.walkHow":"Haitham Mode: walk 400 m to the shop. Left and right to dodge, up walks faster, Space says excuse me","text.walkHowTouch":"Haitham Mode: walk 400 m to the shop. Slide to dodge, the horn says excuse me","text.walkBump":"Bump!","text.walkTrash":"Mind the rubbish!","text.walkPole":"Ouch!","text.walkSlip":"Slipped on a banana peel!","text.walkExcuse":"Excuse me!","text.walkDodge":"Close one","text.walkArrived":"Haitham made it","text.walkTired":"Too many bumps","text.walkTiredSub":"Haitham went back home","text.walkDodges":"Close dodges","text.walkBumps":"Bumps","page.T_WXON":"Dust storm","card.tag":"43 KM LOOP","card.name":"Riyadh Loop","card.text":"Masmak Fort, the TV Tower, Al Faisaliah, Kingdom Centre and the financial district, then out to Boulevard City and old Diriyah. Saher cameras on every stretch.","card.alt":"A white Land Cruiser on King Fahd Road between Riyadh towers","text.radio0":"Tuwaiq FM","text.radio1":"Olaya Nights","text.radio2":"Najd Drums","page.title":"Riyadh Loop","page.name":"Riyadh Loop","page.eyebrow":"Riyadh · الرياض","page.alt":"Driving through Riyadh","page.blurb":"From Masmak Fort in the old town up King Fahd Road past Al Faisaliah and Kingdom Centre, then west to Diriyah and back. Saher cameras see everything.","page.T_MAPNOTE":"The road roughly follows real places in Riyadh. The horn makes the car ahead move over.","page.T_R1S":"Pick a trip between Riyadh landmarks, from Masmak to Kingdom Centre to Diriyah, and reach the end.","page.T_R3S":"Saher cameras flash above 120 km/h, and crashes damage the car.","text.bumpSign":"","text.tollName":"","text.tollPrice":"","text.wreckedSub":"Call the tow truck","text.rateTop":"Kafu! Well done!","text.rateBad":"You need some practice","text.bumpHit":"","text.bumpOk":"","text.loadCity":"Building Riyadh...","text.currency":"SAR","tour.7.body":"The white dot is you and the green dots are landmarks. Your destination shows bigger.","car.0.name":"Toyota Land Cruiser","car.0.sub":"SUV","car.0.pros":"Strong and shrugs off crashes","car.0.cons":"Heavy and slow to turn","car.1.name":"Toyota Hilux","car.1.sub":"Pickup","car.1.pros":"Tough and cheap to run","car.1.cons":"Slow and loose in curves","car.2.name":"Toyota Camry","car.2.sub":"Taxi","car.2.pros":"Even all round, good at everything","car.2.cons":"Nothing stands out","car.3.name":"Hyundai Accent","car.3.sub":"Small sedan","car.3.pros":"Light and easy to weave","car.3.cons":"Slow to pick up","car.4.name":"Toyota Coaster","car.4.sub":"Minibus","car.4.pros":"Carries many passengers for big fare bonuses","car.4.cons":"Wide and heavy to weave","place.0":"Masmak Fort","place.1":"Grand Mosque","place.2":"Murabba Palace","place.3":"Water Tower","place.4":"TV Tower","place.5":"Al Faisaliah","place.6":"Kingdom Centre","place.7":"KAFD","place.8":"Riyadh Park","place.9":"Boulevard City","place.10":"Diriyah","page.otherLabel":"Try Amman Loop"}}};
 </script>
 <script>
 window.CITY = {
@@ -717,6 +721,13 @@ window.CITY = {
     { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x0b6e3a }, vmax: 155, accel: 3.8, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 }
   ],
   stickers: ['', 'ما شاء الله', 'هذا من فضل ربي', 'لا تسرع يا شيخ', 'عز الرياض', 'طويق', 'الله يحفظك'],
+  // Haitham Mode: what people on the sidewalk say, and the street seller's cart
+  walk: {
+    bump: ['انتبه يا رجّال!', 'وش فيك؟', 'على هونك!', 'الله يهديك!', 'وين عيونك يا الحبيب؟'],
+    kid: ['آسف عمي!', 'ما قصدت!', 'هههه'],
+    vendor: ['تمر! تمر سكري!', 'قهوة! قهوة عربية!', 'تفضّل يا الطيب!', 'رطب! رطب طازج!'],
+    cart: { body: 0x1f6e43, goods: 0x6b3a1e, shade: 0xe8dcc0 }, bin: 0x6b6f76
+  },
   barks: {
     honk: ['وسّع يا شيخ!', 'هوّن هوّن!', 'ساهر قدامك خفف!', 'افسح الله يرضى عليك!', 'يا رجّال وش العجلة؟'],
     cut: ['يا ساتر وش ذا؟!', 'تفحيط ولا وش؟', 'كفو والله!', 'انتبه للمسار يا خوي!', 'شوي شوي يا ولد الحلال!'],
@@ -761,7 +772,7 @@ window.CITY = {
     skyLight: 0xd8e4f0, groundLight: 0xc2a578, hemi: 1.2, sunColor: 0xffe2b0, sun: 2.0, sunDir: [0.6, 0.5, -0.35],
     winLit: '#ffd58a', winGlass: '#3e4f60', windows: { floor: 3.5, bay: 2.8, size: 0.5 },
     ground: ['#d4b685', '#c9a974', '#ab9a7e'], asphalt: '#505156', median: '#a39a88', lineEdge: '#f2e7c4', lineLane: '#f2f2f2',
-    barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0xe8e8e8, 0xd8d8d0],
+    paving: '#cdb894', kerb: ['#e8c22a', '#1c1c1c'], barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0xe8e8e8, 0xd8d8d0],
     treeDark: 0x3e5a33, treeLight: 0x7d8a5a, signColor: '#0a6b45', warnColor: '#a8740a', radarColor: 0xdedede,
     miniRoad: '#f3e3c4', miniDot: '#6fd49a', miniDest: '#ff5a4a', miniMe: '#ffffff'
   },
@@ -1140,7 +1151,10 @@ const SND = (() => {
     paxDrop: () => { [1047, 1319, 1568, 2093].forEach((f, i) => blip(f, 0.14, 'triangle', 0.09, null, now() + i * 0.05)); },
     refuel: () => { blip(880, 0.1, 'sine', 0.07); blip(1175, 0.15, 'sine', 0.08, null, now() + 0.09); },
     tick: () => blip(2400, 0.02, 'triangle', 0.03),
-    click: () => blip(1500, 0.03, 'triangle', 0.025)
+    click: () => blip(1500, 0.03, 'triangle', 0.025),
+    // walking: a soft shoe on paving, and a sliding whistle for a banana peel
+    step: () => burst(now(), 0.05, 0.035 + Math.random() * 0.015, [filt('bandpass', 600 + Math.random() * 300, 1.4)], bus.fx, 3),
+    slip: () => { const t = now(), o = ac.createOscillator(), g = gainN(0.0001); o.type = 'sine'; o.frequency.setValueAtTime(1400, t); o.frequency.exponentialRampToValueAtTime(260, t + 0.5); g.gain.exponentialRampToValueAtTime(0.09, t + 0.02); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.55); chain(o, g, bus.fx); o.start(t); o.stop(t + 0.6); }
   };
   // near misses climb a semitone each step of the chain
   function combo(n) { const f = 1245 * Math.pow(2, Math.min(7, n - 1) / 12); blip(f, 0.1, 'triangle', 0.08); blip(f * 1.5, 0.12, 'triangle', 0.06, null, now() + 0.09); }
@@ -1452,6 +1466,9 @@ const CW = SH * 2 + LANES * LW;
 const HW = MED + CW;
 const laneD = (i) => MED + SH + LW * (i + 0.5);
 const D_MIN = MED + 1.0, D_MAX = MED + CW - 1.0;
+// a paved sidewalk outside each barrier, raised a little above the road
+const SW_IN = HW + 0.62, SW_OUT = HW + 4.6, SW_Y = 0.16;
+const SIDE_OBS = []; // things that stand on the sidewalks: { s, lat, hl, hw, kind } in curve coords
 
 // ---------- track ----------
 const ctrl = C.route.map((p) => { const g = geo(p[0], p[1]); return new THREE.Vector3(g[0], 0, g[1]); });
@@ -2612,7 +2629,8 @@ function buildScenery() {
       // roadside trees
       if (zn.tree && rand() < zn.treeP) {
         const underRail = C.metro && side === C.metro.side && s > C.metro.from * L && s < C.metro.to * L;
-        const lat = side * (HW + (underRail ? R(2.5, 4) : R(3, zn.setback - 2)));
+        let lat = side * (HW + (underRail ? R(2.5, 4) : R(3, zn.setback - 2)));
+        if (Math.abs(lat) < SW_OUT + 1.2) lat = side * (SW_OUT + 1.2 + (Math.abs(lat) - HW - 2.5) * 0.4); // keep the sidewalk clear
         curveAt(s + R(0, 10), lat, o);
         const nr = nearestRoad(o.x, o.z);
         if (nr.d > HW + 2.5 && !blocked(o.x, o.z, 3)) {
@@ -2922,6 +2940,48 @@ function buildVerge() {
   const m = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ map: tex })); m.receiveShadow = true; scene.add(m);
 }
 
+// ---------- sidewalks ----------
+// paving slabs from the barrier out to a painted kerb, with a face down to the ground where the road sits up high
+function buildSidewalk() {
+  const pave = C.look.paving || '#b8b1a4', kerb = C.look.kerb || ['#f2f2ee', '#1c1c1c'];
+  const tex = canvasTex(256, 256, (g, w, h) => {
+    g.fillStyle = pave; g.fillRect(0, 0, w, h);
+    const n = 4, sz = w / n;
+    for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const v = Math.random() * 0.12 - 0.06; g.fillStyle = v > 0 ? `rgba(255,255,255,${v})` : `rgba(0,0,0,${-v})`; g.fillRect(i * sz + 2, j * sz + 2, sz - 4, sz - 4); }
+    for (let i = 0; i < 6000; i++) { const v = Math.random() < 0.5 ? 0 : 255; g.fillStyle = `rgba(${v},${v},${v},${0.04 + Math.random() * 0.06})`; g.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+    g.fillStyle = 'rgba(0,0,0,0.25)'; for (let i = 0; i <= n; i++) { g.fillRect(i * sz - 1.5, 0, 3, h); g.fillRect(0, i * sz - 1.5, w, 3); }
+  }, true);
+  const kerbTex = canvasTex(64, 128, (g, w, h) => { g.fillStyle = kerb[0]; g.fillRect(0, 0, w, h / 2); g.fillStyle = kerb[1]; g.fillRect(0, h / 2, w, h / 2); }, true);
+  const K0 = SW_OUT - 0.28; // the kerb stone along the outer edge
+  const P = [], U = [], I = [], KP = [], KU = [], KI = [], FP = [], FI = [];
+  const a = {}, b = {}, c = {};
+  for (const side of [-1, 1]) {
+    const base = P.length / 3, kb = KP.length / 3, fb = FP.length / 3;
+    for (let i = 0; i <= N; i++) {
+      const s = i * ds;
+      curveAt(s, side * SW_IN, a); curveAt(s, side * K0, b); curveAt(s, side * SW_OUT, c);
+      const y = a.y + SW_Y;
+      P.push(a.x, y, a.z, b.x, y, b.z); U.push(0, s / 4, (K0 - SW_IN) / 4, s / 4);
+      KP.push(b.x, y + 0.04, b.z, c.x, y + 0.04, c.z, c.x, y - 0.3, c.z); KU.push(0, s / 2, 0.5, s / 2, 1, s / 2);
+      FP.push(c.x, y - 0.3, c.z, c.x, Math.max(groundH(c.x, c.z) - 0.4, y - 9), c.z);
+      if (i < N) {
+        const q = base + i * 2; I.push(q, q + 1, q + 2, q + 1, q + 3, q + 2);
+        const k = kb + i * 3; KI.push(k, k + 1, k + 3, k + 1, k + 4, k + 3, k + 1, k + 2, k + 4, k + 2, k + 5, k + 4);
+        const f = fb + i * 2; FI.push(f, f + 1, f + 2, f + 1, f + 3, f + 2);
+      }
+    }
+  }
+  const make = (pos, uv, idx, mat) => {
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+    if (uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx); g.computeVertexNormals();
+    const m = new THREE.Mesh(g, mat); m.receiveShadow = true; scene.add(m); return m;
+  };
+  make(P, U, I, new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
+  make(KP, KU, KI, new THREE.MeshLambertMaterial({ map: kerbTex, side: THREE.DoubleSide }));
+  make(FP, null, FI, new THREE.MeshLambertMaterial({ color: C.look.barrier, side: THREE.DoubleSide }));
+}
+
 // ---------- signs ----------
 function signTexture(ar, en, sub, color) {
   return canvasTex(1024, 360, (g, w, h) => {
@@ -2969,6 +3029,7 @@ function buildEvents() {
     const s = f * L;
     for (const dir of [1, -1]) {
       curveAt(s, dir * (HW + 1.6), o);
+      SIDE_OBS.push({ s, lat: dir * (HW + 1.6), hl: 0.15, hw: 0.15, kind: 'pole' });
       const g = new THREE.Group();
       const pole = new THREE.Mesh(CYL(0.12, 0.15, 5), new THREE.MeshLambertMaterial({ color: 0x9aa0a6 })); pole.position.y = 2.5; g.add(pole);
       const cam = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.6, 1.0), new THREE.MeshLambertMaterial({ color: C.look.radarColor })); cam.position.y = 5.2; g.add(cam);
@@ -3008,6 +3069,8 @@ function buildEvents() {
     const paxMeshes = {};
     for (const dir of [1, -1]) {
       curveAt(s, dir * (HW + 2.4), o);
+      SIDE_OBS.push({ s, lat: dir * (HW + 2.05), hl: 1.45, hw: 0.25, kind: 'crowd' });
+      for (const z of [-2.2, 2.2]) SIDE_OBS.push({ s: s + z, lat: dir * (HW + 3.2), hl: 0.1, hw: 0.1, kind: 'pole' });
       const g = new THREE.Group();
       g.add(new THREE.Mesh(shelterG[dir], vcMat));
       g.add(mesh(BEACON_G, stopBeaconMat, -0.9 * dir, 3.25, -2.2));
@@ -3026,6 +3089,8 @@ function buildEvents() {
   for (let s = 2200; s < L - 1200; s += 4800) {
     for (const dir of [1, -1]) {
       curveAt(s, dir * (HW + 4.2), o);
+      for (const z of [-2, 2]) SIDE_OBS.push({ s: s + z, lat: dir * (HW + 3.4), hl: 0.45, hw: 0.35, kind: 'pole' });
+      for (const z of [-4, 4]) SIDE_OBS.push({ s: s + z, lat: dir * (HW + 4.2), hl: 0.25, hw: 0.25, kind: 'pole' });
       const g = new THREE.Group();
       g.add(mesh(CANOPY_G, canopyMat, 0, 4.6, 0));
       g.add(new THREE.Mesh(stationG[dir], vcMat));
@@ -3175,6 +3240,230 @@ const stepTimers = [];
 function setTimeoutStep(sec, fn) { stepTimers.push({ t: sec, fn }); }
 function runStepTimers(dt) { for (let i = stepTimers.length - 1; i >= 0; i--) { const x = stepTimers[i]; x.t -= dt; if (x.t <= 0) { stepTimers.splice(i, 1); x.fn(); } } }
 function resetStops() { game.stop = null; stepTimers.length = 0; clearWalkers(); }
+
+// ---------- Haitham Mode: walk the sidewalk and keep out of everyone's way ----------
+// people, kids, street sellers and rubbish stand or move on the sidewalk in travel coords (t, d)
+const WALK_GOAL = 400, WALK_MAX_BUMPS = 6, WALK_V = 1.4, WALK_FAST = 2.1;
+const WD_MIN = SW_IN + 0.3, WD_MAX = SW_OUT - 0.32;
+function makeFigure(cloth, skin, pants) {
+  const g = new THREE.Group(), body = new THREE.Mesh(WK_BODY, wkMat(cloth)), head = new THREE.Mesh(WK_HEAD, wkMat(skin)), legs = [], arms = [];
+  body.position.y = 1.12; head.position.y = 1.62; body.castShadow = true; g.add(body, head);
+  for (const x of [-0.1, 0.1]) { const l = new THREE.Mesh(WK_LEG, wkMat(pants)); l.position.set(x, 0.8, 0); g.add(l); legs.push(l); }
+  for (const x of [-0.27, 0.27]) { const a = new THREE.Mesh(WK_ARM, wkMat(cloth)); a.position.set(x, 1.4, 0); g.add(a); arms.push(a); }
+  return { g, body, head, legs, arms, ph: Math.random() * 6 };
+}
+function swing(f, ph, amt) {
+  const sw = Math.sin(ph) * amt;
+  f.legs[0].rotation.x = sw; f.legs[1].rotation.x = -sw; f.arms[0].rotation.x = -sw * 0.8; f.arms[1].rotation.x = sw * 0.8;
+}
+// Haitham: yellow shirt, red cap, a small backpack
+let haitham = null;
+function getHaitham() {
+  if (haitham) return haitham;
+  const f = makeFigure(0xf2a900, 0xc99372, 0x24365c);
+  f.g.add(mesh(CYL(0.17, 0.17, 0.12, 12), wkMat(0xc8102e), 0, 1.76, 0), mesh(new THREE.BoxGeometry(0.26, 0.03, 0.16), wkMat(0xc8102e), 0, 1.71, 0.17));
+  f.g.add(mesh(new THREE.BoxGeometry(0.34, 0.42, 0.16), wkMat(0x2e5d3a), 0, 1.18, -0.26));
+  f.g.traverse((o) => { if (o.isMesh) o.castShadow = true; });
+  f.g.visible = false; scene.add(f.g);
+  return (haitham = f);
+}
+// one shared model for each thing that stands still
+const WALK_GEO = {};
+function walkGeo(kind) {
+  if (WALK_GEO[kind]) return WALK_GEO[kind];
+  const cart = (C.walk && C.walk.cart) || { body: 0xb3202a, goods: 0xd9a35b, shade: 0xf2a900 };
+  const ROUND = new THREE.SphereGeometry(1, 10, 8), WHEEL = CYL(0.28, 0.28, 0.08, 12);
+  let parts;
+  if (kind === 'vendor') {
+    parts = [box(cart.body, 0, 0.78, 0, 0.8, 0.5, 1.5), box(0x3a2a1e, 0, 1.05, 0, 0.84, 0.05, 1.56), box(0x2b2d33, 0, 0.42, 0.85, 0.06, 0.06, 0.5, { rx: 0.5 })];
+    for (const z of [-0.45, 0.45]) parts.push({ g: WHEEL, c: 0x222428, x: 0, y: 0.3, z, rz: Math.PI / 2, sx: 1, sy: 3, sz: 1 });
+    for (let i = 0; i < 6; i++) parts.push(box(cart.goods, (i % 2 - 0.5) * 0.36, 1.13 + Math.floor(i / 2) * 0.02, (Math.floor(i / 2) - 1) * 0.45, 0.3, 0.06 + (i % 3) * 0.03, 0.36));
+    parts.push({ g: CYL(0.025, 0.025, 1.3, 6), c: 0xd8dce0, x: 0, y: 1.7, z: 0 }, { g: new THREE.ConeGeometry(0.95, 0.38, 10), c: cart.shade, x: 0, y: 2.35, z: 0 });
+  } else if (kind === 'bags') {
+    parts = [[-0.18, 0.1, 0.32, 0x1d1f22], [0.2, -0.12, 0.28, 0x2b2d33], [0.02, 0.24, 0.24, 0x37474f], [0.05, -0.02, 0.2, 0x1d1f22]].map(([x, z, r, c], i) => ({ g: ROUND, c, x, y: r * 0.75 + (i === 3 ? 0.35 : 0), z, sx: r, sy: r * 0.8, sz: r }));
+    parts.push(box(0x8d6e4f, 0.32, 0.12, 0.3, 0.3, 0.24, 0.22, { ry: 0.5 }));
+  } else if (kind === 'bin') {
+    const c = (C.walk && C.walk.bin) || 0x2f6b3a;
+    parts = [box(c, 0, 0.62, 0, 0.9, 1.0, 1.3), box(0x1f2a22, 0, 1.16, -0.02, 0.96, 0.08, 1.36), box(0x1d1f22, 0, 0.62, 0.66, 0.6, 0.08, 0.04)];
+    for (const z of [-0.5, 0.5]) parts.push({ g: CYL(0.1, 0.1, 0.06, 8), c: 0x111111, x: 0.42, y: 0.1, z, rz: Math.PI / 2 }, { g: CYL(0.1, 0.1, 0.06, 8), c: 0x111111, x: -0.42, y: 0.1, z, rz: Math.PI / 2 });
+  } else if (kind === 'boxes') {
+    parts = [box(0xa47148, 0, 0.22, 0, 0.55, 0.44, 0.5, { ry: 0.2 }), box(0x8d6e4f, 0.05, 0.6, 0.05, 0.45, 0.34, 0.42, { ry: -0.3 }), box(0xb98758, -0.1, 0.18, 0.45, 0.4, 0.36, 0.36, { ry: 0.6 })];
+  } else { // a banana peel
+    parts = [0, 2.1, 4.2].map((r) => box(0xf2c218, Math.sin(r) * 0.08, 0.025, Math.cos(r) * 0.08, 0.07, 0.03, 0.2, { ry: r }));
+    parts.push(box(0x5a4a1a, 0, 0.04, 0, 0.06, 0.05, 0.06));
+  }
+  return (WALK_GEO[kind] = mergeParts(parts));
+}
+const WALK_SIZE = { man: [0.28, 0.28], kid: [0.22, 0.22], seller: [0.28, 0.28], vendor: [0.8, 0.45], bags: [0.5, 0.45], bin: [0.68, 0.48], boxes: [0.45, 0.42], peel: [0.16, 0.16] };
+const walkVc = new THREE.MeshLambertMaterial({ vertexColors: true });
+const crowd = []; // figures, reused from walk to walk
+function crowdFigure(kid) {
+  let f = crowd.find((x) => !x.on);
+  if (!f) { f = makeFigure(WALK_COLS[0], SKIN_COLS[0], 0x2b2d33); scene.add(f.g); crowd.push(f); }
+  const cloth = wkMat(mpick(WALK_COLS)); f.body.material = cloth; f.arms.forEach((a) => (a.material = cloth));
+  f.head.material = wkMat(mpick(SKIN_COLS)); f.legs.forEach((l) => (l.material = wkMat(mpick([0x2b2d33, 0x24365c, 0x4a3b2a, 0x6b6f76]))));
+  f.g.scale.setScalar(kid ? 0.62 : mr(0.95, 1.06)); f.on = true; f.g.visible = true;
+  return f;
+}
+const WQ = {};
+function walkPlace(o) {
+  trackAt(o.t, o.d, WQ);
+  o.obj.position.set(WQ.x, WQ.y + SW_Y, WQ.z);
+  o.obj.rotation.y = yawOf(WQ.fx, WQ.fz) + (o.v >= 0 ? Math.PI : 0) + (o.yaw || 0);
+}
+function walkAdd(W, kind, t, d, extra) {
+  const [hl, hw] = WALK_SIZE[kind] || [0.3, 0.3];
+  const o = Object.assign({ kind, t, d, hl, hw, v: 0, td: d, obj: null, fig: null }, extra || {});
+  if (kind === 'man' || kind === 'kid' || kind === 'seller') { o.fig = crowdFigure(kind === 'kid'); o.obj = o.fig.g; }
+  else if (kind !== 'tree' && kind !== 'pole' && kind !== 'crowd') { o.obj = new THREE.Mesh(walkGeo(kind), walkVc); o.obj.castShadow = kind !== 'peel'; scene.add(o.obj); o.own = true; }
+  if (o.obj) walkPlace(o);
+  W.items.push(o); return o;
+}
+function walkClear() {
+  const W = game.walk; if (!W) return;
+  for (const o of W.items) { if (o.fig) { o.fig.on = false; o.fig.g.visible = false; } else if (o.own) scene.remove(o.obj); }
+  W.items.length = 0;
+}
+const fits = (W, t, d, hl, hw) => W.items.every((o) => Math.abs(o.t - t) > o.hl + hl + 1.2 || Math.abs(o.d - d) > o.hw + hw + 1.6);
+function walkSetup() {
+  const W = game.walk = { items: [], stun: 0, spin: 0, excuseT: 0, combo: 0, comboT: 0, dodges: 0, bumps: 0, stepPh: 0, hitCool: 0, cool: 0 };
+  // fixed things already on this side: trees, poles, pumps, people waiting at the shelters
+  const s0 = sOfT(player.t);
+  for (const so of SIDE_OBS) {
+    if (Math.sign(so.lat) !== DIR) continue;
+    let rel = aheadDist(s0, so.s); if (rel > L / 2) rel -= L;
+    if (rel < -40 || rel > WALK_GOAL + 60) continue;
+    walkAdd(W, so.kind, player.t + rel, Math.abs(so.lat), { hl: so.hl, hw: so.hw });
+  }
+  // then the street: it gets busier the further you walk
+  const KINDS = [['man', 30], ['kid', 13], ['vendor', 9], ['bags', 12], ['bin', 8], ['boxes', 7], ['peel', 7]];
+  const tot = KINDS.reduce((a, k) => a + k[1], 0);
+  let t = player.t + 14;
+  while (t < player.t + WALK_GOAL + 30) {
+    let r = Math.random() * tot, kind = KINDS[0][0]; for (const [k, w] of KINDS) { if ((r -= w) < 0) { kind = k; break; } }
+    const [hl, hw] = WALK_SIZE[kind];
+    for (let tries = 0; tries < 4; tries++) {
+      const edge = Math.random() < 0.5 ? WD_MIN + hw - 0.1 : WD_MAX - hw + 0.1;
+      const d = kind === 'vendor' ? SW_OUT - 1.35 : kind === 'bin' || kind === 'bags' || kind === 'boxes' ? edge : mr(WD_MIN + hw, WD_MAX - hw);
+      const big = kind === 'vendor' ? 1.0 : 0;
+      if (!fits(W, t, d + big * 0.4, hl, hw + big * 0.4)) { t += 2; continue; }
+      if (kind === 'man') {
+        const toward = Math.random() < 0.6;
+        walkAdd(W, 'man', t + (toward ? 25 : 0), d, { v: toward ? -mr(1.0, 1.5) : mr(0.45, 0.9), stubborn: Math.random() < 0.25 });
+      } else if (kind === 'kid') {
+        walkAdd(W, 'kid', t, d, { v: (Math.random() < 0.5 ? -1 : 1) * mr(0.6, 1.8), base: d, ph: Math.random() * 6, wob: mr(1.3, 2.4) });
+      } else if (kind === 'vendor') {
+        walkAdd(W, 'vendor', t, d, { yaw: Math.PI / 2 * 0 });
+        walkAdd(W, 'seller', t + 0.3, d + 0.78, { v: 0, yaw: Math.PI / 2, still: true, cries: true });
+      } else walkAdd(W, kind, t, d, { yaw: Math.random() * 6 });
+      break;
+    }
+    t += mr(4, 9) + 7 * (1 - (t - player.t) / WALK_GOAL);
+  }
+  player.d = (WD_MIN + WD_MAX) / 2; player.v = 0; player.lat = 0;
+  game.warnTxt = ''; game.weavePts = 0; game.weaves = 0;
+  getHaitham().g.visible = true;
+}
+const sayAt = (o, text) => { if (o.obj && text) spawnBark({ mesh: o.obj }, text); };
+const walkLines = (k) => (C.walk && C.walk[k]) || [];
+function walkBump(W, o, dt2, dd) {
+  W.cool = 1.0; W.bumps++; game.crashes = W.bumps; W.combo = 0;
+  W.stun = o.kind === 'peel' ? 1.3 : 0.6; W.spin = o.kind === 'peel' ? 1.3 : 0;
+  player.v = 0; player.t -= Math.sign(dt2 || 1) * 0.35; player.lat = -Math.sign(dd || 1) * 1.2;
+  if (o.fig && !o.still) { o.td = clamp(o.d + (dd >= 0 ? 1.1 : -1.1), WD_MIN, WD_MAX); o.aside = 3; } // they step out of your way after that
+  game.shake = 0.22; vibrate([40, 30, 60]);
+  if (o.kind === 'peel') { toast(T.walkSlip, 'bad'); SND.cue('slip'); if (o.obj) o.obj.visible = false; o.gone = true; }
+  else {
+    SND.bump(0.6); SND.cue('bad');
+    if (o.kind === 'man' || o.kind === 'seller') { toast(T.walkBump, 'bad'); sayAt(o, mpick(walkLines('bump'))); }
+    else if (o.kind === 'kid') { toast(T.walkBump, 'bad'); sayAt(o, mpick(walkLines('kid'))); }
+    else if (o.kind === 'vendor') { toast(T.walkBump, 'bad'); }
+    else if (o.kind === 'tree' || o.kind === 'pole') toast(T.walkPole, 'bad');
+    else toast(T.walkTrash, 'bad');
+  }
+  spawnFxText(P.x, P.y + 2.1, P.z, '-30', '#f87171');
+  if (W.bumps >= WALK_MAX_BUMPS) return true;
+}
+// one physics step of walking; returns 'arrive', 'tired' or nothing
+function walkStep(dt, gas, brake, steerIn, hornTap) {
+  const W = game.walk;
+  if (W.stun > 0) W.stun -= dt;
+  if (W.spin > 0) W.spin -= dt;
+  if (W.cool > 0) W.cool -= dt;
+  if (W.comboT > 0) W.comboT -= dt;
+  const vWant = W.stun > 0 || brake ? 0 : gas ? WALK_FAST : WALK_V;
+  player.v += clamp(vWant - player.v, -5 * dt, 2.4 * dt);
+  player.lat += (steerIn * 1.8 - player.lat) * Math.min(1, dt * (W.stun > 0 ? 2 : 9));
+  player.d = clamp(player.d + player.lat * dt, WD_MIN, WD_MAX);
+  player.t += player.v * dt; game.dist += player.v * dt;
+  // footsteps
+  W.stepPh += player.v * dt / 0.72;
+  if (W.stepPh >= 1) { W.stepPh -= 1; SND.cue('step'); }
+  // "excuse me": the people just ahead step aside, unless they are on the phone
+  if (W.excuseT > 0) W.excuseT -= dt;
+  if (hornTap && W.excuseT <= 0) {
+    W.excuseT = 1.6; spawnFxText(P.x, P.y + 2.0, P.z, T.walkExcuse, '#fde68a'); SND.cue('ok');
+    for (const o of W.items) {
+      const ahead = o.t - player.t;
+      if ((o.kind === 'man' || o.kind === 'kid') && ahead > 0 && ahead < 10 && Math.abs(o.d - player.d) < 1.3 && !o.stubborn) {
+        const room = o.d - WD_MIN > WD_MAX - o.d ? -1 : 1;
+        o.td = clamp(player.d + room * 1.4, WD_MIN + 0.1, WD_MAX - 0.1); o.aside = 3;
+      }
+    }
+  }
+  let end = null;
+  for (const o of W.items) {
+    if (o.gone) continue;
+    const rel = o.t - player.t;
+    // moving people
+    if (o.fig && !o.still && Math.abs(rel) < 140) {
+      if (o.kind === 'kid') { o.ph += dt * o.wob; o.td = clamp(o.base + Math.sin(o.ph) * 1.1, WD_MIN, WD_MAX); }
+      else if (o.aside > 0) o.aside -= dt;
+      else if (o.v < 0 && !o.stubborn && rel > 0 && rel < 5 && Math.abs(o.d - player.d) < 0.6 && Math.random() < dt * 1.5) o.td = clamp(o.d + (o.d > player.d ? 0.9 : -0.9), WD_MIN, WD_MAX);
+      // go round things that stand still
+      for (const s of W.items) {
+        if (s.fig && !s.still || s === o || s.gone) continue;
+        const ahead = (s.t - o.t) * Math.sign(o.v);
+        if (ahead > 0 && ahead < s.hl + 2.2 && Math.abs(s.d - o.td) < s.hw + o.hw + 0.25) {
+          const up = s.d + s.hw + o.hw + 0.35, dn = s.d - s.hw - o.hw - 0.35;
+          o.td = up <= WD_MAX ? (dn >= WD_MIN && Math.abs(dn - o.d) < Math.abs(up - o.d) ? dn : up) : dn;
+        }
+      }
+      o.t += o.v * dt; o.d += clamp(o.td - o.d, -1.2 * dt, 1.2 * dt);
+      o.fig.ph += dt * Math.abs(o.v) * (o.kind === 'kid' ? 7 : 5.5); swing(o.fig, o.fig.ph, 0.5);
+      walkPlace(o); o.obj.position.y += Math.abs(Math.cos(o.fig.ph)) * 0.035;
+    }
+    if (o.obj) { const vis = rel > -30 && rel < 150; if (o.obj.visible !== vis) o.obj.visible = vis; }
+    // sellers call out as you come near
+    if (o.cries && !o.cried && rel > 0 && rel < 9) { o.cried = true; sayAt(o, mpick(walkLines('vendor'))); }
+    const dd = o.d - player.d;
+    if (W.cool <= 0 && Math.abs(rel) < o.hl + 0.22 && Math.abs(dd) < o.hw + 0.22) { if (walkBump(W, o, rel, dd)) end = 'tired'; o.hit = true; }
+    // slipping past close by earns points, more for a chain of them
+    if (!o.passed && rel < -(o.hl + 0.3)) {
+      o.passed = true;
+      if (!o.hit && Math.abs(dd) < o.hw + 0.95 && o.kind !== 'tree' && o.kind !== 'pole') {
+        W.dodges++; W.combo = W.comboT > 0 ? W.combo + 1 : 1; W.comboT = 3.5;
+        const pts = 10 * W.combo; game.weavePts += pts; game.weaves = W.dodges;
+        hud.weave.textContent = T.walkDodge + (W.combo > 1 ? ' x' + W.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
+        SND.combo(W.combo); vibrate(10);
+      }
+    } else if (o.passed && rel > o.hl + 0.3) o.passed = false;
+  }
+  // cars going by on the other side of the barrier
+  for (const c of SAME) { const ahead = c.t > player.t; if (c.wAhead && !ahead) { const gap = player.d - c.d; if (gap < 14) SND.passBy(-1, sizeOf(c.kind), 1 - (gap - 5) / 10); } c.wAhead = ahead; }
+  if (end) return end;
+  if (game.dist >= WALK_GOAL) return 'arrive';
+}
+function walkScore() { return Math.max(0, Math.round(game.dist * 2 + game.weavePts + game.extraPts - (game.walk ? game.walk.bumps * 30 : 0))); }
+// Haitham's figure follows the player each frame
+function walkRender() {
+  const f = getHaitham(), W = game.walk;
+  trackAt(player.t, player.d, P);
+  f.g.position.set(P.x, P.y + SW_Y, P.z);
+  f.g.rotation.set(0, yawOf(P.fx, P.fz) + Math.PI - Math.atan2(player.lat, Math.max(player.v, 1.2)) * 0.7 + (W && W.spin > 0 ? (1.3 - W.spin) * 9 : 0), 0);
+  f.ph = W ? W.stepPh * Math.PI * 2 : 0; swing(f, f.ph, 0.25 + player.v * 0.2);
+  f.g.position.y += Math.abs(Math.cos(f.ph)) * 0.04 * player.v;
+}
 
 function mesh(g, m, x, y, z) { const me = new THREE.Mesh(g, m); me.position.set(x || 0, y || 0, z || 0); return me; }
 LB.fountain = (g) => {
@@ -4157,6 +4446,15 @@ function startTrip(opts) {
   hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
   if (!opts.tour) toast(player.paxCap > 0 ? T.serviceMode : (tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name));
   game.count = opts.tour ? 0 : 3; game.countN = 4; player.cruise = opts.tour ? player.cruise : 0;
+  walkClear(); game.walk = null;
+  if (opts.walk) {
+    walkSetup(); game.free = false; game.dest = null; game.tripLen = WALK_GOAL;
+    hud.next.textContent = T.walkGoal; if (hud.chipFuel) hud.chipFuel.hidden = true; if (hud.chipPax) hud.chipPax.hidden = true;
+    toast(isTouch() ? T.walkHowTouch : T.walkHow);
+  }
+  if (haitham) haitham.g.visible = !!game.walk;
+  player.group.visible = !game.walk;
+  $('#hud').classList.toggle('walk', !!game.walk); $('#touch').classList.toggle('walk', !!game.walk);
   radioStart();
 }
 // 3, 2, 1, go: the car waits at the line, then sets off
@@ -4215,9 +4513,9 @@ document.addEventListener('pointerdown', (e) => { if (!radioMenu.hidden && !e.ta
 const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck' : k === 'pickup' || k === 'suv' ? 'van' : 'car');
 // engine, road and wind follow the car every frame; the dashboard shows the gear the engine is in
 function soundFrame() {
-  const live = game.mode === 'drive' && !game.paused;
+  const live = game.mode === 'drive' && !game.paused && !game.walk;
   const car = CARS[settings.car] || CARS[0];
-  const s = driveIn; s.live = live; s.idle = !live; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
+  const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
   s.gas = !!player.input.gas && game.count <= 0; s.brake = !!player.input.brake; s.brakeAmt = player.input.brakeAmt || 0; s.cruising = player.input.cruising; s.slip = player.slip;
   const d = SND.drive(s);
   if (live) { setText(hud.gear, d.gear); setStyle(hud.rpm, 'width', Math.round(d.rpm * 100) + '%'); }
@@ -4229,6 +4527,7 @@ const driveIn = {}; let wasLive = false;
 function finishTrip(reason) {
   game.mode = 'done'; evEnd(); resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
+  if (game.walk) return finishWalk(reason);
   const score = computeScore();
   const key = 'best:' + settings.dir + ':' + settings.trip;
   const best = store.get(key, 0); if (reason === 'arrive' && score > best) store.set(key, score);
@@ -4248,13 +4547,25 @@ function finishTrip(reason) {
   $('#rRate').textContent = reason !== 'arrive' ? T.rateBad : viol === 0 && game.weaves >= 5 ? T.rateTop : viol <= 2 ? T.rateMid : T.rateBad;
   showScreen('#result');
 }
+function finishWalk(reason) {
+  const W = game.walk, score = walkScore(), ok = reason === 'arrive';
+  const best = store.get('best:walk', 0); if (ok && score > best) store.set('best:walk', score);
+  $('#rTitle').textContent = ok ? T.walkArrived : T.walkTired;
+  $('#rSub').textContent = ok ? T.walkGoal : T.walkTiredSub;
+  const rows = [[T.rTime, fmtTime(game.time)], [T.rDist, fmt(game.dist) + ' ' + T.meters], [T.rAvg, (game.time > 0 ? game.dist / game.time * 3.6 : 0).toFixed(1) + ' ' + T.kmh], [T.walkDodges, fmt(W.dodges)], [T.walkBumps, fmt(W.bumps)]];
+  $('#rStats').innerHTML = rows.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
+  $('#rScore').textContent = fmt(score);
+  $('#rBest').textContent = ok ? (score > best ? T.newBest : T.best + ' ' + fmt(best)) : '';
+  $('#rRate').textContent = !ok ? T.rateBad : W.bumps === 0 ? T.rateTop : W.bumps <= 2 ? T.rateMid : T.rateBad;
+  showScreen('#result');
+}
 // the camera fine for going this many km/h over the limit: the highest tier you passed
 function radarFine(over) {
   const tiers = Array.isArray(C.fines.radar) ? C.fines.radar : [[0, C.fines.radar]];
   let f = tiers[0][1]; for (const [k, v] of tiers) if (over > k) f = v;
   return f;
 }
-function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.extraPts + game.bonus + game.fares * 5)); }
+function computeScore() { if (game.walk) return walkScore(); return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.extraPts + game.bonus + game.fares * 5)); }
 // cameras and crashes cost fines and damage, not points, so the score never drops back to 0
 function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
@@ -4264,7 +4575,7 @@ function togglePause() {
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { clearFx(); evEnd(); resetStops(); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -4289,6 +4600,15 @@ function step(dt) {
   if (settings.control === 'wheel' && wheelIn.on && !steerIn) steerIn = wheelIn.x;
   const gas = gasAmt > 0, brake = brakeAmt > 0;
   const horn = keys.Space || keys.KeyH || touch.horn;
+  if (game.walk) {
+    const hornTap = horn && !game.hornWas; game.hornWas = horn;
+    trackAt(player.t, player.d, P);
+    updateTraffic(dt, false);
+    const end = walkStep(dt, gas, brake, steerIn, hornTap);
+    if (end) { finishTrip(end === 'arrive' ? 'arrive' : 'wreck'); return; }
+    if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) hud.toast.className = 'toast'; }
+    return;
+  }
   // fuel consumption
   if (!game.tour && player.v > 2) {
     game.fuel = Math.max(0, game.fuel - dt * (0.28 + (gas ? 0.26 : 0) + (game.boost > 0 ? 0.45 : 0)));
@@ -4457,6 +4777,13 @@ function setStyle(el, k, v) { const key = k + '|'; let m = hudLast.get(key); if 
 function setClass(el, c, on) { if (el.classList.contains(c) !== on) el.classList.toggle(c, on); }
 let speedoEl = null;
 function drawHud() {
+  if (game.walk) {
+    setText(hud.speed, Math.round(player.v * 3.6)); setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(walkScore()));
+    setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS);
+    const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
+    setText(hud.remain, Math.max(0, Math.ceil(WALK_GOAL - game.dist)) + ' ' + T.meters);
+    return;
+  }
   const kmh = Math.round(player.v * 3.6);
   setText(hud.speed, kmh); speedoEl = speedoEl || hud.speed.closest('.speedo'); setClass(speedoEl, 'over', kmh > C.limit + C.tolerance);
   setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(computeScore())); setText(hud.viol, game.radar + game.crashes);
@@ -4482,6 +4809,7 @@ const tmpEuler = new THREE.Euler();
 let miniTick = 0, lastSpd = '';
 function render(dt) {
   // player
+  if (game.walk) walkRender();
   trackAt(player.t, player.d, P);
   const yaw = yawOf(P.fx, P.fz) - Math.atan2(player.lat, Math.max(player.v, 4)) * 0.8;
   player.group.position.set(P.x, P.y, P.z);
@@ -4495,7 +4823,7 @@ function render(dt) {
   drawWeather(dt);
   sun.target.position.set(P.x, P.y, P.z); sun.position.set(P.x + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, P.z + SUN_DIR.z * 400);
   let si = 0; const setShadow = (x, y, z, yw, w, l) => { if (si >= MAXS) return; tmpQ.setFromAxisAngle(UP, yw); tmpM.compose(tmpV.set(x, y + 0.04, z), tmpQ, tmpS.set(w * 1.3, 1, l * 1.15)); shadows.setMatrixAt(si++, tmpM); };
-  setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
+  if (game.walk) setShadow(P.x, P.y + SW_Y, P.z, yaw, 0.45, 0.4); else setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
   // cars further than this are a few pixels; skip drawing them
   const far = settings.quality === 'high' ? 900 : 560;
   for (const c of SAME) {
@@ -4523,7 +4851,19 @@ function render(dt) {
   updateMetro(dt);
   shadows.count = si; shadows.instanceMatrix.needsUpdate = true;
   // camera with frame-rate-independent exponential smoothing
-  if (game.mode === 'drive' || game.mode === 'done') {
+  if (game.walk && (game.mode === 'drive' || game.mode === 'done')) {
+    // just behind and above Haitham's shoulder, looking down the sidewalk
+    const tall = camera.aspect < 0.8 ? 1.35 : 1; // an upright phone sits a step further back
+    const dist = [2.6, 3.6, 5.4][settings.cam] * tall, hgt = [1.85, 2.3, 3.3][settings.cam] * tall;
+    trackAt(player.t - dist, player.d - 0.35, Q); wantPos.set(Q.x, Q.y + SW_Y + hgt, Q.z);
+    trackAt(player.t + 7, player.d - 0.2, Q); wantLook.set(Q.x, Q.y + SW_Y + 1.15, Q.z);
+    if (!camInit || camPos.distanceTo(wantPos) > 30) { camPos.copy(wantPos); camLook.copy(wantLook); camInit = true; }
+    camPos.lerp(wantPos, 1 - Math.exp(-dt * 8)); camLook.lerp(wantLook, 1 - Math.exp(-dt * 10));
+    camera.position.copy(camPos);
+    if (game.shake > 0) { game.shake -= dt; camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; }
+    camera.lookAt(camLook);
+    camera.fov = 60 * (camera.aspect < 0.8 ? 0.85 : 1); camera.updateProjectionMatrix();
+  } else if (game.mode === 'drive' || game.mode === 'done') {
     const dist = [6.5, 9, 13][settings.cam], hgt = [2.4, 3.4, 5.2][settings.cam];
     trackAt(player.t - dist, player.d * 0.85 + laneD(0) * 0.15, Q);
     wantPos.set(Q.x, Q.y + hgt, Q.z);
@@ -4730,6 +5070,7 @@ function renderBooklet() {
 }
 $('#plate').addEventListener('input', (e) => { settings.plate = e.target.value.slice(0, 12); saveSettings(); drawPlate(); });
 $('#btnStart').onclick = () => { if (settings.control === 'tilt') askTilt(); startTrip(); };
+$('#btnWalk').onclick = () => { if (settings.control === 'tilt') askTilt(); startTrip({ free: true, walk: true }); };
 $('#btnMore').onclick = () => { const box = $('#moreBox'), open = box.hidden; box.hidden = !open; $('#btnMore').setAttribute('aria-expanded', open); if (open) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
 $('#btnGarage').onclick = () => { $('#garage').hidden = !$('#garage').hidden; };
 if ($('#btnBooklet')) $('#btnBooklet').onclick = () => { $('#garage').hidden = true; renderBooklet(); showScreen('#booklet'); };
@@ -4838,7 +5179,7 @@ async function boot() {
   const status = $('#loading');
   const stage = (msg) => new Promise((r) => { status.textContent = msg; setTimeout(r, 16); });
   await stage(T.loadRoad); buildRoad(); buildTerrain();
-  await stage(T.loadCity); buildScenery(); buildMetro(); buildVerge(); buildLandmarks(); buildSigns(); buildEvents();
+  await stage(T.loadCity); buildScenery(); buildMetro(); buildVerge(); buildSidewalk(); buildLandmarks(); buildSigns(); buildEvents();
   for (const ty of C.traffic) carGeo(ty.kind, ty.colors[0], ty.extra); // build every traffic shape now, not mid-drive
   prepMini(); buildPlayer(); placeMenuCar(); applyQuality(); applyTime();
   renderTrips(); renderGarage(); renderBooklet(); syncSettingsUI();
