@@ -165,14 +165,18 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 ## Project layout
 
 ```
+cities/                One folder per city; the build finds them on its own
+  amman/city.js        Amman: route, landmarks, building styles, cars, traffic, radio stations, limits, fines, colors
+  amman/lang/en.xml    Amman's own English text: place names, cars, tour and its card on the start page
+  amman/lang/ar.xml    Amman's own Arabic text, in Jordanian Arabic
+  amman/cover.png      The picture on the start page card
+  dubai/...            The same for Dubai (Gulf Arabic)
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
 src/audio.js           Engine, road, horn and crash sounds, phone buzz, and the car radio
-src/cities/amman.js    Amman: route, landmarks, building styles, cars, traffic, radio stations, limits, fines and colors
-src/cities/dubai.js    Dubai: the same for Dubai
-lang/en.xml            English text for both games and the start page
-lang/ar.xml            Arabic text (Jordanian for Amman, Gulf for Dubai)
 src/template.html      Page layout and styles
-src/landing.html       The start page that links to both games
+src/landing.html       The start page with a card for each city
+lang/en.xml            Shared English text: menus, settings, HUD and the start page
+lang/ar.xml            Shared Arabic text
 .github/workflows/     Builds the games and publishes them to GitHub Pages
 build.mjs              Builds the start page and one page per city into dist/
 dist/                  Ready to play builds
@@ -195,10 +199,10 @@ This writes the start page `dist/index.html` and one page per city, `dist/amman/
 
 ## Add a language
 
-1. Copy `lang/en.xml` to a new file, for example `lang/fr.xml`.
-2. Set `code`, `name` (shown on the language button) and `dir` (`ltr` or `rtl`) on the `<language>` tag.
-3. Translate each `<string>`. Keys in `<common>` apply to both cities, and a key under `<city>` wins over the same key in `<common>`. Keep text with tags such as `<kbd>` inside `<![CDATA[ ... ]]>`.
-4. Run `node build.mjs`. The build stops and lists any key the new file is missing.
+1. Copy `lang/en.xml` to a new file, for example `lang/fr.xml`, and copy each city's `cities/<city>/lang/en.xml` to `fr.xml` next to it.
+2. Set `code`, `name` (shown on the language button) and `dir` (`ltr` or `rtl`) on the `<language>` tag in each new file.
+3. Translate each `<string>`. A key in a city's file wins over the same key in `lang/`. Keep text with tags such as `<kbd>` inside `<![CDATA[ ... ]]>`.
+4. Run `node build.mjs`. The build stops and lists any key the new files are missing.
 
 ## Publish on GitHub Pages
 
@@ -211,11 +215,13 @@ GitHub Pages is free for public repos. A private repo needs a paid GitHub plan.
 
 ## Add a city
 
-1. Copy `src/cities/dubai.js` to a new file, for example `src/cities/riyadh.js`.
-2. Change `id`, `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `look`, `tour` and `page`.
-3. Add a `<city id="...">` section to every file in `lang/` with the city's names, places, cars and tour text.
-4. Add the city id to the `CITIES` list in `build.mjs`.
-5. Run `node build.mjs`.
+Each city lives in its own folder under `cities/`. To add one:
+
+1. Copy a city folder, for example `cities/dubai` to `cities/riyadh`.
+2. In `city.js`, set `id` to the folder name (`riyadh`), then change `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `radio`, `look`, `tour`, `card` and `page`. Add `order: 3` to choose where its card sits on the start page.
+3. In `lang/en.xml` and `lang/ar.xml` inside the folder, write the city's names, places, cars, tour text and its start page card (`card.tag`, `card.name`, `card.text`, `card.alt`).
+4. Replace `cover.png` with a picture of the new city (1280 by 760 works best).
+5. Run `node build.mjs`. The new city gets its own page at `dist/riyadh/`, a card on the start page, and the link at the bottom of each game points to the next city.
 
 Landmark models are small builder functions in `src/engine.js` (the `LB` object). Add a new builder there if a landmark needs its own shape.
 

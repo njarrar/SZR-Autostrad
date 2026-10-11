@@ -97,6 +97,8 @@ window.CITY = {
     {},
     { target: '#btnPause' }
   ],
+  // the card on the start page: its color in light and dark mode
+  card: { color: '#b5822a', dark: '#e2b04f' },
   page: {
     tokens: {
       ground: '#1b1830', ink: '#f4ecdf', muted: '#b7aec2', panel: 'rgba(19,18,38,0.9)', 'panel-solid': '#2a2746', chip: 'rgba(255,255,255,0.09)',
