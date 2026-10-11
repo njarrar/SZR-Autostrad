@@ -1,6 +1,7 @@
 window.CITY = {
   id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20,
-  fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
+  // Dubai Police tiers: [km/h over the limit, AED]; a crash is fined like not keeping a safe distance
+  fines: { radar: [[20, 300], [30, 600], [40, 700], [50, 1000], [60, 2000]], crash: 400 }, tripHop: 2, tollFee: 4,
   origin: [25.16, 55.22],
   weather: 'dust', // what the weather setting brings: 'rain' or 'dust'
   horn: [330, 415],
