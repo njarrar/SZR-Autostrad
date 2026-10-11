@@ -1,0 +1,24 @@
+{
+  "name": "szr-autostrad-app",
+  "private": true,
+  "version": "2.13.0",
+  "description": "iOS and Android apps that wrap the three city games",
+  "type": "module",
+  "scripts": {
+    "prepare-web": "node prepare.mjs",
+    "icons": "capacitor-assets generate --android --ios --iconBackgroundColor '#15183f' --iconBackgroundColorDark '#15183f' --splashBackgroundColor '#15183f' --splashBackgroundColorDark '#15183f'",
+    "sync": "npm run prepare-web && cap sync",
+    "android": "npm run sync && cap open android",
+    "ios": "npm run sync && cap open ios",
+    "apk": "npm run sync && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.3"
+  }
+}

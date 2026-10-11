@@ -1,0 +1,8 @@
+{
+  "appId": "com.njarrar.autostrad",
+  "appName": "Autostrad",
+  "webDir": "www",
+  "backgroundColor": "#15183f",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never", "scrollEnabled": false }
+}

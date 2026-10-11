@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.12** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.13** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -258,6 +258,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 
 ## What's new
 
+### 2.13 (October 2026)
+
+- **Phone apps.** The `app/` folder holds iOS and Android apps of all three cities. They carry three.js and the fonts inside, so they play with no network, run full screen, and keep the screen on while you drive. See [Phone apps](#phone-apps).
+
 ### 2.12 (October 2026)
 
 - **Haitham's nitro.** Nitro in Haitham Mode now sends a barking street dog after him, and he runs for it until the dog gives up and trots off.
@@ -380,6 +384,10 @@ lang/ar.xml            Shared Arabic text
 build.mjs              Builds the start page and one page per city into dist/
 dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
+app/                   iOS and Android apps that wrap the games
+  prepare.mjs          Builds the games and copies them, with three.js and the fonts, into app/www
+  assets/              App icon and launch screen; the platform icons are made from these
+  android/  ios/       The Android Studio and Xcode projects
 ```
 
 ## Build
@@ -395,6 +403,25 @@ This writes the start page `dist/index.html` and one page per city, `dist/amman/
 ```json
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html", "riyadh": "https://example.com/riyadh.html" }
 ```
+
+## Phone apps
+
+The apps use [Capacitor](https://capacitorjs.com/), which shows the games in the phone's own web view. You need Node.js 22, plus Android Studio for Android and a Mac with Xcode for iOS.
+
+```bash
+cd app
+npm install
+npm run sync      # build the games into app/www and copy them into both apps
+npm run android   # open the Android project in Android Studio
+npm run ios       # open the iOS project in Xcode
+npm run apk       # or build a test Android app at android/app/build/outputs/apk/debug/
+```
+
+Run `npm run sync` again after each change to the games.
+
+**New icon.** Replace the files in `app/assets` (`icon-only.png` and `icon-background.png` at 1024 by 1024, `splash.png` and `splash-dark.png` at 2732 by 2732) and run `npm run icons`. Android shows only the middle two thirds of `icon-background.png` in round and squircle icons.
+
+**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open the project in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, pick your team under **Signing & Capabilities** in Xcode, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `app/capacitor.config.json` and both projects before the first upload if you want another.
 
 ## Add a language
 
@@ -428,5 +455,6 @@ Landmark models are small builder functions in `src/engine.js` (the `LB` object)
 
 - [three.js](https://threejs.org/) 0.160.0
 - [Lalezar](https://fonts.google.com/specimen/Lalezar) and [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic) from Google Fonts
+- [Capacitor](https://capacitorjs.com/) 8 for the iOS and Android apps
 
 The routes follow real places but are drawn by hand from a handful of map points, so distances and curves are close, not exact.
