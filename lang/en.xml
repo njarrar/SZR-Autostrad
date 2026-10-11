@@ -203,6 +203,10 @@
     <string key="page.T_CHARM">Mirror charm</string>
     <string key="page.T_GARAGE_HINT">Drag left or right on the road to spin the car 360°</string>
     <string key="page.T_ALBUM">Landmark Album</string>
+    <string key="page.T_MORE">More options</string>
+    <string key="page.T_LESS">Fewer options</string>
+    <string key="text.prevTrip">Previous trip</string>
+    <string key="text.nextTrip">Next trip</string>
     <string key="page.T_PAX">Passengers</string>
     <string key="page.T_FUEL">Fuel</string>
     <string key="text.serviceMode">Taxi &amp; Service Shift</string>

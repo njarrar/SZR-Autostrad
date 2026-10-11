@@ -37,7 +37,6 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .seg button { border: 0; background: transparent; padding: 9px 6px; border-radius: 8px; font-weight: 600; font-size: 14px; }
 .seg5 button { padding-inline: 2px; font-size: 13px; }
 .seg button.sel { background: var(--panel-solid); box-shadow: 0 1px 3px rgba(0,0,0,.18); color: var(--accent); }
-#trips { display: flex; flex-direction: column; gap: 6px; max-height: 236px; overflow-y: auto; padding-inline-end: 2px; }
 .trip { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 9px 12px; display: flex; flex-direction: column; gap: 1px; }
 .trip .tt { font-weight: 600; font-size: 15px; }
 .trip .tt i { font-style: normal; color: var(--muted); font-weight: 500; }
@@ -49,16 +48,41 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .go { font-family: var(--display); font-weight: 400; font-size: 30px; background: var(--accent); color: var(--on-accent); border-radius: 12px; border: 0; padding: 10px 14px 6px; letter-spacing: .01em; }
 .go:active, .btn:active { transform: translateY(1px); }
 .drawer { display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+/* trip picker: one trip with arrows either side */
+#trips { display: flex; align-items: stretch; gap: 6px; }
+#trips .trip { flex: 1; min-width: 0; position: relative; }
+#trips .tn { position: absolute; top: 8px; right: 10px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
+#trips .tt { padding-inline-end: 34px; }
+[dir=rtl] #trips .tn { right: auto; left: 10px; }
+.tArrow { flex: none; width: 40px; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; display: grid; place-items: center; padding: 0; }
+.tArrow svg { width: 20px; height: 20px; }
+.tArrow.next svg, [dir=rtl] .tArrow.prev svg { transform: scaleX(-1); }
+[dir=rtl] .tArrow.next svg { transform: none; }
+/* extra options stay folded away until asked for */
+.more { display: flex; align-items: center; justify-content: center; gap: 6px; border: 1.5px solid var(--line); background: transparent; border-radius: 12px; padding: 10px 14px; font-weight: 700; font-size: 14px; color: var(--ink); }
+.more svg { width: 18px; height: 18px; transition: transform .2s; }
+.more .mShut, .more[aria-expanded=true] .mOpen { display: none; }
+.more[aria-expanded=true] .mShut { display: inline; }
+.more[aria-expanded=true] svg { transform: rotate(180deg); }
+.moreBox { display: flex; flex-direction: column; gap: 16px; }
+.moreBox .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.goBar { position: sticky; bottom: -20px; margin: 0 -20px -20px; padding: 10px 20px 20px; background: var(--panel); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border-radius: 0 0 var(--r) var(--r); display: flex; }
+.goBar .go { flex: 1; }
+.chip .ic { display: none; }
+.carStats { display: none; }
+.carStats .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+.carStats .st { font-size: 12px; }
+.carStats .st i { width: 64px; }
 #carPick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .pick { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pick b { font-size: 14px; line-height: 1.3; }
 .pick .en { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick .bars { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
-.pick .st { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); }
-.pick .st i { width: 44px; height: 5px; border-radius: 3px; flex: none; background: linear-gradient(to left, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
-[dir=ltr] .pick .st i { background: linear-gradient(to right, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
+.pick .st, .carStats .st { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); }
+.pick .st i, .carStats .st i { width: 44px; height: 5px; border-radius: 3px; flex: none; background: linear-gradient(to left, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
+[dir=ltr] .pick .st i, [dir=ltr] .carStats .st i { background: linear-gradient(to right, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
 .pick.sel { border-color: var(--accent); background: var(--chip); }
-#carPros { margin: 6px 0 0; display: flex; flex-direction: column; font-size: 12.5px; line-height: 1.5; }
+#carPros { margin: 6px 0 0; display: flex; flex-wrap: wrap; column-gap: 10px; font-size: 12.5px; line-height: 1.5; }
 #carPros .pro { color: var(--good); font-weight: 600; }
 #carPros .con { color: var(--bad); font-weight: 600; }
 #colors, #leds { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -306,35 +330,19 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .tb { width: 62px; height: 62px; border-radius: 16px; }
   .tb.gas { height: 96px; }
   #menu { align-items: flex-end; }
-  #menu .sheet { max-height: 64%; padding: 16px 16px 14px; gap: 12px; }
+  #menu .sheet { max-height: 78%; padding: 16px 16px 14px; gap: 12px; }
+  .goBar { bottom: -14px; margin: 0 -16px -14px; padding: 8px 16px 14px; }
   .brand h1 { font-size: 40px; }
   .brand p { display: none; }
-  #trips { max-height: 150px; }
-  .trip-hud { max-width: 52vw; padding: 6px 12px; }
-  .trip-hud b { font-size: 15px; }
-  .trip-hud .rem { font-size: 19px; }
-  .stats { top: calc(env(safe-area-inset-top, 0px) + 112px); }
-  .speedo .num { font-size: 36px; }
-  #mini { width: 92px; height: 92px; }
-  #btnPause { top: calc(env(safe-area-inset-top, 0px) + 180px); }
-  #btnRadio { top: calc(env(safe-area-inset-top, 0px) + 220px); }
+  .pick { padding: 7px 10px; }
+  .pick b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pick .bars { display: none; }
+  .carStats { display: block; }
+  .foot span:first-child { display: none; }
 }
 
 /* phone on its side: short screen, so the HUD and sheets get compact */
 @media (max-height: 520px) and (orientation: landscape) {
-  .hbar { top: calc(env(safe-area-inset-top, 0px) + 8px); inset-inline: max(12px, env(safe-area-inset-left, 0px)); }
-  .speedo { padding: 4px 10px 2px; gap: 8px; }
-  .speedo .num { font-size: 30px; }
-  .limit { width: 32px; height: 32px; border-width: 4px; font-size: 12px; }
-  .trip-hud { padding: 4px 10px; max-width: 34vw; }
-  .trip-hud b { font-size: 14px; }
-  .trip-hud .rem { font-size: 17px; }
-  .stats { top: calc(env(safe-area-inset-top, 0px) + 78px); gap: 4px; inset-inline-start: max(12px, env(safe-area-inset-left, 0px)); }
-  .chip { padding: 3px 8px; font-size: 12px; }
-  .dmg { width: 80px; }
-  #mini { top: calc(env(safe-area-inset-top, 0px) + 60px); width: 76px; height: 76px; inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); }
-  #btnPause { top: calc(env(safe-area-inset-top, 0px) + 144px); inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); padding: 5px 12px; }
-  #btnRadio { top: calc(env(safe-area-inset-top, 0px) + 180px); inset-inline-end: max(12px, env(safe-area-inset-right, 0px)); padding: 4px 8px; }
   #touch[data-mode=wheel] .horn { bottom: calc(var(--pad) + 96px); }
   #wheel { width: min(40vmin, 160px); height: min(40vmin, 160px); left: max(16px, env(safe-area-inset-left, 0px)); }
   #touch { --stick: min(44vmin, 168px); --pad: calc(env(safe-area-inset-bottom, 0px) + 8px); }
@@ -353,6 +361,10 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   #touch.horn-small #btnNitro { bottom: calc(var(--pad) + 8px); }
   #touch[data-mode=lanes] #btnNitro, #touch[data-mode=wheel] #btnNitro { bottom: calc(var(--pad) + 100px); }
   .sheet { padding: 14px 16px; gap: 10px; }
+  .goBar { bottom: -14px; margin: 0 -16px -14px; padding: 8px 16px 14px; }
+  .pick { padding: 7px 10px; }
+  .pick .bars { display: none; }
+  .carStats { display: block; }
   .brand h1 { font-size: 34px; }
   .brand p { display: none; }
   #welcome .sheet { width: min(640px, 100%); }
@@ -361,10 +373,48 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .rule { grid-template-columns: 1fr; }
   .rule svg { width: 30px; height: 30px; }
   .rule span { font-size: 12.5px; }
-  .toast { top: 26%; font-size: 15px; }
   #rTitle { font-size: 40px; }
   #tourBody { font-size: 14px; line-height: 1.5; }
   #tourTitle { font-size: 24px; }
+}
+/* phone HUD, upright or sideways: two slim rows at the top, the map in the corner, messages in one place */
+@media (max-width: 640px), (max-height: 520px) and (orientation: landscape) {
+  #hud { --top: calc(env(safe-area-inset-top, 0px) + 10px); }
+  .hbar { top: var(--top); inset-inline: 10px; }
+  .trip-hud { padding: 6px 12px; max-width: none; flex: 1; }
+  .trip-hud .lbl { display: none; }
+  .trip-hud b { font-size: 15px; }
+  .trip-hud .rem { font-size: 19px; }
+  .speedo { padding: 4px 10px 2px; gap: 8px; }
+  .speedo .num { font-size: 34px; }
+  .limit { width: 34px; height: 34px; border-width: 4px; font-size: 13px; }
+  .stats { top: calc(var(--top) + 64px); inset-inline: 10px calc(10px + 2 * 40px + 8px); flex-direction: row; gap: 0; background: var(--hud); border-radius: 12px; padding: 0 4px; height: 38px; align-items: center; }
+  .chip { background: none; flex: 1; min-width: 0; padding: 0 2px; justify-content: center; align-items: center; gap: 4px; font-size: 13px; }
+  .chip > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .chip .ic { display: block; width: 15px; height: 15px; flex: none; opacity: .75; }
+  .dmg, .fuel { width: 100%; max-width: 44px; }
+  #mini { top: calc(var(--top) + 110px); width: 84px; height: 84px; inset-inline-end: 10px; border-radius: 12px; }
+  #btnPause, #btnRadio { top: calc(var(--top) + 64px); width: 38px; height: 38px; padding: 0; border-radius: 12px; display: grid; place-items: center; }
+  #btnPause { inset-inline-end: 10px; font-size: 0; }
+  #btnPause::before { content: ''; width: 13px; height: 15px; box-sizing: border-box; border-inline: 4.5px solid currentColor; }
+  #btnRadio { inset-inline-end: 54px; max-width: none; }
+  #btnRadio span { display: none; }
+  #warn, .toast { top: calc(var(--top) + 110px); left: 10px; right: 104px; transform: none; max-width: none; white-space: normal; text-align: start; font-size: 14px; line-height: 1.35; padding: 7px 12px; border-radius: 10px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  [dir=rtl] #warn, [dir=rtl] .toast { left: 104px; right: 10px; }
+  .toast { transform: translateY(-6px); }
+  .toast.show { transform: none; }
+  #hWeave { top: 36%; font-size: 26px; }
+}
+@media (max-height: 520px) and (orientation: landscape) {
+  #hud { --top: calc(env(safe-area-inset-top, 0px) + 8px); --side: max(10px, env(safe-area-inset-left, 0px)); }
+  .hbar { inset-inline: var(--side); }
+  .trip-hud { flex: 0 1 380px; box-sizing: border-box; }
+  .stats { inset-inline: var(--side) auto; width: 380px; box-sizing: border-box; }
+  #btnPause { inset-inline-end: var(--side); }
+  #btnRadio { inset-inline-end: calc(var(--side) + 44px); }
+  #mini { inset-inline-end: var(--side); }
+  #warn, .toast { left: var(--side); right: auto; width: 380px; box-sizing: border-box; }
+  [dir=rtl] #warn, [dir=rtl] .toast { left: auto; right: var(--side); }
 }
 #fx:not(.fast) .streaks { animation: none; visibility: hidden; }
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
@@ -386,12 +436,12 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     <div class="speedo"><div class="limit" id="hLimit">80</div><div><div class="num" id="hSpeed">0</div><div class="unit">__T_KMH__</div></div><div class="gearbox"><b id="hGear">1</b><div class="rpm"><i id="hRpm"></i></div></div><div class="nbar" id="hNitro" aria-hidden="true"><i></i></div></div>
   </div>
   <div class="stats">
-    <div class="chip"><span>__T_TIME__</span><b id="hTime">0:00</b></div>
-    <div class="chip"><span>__T_SCORE__</span><b id="hScore">0</b></div>
-    <div class="chip"><span>__T_VIOL__</span><b id="hViol">0</b></div>
-    <div class="chip" id="chipPax" hidden><span>__T_PAX__</span><b id="hPax">0/4</b></div>
-    <div class="chip" id="chipFuel" hidden><span>__T_FUEL__</span><div class="fuel"><div id="hFuelBar"></div></div></div>
-    <div class="chip"><span>__T_DMG__</span><div class="dmg"><div id="hDmgBar"></div></div></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_TIME__</span><b id="hTime">0:00</b></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 5.8 6.3.7-4.7 4.3 1.3 6.2L12 16.9 6.4 20l1.3-6.2L3 9.5l6.3-.7z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_SCORE__</span><b id="hScore">0</b></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6M9 12h6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_VIOL__</span><b id="hViol">0</b></div>
+    <div class="chip" id="chipPax" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_PAX__</span><b id="hPax">0/4</b></div>
+    <div class="chip" id="chipFuel" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v16M3 21h13M8 9h3M14 10h2a2 2 0 0 1 2 2v4.5a1.5 1.5 0 0 0 3 0V8l-3-3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_FUEL__</span><div class="fuel"><div id="hFuelBar"></div></div></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_DMG__</span><div class="dmg"><div id="hDmgBar"></div></div></div>
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
   <button id="btnPause" type="button">__T_PAUSE__</button>
@@ -443,25 +493,29 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
-      <div><div class="label">__T_DIR__</div><div class="seg" id="segDir"><button type="button" data-v="1">__T_CW__</button><button type="button" data-v="-1">__T_CCW__</button></div></div>
       <div><div class="label">__T_TRIP__</div><div id="trips"></div></div>
       <div><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
-      <div><div class="label">__T_TRAFFIC__</div><div class="seg" id="segTraffic"><button type="button" data-v="0">__T_TR0__</button><button type="button" data-v="1">__T_TR1__</button><button type="button" data-v="2">__T_TR2__</button></div></div>
-      <button class="go" id="btnStart" type="button">__T_GO__</button>
-      <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnBooklet" type="button">__T_ALBUM__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button><button class="btn" id="btnTour" type="button">__T_HOWTO__</button></div>
-      <div class="drawer" id="garage" hidden>
-        <p class="note">__T_GARAGE_HINT__</p>
-        <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
-        <div><div class="label">__T_LED__</div><div id="leds"></div></div>
-        <div><div class="label">__T_STICKER__</div><div class="chip-row" id="stickers"></div></div>
-        <div><div class="label">__T_CHARM__</div><div class="chip-row" id="charms"></div></div>
-        <div><div class="label"><label for="plate">__T_PLATE__</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
+      <button class="more" id="btnMore" type="button" aria-expanded="false" aria-controls="moreBox"><span class="mOpen">__T_MORE__</span><span class="mShut">__T_LESS__</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <div class="moreBox" id="moreBox" hidden>
+        <div class="carStats"><div class="label">__T_CARS__</div><div class="bars" id="carStats"></div></div>
+        <div><div class="label">__T_DIR__</div><div class="seg" id="segDir"><button type="button" data-v="1">__T_CW__</button><button type="button" data-v="-1">__T_CCW__</button></div></div>
+        <div><div class="label">__T_TRAFFIC__</div><div class="seg" id="segTraffic"><button type="button" data-v="0">__T_TR0__</button><button type="button" data-v="1">__T_TR1__</button><button type="button" data-v="2">__T_TR2__</button></div></div>
+        <div class="row"><button class="btn" id="btnGarage" type="button">__T_GARAGE__</button><button class="btn" id="btnBooklet" type="button">__T_ALBUM__</button><button class="btn" id="btnSettings" type="button">__T_SETTINGS__</button><button class="btn" id="btnTour" type="button">__T_HOWTO__</button></div>
+        <div class="drawer" id="garage" hidden>
+          <p class="note">__T_GARAGE_HINT__</p>
+          <div><div class="label">__T_COLOR__</div><div id="colors"></div><p class="note" id="colorNote" hidden>__T_FIXEDCOLOR__</p></div>
+          <div><div class="label">__T_LED__</div><div id="leds"></div></div>
+          <div><div class="label">__T_STICKER__</div><div class="chip-row" id="stickers"></div></div>
+          <div><div class="label">__T_CHARM__</div><div class="chip-row" id="charms"></div></div>
+          <div><div class="label"><label for="plate">__T_PLATE__</label></div><input id="plate" maxlength="12" autocomplete="off"></div>
+        </div>
+        <div class="foot">
+          <span>__T_KEYS__</span>
+          <span>__T_MAPNOTE__</span>
+          __OTHER__
+        </div>
       </div>
-      <div class="foot">
-        <span>__T_KEYS__</span>
-        <span>__T_MAPNOTE__</span>
-        __OTHER__
-      </div>
+      <div class="goBar"><button class="go" id="btnStart" type="button">__T_GO__</button></div>
     </div>
   </div>
 </div>

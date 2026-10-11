@@ -2779,7 +2779,8 @@ function drawHud() {
   setStyle(hud.nitro, '--n', nShow); setStyle(hud.nitroBtn, '--n', nShow);
   setClass(hud.nitro, 'sweet', sweet); setClass(hud.nitro, 'on', game.boost > 0);
   setClass(hud.nitroBtn, 'sweet', sweet); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
-  const w = game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
+  // the hint and the toast share one spot on phones, so the toast wins while it shows
+  const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
   const km = game.free ? game.dist : Math.max(0, game.tripLen - (player.t - game.startT));
   setText(hud.remain, (km / 1000).toFixed(1) + ' ' + T.km);
 }
@@ -2927,14 +2928,17 @@ function updateTrafficIdle(dt) {
 function renderTrips() {
   DIR = settings.dir;
   const trips = tripList();
+  const i = Math.min(settings.trip, trips.length - 1), tr = trips[i];
+  const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.name} <i>${T.to}</i> ${tr.to.name}`;
+  const sub = tr.free ? T.freeSub : (tr.len / 1000).toFixed(1) + ' ' + T.km;
+  const best = store.get('best:' + settings.dir + ':' + i, 0);
+  // one trip at a time with arrows either side, so the menu stays short
+  const arrow = (cls, label) => `<button class="tArrow ${cls}" type="button" aria-label="${label}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>`;
   const el = $('#trips');
-  el.innerHTML = trips.map((tr, i) => {
-    const title = tr.free ? T.freeDrive : tr.lap ? T.fullLap : `${tr.from.name} <i>${T.to}</i> ${tr.to.name}`;
-    const sub = tr.free ? T.freeSub : (tr.len / 1000).toFixed(1) + ' ' + T.km;
-    const best = store.get('best:' + settings.dir + ':' + i, 0);
-    return `<button class="trip${i === settings.trip ? ' sel' : ''}" data-i="${i}" type="button"><span class="tt">${title}</span><span class="ts">${sub}${best ? ' · ' + T.best + ' ' + fmt(best) : ''}</span></button>`;
-  }).join('');
-  el.querySelectorAll('.trip').forEach((b) => b.addEventListener('click', () => { settings.trip = +b.dataset.i; saveSettings(); renderTrips(); placeMenuCar(); }));
+  el.innerHTML = arrow('prev', T.prevTrip) + `<div class="trip sel" aria-live="polite"><span class="tt">${title}</span><span class="ts">${sub}${best ? ' · ' + T.best + ' ' + fmt(best) : ''}</span><span class="tn">${i + 1} / ${trips.length}</span></div>` + arrow('next', T.nextTrip);
+  const go = (d) => { settings.trip = (i + d + trips.length) % trips.length; saveSettings(); renderTrips(); placeMenuCar(); };
+  el.querySelector('.prev').onclick = () => go(-1);
+  el.querySelector('.next').onclick = () => go(1);
 }
 function segmented(sel, key, after) {
   const el = $(sel);
@@ -2999,6 +3003,8 @@ function renderGarage() {
     <span class="bars">${carStats(c).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('')}</span></button>`).join('');
   $('#carPick').querySelectorAll('.pick').forEach((b) => b.onclick = () => { settings.car = +b.dataset.i; saveSettings(); renderGarage(); buildPlayer(); });
   const cur = CARS[settings.car];
+  // phones hide the bars on the car cards, so the chosen car's bars sit under More options
+  $('#carStats').innerHTML = `<b>${cur.name}</b><span></span>` + carStats(cur).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('');
   $('#carPros').innerHTML = `<span class="pro">+ ${cur.pros}</span><span class="con">− ${cur.cons}</span>`;
   const fixed = CARS[settings.car].fixedColor;
   $('#colors').innerHTML = C.colors.map((c) => `<button type="button" class="sw${c === settings.color ? ' sel' : ''}" style="--sw:#${c.toString(16).padStart(6, '0')}" data-c="${c}" aria-label="color"${fixed ? ' disabled' : ''}></button>`).join('');
@@ -3035,6 +3041,7 @@ function renderBooklet() {
 }
 $('#plate').addEventListener('input', (e) => { settings.plate = e.target.value.slice(0, 12); saveSettings(); drawPlate(); });
 $('#btnStart').onclick = () => { if (settings.control === 'tilt') askTilt(); startTrip(); };
+$('#btnMore').onclick = () => { const box = $('#moreBox'), open = box.hidden; box.hidden = !open; $('#btnMore').setAttribute('aria-expanded', open); if (open) box.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
 $('#btnGarage').onclick = () => { $('#garage').hidden = !$('#garage').hidden; };
 if ($('#btnBooklet')) $('#btnBooklet').onclick = () => { $('#garage').hidden = true; renderBooklet(); showScreen('#booklet'); };
 if ($('#bookClose')) $('#bookClose').onclick = () => showScreen('#menu');
