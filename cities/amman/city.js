@@ -1,6 +1,7 @@
 window.CITY = {
   id: 'amman', seed: 11, hills: true, valley: 28, stone: true, lanes: 3, limit: 80, tolerance: 10,
-  fines: { radar: 30, crash: 50 }, tripHop: 3,
+  // speed camera fines grow with how far over the limit you are: [km/h over, JD]; a crash costs a small fixed fine
+  fines: { radar: [[10, 15], [20, 25], [30, 50], [50, 100]], crash: 20 }, tripHop: 3,
   origin: [31.962, 35.900],
   weather: 'rain', // what the weather setting brings: 'rain' or 'dust'
   horn: [415, 520],

@@ -519,7 +519,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <h1><span data-t="page.name">لفّة دبي</span></h1>
       <div class="flagbar"></div>
       <p><span data-t="page.blurb">من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.</span></p>
-      <p class="ver">v2.7 · 2026-10-11 12:15 UTC</p>
+      <p class="ver">v2.8 · 2026-10-11 15:05 UTC</p>
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
@@ -652,7 +652,8 @@ window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"page.T_LANG":"ا
 <script>
 window.CITY = {
   id: 'dubai', seed: 23, hills: false, lanes: 5, limit: 100, tolerance: 20,
-  fines: { radar: 600, crash: 500 }, tripHop: 2, tollFee: 4,
+  // Dubai Police tiers: [km/h over the limit, AED]; a crash is fined like not keeping a safe distance
+  fines: { radar: [[20, 300], [30, 600], [40, 700], [50, 1000], [60, 2000]], crash: 400 }, tripHop: 2, tollFee: 4,
   origin: [25.16, 55.22],
   weather: 'dust', // what the weather setting brings: 'rain' or 'dust'
   horn: [330, 415],
@@ -3936,6 +3937,12 @@ function finishTrip(reason) {
   $('#rRate').textContent = reason !== 'arrive' ? T.rateBad : viol === 0 && game.weaves >= 5 ? T.rateTop : viol <= 2 ? T.rateMid : T.rateBad;
   showScreen('#result');
 }
+// the camera fine for going this many km/h over the limit: the highest tier you passed
+function radarFine(over) {
+  const tiers = Array.isArray(C.fines.radar) ? C.fines.radar : [[0, C.fines.radar]];
+  let f = tiers[0][1]; for (const [k, v] of tiers) if (over > k) f = v;
+  return f;
+}
 function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.extraPts + game.bonus + game.fares * 5)); }
 // cameras and crashes cost fines and damage, not points, so the score never drops back to 0
 function tourEndShown() { return !$('#tourEnd').hidden; }
@@ -4081,7 +4088,7 @@ function step(dt) {
       ev.lastT = player.t;
       const kmh = player.v * 3.6;
       if (ev.type === 'radar') {
-        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
+        if (kmh > C.limit + C.tolerance && !game.tour) { const fine = radarFine(kmh - C.limit); game.radar++; game.fines += fine; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + fine + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
         else { toast(T.radarOk, 'good'); SND.cue('ok'); }
       } else if (ev.type === 'bump') {
         if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); SND.bump((kmh - 35) / 15); vibrate(80); } else toast(T.bumpOk, 'good');

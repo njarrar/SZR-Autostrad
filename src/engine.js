@@ -2590,6 +2590,12 @@ function finishTrip(reason) {
   $('#rRate').textContent = reason !== 'arrive' ? T.rateBad : viol === 0 && game.weaves >= 5 ? T.rateTop : viol <= 2 ? T.rateMid : T.rateBad;
   showScreen('#result');
 }
+// the camera fine for going this many km/h over the limit: the highest tier you passed
+function radarFine(over) {
+  const tiers = Array.isArray(C.fines.radar) ? C.fines.radar : [[0, C.fines.radar]];
+  let f = tiers[0][1]; for (const [k, v] of tiers) if (over > k) f = v;
+  return f;
+}
 function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.extraPts + game.bonus + game.fares * 5)); }
 // cameras and crashes cost fines and damage, not points, so the score never drops back to 0
 function tourEndShown() { return !$('#tourEnd').hidden; }
@@ -2735,7 +2741,7 @@ function step(dt) {
       ev.lastT = player.t;
       const kmh = player.v * 3.6;
       if (ev.type === 'radar') {
-        if (kmh > C.limit + C.tolerance && !game.tour) { game.radar++; game.fines += C.fines.radar; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + C.fines.radar + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
+        if (kmh > C.limit + C.tolerance && !game.tour) { const fine = radarFine(kmh - C.limit); game.radar++; game.fines += fine; toast(T.flash + ' ' + Math.round(kmh) + ' ' + T.kmh + ' · ' + fine + ' ' + C.currency, 'bad'); flash(); SND.cue('flash'); vibrate([60, 40, 60]); }
         else { toast(T.radarOk, 'good'); SND.cue('ok'); }
       } else if (ev.type === 'bump') {
         if (kmh > 35) { if (!game.tour) player.dmg += (kmh - 35) * 0.22 * player.tough; game.shake = 0.5; game.bumps++; toast(T.bumpHit, 'bad'); SND.bump((kmh - 35) / 15); vibrate(80); } else toast(T.bumpOk, 'good');

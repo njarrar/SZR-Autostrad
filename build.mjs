@@ -12,7 +12,7 @@ const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here 
 if (!CITIES.length) throw new Error('no cities found in cities/');
 const DEFAULT_LANG = 'ar';
 // shown on each game's start screen and on the landing cards; raise VERSION with each release
-const VERSION = '2.7';
+const VERSION = '2.8';
 const BUILT = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 const STAMP = `v${VERSION} · ${BUILT}`;
 

@@ -18,7 +18,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.7** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.8** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -189,8 +189,18 @@ About once a minute something happens on the road:
 
 ### Watch out for
 
-- **Speed cameras.** A yellow warning shows before each one. Amman fines you above 90 km/h (80 limit plus 10). Dubai fines you above 120 km/h (100 limit plus 20).
-- **Crashes.** Hitting a car costs a fine and damage, and ends your pass streak. Cameras and crashes never take away points.
+- **Speed cameras.** A yellow warning shows before each one. Amman fines you above 90 km/h (80 limit plus 10). Dubai fines you above 120 km/h (100 limit plus 20). The faster you go, the bigger the fine:
+
+  | Over the limit | Amman | Dubai |
+  | --- | --- | --- |
+  | 11 to 20 km/h | 15 JD | no fine |
+  | 21 to 30 km/h | 25 JD | 300 AED |
+  | 31 to 40 km/h | 50 JD | 600 AED |
+  | 41 to 50 km/h | 50 JD | 700 AED |
+  | 51 to 60 km/h | 100 JD | 1,000 AED |
+  | over 60 km/h | 100 JD | 2,000 AED |
+
+- **Crashes.** Hitting a car costs a fine (20 JD in Amman, 400 AED in Dubai) and damage, and ends your pass streak. Cameras and crashes never take away points.
 - **The barrier.** Scraping it slows you down and adds damage.
 - **Speed bumps (Amman).** Take them under 35 km/h.
 - **Salik gates (Dubai).** Each one adds 4 dirhams to your trip.
@@ -205,6 +215,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.8 (October 2026)
+
+- **Fairer fines.** Speed camera fines now grow with how far over the limit you are, the way real cameras work. A small slip in Amman costs 15 JD instead of 30, and in Dubai 300 AED instead of 600. Crashes cost 20 JD in Amman (was 50) and 400 AED in Dubai (was 500).
 
 ### 2.7 (October 2026)
 
