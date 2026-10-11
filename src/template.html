@@ -210,6 +210,8 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #radioMenu button i { width: 10px; height: 10px; border-radius: 50%; border: 2px solid currentColor; opacity: .6; flex: none; }
 #radioMenu button[aria-checked=true] { background: rgba(255,255,255,.1); color: var(--accent-hud); }
 #radioMenu button[aria-checked=true] i { background: currentColor; opacity: 1; }
+#radioMenu .rkeys { margin: 4px 8px 2px; font-size: 11.5px; opacity: .7; font-weight: 500; }
+#radioMenu .rkeys kbd { background: rgba(255,255,255,.15); color: inherit; }
 #radioMenu .off { border-top: 1px solid rgba(255,255,255,.15); border-radius: 0 0 8px 8px; margin-top: 2px; }
 #btnRadio svg { width: 20px; height: 20px; flex: none; }
 #btnRadio span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -458,7 +460,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
   <button id="btnPause" type="button">__T_PAUSE__</button>
-  <button id="btnRadio" type="button" aria-label="__T_RADIO__" aria-haspopup="menu" aria-expanded="false" aria-controls="radioMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8 17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14.5" r="3" fill="currentColor"/><path d="M5.5 12.5h5M5.5 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="radioName"></span></button>
+  <button id="btnRadio" type="button" aria-label="__T_RADIO__" aria-keyshortcuts="R M" aria-haspopup="menu" aria-expanded="false" aria-controls="radioMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8 17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14.5" r="3" fill="currentColor"/><path d="M5.5 12.5h5M5.5 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="radioName"></span></button>
   <div id="radioMenu" role="menu" aria-label="__T_RADIO__" hidden></div>
   <div id="warn" hidden></div>
   <div id="hWeave"></div>

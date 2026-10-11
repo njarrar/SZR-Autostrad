@@ -41,7 +41,7 @@
     <string key="page.T_SOUND">Sound</string>
     <string key="page.T_ON">On</string>
     <string key="page.T_OFF">Off</string>
-    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Pause <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Radio <kbd>R</kbd> · Pause <kbd>P</kbd>]]></string>
     <string key="page.T_PAUSED">Paused</string>
     <string key="page.T_RESUME">Resume</string>
     <string key="page.T_QUIT">Back to menu</string>
@@ -165,6 +165,7 @@
     <string key="page.T_AUTOQ_D">If the game runs slow, it draws fewer pixels so it stays smooth.</string>
     <string key="text.go">Go!</string>
     <string key="text.radioOff">Radio off</string>
+    <string key="text.radioKeys"><![CDATA[<kbd>R</kbd> next station · <kbd>M</kbd> on or off]]></string>
     <string key="text.autoLow">Lowered the quality to keep it smooth</string>
     <string key="page.T_QUIET">Quiet</string>
     <string key="page.T_LOUD">Loud</string>
