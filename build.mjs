@@ -11,6 +11,10 @@ const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here 
 }).sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.id.localeCompare(b.id)).map((c) => c.id);
 if (!CITIES.length) throw new Error('no cities found in cities/');
 const DEFAULT_LANG = 'ar';
+// shown on each game's start screen and on the landing cards; raise VERSION with each release
+const VERSION = '2.1';
+const BUILT = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+const STAMP = `v${VERSION} · ${BUILT}`;
 
 // ---------- language files: lang/<code>.xml ----------
 const unescape = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
@@ -65,6 +69,7 @@ for (const id of CITIES) {
   html = html.replace(/__([A-Z0-9_]+)__/g, (m, k) => {
     if (k === 'CITY' || k === 'ENGINE' || k === 'LANGS') return m;
     if (k === 'LANG') return DEFAULT_LANG;
+    if (k === 'STAMP') return STAMP;
     if (k === 'DIR') return langs[DEFAULT_LANG].dir;
     if (k === 'TITLE') return S['page.title'];
     if (k === 'ALT') return S['page.alt'];
@@ -98,6 +103,7 @@ for (const id of CITIES) {
         <h2 data-t="${id}.name">${S[id + '.name']}</h2>
         <p data-t="${id}.text">${S[id + '.text']}</p>
         <span class="play" data-t="play">${S.play}</span>
+        <span class="ver">${STAMP}</span>
       </div>
     </a>`).join('\n');
   const colors = (k) => CITIES.map((id) => `.c-${id} { --c: ${(cfg[id].card || {})[k] || (cfg[id].card || {}).color || 'var(--ink)'}; }`).join(' ');
