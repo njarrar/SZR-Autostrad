@@ -85,6 +85,7 @@ const SND = (() => {
     suv:    { base: 20, span: 62, bite: 2, biteG: 0.4, fire: 2, fireWave: 'square', depth: 0.5, lp: 520, lpSpan: 1800, peak: 300, peakQ: 1.4, peakG: 6, comb: 0.0029, vol: 0.1, rum: 0.05, rumF: 4, whine: 0, whineG: 0, gears: 7 },
     sports: { base: 42, span: 175, bite: 1.5, biteG: 0.36, fire: 2.5, fireWave: 'sawtooth', depth: 0.3, lp: 900, lpSpan: 4200, peak: 700, peakQ: 1.6, peakG: 6, comb: 0.0012, vol: 0.085, rum: 0.02, rumF: 5, whine: 8, whineG: 0.02, gears: 7 },
     dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 },
+    sedan:  { base: 32, span: 92, bite: 2, biteG: 0.28, fire: 2, fireWave: 'triangle', depth: 0.24, lp: 680, lpSpan: 2500, peak: 420, peakQ: 1.1, peakG: 4, comb: 0.0019, vol: 0.075, rum: 0.016, rumF: 3, whine: 5, whineG: 0.022, gears: 6 },
     coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
@@ -236,7 +237,7 @@ const SND = (() => {
     if (!ac || !sfxOn) { hornStop(); return; }
     if (on && !myHorn) {
       const H = HORNS[hornStyle] || HORNS.city;
-      const k = ({ pickup: 0.85, suv: 0.82, sports: 1.12, bmw: 1.04, hatch: 1.06 }[kind] || 1) * (H.k || 1);
+      const k = ({ pickup: 0.85, suv: 0.82, sports: 1.12, bmw: 1.04, hatch: 1.06, sedan: 1.08 }[kind] || 1) * (H.k || 1);
       const notes = H.chord || (chord || [400, 500]).map((f) => f * k);
       const opts = { gain: H.gain || 0.11, wave: H.wave || (kind === 'hatch' ? 'square' : 'sawtooth'), throat: H.throat, bell: H.bell, lp: H.lp };
       if (H.tune) {
@@ -362,7 +363,9 @@ const SND = (() => {
   // D = deep drum, T = sharp drum, k = soft hit, C = hand clap, . = rest; sixteen steps a bar
   const RHYTHM = {
     maqsum:  'D.T...T.D...T...', baladi: 'D.D...T.D...T...', saidi: 'D.T...D.D...T...',
-    khaleeji: 'D..CT.C.D..CT.C.', fallahi: 'D.T.D.T.D.T.D.T.', chobi: 'D..TD.T.D..TD.TT'
+    khaleeji: 'D..CT.C.D..CT.C.', fallahi: 'D.T.D.T.D.T.D.T.', chobi: 'D..TD.T.D..TD.TT',
+    // Najd: samri leans on hand claps, ardah is the slow march of the big drums
+    samri: 'D.C..CT.D.C..CT.', ardah: 'D...D...D.TTD...'
   };
   const radio = (() => {
     let stations = [], cur = -1, timer = null, nextT = 0, step = 0, bar = 0, motif = null, rng = Math.random, duckUntil = 0, level = 0, mixG = null;
@@ -425,6 +428,16 @@ const SND = (() => {
         o.connect(g);
         g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.1, t + 0.06); g.gain.setValueAtTime(0.1, t + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + len + 0.1);
         oscs.push(o, o2, vib, air);
+      } else if (kind === 'rababa') {
+        // the one string rababa of the desert: a bowed, nasal tone that swells and wavers
+        const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(f * 0.985, t); o.frequency.setTargetAtTime(f, t, 0.05);
+        const vib = ac.createOscillator(); vib.frequency.value = 5.6; const vg = gainN(0); vg.gain.setValueAtTime(0, t); vg.gain.linearRampToValueAtTime(f * 0.014, t + len * 0.5);
+        vib.connect(vg); vg.connect(o.frequency);
+        const nose = filt('bandpass', f * 3, 3), body = filt('lowpass', 2200, 0.8), ng = gainN(0.7);
+        o.connect(body); o.connect(nose); nose.connect(ng); ng.connect(g); body.connect(g);
+        const bow = noiseSrc(white); const bb = filt('bandpass', f * 4, 4); const bg = gainN(0.03); chain(bow, bb, bg, g);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.07, t + 0.09); g.gain.setValueAtTime(0.07, t + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + len + 0.12);
+        oscs.push(o, vib, bow); len = Math.max(len, 0.35);
       } else {
         // a bright synth lead for the dance stations
         const o = ac.createOscillator(); o.type = 'square'; o.frequency.setValueAtTime(f * 0.97, t); o.frequency.setTargetAtTime(f, t, 0.02);
@@ -469,8 +482,8 @@ const SND = (() => {
           if (d != null && !(S.sparse && bar % 2 === 1 && beat > 4)) {
             let len = sixteenth * 2;
             if (beat < 7 && phrase[beat + 1] == null) len *= 2;
-            if (S.lead !== 'nay' && rng() < 0.15 && beat < 7) { lead(hz(d + 1, 1), t, sixteenth * 0.6, S.lead); lead(hz(d, 1), t + sixteenth * 0.5, len, S.lead); }
-            else lead(hz(d, 1), t, S.lead === 'nay' ? len * 1.6 : len, S.lead);
+            if (S.lead !== 'nay' && S.lead !== 'rababa' && rng() < 0.15 && beat < 7) { lead(hz(d + 1, 1), t, sixteenth * 0.6, S.lead); lead(hz(d, 1), t + sixteenth * 0.5, len, S.lead); }
+            else lead(hz(d, 1), t, S.lead === 'nay' || S.lead === 'rababa' ? len * 1.6 : len, S.lead);
           }
         }
         nextT += sixteenth * (S.swing && step % 2 === 0 ? 1 + S.swing : S.swing && step % 2 === 1 ? 1 - S.swing : 1);

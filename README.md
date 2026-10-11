@@ -1,15 +1,16 @@
 # SZR Autostrad
 
-Two 3D driving games that run in the browser, set on real roads in two Arab cities:
+Three 3D driving games that run in the browser, set on real roads in three Arab cities:
 
 - **لفّة عمّان (Amman Loop):** a 22 km loop over the hills of Amman, past Abdali, the King Abdullah I Mosque, the Citadel, the Raghadan flagpole, the Roman Theatre, Rainbow Street, Abdoun Bridge, the 7th Circle and Mecca Mall.
 - **لفّة دبي (Dubai Loop):** a 47 km loop at sunset, down Sheikh Zayed Road past the Dubai Frame, the Museum of the Future, Emirates Towers, Burj Khalifa and Mall of the Emirates to the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab and Jumeirah Mosque.
+- **لفّة الرياض (Riyadh Loop):** a 43 km loop on a hot, hazy afternoon, from Masmak Fort and the Grand Mosque in the old town past Murabba Palace, the Water Tower and the TV Tower, up King Fahd Road past Al Faisaliah and Kingdom Centre to the financial district, then west past Riyadh Park and Boulevard City to old Diriyah and back.
 
-Each city has its own look. Amman has white and beige stone houses stacked up the hills on both sides of the road, with balconies, black and white water tanks, solar heaters and dishes on the roofs, and steel bars left on top for the next floor. Dubai has a wall of glass towers along Sheikh Zayed Road that mirror the sunset sky, the Metro running beside the road on its raised track with gold stations and a moving train, and green lawns and palms along the road.
+Each city has its own look. Amman has white and beige stone houses stacked up the hills on both sides of the road, with balconies, black and white water tanks, solar heaters and dishes on the roofs, and steel bars left on top for the next floor. Dubai has a wall of glass towers along Sheikh Zayed Road that mirror the sunset sky, the Metro running beside the road on its raised track with gold stations and a moving train, and green lawns and palms along the road. Riyadh has low mud colored Najdi walls with pointed tops in the old town, glass and stone towers along King Fahd Road with the blue Metro line on its raised track beside it, walled beige villas with palms, and the mud brick lanes of Diriyah.
 
 The cars have shiny paint that reflects the sky, rounded bodies, wheel arches and five spoke wheels.
 
-The games come in English and Arabic. The Arabic text uses each city's own dialect, and the layout flips right to left.
+The games come in English and Arabic. The Arabic text uses each city's own dialect (Jordanian, Gulf and Najdi), and the layout flips right to left.
 
 ![Amman welcome screen](docs/screenshots/amman-welcome.png)
 
@@ -18,7 +19,11 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![Driving in Amman](docs/screenshots/amman-drive.png) | ![Driving in Dubai](docs/screenshots/dubai-drive.png) |
 | ![Guided tour](docs/screenshots/amman-tour-trip.png) | ![Dubai welcome screen](docs/screenshots/dubai-welcome.png) |
 
-**Version 2.8** (October 2026). See [What's new](#whats-new) for the changes.
+| Riyadh | |
+| --- | --- |
+| ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
+
+**Version 2.9** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -32,13 +37,14 @@ The page lets you pick a city. Each game also has its own address:
 
 - Amman: https://njarrar.github.io/SZR-Autostrad/amman/
 - Dubai: https://njarrar.github.io/SZR-Autostrad/dubai/
+- Riyadh: https://njarrar.github.io/SZR-Autostrad/riyadh/
 
 They work on a computer or a phone, upright or sideways.
 
 To play offline:
 
 1. Download or clone this repo.
-2. Open `dist/amman.html` or `dist/dubai.html` in Chrome, Edge, Safari or Firefox.
+2. Open `dist/amman.html`, `dist/dubai.html` or `dist/riyadh.html` in Chrome, Edge, Safari or Firefox.
 
 That's it. Each game is one file. It needs an internet connection the first time to load three.js and the fonts.
 
@@ -48,7 +54,7 @@ If your browser blocks local files, serve the folder instead:
 npx http-server dist
 ```
 
-Then open the address it prints and pick `amman.html` or `dubai.html`.
+Then open the address it prints and pick `amman.html`, `dubai.html` or `riyadh.html`.
 
 ## Language
 
@@ -91,24 +97,30 @@ Open **Settings** from **More options** in the menu, or from the pause screen. I
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
 - **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai), camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
 
 Every sound is made live in the browser. There are no sound files.
 
-- **Engine.** Each car has its own engine sound. The Hilux sounds like a diesel, the Patrol like a big V8, the Huracán screams, and the Prius hums. The engine climbs through the gears as you speed up, and you hear each shift. The gear and a rev bar sit next to your speed.
+- **Engine.** Each car has its own engine sound. The Hilux sounds like a diesel, the Patrol like a big V8, the Huracán screams, and the Prius hums. The Accent buzzes like a small four cylinder. The engine climbs through the gears as you speed up, and you hear each shift. The gear and a rev bar sit next to your speed.
 - **Road.** Tyre roar and wind grow with your speed, the tyres squeal when you brake hard or take a curve too fast, and the city hums in the background.
 - **Traffic.** You hear cars whoosh past on the side they pass you. A car stuck behind you honks, and horns sound from where the car is.
 - **Crashes.** A thump, crunching metal and, on a big hit, breaking glass.
-- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. On a keyboard, press `R` for the next station or `M` to turn the radio on or off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
+- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. On a keyboard, press `R` for the next station or `M` to turn the radio on or off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji, the Najdi samri and ardah, and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
 
 | Amman | Dubai |
 | --- | --- |
 | Dawar FM: qanun over a maqsum beat | Creek FM: oud over a khaleeji beat |
 | Jabal Radio: nay over a dabke beat | Marina Nights: dance beat with a synth lead |
 | Downtown Beats: synth over a baladi beat | Desert Wind: slow nay in maqam saba |
+
+| Riyadh |
+| --- |
+| Tuwaiq FM: oud over a samri beat with hand claps |
+| Olaya Nights: Saudi pop with a synth lead |
+| Najd Drums: the slow ardah march with a one string rababa |
 
 Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a buzz on crashes, close passes, camera flashes and lane changes.
 
@@ -121,7 +133,7 @@ Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a
 
 ### Cars
 
-Each city has four cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly. On a phone the bars for the chosen car sit under **More options**.
+Each city has the cars you see on its roads every day. Each one has four bars on the menu: speed, pick up, grip and toughness, plus what it does well and badly. On a phone the bars for the chosen car sit under **More options**.
 
 ![Car picker in the Amman menu](docs/screenshots/amman-menu.png)
 
@@ -143,6 +155,16 @@ Each city has four cars you see on its roads every day. Each one has four bars o
 | Lamborghini Huracán | 300 km/h | Fastest and best grip | One crash hurts a lot |
 | Toyota Camry (taxi) | 190 km/h | Even all round, carries 4 passengers | Nothing stands out |
 | Toyota Coaster (minibus) | 165 km/h | Carries up to 14 passengers | Wide and heavy to weave |
+
+**Riyadh**
+
+| Car | Top speed | Good at | Weak at |
+| --- | --- | --- | --- |
+| Toyota Land Cruiser | 205 km/h | Tough, shrugs off crashes | Heavy and slow to turn |
+| Toyota Hilux | 175 km/h | Takes the least damage | Slow and loose in curves |
+| Toyota Camry (white taxi) | 185 km/h | Even all round, carries 4 passengers | Nothing stands out |
+| Hyundai Accent | 170 km/h | Light, good grip, easy to weave | Slow to pick up |
+| Toyota Coaster (minibus) | 155 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 
 Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
 
@@ -189,18 +211,18 @@ About once a minute something happens on the road:
 
 ### Watch out for
 
-- **Speed cameras.** A yellow warning shows before each one. Amman fines you above 90 km/h (80 limit plus 10). Dubai fines you above 120 km/h (100 limit plus 20). The faster you go, the bigger the fine:
+- **Speed cameras.** A yellow warning shows before each one. Amman fines you above 90 km/h (80 limit plus 10). Dubai and Riyadh fine you above 120 km/h (100 limit plus 20). The faster you go, the bigger the fine:
 
-  | Over the limit | Amman | Dubai |
-  | --- | --- | --- |
-  | 11 to 20 km/h | 15 JD | no fine |
-  | 21 to 30 km/h | 25 JD | 300 AED |
-  | 31 to 40 km/h | 50 JD | 600 AED |
-  | 41 to 50 km/h | 50 JD | 700 AED |
-  | 51 to 60 km/h | 100 JD | 1,000 AED |
-  | over 60 km/h | 100 JD | 2,000 AED |
+  | Over the limit | Amman | Dubai | Riyadh (Saher) |
+  | --- | --- | --- | --- |
+  | 11 to 20 km/h | 15 JD | no fine | no fine |
+  | 21 to 30 km/h | 25 JD | 300 AED | 800 SAR |
+  | 31 to 40 km/h | 50 JD | 600 AED | 1,200 SAR |
+  | 41 to 50 km/h | 50 JD | 700 AED | 1,500 SAR |
+  | 51 to 60 km/h | 100 JD | 1,000 AED | 3,000 SAR |
+  | over 60 km/h | 100 JD | 2,000 AED | 3,000 SAR |
 
-- **Crashes.** Hitting a car costs a fine (20 JD in Amman, 400 AED in Dubai) and damage, and ends your pass streak. Cameras and crashes never take away points.
+- **Crashes.** Hitting a car costs a fine (20 JD in Amman, 400 AED in Dubai, 300 SAR in Riyadh) and damage, and ends your pass streak. Cameras and crashes never take away points.
 - **The barrier.** Scraping it slows you down and adds damage.
 - **Speed bumps (Amman).** Take them under 35 km/h.
 - **Salik gates (Dubai).** Each one adds 4 dirhams to your trip.
@@ -215,6 +237,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.9 (October 2026)
+
+- **Riyadh.** A third city: a 43 km loop from Masmak Fort up King Fahd Road past Al Faisaliah and Kingdom Centre, out to Boulevard City and Diriyah, and back. It has eleven new landmarks, Najdi mud walls in the old town, towers and the blue Metro line along King Fahd Road, and a dust storm in the weather setting.
+- **Riyadh cars.** The cars you see most there: Land Cruiser, Hilux, a white Camry taxi, Hyundai Accent and the Coaster bus. Traffic is mostly white SUVs and pickups, with maroon city buses. Plates are Saudi, with Arabic on top and Latin below.
+- **Riyadh sound and talk.** Three new radio stations built on Najdi samri and ardah rhythms, one with a one string rababa. Saher cameras, a deeper SUV horn, and Arabic text and passenger lines in the Najdi dialect ("وسّع يا شيخ!", "كفو!").
 
 ### 2.8 (October 2026)
 
@@ -307,6 +335,7 @@ cities/                One folder per city; the build finds them on its own
   amman/lang/ar.xml    Amman's own Arabic text, in Jordanian Arabic
   amman/cover.png      The picture on the start page card
   dubai/...            The same for Dubai (Gulf Arabic)
+  riyadh/...           The same for Riyadh (Najdi Arabic)
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
 src/audio.js           Engine, road, horn, siren, nitro and crash sounds, rain and wind, phone buzz, and the car radio
 src/template.html      Page layout and styles
@@ -327,10 +356,10 @@ You need Node.js 18 or newer. There are no packages to install.
 node build.mjs
 ```
 
-This writes the start page `dist/index.html` and one page per city, `dist/amman/index.html` and `dist/dubai/index.html`. The old `dist/amman.html` and `dist/dubai.html` addresses forward to the new pages. To add a link from each game to the other, create `links.json` next to `build.mjs`:
+This writes the start page `dist/index.html` and one page per city, `dist/amman/index.html`, `dist/dubai/index.html` and `dist/riyadh/index.html`. The old `dist/amman.html`, `dist/dubai.html` and `dist/riyadh.html` addresses forward to the new pages. To add a link from each game to the other, create `links.json` next to `build.mjs`:
 
 ```json
-{ "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html" }
+{ "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html", "riyadh": "https://example.com/riyadh.html" }
 ```
 
 ## Add a language
@@ -353,11 +382,11 @@ GitHub Pages is free for public repos. A private repo needs a paid GitHub plan.
 
 Each city lives in its own folder under `cities/`. To add one:
 
-1. Copy a city folder, for example `cities/dubai` to `cities/riyadh`.
-2. In `city.js`, set `id` to the folder name (`riyadh`), then change `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `radio`, `look`, `tour`, `card` and `page`. Add `order: 3` to choose where its card sits on the start page.
+1. Copy a city folder, for example `cities/riyadh` to `cities/jeddah`.
+2. In `city.js`, set `id` to the folder name (`jeddah`), then change `route` (latitude and longitude points in driving order), `landmarks`, `zones`, `cars`, `traffic`, `radio`, `look`, `tour`, `card` and `page`. Add `order: 4` to choose where its card sits on the start page.
 3. In `lang/en.xml` and `lang/ar.xml` inside the folder, write the city's names, places, cars, tour text and its start page card (`card.tag`, `card.name`, `card.text`, `card.alt`).
 4. Replace `cover.png` with a picture of the new city (1280 by 760 works best).
-5. Run `node build.mjs`. The new city gets its own page at `dist/riyadh/`, a card on the start page, and the link at the bottom of each game points to the next city.
+5. Run `node build.mjs`. The new city gets its own page at `dist/jeddah/`, a card on the start page, and the link at the bottom of each game points to the next city.
 
 Landmark models are small builder functions in `src/engine.js` (the `LB` object). Add a new builder there if a landmark needs its own shape.
 

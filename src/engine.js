@@ -1156,7 +1156,8 @@ function makeInstanced(geo, mat, list, colored, castShadow = true) {
   scene.add(im); return im;
 }
 
-const lmZones = LMS.map((l) => ({ x: l.x, z: l.z, r: l.clear || 90 }));
+// no buildings inside a landmark's clear ring; `view` widens it so a tall landmark shows over the street
+const lmZones = LMS.map((l) => ({ x: l.x, z: l.z, r: l.view || l.clear || 90 }));
 function blocked(x, z, r) {
   for (const zz of lmZones) { const dx = x - zz.x, dz = z - zz.z; if (dx * dx + dz * dz < (zz.r + r) ** 2) return true; }
   if (coast && seaDist(x, z) < 40 + r) return true;
@@ -1499,8 +1500,8 @@ function buildMetro() {
   makeInstanced(pg, new THREE.MeshLambertMaterial({ color: 0xd2cec6 }), piers, false);
   const cg = new THREE.CylinderGeometry(3.6, 0.9, 1.6, 4, 1); cg.rotateY(Math.PI / 4); cg.scale(1.5, 1, 0.5); cg.translate(0, 0.8, 0); cg.computeVertexNormals();
   makeInstanced(cg, new THREE.MeshLambertMaterial({ color: 0xd2cec6 }), caps, false);
-  // stations: a long gold shell over the tracks
-  const gold = new THREE.MeshStandardMaterial({ color: 0xc9a453, metalness: 0.7, roughness: 0.32, envMap: ENV });
+  // stations: a long shell over the tracks, gold unless the city picks another color
+  const gold = new THREE.MeshStandardMaterial({ color: M.station || 0xc9a453, metalness: M.metal ?? 0.7, roughness: 0.32, envMap: ENV });
   const shell = new THREE.SphereGeometry(1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2);
   for (const f of M.stations) {
     curveAt(f * L, lat, a); if (blocked(a.x, a.z, 30)) continue;
@@ -1510,8 +1511,8 @@ function buildMetro() {
     for (const k of [-1, 1]) for (const z of [-28, 0, 28]) g.add(mesh(new THREE.BoxGeometry(1.6, H - 1, 1.6), lam(0xd2cec6), k * 4.5, -H / 2 - 0.6, z));
     scene.add(g);
   }
-  // the train: five white cars with a dark glass band and a red stripe
-  const tg = mergeParts([box(0xf2f2ee, 0, 1.65, 0, 2.9, 3.0, 16.4), box(0x1c252e, 0, 2.1, 0, 2.96, 0.95, 15.6), box(0xc8102e, 0, 0.75, 0, 2.95, 0.22, 16.2), box(0x2a2d31, 0, 0.1, 0, 2.4, 0.4, 14)]);
+  // the train: five white cars with a dark glass band and a stripe in the line's color
+  const tg = mergeParts([box(0xf2f2ee, 0, 1.65, 0, 2.9, 3.0, 16.4), box(0x1c252e, 0, 2.1, 0, 2.96, 0.95, 15.6), box(M.stripe || 0xc8102e, 0, 0.75, 0, 2.95, 0.22, 16.2), box(0x2a2d31, 0, 0.1, 0, 2.4, 0.4, 14)]);
   const tm = new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 70, specular: 0x666666 });
   for (let k = 0; k < 5; k++) { const m = new THREE.Mesh(tg, tm); m.castShadow = true; scene.add(m); metro.cars.push(m); }
   Object.assign(metro, { lat: lat + M.side * 1.8, H, t0, t1, pos: t0 + (t1 - t0) * 0.3 });
@@ -1877,6 +1878,148 @@ LB.jumeirahMosque = (g) => {
   g.add(mesh(CYL(0.35, 0.6, 4, 8), gold, 0, 27, 0));
   for (const x of [-16, 16]) g.add(mesh(new THREE.SphereGeometry(5.5, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), st, x, 14, 8));
   for (const s of [-1, 1]) { g.add(mesh(CYL(1.7, 2.1, 48, 10), st, s * 30, 24, -18)); g.add(mesh(new THREE.ConeGeometry(2.2, 5.5, 10), st, s * 30, 50.5, -18)); }
+};
+
+// Najdi mud walls end in a row of small stepped points; one helper adds them along a wall top
+function merlons(g, mat, x0, x1, z0, z1, y, gap) {
+  const geo = new THREE.ConeGeometry(0.85, 1.9, 4); gap = gap || 3;
+  const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(len / gap));
+  for (let k = 0; k <= n; k++) { const f = k / n; g.add(mesh(geo, mat, x0 + (x1 - x0) * f, y + 0.95, z0 + (z1 - z0) * f)); }
+}
+function merlonBox(g, mat, w, d, y, gap, cx) {
+  const a = (cx || 0) - w / 2, b = (cx || 0) + w / 2;
+  merlons(g, mat, a, b, d / 2, d / 2, y, gap); merlons(g, mat, a, b, -d / 2, -d / 2, y, gap);
+  merlons(g, mat, a, a, -d / 2, d / 2, y, gap); merlons(g, mat, b, b, -d / 2, d / 2, y, gap);
+}
+LB.masmak = (g) => {
+  // Masmak Fort (قصر المصمك): a square mud fort with round corner towers, a tall watchtower and a palm wood gate
+  const mud = lam(0xc49a6c), dark = lam(0xa57b50), wood = lam(0x5a3a1f), hole = lam(0x3b2a1a);
+  g.add(mesh(new THREE.BoxGeometry(56, 13, 50), mud, 0, 6.5, 0));
+  merlonBox(g, mud, 56, 50, 13);
+  for (const [x, z] of [[-28, -25], [28, -25], [-28, 25], [28, 25]]) {
+    g.add(mesh(CYL(4.4, 5.6, 19, 16), mud, x, 9.5, z));
+    g.add(mesh(CYL(4.8, 4.8, 0.8, 16), dark, x, 15.5, z));
+  }
+  g.add(mesh(new THREE.BoxGeometry(9, 26, 9), mud, -14, 13, -12));
+  merlons(g, mud, -18.5, -9.5, -7.5, -7.5, 26, 3); merlons(g, mud, -18.5, -9.5, -16.5, -16.5, 26, 3);
+  g.add(mesh(new THREE.BoxGeometry(6, 8, 0.8), wood, 0, 4, 25.3));
+  g.add(mesh(new THREE.BoxGeometry(56.4, 0.7, 50.4), dark, 0, 8.5, 0));
+  for (let x = -22; x <= 22; x += 6) if (Math.abs(x) > 4) g.add(mesh(new THREE.ConeGeometry(0.8, 1.6, 3), hole, x, 10.5, 25.2));
+};
+LB.najdiMosque = (g) => {
+  // Imam Turki bin Abdullah Grand Mosque (جامع الإمام تركي بن عبدالله): a long mud colored hall and two square minarets
+  const st = lam(0xd1ae80), trim = lam(0xb48d5f);
+  g.add(mesh(new THREE.BoxGeometry(80, 12, 60), st, 0, 6, 0));
+  merlonBox(g, st, 80, 60, 12, 3.2);
+  g.add(mesh(new THREE.BoxGeometry(80.4, 0.8, 60.4), trim, 0, 9, 0));
+  for (const s of [-1, 1]) {
+    g.add(mesh(new THREE.BoxGeometry(6.5, 40, 6.5), st, s * 34, 20, 27));
+    g.add(mesh(new THREE.BoxGeometry(8, 2, 8), trim, s * 34, 40.5, 27));
+    g.add(mesh(new THREE.BoxGeometry(4.6, 7, 4.6), st, s * 34, 45, 27));
+    const cap = mesh(new THREE.ConeGeometry(3.4, 4.5, 4), trim, s * 34, 50.7, 27); cap.rotation.y = Math.PI / 4; g.add(cap);
+  }
+};
+LB.murabba = (g) => {
+  // Murabba Palace (قصر المربع) beside the National Museum's long curved wall
+  const mud = lam(0xc9a172), dark = lam(0xab8256), stone = lam(0xd9c4a0);
+  g.add(mesh(new THREE.BoxGeometry(46, 14, 46), mud, -30, 7, 0));
+  merlonBox(g, mud, 46, 46, 14, 3, -30);
+  g.add(mesh(new THREE.BoxGeometry(46.4, 0.7, 46.4), dark, -30, 7.5, 0));
+  for (const [x, z] of [[-53, -23], [-7, -23], [-53, 23], [-7, 23]]) g.add(mesh(new THREE.BoxGeometry(7, 18, 7), mud, x, 9, z));
+  const wall = new THREE.Mesh(new THREE.CylinderGeometry(90, 90, 20, 40, 1, true, -0.45, 0.9), new THREE.MeshLambertMaterial({ color: 0xd9c4a0, side: THREE.DoubleSide }));
+  wall.position.set(40, 10, -80); g.add(wall);
+  g.add(mesh(new THREE.BoxGeometry(50, 12, 30), stone, 40, 6, -20));
+};
+LB.waterTower = (g) => {
+  // Riyadh Water Tower (برج المياه): a white column holding a wide cup
+  const white = lam(0xf2f0ea, { fog: false }), band = lam(0x5f9fb8, { emissive: 0x10303c, fog: false });
+  g.add(mesh(CYL(10, 12, 2, 20), lam(0xd8cdb6), 0, 1, 0));
+  g.add(mesh(CYL(3.2, 4.4, 52, 16), white, 0, 27, 0));
+  const cup = mesh(new THREE.ConeGeometry(17, 20, 28), white, 0, 60, 0); cup.rotation.x = Math.PI; g.add(cup);
+  g.add(mesh(CYL(17, 17, 3, 28), band, 0, 71.5, 0));
+  g.add(mesh(CYL(15, 17, 2, 28), white, 0, 74, 0));
+};
+LB.tvTower = (g) => {
+  // Riyadh TV Tower (برج التلفزيون): a tall concrete shaft with a round pod and a mast
+  const con = lam(0xe2dccf, { fog: false }), glass = lam(0x7fa6c0, { emissive: 0x13283a, fog: false });
+  g.add(mesh(CYL(14, 16, 4, 20), lam(0xcfc5b0), 0, 2, 0));
+  g.add(mesh(CYL(4, 8, 140, 16), con, 0, 72, 0));
+  g.add(mesh(CYL(10, 14, 6, 24), con, 0, 140, 0));
+  g.add(mesh(CYL(15, 15, 7, 24), glass, 0, 146.5, 0));
+  g.add(mesh(CYL(13, 15, 3, 24), con, 0, 151.5, 0));
+  g.add(mesh(CYL(0.6, 1.6, 40, 8), lam(0xd0d4d8, { fog: false }), 0, 173, 0));
+};
+LB.faisaliah = (g) => {
+  // Al Faisaliah Tower (برج الفيصلية): a glass pyramid tower holding a golden globe below its spire
+  const gm = windowMaterial(C.look.windows, true); gm.color.set(0xc6b58e);
+  const steel = lam(0xe6e2d8, { fog: false }), gold = lam(0xe5b548, { emissive: 0x4a3408, fog: false });
+  const body = mesh(new THREE.CylinderGeometry(7, 36, 190, 4, 1), gm, 0, 95, 0); body.rotation.y = Math.PI / 4; g.add(body);
+  for (const [x, z] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+    const leg = mesh(new THREE.BoxGeometry(3, 220, 3), steel, x * 13.5, 110, z * 13.5);
+    leg.rotation.set(-z * 0.115, 0, x * 0.115); g.add(leg);
+  }
+  g.add(mesh(new THREE.SphereGeometry(10, 24, 16), gold, 0, 196, 0));
+  g.add(mesh(CYL(3, 5, 12, 12), steel, 0, 210, 0));
+  g.add(mesh(CYL(0.7, 3, 55, 10), steel, 0, 243, 0));
+  g.add(mesh(new THREE.BoxGeometry(60, 10, 50), lam(0xd8cdb6), 0, 5, 0));
+  g.traverse((o) => { if (o.material) o.material.fog = false; });
+};
+LB.kingdomCentre = (g) => {
+  // Kingdom Centre (برج المملكة): a tall glass tower whose top opens in a curve, with the Sky Bridge across the gap
+  const gm = windowMaterial(C.look.windows, true); gm.color.set(0x8aa6bd);
+  const sh = new THREE.Shape();
+  sh.moveTo(-32, 0); sh.lineTo(32, 0); sh.lineTo(32, 180); sh.quadraticCurveTo(30, 268, 13, 302); sh.lineTo(10, 302);
+  sh.quadraticCurveTo(0, 180, -10, 302); sh.lineTo(-13, 302); sh.quadraticCurveTo(-30, 268, -32, 180); sh.lineTo(-32, 0);
+  const eg = new THREE.ExtrudeGeometry(sh, { depth: 32, bevelEnabled: false, curveSegments: 24 }); eg.translate(0, 0, -16);
+  // turned part way toward oncoming drivers so the opening at the top shows from the road
+  const tower = new THREE.Group(); tower.rotation.y = 0.75; g.add(tower);
+  tower.add(new THREE.Mesh(eg, gm));
+  tower.add(mesh(new THREE.BoxGeometry(14, 4, 30), lam(0xe8eef4, { emissive: 0x6688aa }), 0, 255, 0));
+  g.add(mesh(new THREE.BoxGeometry(110, 16, 70), lam(0xd8d2c4), 0, 8, 0));
+  g.traverse((o) => { if (o.material) o.material.fog = false; });
+};
+LB.kafd = (g) => {
+  // King Abdullah Financial District (المركز المالي): a cluster of new towers led by one tall cut crystal tower
+  const cols = [0x7d9fb8, 0xa9bccb, 0x5d7f99, 0xc2b092, 0x8fb3c9, 0x4f6f84];
+  const tall = windowMaterial(C.look.windows, true); tall.color.set(0x9fbcd2);
+  g.add(mesh(new THREE.BoxGeometry(34, 300, 34), tall, 0, 150, 0));
+  const top = mesh(new THREE.ConeGeometry(26, 70, 4), tall, 0, 335, 0); top.rotation.y = Math.PI / 4; g.add(top);
+  for (let i = 0; i < 14; i++) {
+    const h = 70 + Math.random() * 150, w = 20 + Math.random() * 14, a = i / 14 * Math.PI * 2, r = 70 + Math.random() * 90;
+    const x = Math.cos(a) * r, z = Math.sin(a) * r * 0.7;
+    const m = windowMaterial(C.look.windows, true); m.color.set(mpick(cols));
+    if (i % 4 === 0) { const t = mesh(CYL(w * 0.35, w * 0.6, h, 6), m, x, h / 2, z); t.rotation.y = Math.random(); g.add(t); }
+    else { g.add(mesh(new THREE.BoxGeometry(w, h, w), m, x, h / 2, z)); g.add(mesh(new THREE.BoxGeometry(w * 0.7, 12, w * 0.7), m, x, h + 6, z)); }
+  }
+  g.traverse((o) => { if (o.material) o.material.fog = false; });
+};
+LB.boulevard = (g) => {
+  // Boulevard City (بوليفارد رياض سيتي): a lit gate, bright shop fronts and light towers
+  const glow = (c) => new THREE.MeshBasicMaterial({ color: c, toneMapped: false });
+  const arch = new THREE.Mesh(new THREE.TorusGeometry(24, 2.2, 10, 40, Math.PI), lam(0x2a2340, { emissive: 0x3a1f66 }));
+  arch.position.set(0, 0, 30); g.add(arch);
+  const lights = new THREE.Mesh(new THREE.TorusGeometry(24, 0.5, 6, 40, Math.PI), glow(0xffd36b)); lights.position.set(0, 0, 32.4); g.add(lights);
+  const signs = [0xff4fa3, 0x4fd2ff, 0xffd36b, 0x7cff8a, 0xb06bff];
+  for (let i = 0; i < 12; i++) {
+    const x = (i % 6 - 2.5) * 34, z = i < 6 ? -10 : -60, h = 12 + Math.random() * 14;
+    g.add(mesh(new THREE.BoxGeometry(28, h, 26), lam(0x3a3446), x, h / 2, z));
+    g.add(mesh(new THREE.BoxGeometry(22, 3, 0.6), glow(signs[i % signs.length]), x, h - 3, z + 13.4));
+  }
+  for (const x of [-60, -30, 30, 60]) { g.add(mesh(CYL(0.6, 0.9, 30, 8), lam(0x6b6f75), x, 15, 20)); g.add(mesh(new THREE.SphereGeometry(2, 10, 8), glow(0xfff1c2), x, 31, 20)); }
+};
+LB.diriyah = (g) => {
+  // At-Turaif in Diriyah (الدرعية): mud brick houses and Salwa Palace stacked on a low hill by the wadi
+  const cols = [0xb98a5a, 0xc49868, 0xa97c50, 0xcda577];
+  g.add(mesh(new THREE.CylinderGeometry(70, 95, 12, 14), lam(0xb0915f), 0, 4, 0));
+  for (let i = 0; i < 26; i++) {
+    const w = 9 + Math.random() * 12, h = 6 + Math.random() * 12, x = (Math.random() - 0.5) * 120, z = (Math.random() - 0.5) * 90;
+    const m = lam(mpick(cols)); g.add(mesh(new THREE.BoxGeometry(w, h, w), m, x, 10 + h / 2, z));
+    if (i % 3 === 0) merlons(g, m, x - w / 2, x + w / 2, z + w / 2, z + w / 2, 10 + h, 2.6);
+  }
+  for (const [x, z, h] of [[-40, -20, 26], [30, -30, 30], [10, 25, 22], [-15, 5, 34]]) {
+    g.add(mesh(CYL(3.2, 4.6, h, 12), lam(0xb98a5a), x, 10 + h / 2, z));
+    g.add(mesh(CYL(3.6, 3.6, 0.8, 12), lam(0x8f6a42), x, 10 + h, z));
+  }
 };
 
 function buildLandmarks() {

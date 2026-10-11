@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- riyadh: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
+<language code="en" name="English" dir="ltr">
+  <city>
+    <string key="page.T_WXON">Dust storm</string>
+    <string key="card.tag">43 KM LOOP</string>
+    <string key="card.name">Riyadh Loop</string>
+    <string key="card.text">Masmak Fort, the TV Tower, Al Faisaliah, Kingdom Centre and the financial district, then out to Boulevard City and old Diriyah. Saher cameras on every stretch.</string>
+    <string key="card.alt">A white Land Cruiser on King Fahd Road between Riyadh towers</string>
+    <string key="text.radio0">Tuwaiq FM</string>
+    <string key="text.radio1">Olaya Nights</string>
+    <string key="text.radio2">Najd Drums</string>
+    <string key="page.title">Riyadh Loop</string>
+    <string key="page.name">Riyadh Loop</string>
+    <string key="page.eyebrow">Riyadh · الرياض</string>
+    <string key="page.alt">Driving through Riyadh</string>
+    <string key="page.blurb">From Masmak Fort in the old town up King Fahd Road past Al Faisaliah and Kingdom Centre, then west to Diriyah and back. Saher cameras see everything.</string>
+    <string key="page.T_MAPNOTE">The road roughly follows real places in Riyadh. The horn makes the car ahead move over.</string>
+    <string key="page.T_R1S">Pick a trip between Riyadh landmarks, from Masmak to Kingdom Centre to Diriyah, and reach the end.</string>
+    <string key="page.T_R3S">Saher cameras flash above 120 km/h, and crashes damage the car.</string>
+    <string key="text.bumpSign"></string>
+    <string key="text.tollName"></string>
+    <string key="text.tollPrice"></string>
+    <string key="text.wreckedSub">Call the tow truck</string>
+    <string key="text.rateTop">Kafu! Well done!</string>
+    <string key="text.rateBad">You need some practice</string>
+    <string key="text.bumpHit"></string>
+    <string key="text.bumpOk"></string>
+    <string key="text.loadCity">Building Riyadh...</string>
+    <string key="text.currency">SAR</string>
+    <string key="tour.7.body">The white dot is you and the green dots are landmarks. Your destination shows bigger.</string>
+    <string key="car.0.name">Toyota Land Cruiser</string>
+    <string key="car.0.sub">SUV</string>
+    <string key="car.0.pros">Strong and shrugs off crashes</string>
+    <string key="car.0.cons">Heavy and slow to turn</string>
+    <string key="car.1.name">Toyota Hilux</string>
+    <string key="car.1.sub">Pickup</string>
+    <string key="car.1.pros">Tough and cheap to run</string>
+    <string key="car.1.cons">Slow and loose in curves</string>
+    <string key="car.2.name">Toyota Camry</string>
+    <string key="car.2.sub">Taxi</string>
+    <string key="car.2.pros">Even all round, good at everything</string>
+    <string key="car.2.cons">Nothing stands out</string>
+    <string key="car.3.name">Hyundai Accent</string>
+    <string key="car.3.sub">Small sedan</string>
+    <string key="car.3.pros">Light and easy to weave</string>
+    <string key="car.3.cons">Slow to pick up</string>
+    <string key="car.4.name">Toyota Coaster</string>
+    <string key="car.4.sub">Minibus</string>
+    <string key="car.4.pros">Carries many passengers for big fare bonuses</string>
+    <string key="car.4.cons">Wide and heavy to weave</string>
+    <string key="place.0">Masmak Fort</string>
+    <string key="place.1">Grand Mosque</string>
+    <string key="place.2">Murabba Palace</string>
+    <string key="place.3">Water Tower</string>
+    <string key="place.4">TV Tower</string>
+    <string key="place.5">Al Faisaliah</string>
+    <string key="place.6">Kingdom Centre</string>
+    <string key="place.7">KAFD</string>
+    <string key="place.8">Riyadh Park</string>
+    <string key="place.9">Boulevard City</string>
+    <string key="place.10">Diriyah</string>
+  </city>
+</language>
