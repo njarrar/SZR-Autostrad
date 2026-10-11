@@ -1661,6 +1661,143 @@ function buildEvents() {
 // ---------- landmark builders ----------
 const LB = {};
 const lam = (c, extra) => new THREE.MeshLambertMaterial(Object.assign({ color: c }, extra || {}));
+// ---------- people who walk between the stop and the car ----------
+// a small pool of figures with swinging legs; each walks a path given in travel coords (t, d)
+const WALK_COLS = [0x1f4e9c, 0xc8102e, 0xf2a900, 0x2e8b57, 0xf4f4f0, 0x6b4f9e, 0x222428], SKIN_COLS = [0xe6b89c, 0xc99372, 0x8d5b3f];
+const walkers = [];
+const WK_BODY = CYL(0.19, 0.23, 0.68, 8), WK_HEAD = new THREE.SphereGeometry(0.15, 10, 8), WK_LEG = new THREE.BoxGeometry(0.13, 0.78, 0.15), WK_ARM = new THREE.BoxGeometry(0.09, 0.6, 0.1);
+WK_LEG.translate(0, -0.39, 0); WK_ARM.translate(0, -0.28, 0); // swing from the hip and shoulder
+const wkMats = new Map(); const wkMat = (c) => { let m = wkMats.get(c); if (!m) wkMats.set(c, m = new THREE.MeshLambertMaterial({ color: c })); return m; };
+function getWalker() {
+  let w = walkers.find((x) => !x.on);
+  if (!w) {
+    const g = new THREE.Group(), body = new THREE.Mesh(WK_BODY), head = new THREE.Mesh(WK_HEAD), legs = [], arms = [];
+    body.position.y = 1.12; head.position.y = 1.62; g.add(body, head);
+    for (const x of [-0.1, 0.1]) { const l = new THREE.Mesh(WK_LEG, wkMat(0x2b2d33)); l.position.set(x, 0.8, 0); g.add(l); legs.push(l); }
+    for (const x of [-0.27, 0.27]) { const a = new THREE.Mesh(WK_ARM); a.position.set(x, 1.4, 0); g.add(a); arms.push(a); }
+    scene.add(g); w = { g, body, head, legs, arms, on: false }; walkers.push(w);
+  }
+  const cloth = wkMat(mpick(WALK_COLS)), skin = wkMat(mpick(SKIN_COLS));
+  w.body.material = cloth; w.arms.forEach((a) => (a.material = cloth)); w.head.material = skin;
+  w.on = true; w.g.visible = true; w.ph = Math.random() * 6;
+  return w;
+}
+// pts: [[t, d], ...]; the walker waits `wait` seconds, then walks the path and calls done at the end
+function walk(pts, wait, done, hideAtEnd) {
+  const w = getWalker(); Object.assign(w, { pts, i: 0, f: 0, wait, done, hide: hideAtEnd !== false, speed: mr(1.7, 2.1) });
+  placeWalker(w, pts[0][0], pts[0][1], pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]); w.g.visible = wait <= 0;
+  return w;
+}
+const WO = {}, WO2 = {};
+function placeWalker(w, t, d, dt, dd) {
+  trackAt(t, d, WO); trackAt(t + dt * 0.1, d + dd * 0.1, WO2);
+  w.g.position.set(WO.x, WO.y, WO.z);
+  if (Math.abs(WO2.x - WO.x) + Math.abs(WO2.z - WO.z) > 1e-4) w.g.rotation.y = Math.atan2(WO2.x - WO.x, WO2.z - WO.z);
+}
+function updateWalkers(dt) {
+  for (const w of walkers) {
+    if (!w.on) continue;
+    if (w.wait > 0) { w.wait -= dt; if (w.wait > 0) continue; w.g.visible = true; }
+    const a = w.pts[w.i], b = w.pts[w.i + 1], segT = b[0] - a[0], segD = b[1] - a[1], len = Math.hypot(segT, segD) || 0.01;
+    w.f += w.speed * dt / len;
+    if (w.f >= 1) { w.i++; w.f = 0; if (w.i >= w.pts.length - 1) { if (w.hide) { w.on = false; w.g.visible = false; } else w.i--, w.f = 1; const cb = w.done; w.done = null; if (cb) cb(); continue; } }
+    const p = w.pts[w.i], q = w.pts[w.i + 1];
+    placeWalker(w, p[0] + (q[0] - p[0]) * w.f, p[1] + (q[1] - p[1]) * w.f, q[0] - p[0], q[1] - p[1]);
+    w.ph += dt * 9; const sw = Math.sin(w.ph) * 0.55;
+    w.legs[0].rotation.x = sw; w.legs[1].rotation.x = -sw; w.arms[0].rotation.x = -sw * 0.8; w.arms[1].rotation.x = sw * 0.8;
+    w.g.position.y += Math.abs(Math.cos(w.ph)) * 0.04;
+  }
+}
+function clearWalkers() { for (const w of walkers) { w.on = false; w.g.visible = false; w.done = null; } }
+
+// ---------- passenger stops: slow down in the right lane, the car pulls in, people get off and on ----------
+const PULL_D = () => D_MAX - 0.15; // on the shoulder, so traffic in the right lane can get by
+const stopAheadSigned = (ev) => { const a = aheadDist(sOfT(player.t), ev.s); return a > L / 2 ? a - L : a; };
+function paxStopStep(dt, gas) {
+  if (player.paxCap <= 0 || game.tour) return;
+  const st = game.stop;
+  if (!st) {
+    // look for the next stop just ahead
+    for (const e of events) {
+      if (e.type !== 'paxStop' || (e.doneT != null && Math.abs(player.t - e.doneT) < 300) || e.skipT != null && Math.abs(player.t - e.skipT) < 300) continue;
+      const a = stopAheadSigned(e);
+      if (a > 0 && a < 110 && player.d >= laneD(LANES - 1) - LW * 0.5 && player.v * 3.6 < 75 && !gas) { game.stop = { ev: e, phase: 'pull' }; break; }
+    }
+    return;
+  }
+  const a = stopAheadSigned(st.ev);
+  if (st.phase === 'pull') {
+    if (gas) { st.ev.skipT = player.t; game.stop = null; return; } // drove on
+    // brake to stand still beside the shelter, and ease onto the shoulder
+    const vWant = Math.min(32 / 3.6, Math.sqrt(2 * 2.2 * Math.max(0, a - 1.5)));
+    player.cruise = Math.min(player.cruise, vWant);
+    if (player.v > vWant + 0.3) player.v = Math.max(vWant, player.v - 4.5 * dt);
+    player.d += (PULL_D() - player.d) * Math.min(1, dt * 1.6); player.lat = 0;
+    if (a < 2.5 || player.v < 0.6) beginDwell(st, a);
+    return;
+  }
+  // standing at the stop: the car stays put until everyone is on
+  player.v = 0; player.cruise = 0; player.lat = 0;
+  player.d += (PULL_D() - player.d) * Math.min(1, dt * 2);
+  st.t += dt;
+  if (st.left <= 0 || st.t > 14) endDwell(st);
+}
+function beginDwell(st, a) {
+  const ev = st.ev; Object.assign(st, { phase: 'dwell', t: 0, left: 0 });
+  player.v = 0; player.cruise = 0;
+  ev.doneT = player.t;
+  const isBus = player.role === 'bus', len = player.len;
+  const doorT = player.t + (isBus ? len * 0.36 : 0.1), carSide = player.d + player.wid / 2 + 0.35;
+  const curb = HW + 1.7, stopT = player.t + a; // where the shelter is, along the road
+  const dropN = game.pax > 0 ? Math.max(1, Math.ceil(game.pax * 0.6)) : 0;
+  const room = player.paxCap - (game.pax - dropN), addN = Math.min(room, isBus ? 4 + Math.floor(Math.random() * 4) : 1 + Math.floor(Math.random() * 2));
+  const showOff = Math.min(dropN, 5), showOn = Math.min(addN, 6);
+  st.left = (showOff ? 1 : 0) + (showOn ? 1 : 0);
+  toast(T.paxAhead + (showOff ? ' · ' + T.paxOff : showOn ? ' · ' + T.paxOn : ''), 'good');
+  SND.cue('ok');
+  const getOn = () => {
+    if (!showOn) return;
+    if (ev.paxMeshes && ev.paxMeshes[DIR]) ev.paxMeshes[DIR].visible = false; // the people at the shelter start walking
+    let boarded = 0;
+    for (let k = 0; k < showOn; k++) {
+      const t0 = stopT + (k % 3 - 1) * 1.15 - Math.floor(k / 3) * 0.9, d0 = HW + 2.05 + Math.floor(k / 3) * 0.6;
+      walk([[t0, d0], [doorT + 0.6, curb], [doorT, carSide], [doorT, carSide - 0.6]], 0.15 + k * 0.55, () => {
+        boarded++;
+        const n = Math.round(addN * boarded / showOn) - Math.round(addN * (boarded - 1) / showOn);
+        game.pax = Math.min(player.paxCap, game.pax + n);
+        if (boarded === showOn) { toast(`${T.paxPick} (+${addN})`, 'good'); spawnFxText(P.x, P.y + 2.3, P.z, `+${addN}`, '#38d996'); SND.cue('paxPick'); st.left--; }
+      });
+    }
+  };
+  if (showOff) {
+    let off = 0;
+    for (let k = 0; k < showOff; k++) {
+      const away = (k % 2 ? 1 : -1) * (5 + k * 1.3);
+      walk([[doorT, carSide - 0.6], [doorT, carSide], [doorT - 0.3 + k * 0.2, curb + 0.5], [stopT + away, curb + 1.2 + (k % 2) * 0.5]], k * 0.6, null);
+      // count them off as they reach the kerb
+      setTimeoutStep(k * 0.6 + 2.6, () => {
+        off++;
+        if (off === showOff) {
+          const fare = dropN * (player.role === 'bus' ? 8 : 15);
+          game.pax = Math.max(0, game.pax - dropN); game.fares += fare; game.extraPts += fare * 4;
+          toast(`${T.paxDrop} +${fare} ${C.currency}`, 'good'); spawnFxText(P.x, P.y + 2.3, P.z, `+${fare} ${C.currency}`, '#fbbf24'); SND.cue('paxDrop');
+          st.left--; getOn();
+        }
+      });
+    }
+  } else getOn();
+  vibrate([15, 25, 15]);
+}
+function endDwell(st) {
+  game.stop = null; player.laneT = LANES - 1; player.cruise = 45 / 3.6;
+  game.nitro = Math.min(1, game.nitro + 0.14);
+}
+// timers that run on game time, so a pause also pauses them
+const stepTimers = [];
+function setTimeoutStep(sec, fn) { stepTimers.push({ t: sec, fn }); }
+function runStepTimers(dt) { for (let i = stepTimers.length - 1; i >= 0; i--) { const x = stepTimers[i]; x.t -= dt; if (x.t <= 0) { stepTimers.splice(i, 1); x.fn(); } } }
+function resetStops() { game.stop = null; stepTimers.length = 0; clearWalkers(); }
+
 function mesh(g, m, x, y, z) { const me = new THREE.Mesh(g, m); me.position.set(x || 0, y || 0, z || 0); return me; }
 LB.fountain = (g) => {
   const stone = lam(0xf0e8d8), trim = lam(0xd9ceb8), water = lam(0x2d96bd, { emissive: 0x0e384d });
@@ -2628,12 +2765,12 @@ function startTrip(opts) {
   Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, nitro: 0, boost: 0, boostCap: 1, boostK: 1, extraPts: 0, nitroReq: false, evT: mr(25, 45), paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour, lastOpts: opts.tour ? { free: true } : opts, pax: initPax, fares: 0, fuel: 100, fuelWarned: false });
   game.lastS = sOfT(player.t);
   for (const ev of events) {
-    ev.lastT = null;
+    ev.lastT = null; ev.doneT = ev.skipT = null;
     if (ev.type === 'paxStop' && ev.paxMeshes) {
       for (const d of [-1, 1]) if (ev.paxMeshes[d]) ev.paxMeshes[d].visible = true;
     }
   }
-  evEnd(); resetTraffic();
+  evEnd(); resetTraffic(); resetStops();
   showScreen(null);
   $('#hud').hidden = false; $('#touch').hidden = !isTouch();
   if (hud.chipPax) hud.chipPax.hidden = player.paxCap <= 0;
@@ -2749,7 +2886,7 @@ function togglePause() {
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { clearFx(); evEnd(); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { clearFx(); evEnd(); resetStops(); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -2828,6 +2965,8 @@ function step(dt) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
     if (player.v > 8) { player.v *= 1 - 0.8 * dt; if (!game.tour) player.dmg += 4 * dt * player.tough; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
   }
+  paxStopStep(dt, gas);
+  runStepTimers(dt); updateWalkers(dt);
   const prevT = player.t;
   player.t += player.v * dt;
   game.dist += player.v * dt;
@@ -2879,7 +3018,7 @@ function step(dt) {
   for (const ev of events) {
     const ahead = aheadDist(sNow, ev.s), prevAhead = aheadDist(sPrev, ev.s);
     if (ev.type === 'radar' && ahead < 350) warnTxt = T.radarAhead + ' ' + Math.round(ahead) + ' ' + T.meters;
-    else if (ev.type === 'paxStop' && player.paxCap > 0 && ahead < 260 && !warnTxt) warnTxt = T.paxPick + ' · ' + Math.round(ahead) + ' ' + T.meters;
+    else if (ev.type === 'paxStop' && player.paxCap > 0 && ahead < 260 && !warnTxt && !game.stop && !(ev.doneT != null && Math.abs(player.t - ev.doneT) < 300)) warnTxt = T.paxAhead + ' ' + Math.round(ahead) + ' ' + T.meters + ' · ' + T.paxHow;
     if (moved > 0 && (prevAhead <= moved || ahead + moved >= L) && !(ev.lastT != null && Math.abs(player.t - ev.lastT) < 40)) { // just passed it
       ev.lastT = player.t;
       const kmh = player.v * 3.6;
@@ -2891,32 +3030,8 @@ function step(dt) {
       } else if (ev.type === 'toll') {
         game.tolls += C.tollFee; toast(T.tollName + ' · ' + C.tollFee + ' ' + C.currency); SND.cue('toll');
       } else if (ev.type === 'paxStop' && player.paxCap > 0) {
-        const rightLane = player.d >= laneD(LANES - 1) - LW * 1.25 || kmh < 105;
-        if (rightLane) {
-          let fareGain = 0;
-          if (game.pax > 0) {
-            const dropN = Math.max(1, Math.ceil(game.pax * 0.6));
-            const rate = player.role === 'bus' ? 8 : 15;
-            fareGain = dropN * rate;
-            game.pax -= dropN;
-            game.fares += fareGain;
-            game.extraPts += fareGain * 4;
-          }
-          const addN = Math.min(player.paxCap - game.pax, player.role === 'bus' ? 4 : 2);
-          game.pax += addN;
-          if (ev.paxMeshes && ev.paxMeshes[DIR]) ev.paxMeshes[DIR].visible = false;
-          if (fareGain > 0) {
-            toast(`${T.paxDrop} +${fareGain} ${C.currency}`, 'good');
-            spawnFxText(P.x, P.y + 2.3, P.z, `+${fareGain} ${C.currency}`, '#fbbf24');
-            SND.cue('paxDrop');
-          } else if (addN > 0) {
-            toast(`${T.paxPick} (+${addN})`, 'good');
-            spawnFxText(P.x, P.y + 2.3, P.z, `+${addN} ${T.paxPick}`, '#38d996');
-            SND.cue('paxPick');
-          }
-          game.nitro = Math.min(1, game.nitro + 0.14);
-          vibrate([15, 25, 15]);
-        }
+        // drove past without stopping: the people at the shelter are left waiting
+        if (!game.tour && !(game.stop && game.stop.ev === ev) && !(ev.doneT != null && Math.abs(player.t - ev.doneT) < 300)) { toast(T.paxMissed, 'bad'); SND.cue('bad'); }
       } else if (ev.type === 'fuelStop') {
         if (game.fuel < 95 || player.dmg > 5) {
           game.fuel = 100; game.fuelWarned = false;

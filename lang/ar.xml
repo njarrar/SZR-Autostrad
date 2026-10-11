@@ -82,8 +82,13 @@
     <string key="page.T_FUEL">البنزين</string>
     <string key="text.serviceMode">ورديّة سرفيس وتاكسي</string>
     <string key="text.serviceSub">حمّل ركّاب من الطريق، نزّلهم عالمحطات، وعبّي بنزين</string>
-    <string key="text.paxPick">ركبوا معك! وصّلهم عالمحطة الجاية</string>
-    <string key="text.paxDrop">نزّلت الركّاب! أجرة التوصيلة +</string>
+    <string key="text.paxPick">ركبوا الركّاب</string>
+    <string key="text.paxDrop">نزلوا الركّاب · الأجرة</string>
+    <string key="text.paxAhead">موقف ركّاب</string>
+    <string key="text.paxHow">خلّيك يمين وخفّف</string>
+    <string key="text.paxOff">نازلين</string>
+    <string key="text.paxOn">طالعين</string>
+    <string key="text.paxMissed">فاتك الموقف</string>
     <string key="text.refuel">فلّلت التانكي من المحطة! +100</string>
     <string key="text.fuelLow">البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين</string>
     <string key="text.cardUnlocked">فتحت بطاقة معلم جديدة:</string>
