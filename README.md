@@ -386,7 +386,7 @@ dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
 app/                   iOS and Android apps that wrap the games
   prepare.mjs          Builds the games and copies them, with three.js and the fonts, into app/www
-  assets/              App icon and launch screen; the platform icons are made from these
+  assets/              App icon and launch screen; icons.mjs makes the platform icons from these
   android/  ios/       The Android Studio and Xcode projects
 ```
 
@@ -419,7 +419,7 @@ npm run apk       # or build a test Android app at android/app/build/outputs/apk
 
 Run `npm run sync` again after each change to the games.
 
-**New icon.** Replace the files in `app/assets` (`icon-only.png` and `icon-background.png` at 1024 by 1024, `splash.png` and `splash-dark.png` at 2732 by 2732) and run `npm run icons`. Android shows only the middle two thirds of `icon-background.png` in round and squircle icons.
+**New icon.** The icon is a green road sign. Replace `app/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `app/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle), plus `splash.png` and `splash-dark.png` (2732 by 2732) in both folders, then run `npm run icons`.
 
 **Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open the project in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, pick your team under **Signing & Capabilities** in Xcode, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `app/capacitor.config.json` and both projects before the first upload if you want another.
 

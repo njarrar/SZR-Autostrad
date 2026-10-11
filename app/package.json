@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "prepare-web": "node prepare.mjs",
-    "icons": "capacitor-assets generate --android --ios --iconBackgroundColor '#15183f' --iconBackgroundColorDark '#15183f' --splashBackgroundColor '#15183f' --splashBackgroundColorDark '#15183f'",
+    "icons": "node icons.mjs",
     "sync": "npm run prepare-web && cap sync",
     "android": "npm run sync && cap open android",
     "ios": "npm run sync && cap open ios",
