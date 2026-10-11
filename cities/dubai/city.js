@@ -57,15 +57,17 @@ window.CITY = {
   ],
   colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
   traffic: [
-    { kind: 'suv', colors: [0xf4f3ef, 0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979], speed: [90, 130] },
-    { kind: 'suv', colors: [0xf4f3ef, 0x141414], speed: [90, 130] },
-    { kind: 'sedan', colors: [0xf4f3ef, 0xb9bec4, 0x5a5f66, 0x1d1f22, 0x2c4a7a], speed: [85, 120] },
+    // white is common in the heat, but black, silver, grey, gold and dark blue are on every road too
+    { kind: 'suv', colors: [0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979, 0x5a5f66, 0x1f3556, 0x6e1a22], speed: [90, 130] },
+    { kind: 'suv', colors: [0x141414, 0xb9bec4, 0xf4f3ef, 0x3a3d42, 0x8a7a5a], speed: [90, 130] },
+    { kind: 'sedan', colors: [0xb9bec4, 0x5a5f66, 0x1d1f22, 0x2c4a7a, 0xf4f3ef, 0x8c1c24, 0xa89f8e], speed: [85, 120] },
     { kind: 'sports', colors: [0xc0141c, 0xf2c12e, 0x141414, 0x2a7de1, 0xf4f3ef], speed: [110, 140], wild: 0.6 },
     { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0xd2232a }, speed: [85, 115] },
     { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0x2e8b57 }, speed: [85, 115] },
-    { kind: 'pickup', colors: [0xf4f3ef], speed: [75, 100] },
-    { kind: 'bus', colors: [0xf4f4f0], extra: { stripe: 0xc8102e }, speed: [70, 90] },
-    { kind: 'truck', colors: [0xf4f3ef, 0x2b5b8f], extra: { cargo: 0xe2ddd2 }, speed: [65, 85] }
+    { kind: 'pickup', colors: [0xf4f3ef, 0xb9bec4, 0x3a3d42, 0xc8a979], speed: [75, 100] },
+    // public buses are white with red, school buses are yellow
+    { kind: 'bus', colors: [0xf4f4f0, 0xd7dbe0, 0xf2b705], extra: { stripe: 0xc8102e }, speed: [70, 90] },
+    { kind: 'truck', colors: [0xb3261e, 0x2b5b8f, 0xf4f3ef, 0xd9822b, 0x2f6b3a], extra: { cargo: 0xe2ddd2 }, speed: [65, 85] }
   ],
   flag(g, w, h) {
     g.fillStyle = '#00843d'; g.fillRect(0, 0, w, h / 3); g.fillStyle = '#fff'; g.fillRect(0, h / 3, w, h / 3);

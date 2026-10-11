@@ -479,8 +479,9 @@ function buildTerrain() {
   g.setAttribute('color', new THREE.BufferAttribute(cols, 3)); g.computeVertexNormals();
   const ground = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true })); ground.receiveShadow = true; scene.add(ground);
   if (coast) {
-    const wg = new THREE.PlaneGeometry(w + 30000, d + 30000); wg.rotateX(-Math.PI / 2);
-    const wm = new THREE.MeshPhongMaterial({ color: C.look.sea, shininess: 90, specular: 0x667788, transparent: true, opacity: 0.94 });
+    // many small tiles and a push away from the camera: one huge flat sheet loses depth precision far from the middle and shows through the road
+    const wg = new THREE.PlaneGeometry(w + 30000, d + 30000, 48, 48); wg.rotateX(-Math.PI / 2);
+    const wm = new THREE.MeshPhongMaterial({ color: C.look.sea, shininess: 90, specular: 0x667788, transparent: true, opacity: 0.94, polygonOffset: true, polygonOffsetFactor: 4, polygonOffsetUnits: 4 });
     const water = new THREE.Mesh(wg, wm); water.position.set((minX + maxX) / 2, -0.8, (minZ + maxZ) / 2); scene.add(water);
   }
 }
@@ -908,6 +909,8 @@ const WEATHER = {
   dust: { fogTo: '#c9a26a', fogMix: 0.8, fogK: 0.14, sunK: 0.45, hemiK: 0.95, clouds: 0, cloudColor: '#c9a26a', skyMix: 0.75 }
 };
 const headlight = new THREE.SpotLight(0xfff1d6, 0, 90, 0.48, 0.65, 1.1);
+// the light and its target must never sit on the same spot, or the light's direction comes out as NaN and the ground turns dark
+headlight.position.set(0, 1, 0); headlight.target.position.set(0, 0, -10); headlight.visible = false;
 scene.add(headlight); scene.add(headlight.target);
 const atm = { night: C.look.night, wx: null };
 const mixHex = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t);
@@ -933,6 +936,7 @@ function applyTime() {
   ATM_U.night.value = night; atm.night = night; atm.wx = W ? C.weather : null;
   LAMP_MAT.color.set(night > 0.3 ? 0xffd9a0 : 0xd8d8d0);
   headlight.intensity = night > 0.5 ? 3.2 * night : 0;
+  headlight.visible = headlight.intensity > 0;
   $('#wx').hidden = !W; $('#wx').dataset.kind = W ? C.weather : '';
   SND.weather(W ? C.weather : null);
 }

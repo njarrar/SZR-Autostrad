@@ -54,12 +54,14 @@ window.CITY = {
   traffic: [
     { kind: 'taxi', colors: [0xf2c12e], speed: [70, 100], wild: 0.5 },
     { kind: 'taxi', colors: [0xf2c12e], speed: [70, 100], wild: 0.5 },
-    { kind: 'sedan', colors: [0xf2f2ee, 0xb9bec4, 0x6b6f75, 0x1d1f22, 0x8c1c24, 0x2c4a7a], speed: [65, 95] },
-    { kind: 'sedan', colors: [0xf2f2ee, 0xb9bec4, 0x6b6f75, 0x1d1f22], speed: [65, 95] },
-    { kind: 'coaster', colors: [0xf4f4f0], extra: { stripe: 0x1f6e43 }, speed: [60, 85], wild: 1 },
-    { kind: 'pickup', colors: [0xf2f2ee, 0x9aa0a6], speed: [55, 85] },
-    { kind: 'bus', colors: [0xf4f4f0], extra: { stripe: 0x0b7a3b }, speed: [50, 70] },
-    { kind: 'truck', colors: [0xe8e4da, 0x2b5b8f], extra: { cargo: 0xd9d2c3 }, speed: [50, 70] }
+    // private cars: mostly silver, grey and dark colors, with some white, red, blue and green
+    { kind: 'sedan', colors: [0xb9bec4, 0x8d9299, 0x5a5f66, 0x1d1f22, 0x8c1c24, 0x2c4a7a, 0xf2f2ee, 0x3c5a3f, 0xb8a98c], speed: [65, 95] },
+    { kind: 'sedan', colors: [0xa7acb3, 0x6b6f75, 0x22252a, 0x6e1a22, 0x1f3556, 0xc9c2b2, 0x7a3b16], speed: [65, 95] },
+    { kind: 'coaster', colors: [0xf4f4f0, 0xe6dcc4, 0xbcd2e0], extra: { stripe: 0x1f6e43 }, speed: [60, 85], wild: 1 },
+    { kind: 'pickup', colors: [0xf2f2ee, 0x9aa0a6, 0x4a4e54, 0x9b2a24, 0x2b4a6e], speed: [55, 85] },
+    // city buses are blue, the rapid bus line is green, a few older ones are cream
+    { kind: 'bus', colors: [0x1f5fa8, 0x1f5fa8, 0x1d7a4f, 0xe9e2cf], extra: { stripe: 0xf4f4f0 }, speed: [50, 70] },
+    { kind: 'truck', colors: [0xb3261e, 0x2b5b8f, 0x2f6b3a, 0xd9822b, 0xe8e4da], extra: { cargo: 0xd9d2c3 }, speed: [50, 70] }
   ],
   flag(g, w, h) {
     g.fillStyle = '#000'; g.fillRect(0, 0, w, h / 3); g.fillStyle = '#fff'; g.fillRect(0, h / 3, w, h / 3);
