@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- amman: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
+<language code="en" name="English" dir="ltr">
+  <city>
+    <string key="card.tag">22 KM LOOP</string>
+    <string key="card.name">Amman Loop</string>
+    <string key="card.text">Abdali, the Citadel, the Raghadan flagpole, the Roman Theatre, Abdoun Bridge and Mecca Mall. Hills, dips and speed bumps.</string>
+    <string key="card.alt">A yellow taxi on an Amman road between stone buildings</string>
+    <string key="text.radio0">Dawar FM</string>
+    <string key="text.radio1">Jabal Radio</string>
+    <string key="text.radio2">Downtown Beats</string>
+    <string key="page.title">Amman Loop</string>
+    <string key="page.name">Amman Loop</string>
+    <string key="page.eyebrow">Amman · عمّان</string>
+    <string key="page.alt">Driving through Amman</string>
+    <string key="page.blurb">From Abdali to the Citadel and Jabal Amman, up and down the hills. Watch for cameras and speed bumps, and weave through traffic without a crash.</string>
+    <string key="page.T_MAPNOTE">The road roughly follows real places in Amman. The horn makes the car ahead move over.</string>
+    <string key="page.T_R1S">Pick a trip between Amman landmarks, from Abdali to the Citadel to Mecca Mall, and reach the end.</string>
+    <string key="page.T_R3S">Cameras flash above 90 km/h. Speed bumps and crashes damage the car.</string>
+    <string key="text.bumpSign">BUMP</string>
+    <string key="text.tollName"></string>
+    <string key="text.tollPrice"></string>
+    <string key="text.wreckedSub">Call the tow truck</string>
+    <string key="text.rateTop">Driving master!</string>
+    <string key="text.rateBad">Time for driving lessons</string>
+    <string key="text.bumpHit">Speed bump! Slow down</string>
+    <string key="text.bumpOk">Smooth over the bump</string>
+    <string key="text.loadCity">Building Amman...</string>
+    <string key="text.currency">JOD</string>
+    <string key="tour.7.body">The red dot is you and the green dots are landmarks. Your destination shows bigger.</string>
+    <string key="car.0.name">Hyundai Elantra</string>
+    <string key="car.0.sub">Yellow taxi</string>
+    <string key="car.0.pros">Even all round and easy to weave</string>
+    <string key="car.0.cons">Nothing stands out</string>
+    <string key="car.1.name">Toyota Prius</string>
+    <string key="car.1.sub">Hybrid</string>
+    <string key="car.1.pros">Steady in curves and easy to turn</string>
+    <string key="car.1.cons">Slow to pick up and damages easily</string>
+    <string key="car.2.name">Toyota Hilux</string>
+    <string key="car.2.sub">Pickup</string>
+    <string key="car.2.pros">Heavy, so crashes and bumps barely hurt it</string>
+    <string key="car.2.cons">Slow and hard to turn</string>
+    <string key="place.0">Interior Circle</string>
+    <string key="place.1">Abdali Boulevard</string>
+    <string key="place.2">King Abdullah I Mosque</string>
+    <string key="place.3">Amman Citadel</string>
+    <string key="place.4">Raghadan Flagpole</string>
+    <string key="place.5">Roman Theatre</string>
+    <string key="place.6">Rainbow Street</string>
+    <string key="place.7">Abdoun Bridge</string>
+    <string key="place.8">7th Circle</string>
+    <string key="place.9">Sweifieh</string>
+    <string key="place.10">Mecca Mall</string>
+    <string key="place.11">Gardens Street</string>
+  </city>
+</language>

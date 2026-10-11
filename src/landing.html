@@ -4,21 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SZR Autostrad</title>
-<meta name="description" content="Two 3D driving games in the browser, set on real roads in Amman and Dubai.">
+<meta name="description" content="3D driving games in the browser, set on real roads in Arab cities.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
 <style>
-/* Layout: one column, a title, then two city cards side by side that stack on phones. */
+/* Layout: one column, a title, then a card per city, side by side, that stack on phones. */
 :root {
   --bg: #efe7d8; --ink: #22190f; --muted: #6c5f4f; --card: #fbf7ef; --line: #ddd0b8;
-  --amman: #0b6e3a; --dubai: #b5822a;
   --display: 'Lalezar', 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
   --body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #17140f; --ink: #f3ebdc; --muted: #b3a690; --card: #221e17; --line: #3a3226; --amman: #4fc27f; --dubai: #e2b04f; color-scheme: dark; }
+  :root { --bg: #17140f; --ink: #f3ebdc; --muted: #b3a690; --card: #221e17; --line: #3a3226; color-scheme: dark; }
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; }
@@ -26,7 +25,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--b
 header { display: flex; flex-direction: column; gap: 8px; }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .langbtn { font: 600 14px var(--body); color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
-.langbtn:focus-visible { outline: 3px solid var(--amman); outline-offset: 2px; }
+.langbtn:focus-visible { outline: 3px solid var(--muted); outline-offset: 2px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 9vw, 92px); line-height: 1; margin: 0; text-wrap: balance; }
 header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
@@ -40,8 +39,9 @@ header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
 .city p { margin: 0; color: var(--muted); }
 .play { margin-top: 10px; align-self: flex-start; background: var(--c); color: var(--card); font-family: var(--display); font-size: 24px; padding: 8px 22px 4px; border-radius: 12px; }
-.amman { --c: var(--amman); }
-.dubai { --c: var(--dubai); }
+/* each city's color comes from its city.js */
+__CARD_COLORS__
+@media (prefers-color-scheme: dark) { __CARD_COLORS_DARK__ }
 .how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; border-top: 1px solid var(--line); padding-top: 28px; }
 .how h3 { margin: 0 0 4px; font-size: 16px; }
 .how p { margin: 0; color: var(--muted); font-size: 15px; }
@@ -59,24 +59,7 @@ footer a { color: inherit; }
     <p data-t="intro">__L_intro__</p>
   </header>
   <section class="cities">
-    <a class="city amman" href="amman/" data-game>
-      <img src="img/amman-drive.png" alt="__L_ammanAlt__" data-t-alt="ammanAlt">
-      <div class="txt">
-        <span class="en" data-t="ammanTag">__L_ammanTag__</span>
-        <h2 data-t="ammanName">__L_ammanName__</h2>
-        <p data-t="ammanText">__L_ammanText__</p>
-        <span class="play" data-t="play">__L_play__</span>
-      </div>
-    </a>
-    <a class="city dubai" href="dubai/" data-game>
-      <img src="img/dubai-drive.png" alt="__L_dubaiAlt__" data-t-alt="dubaiAlt">
-      <div class="txt">
-        <span class="en" data-t="dubaiTag">__L_dubaiTag__</span>
-        <h2 data-t="dubaiName">__L_dubaiName__</h2>
-        <p data-t="dubaiText">__L_dubaiText__</p>
-        <span class="play" data-t="play">__L_play__</span>
-      </div>
-    </a>
+__CARDS__
   </section>
   <section class="how">
     <div><h3 data-t="how1t">__L_how1t__</h3><p data-t="how1">__L_how1__</p></div>

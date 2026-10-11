@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- dubai: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
+<language code="en" name="English" dir="ltr">
+  <city>
+    <string key="card.tag">47 KM LOOP</string>
+    <string key="card.name">Dubai Loop</string>
+    <string key="card.text">The Dubai Frame, the Museum of the Future, Burj Khalifa, the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab. Speed cameras and Salik gates.</string>
+    <string key="card.alt">A car on Sheikh Zayed Road between Dubai towers at sunset</string>
+    <string key="text.radio0">Creek FM</string>
+    <string key="text.radio1">Marina Nights</string>
+    <string key="text.radio2">Desert Wind</string>
+    <string key="page.title">Dubai Loop</string>
+    <string key="page.name">Dubai Loop</string>
+    <string key="page.eyebrow">Dubai · دبي</string>
+    <string key="page.alt">Driving through Dubai</string>
+    <string key="page.blurb">From the Dubai Frame down Sheikh Zayed Road to the Marina, then back along Jumeirah. The cameras show no mercy and Salik gates add up.</string>
+    <string key="page.T_MAPNOTE">The road roughly follows real places in Dubai. The horn makes the car ahead move over.</string>
+    <string key="page.T_R1S">Pick a trip between Dubai landmarks, from the Frame to Burj Khalifa to the Marina, and reach the end.</string>
+    <string key="page.T_R3S">Cameras flash above 120 km/h, Salik gates charge you, and crashes damage the car.</string>
+    <string key="text.bumpSign"></string>
+    <string key="text.tollName">Salik</string>
+    <string key="text.tollPrice">4 AED</string>
+    <string key="text.wreckedSub">Call the recovery truck</string>
+    <string key="text.rateTop">Well done!</string>
+    <string key="text.rateBad">You need some practice</string>
+    <string key="text.bumpHit"></string>
+    <string key="text.bumpOk"></string>
+    <string key="text.loadCity">Building Dubai...</string>
+    <string key="text.currency">AED</string>
+    <string key="tour.7.body">The white dot is you and the gold dots are landmarks. Your destination shows bigger.</string>
+    <string key="car.0.name">Nissan Patrol</string>
+    <string key="car.0.sub">SUV</string>
+    <string key="car.0.pros">Strong and shrugs off crashes</string>
+    <string key="car.0.cons">Heavy and hard to turn</string>
+    <string key="car.1.name">Lamborghini Huracán</string>
+    <string key="car.1.sub">Supercar</string>
+    <string key="car.1.pros">Fastest car on the road and very steady</string>
+    <string key="car.1.cons">Any crash wrecks it</string>
+    <string key="car.2.name">Toyota Camry</string>
+    <string key="car.2.sub">Taxi</string>
+    <string key="car.2.pros">Even all round, good at everything</string>
+    <string key="car.2.cons">Nothing stands out</string>
+    <string key="place.0">Dubai Frame</string>
+    <string key="place.1">World Trade Centre</string>
+    <string key="place.2">Museum of the Future</string>
+    <string key="place.3">Emirates Towers</string>
+    <string key="place.4">Burj Khalifa</string>
+    <string key="place.5">Mall of the Emirates</string>
+    <string key="place.6">Dubai Marina</string>
+    <string key="place.7">Ain Dubai</string>
+    <string key="place.8">Burj Al Arab</string>
+    <string key="place.9">Jumeirah Mosque</string>
+  </city>
+</language>
