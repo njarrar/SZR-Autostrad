@@ -68,6 +68,7 @@ The car drives on its own and keeps its speed. You speed it up, slow it down and
 | Slow down or stop | Hold `↓` or `S` | Pull the stick down |
 | Change lane | `←` `→` or `A` `D` | Push the stick left or right |
 | Horn | `Space` or `H` | Round horn button |
+| Nitro | `N` or `Shift` | N₂O button above the horn |
 | Change camera | `C` | Settings > Display |
 | Pause | `P` or `Esc` | Pause button |
 
@@ -85,8 +86,8 @@ Open **Settings** from the menu or the pause screen. It has four tabs:
   - **Tilt**: turn the phone like a steering wheel to change lanes, and drag up or down to change speed. On iPhone the game asks for motion access the first time.
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
-- **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai), camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
@@ -144,6 +145,19 @@ Damage from crashes, the barrier and speed bumps grows or shrinks with the car's
 - You earn points for every kilometer you drive.
 - Pass a car close and faster than it to earn bonus points. Passes in a row multiply the bonus.
 - Every 10 km gives 500 bonus points.
+- Road events pay extra points (see below).
+
+### Nitro
+
+Fill the nitro gauge under your speed by passing cars close or by driving right behind a car. Once it is a quarter full, press `N` (or the N₂O button) for a burst of speed. Fire it while the gauge sits in the gold part for a **perfect nitro**: a stronger push and 150 points. After the burst the car eases back to the speed you had.
+
+### Road events
+
+About once a minute something happens on the road:
+
+- **Ambulance.** You hear a siren and see red and blue light behind you. Move out of its lane before it reaches you for 250 points. Block it and you get nothing.
+- **Wedding convoy.** Three white cars with flowers drive slowly in the next lane and honk in rhythm. Pull up next to each one and honk for 100 points ("Mabrook!").
+- **Tailgater.** A dark car sits right behind you and flashes its lights. Move over and let it pass for 120 points.
 
 ### Watch out for
 
@@ -172,7 +186,7 @@ cities/                One folder per city; the build finds them on its own
   amman/cover.png      The picture on the start page card
   dubai/...            The same for Dubai (Gulf Arabic)
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
-src/audio.js           Engine, road, horn and crash sounds, phone buzz, and the car radio
+src/audio.js           Engine, road, horn, siren, nitro and crash sounds, rain and wind, phone buzz, and the car radio
 src/template.html      Page layout and styles
 src/landing.html       The start page with a card for each city
 lang/en.xml            Shared English text: menus, settings, HUD and the start page

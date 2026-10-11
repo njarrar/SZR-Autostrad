@@ -41,7 +41,7 @@
     <string key="page.T_SOUND">Sound</string>
     <string key="page.T_ON">On</string>
     <string key="page.T_OFF">Off</string>
-    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Camera <kbd>C</kbd> · Pause <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Pause <kbd>P</kbd>]]></string>
     <string key="page.T_PAUSED">Paused</string>
     <string key="page.T_RESUME">Resume</string>
     <string key="page.T_QUIT">Back to menu</string>
@@ -147,7 +147,7 @@
     <string key="page.T_HORNSIZE">Horn button size</string>
     <string key="page.T_SMALL">Small</string>
     <string key="page.T_NORMAL">Normal</string>
-    <string key="page.T_KEYSNOTE"><![CDATA[On a computer the keyboard always works: arrows or <kbd>WASD</kbd> to drive, <kbd>Space</kbd> for the horn.]]></string>
+    <string key="page.T_KEYSNOTE"><![CDATA[On a computer the keyboard always works: arrows or <kbd>WASD</kbd> to drive, <kbd>Space</kbd> for the horn, <kbd>N</kbd> or <kbd>Shift</kbd> for nitro.]]></string>
     <string key="page.T_VOLENG">Engine</string>
     <string key="page.T_VOLFX">Effects</string>
     <string key="page.T_VOLHORN">Horn</string>
@@ -182,6 +182,21 @@
     <string key="page.T_TNIGHT">Night</string>
     <string key="page.T_WX">Weather</string>
     <string key="page.T_WXOFF">Clear</string>
+    <string key="page.T_NITRO">Nitro</string>
+    <string key="page.T_HORNSTYLE">Horn sound</string>
+    <string key="page.T_HCITY">Normal</string>
+    <string key="page.T_HDEEP">Deep</string>
+    <string key="page.T_HTRUCK">Truck</string>
+    <string key="page.T_HTUNE">Tune</string>
+    <string key="text.nitroPerfect">Perfect nitro! +150</string>
+    <string key="text.ambBehind">Ambulance behind you. Make way</string>
+    <string key="text.ambThanks">You made way +250</string>
+    <string key="text.ambBlock">You blocked the ambulance!</string>
+    <string key="text.wedAhead">Wedding convoy ahead. Honk next to it</string>
+    <string key="text.mabrook">Mabrook! +100</string>
+    <string key="text.tailBehind">Car flashing behind you. Move over</string>
+    <string key="text.tailOk">You let it pass +120</string>
+    <string key="text.rExtra">Road events</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
@@ -189,7 +204,7 @@
     <string key="intro">Two 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera. Plays in the browser on a computer or a phone.</string>
     <string key="play">Play</string>
     <string key="how1t">Driving</string>
-    <string key="how1"><![CDATA[<kbd>↑</kbd> gas, <kbd>↓</kbd> brake, <kbd>←</kbd> <kbd>→</kbd> change lane, <kbd>Space</kbd> horn. On a phone, use the buttons on screen.]]></string>
+    <string key="how1"><![CDATA[<kbd>↑</kbd> gas, <kbd>↓</kbd> brake, <kbd>←</kbd> <kbd>→</kbd> change lane, <kbd>Space</kbd> horn, <kbd>N</kbd> nitro. On a phone, use the buttons on screen.]]></string>
     <string key="how2t">Points</string>
     <string key="how2">Every kilometer earns points. Close, fast passes earn more, and passes in a row multiply them.</string>
     <string key="how3t">Fines</string>

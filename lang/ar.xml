@@ -53,6 +53,21 @@
     <string key="page.T_TNIGHT">الليل</string>
     <string key="page.T_WX">الطقس</string>
     <string key="page.T_WXOFF">صافي</string>
+    <string key="page.T_NITRO">نيترو</string>
+    <string key="page.T_HORNSTYLE">صوت الهرن</string>
+    <string key="page.T_HCITY">عادي</string>
+    <string key="page.T_HDEEP">غليظ</string>
+    <string key="page.T_HTRUCK">شاحنة</string>
+    <string key="page.T_HTUNE">نغمة</string>
+    <string key="text.nitroPerfect">نيترو مضبوط! +150</string>
+    <string key="text.ambBehind">إسعاف وراك، وسّعله</string>
+    <string key="text.ambThanks">وسّعت للإسعاف +250</string>
+    <string key="text.ambBlock">سكّرت طريق الإسعاف!</string>
+    <string key="text.wedAhead">زفّة قدّامك، زمّر جنبها</string>
+    <string key="text.mabrook">مبروك! +100</string>
+    <string key="text.tailBehind">سيارة بتغمّز وراك، وسّعلها</string>
+    <string key="text.tailOk">خلّيتها تمرق +120</string>
+    <string key="text.rExtra">مواقف الطريق</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
@@ -60,7 +75,7 @@
     <string key="intro">لعبتين سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار. بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</string>
     <string key="play">العب</string>
     <string key="how1t">السواقة</string>
-    <string key="how1"><![CDATA[<kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور. عالموبايل في أزرار عالشاشة.]]></string>
+    <string key="how1"><![CDATA[<kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور، <kbd>N</kbd> نيترو. عالموبايل في أزرار عالشاشة.]]></string>
     <string key="how2t">النقاط</string>
     <string key="how2">كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.</string>
     <string key="how3t">المخالفات</string>

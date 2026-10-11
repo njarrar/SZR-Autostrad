@@ -55,7 +55,7 @@
     <string key="page.T_SOUND">الصوت</string>
     <string key="page.T_ON">شغّال</string>
     <string key="page.T_OFF">مسكّر</string>
-    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الزامور <kbd>Space</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الزامور <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · وقوف <kbd>P</kbd>]]></string>
     <string key="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية بعمّان. الزامور بخلّي السيارة اللي قدامك توسّعلك.</string>
     <string key="page.T_PAUSED">استراحة</string>
     <string key="page.T_RESUME">كمّل</string>
@@ -185,6 +185,7 @@
     <string key="page.T_C_LANES_D">أسهم لتغيير المسرب، كل كبسة مسرب، مع زر بنزين وزر بريك.</string>
     <string key="page.T_TILTPERM">اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.</string>
     <string key="page.T_NOTILT">هالجهاز ما فيه حسّاس إمالة، فالعصا رح تسوق بداله.</string>
-    <string key="page.T_KEYSNOTE"><![CDATA[عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للزامور.]]></string>
-  </city>
+    <string key="page.T_KEYSNOTE"><![CDATA[عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للزامور و<kbd>N</kbd> أو <kbd>Shift</kbd> للنيترو.]]></string>
+      <string key="page.T_HORNSTYLE">صوت الزامور</string>
+</city>
 </language>

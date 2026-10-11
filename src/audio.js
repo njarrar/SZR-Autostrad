@@ -216,15 +216,35 @@ const SND = (() => {
     return { oscs, env, t0: t };
   }
   function hornOff(h, at) { const t = Math.max(now(), at || 0); h.env.gain.cancelScheduledValues(t); h.env.gain.setValueAtTime(Math.max(h.env.gain.value, 0.0001), t); h.env.gain.exponentialRampToValueAtTime(0.0001, t + 0.03); stopAt(h.oscs, t + 0.05); }
-  // the player's horn sounds while held, and for at least a short honk on a quick tap
-  let myHorn = null;
+  // the player's horn sounds while held, and for at least a short honk on a quick tap.
+  // the style comes from settings: the car's own horn, a deep one, a truck air horn, or a little tune
+  const HORNS = {
+    city: {},
+    deep: { k: 0.68, throat: 560, bell: 1900, lp: 3200, gain: 0.12 },
+    truck: { chord: [155, 196, 233], throat: 480, bell: 1500, lp: 3000, wave: 'square', gain: 0.14 },
+    melody: { tune: [1, 1.26, 1.5, 1.26, 1.68, 1.5, 1.26, 1], wave: 'square', gain: 0.09 }
+  };
+  let myHorn = null, hornStyle = 'city';
+  function hornStop(at) {
+    if (!myHorn) return;
+    if (myHorn.tune) { clearInterval(myHorn.tune); if (myHorn.h) hornOff(myHorn.h, Math.max(at || 0, myHorn.h.t0 + 0.14)); } else hornOff(myHorn, at);
+    myHorn = null;
+  }
   function horn(on, chord, kind) {
-    if (!ac || !sfxOn) { if (myHorn) { hornOff(myHorn); myHorn = null; } return; }
+    if (!ac || !sfxOn) { hornStop(); return; }
     if (on && !myHorn) {
-      const k = { pickup: 0.85, suv: 0.82, sports: 1.12, hatch: 1.06 }[kind] || 1;
-      myHorn = hornVoice(chord.map((f) => f * k), bus.horn, { gain: 0.11, wave: kind === 'hatch' ? 'square' : 'sawtooth' });
+      const H = HORNS[hornStyle] || HORNS.city;
+      const k = ({ pickup: 0.85, suv: 0.82, sports: 1.12, hatch: 1.06 }[kind] || 1) * (H.k || 1);
+      const notes = H.chord || (chord || [400, 500]).map((f) => f * k);
+      const opts = { gain: H.gain || 0.11, wave: H.wave || (kind === 'hatch' ? 'square' : 'sawtooth'), throat: H.throat, bell: H.bell, lp: H.lp };
+      if (H.tune) {
+        // a tune plays its notes one after another for as long as the horn is held
+        let i = 0; const me = myHorn = { h: null, tune: 0 };
+        const play = () => { if (me.h) hornOff(me.h); me.h = hornVoice(notes.map((f) => f * H.tune[i++ % H.tune.length]), bus.horn, opts); };
+        play(); me.tune = setInterval(play, 170);
+      } else myHorn = hornVoice(notes, bus.horn, opts);
       duckEngine(1); radio.duck(1.2);
-    } else if (!on && myHorn) { hornOff(myHorn, myHorn.t0 + 0.16); myHorn = null; }
+    } else if (!on && myHorn) hornStop(myHorn.tune ? 0 : myHorn.t0 + 0.16);
   }
   // a horn from another car: panned to its side and dulled with distance, with an echo off the buildings when far
   function placeAt(dx, dist, dest) {
@@ -280,6 +300,32 @@ const SND = (() => {
     let last = chain(n, bp, g);
     if (ac.createStereoPanner) { const p = ac.createStereoPanner(); p.pan.setValueAtTime(0.9 * side, t); p.pan.linearRampToValueAtTime(-0.2 * side, t + len); last.connect(p); last = p; }
     last.connect(bus.fx); n.start(t); n.stop(t + len + 0.05);
+  }
+  // nitro: a rush of air and a rising tone; the perfect one adds a bright chord on top
+  function nitro(perfect) {
+    if (!ac || !sfxOn) return; const t = now();
+    burst(t, 0.8, 0.22, [filt('bandpass', 1400, 0.6)], bus.fx, 2);
+    const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(720, t + 0.7);
+    const g = gainN(0); g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.05); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.9);
+    chain(o, filt('lowpass', 1800, 1), g, bus.fx); o.start(t); o.stop(t + 1);
+    if (perfect) [1319, 1661, 1976, 2637].forEach((f, i) => blip(f, 0.22, 'triangle', 0.07, null, t + 0.05 + i * 0.06));
+  }
+  // an ambulance siren that rises and falls; call it each frame with where the ambulance is, or with null to stop it
+  let sir = null;
+  function siren(dx, dist) {
+    if (!ac) return;
+    if (dx == null || !sfxOn) { if (sir) { const t = now(); sir.g.gain.cancelScheduledValues(t); sir.g.gain.setTargetAtTime(0, t, 0.08); stopAt([sir.o, sir.lfo], t + 0.6); sir = null; } return; }
+    if (!sir) {
+      const t = now(); const o = ac.createOscillator(); o.type = 'square'; o.frequency.value = 1000;
+      const lfo = ac.createOscillator(); lfo.type = 'triangle'; lfo.frequency.value = 0.32; const lg = gainN(380); lfo.connect(lg); lg.connect(o.frequency);
+      const lp = filt('lowpass', 2500, 0.7), g = gainN(0), pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      chain(o, filt('bandpass', 1100, 0.8), lp, g);
+      if (pan) { g.connect(pan); pan.connect(bus.horn); } else g.connect(bus.horn);
+      o.start(t); lfo.start(t); sir = { o, lfo, lp, g, pan };
+    }
+    set(sir.g.gain, 0.09 / (1 + Math.pow(dist / 40, 1.3)), 0.1);
+    set(sir.lp.frequency, Math.max(900, 4200 - 20 * dist), 0.1);
+    if (sir.pan) set(sir.pan.pan, clampN(dx / 9, -0.8, 0.8), 0.1);
   }
   // short tunes for game events
   const CUES = {
@@ -505,13 +551,14 @@ const SND = (() => {
   }
 
   return {
-    unlock, drive, horn, weather, otherHorn, crash, scrape, bump, passBy, cue, combo, blip: (f, d, v, w) => blip(f, d, w || 'sine', v), radio, vibrate,
+    unlock, drive, horn, weather, nitro, siren, otherHorn, crash, scrape, bump, passBy, cue, combo, blip: (f, d, v, w) => blip(f, d, w || 'sine', v), radio, vibrate,
     get ready() { return !!ac; },
     // settings: volumes are 0..100
     apply(s) {
       vol.engine = s.volEngine / 100; vol.horn = s.volHorn / 100; vol.fx = s.volFx / 100; vol.music = s.volMusic / 100;
       sfxOn = !!s.sound; musicOn = !!s.music; vibLevel = s.vib;
-      if (!sfxOn && myHorn) { hornOff(myHorn); myHorn = null; }
+      hornStyle = s.hornStyle || 'city';
+      if (!sfxOn) { hornStop(); siren(null); }
       applyVolumes();
     },
     canVibrate: !!navigator.vibrate

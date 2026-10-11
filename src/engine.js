@@ -1324,7 +1324,7 @@ function updateTraffic(dt, honk) {
       if (game.mode === 'drive' && !game.tour && g > -1 && g < 14 && c.vt > player.v + 4 && game.time > (c.honkT || 0)) { c.honkT = game.time + mr(5, 9); SND.otherHorn(c.d - player.d, g + 4, C.horn); }
     }
     let target = c.vt;
-    const safe = 8 + c.v * 0.9;
+    const safe = c.close ? 5 + c.v * 0.18 : 8 + c.v * 0.9; // a tailgater sits much closer than other drivers
     if (gap < safe) target = Math.min(target, lv * (gap < safe * 0.5 ? 0.85 : 1));
     if (gap < 3) target = 0;
     const acc = target > c.v ? 2.2 : 6.5;
@@ -1333,7 +1333,7 @@ function updateTraffic(dt, honk) {
     if (c.tl === c.lane) {
       const want = (gap < safe * 1.4 && c.vt > lv + 2) || Math.random() < dt * (0.01 + c.wild * 0.08);
       const honked = honk && c.t > player.t && c.t - player.t < 55 && Math.abs(c.d - player.d) < 2.4;
-      if (want || honked) {
+      if ((want || honked) && !c.fixed) {
         const opts = [c.lane - 1, c.lane + 1].filter((l) => l >= 0 && l < LANES).sort(() => Math.random() - 0.5);
         for (const l of opts) if (laneClear(c.t, l, c, c.wild ? 6 : 12, c.wild ? 8 : 14)) { c.tl = l; if (honked) c.honked = 1; break; }
       }
@@ -1344,12 +1344,114 @@ function updateTraffic(dt, honk) {
     if (c.tl === c.lane) c.d += (laneD(c.lane) - c.d) * Math.min(1, dt * 3);
     c.t += c.v * dt;
     const rel = c.t - player.t;
-    if (rel < -320 || rel > 1250) spawnSame(c, rel < 0);
+    if (rel < -320 || rel > 1250) { if (c.special) c.gone = true; else spawnSame(c, rel < 0); }
   }
   for (const c of ONC) {
     c.t -= c.vt * dt;
     if (c.t - player.t < -250) { assignType(c); c.t = player.t + mr(900, 1300); c.lane = Math.floor(Math.random() * LANES); c.d = -laneD(c.lane); }
   }
+}
+
+// ---------- road events: an ambulance, a wedding convoy, a car flashing its lights ----------
+// one at a time, every minute or so; each pays points when you do the right thing
+const NITRO_SWEET = [0.7, 0.86];
+const ev = { kind: null, cars: [], t: 0, scored: false, warned: false, blockT: 0, flashT: 0, honkT: 0, last: '' };
+const glowMat = (color) => new THREE.MeshBasicMaterial({ color, toneMapped: false });
+function evCar(kind, body, extra, lane, t, v) {
+  const c = makeTrafficCar(false), cg = carGeo(kind, body, extra);
+  c.mesh.geometry = cg.g; c.mesh.userData.lights.geometry = cg.lg;
+  Object.assign(c, { len: cg.len, wid: cg.wid, kind, wild: 0, special: true, t, lane, tl: lane, d: laneD(lane), v, vt: v, passed: t < player.t, top: cg.tailY + 0.16 });
+  SAME.push(c); ev.cars.push(c);
+  return c;
+}
+function evAdd(c, color, x, y, z, w, h, l, ry) { const m = new THREE.Mesh(BOX, glowMat(color)); m.position.set(x, y, z); m.scale.set(w, h, l); if (ry) m.rotation.y = ry; c.mesh.add(m); return m; }
+function evStart(kind) {
+  evEnd(); ev.kind = kind; ev.t = 0; ev.scored = false; ev.warned = false; ev.blockT = 0; ev.flashT = 0; ev.honkT = 2; ev.last = kind;
+  const lane = player.laneT;
+  if (kind === 'amb') {
+    const c = evCar('coaster', 0xf6f6f2, { stripe: 0xd3202a }, lane, player.t - 120, Math.max(player.v + 12, 95 / 3.6));
+    c.bar = [evAdd(c, 0xff2020, -0.45, 2.55, -c.len / 2 + 0.6, 0.7, 0.18, 0.32), evAdd(c, 0x2a6bff, 0.45, 2.55, -c.len / 2 + 0.6, 0.7, 0.18, 0.32)];
+  } else if (kind === 'wed') {
+    // the convoy keeps to a lane next to yours, a little slower than you
+    const wl = lane + 1 < LANES ? lane + 1 : lane - 1 >= 0 ? lane - 1 : lane, v = clamp(player.v * 0.72, 45 / 3.6, 70 / 3.6);
+    for (let i = 0; i < 3; i++) {
+      const c = evCar('sedan', 0xf7f7f2, null, wl, player.t + 240 + i * 11, v); c.fixed = true;
+      for (const s of [-1, 1]) evAdd(c, 0xff6fa8, 0, c.top + 0.03, -c.len / 2 + 1.0, 0.07, 0.03, 1.9, s * 0.42);
+      [0xff4f8b, 0xffffff, 0xff9ec4, 0xe8233f].forEach((col, k) => evAdd(c, col, (k - 1.5) * 0.22, c.top + 0.09, -c.len / 2 + 0.45, 0.17, 0.15, 0.17));
+    }
+  } else {
+    const c = evCar('sedan', 0x16181c, null, lane, player.t - 80, Math.max(player.v + 7, 75 / 3.6)); c.close = true;
+    c.beams = [-1, 1].map((s) => evAdd(c, 0xffffff, s * c.wid * 0.35, c.top - 0.14, -c.len / 2 - 0.05, 0.42, 0.16, 0.06));
+  }
+}
+function evEnd() {
+  for (const c of ev.cars) { scene.remove(c.mesh); const i = SAME.indexOf(c); if (i >= 0) SAME.splice(i, 1); }
+  ev.cars = []; ev.kind = null; SND.siren(null); hud.beam.dataset.c = '';
+}
+function evPoints(n, msg) { game.extraPts += n; toast(msg, 'good'); SND.cue('bonus'); vibrate([20, 30, 20]); }
+function roadEvent(dt, hornTap) {
+  if (!ev.kind) {
+    if (game.tour || player.v < 12) return '';
+    game.evT -= dt; if (game.evT > 0) return '';
+    game.evT = mr(45, 80);
+    evStart(mpick(['amb', 'wed', 'tail'].filter((k) => k !== ev.last)));
+  }
+  ev.t += dt;
+  let txt = '', beam = '';
+  if (ev.cars.some((c) => c.gone) || ev.t > 75) { evEnd(); return ''; }
+  if (ev.kind === 'amb') {
+    const c = ev.cars[0], behind = player.t - c.t, same = Math.abs(c.d - player.d) < 2.2;
+    c.vt = Math.min(200 / 3.6, Math.max(c.vt, player.v + 8));
+    // from far back it heads for your lane, so you have to let it through
+    if (behind > 45 && c.tl === c.lane && Math.abs(laneD(player.laneT) - c.d) > 1 && laneClear(c.t, player.laneT, c, 8, 12)) c.tl = player.laneT;
+    // cars ahead of it move over when they can
+    for (const o of SAME) {
+      if (o.special || o.tl !== o.lane || Math.abs(o.d - c.d) > 2 || o.t < c.t || o.t - c.t > 80) continue;
+      for (const l of [o.lane - 1, o.lane + 1]) if (l >= 0 && l < LANES && laneClear(o.t, l, o, 10, 12)) { o.tl = l; break; }
+    }
+    if (behind > 0 && behind < 45 && same) ev.blockT += dt;
+    // it waits behind you a few seconds before it goes round
+    c.fixed = behind > 0 && behind < 60 && same && ev.blockT < 4;
+    if (ev.blockT > 2.5 && !ev.warned) { ev.warned = true; toast(T.ambBlock, 'bad'); SND.cue('bad'); }
+    if (!ev.scored && c.t > player.t + 6) { ev.scored = true; if (ev.blockT <= 2.5) evPoints(250, T.ambThanks); }
+    const on = Math.floor(ev.t * 6) % 2;
+    c.bar[0].visible = !!on; c.bar[1].visible = !on;
+    if (behind > -10 && behind < 160) txt = T.ambBehind;
+    if (behind > 0 && behind < 70) beam = on ? 'red' : 'blue';
+    SND.siren(c.d - player.d, Math.hypot(c.t - player.t, c.d - player.d));
+    if (c.t - player.t > 350) evEnd();
+  } else if (ev.kind === 'wed') {
+    const left = ev.cars.filter((c) => !c.cheered);
+    // the convoy honks in its own rhythm
+    ev.honkT -= dt;
+    const near = ev.cars.reduce((m, c) => (Math.abs(c.t - player.t) < Math.abs(m.t - player.t) ? c : m), ev.cars[0]);
+    if (ev.honkT <= 0 && Math.abs(near.t - player.t) < 220) { ev.honkT = mr(2.5, 4.5); SND.otherHorn(near.d - player.d, Math.abs(near.t - player.t) + 3, C.horn, [[0, 0.1], [0.16, 0.1], [0.32, 0.1], [0.52, 0.35]]); }
+    if (hornTap) {
+      const c = left.find((o) => Math.abs(o.t - player.t) < 8 && Math.abs(o.d - player.d) < 5.5);
+      if (c) { c.cheered = true; evPoints(100, T.mabrook); SND.otherHorn(c.d - player.d, 4, C.horn, [[0.2, 0.1], [0.36, 0.1], [0.52, 0.3]]); }
+    }
+    const ahead = ev.cars[ev.cars.length - 1].t - player.t;
+    if (left.length && ahead > -10 && ahead < 320) txt = T.wedAhead;
+    if (!left.length || ev.cars[ev.cars.length - 1].t < player.t - 150) evEnd();
+  } else {
+    const c = ev.cars[0], gap = player.t - c.t - (c.len + player.len) / 2, same = Math.abs(c.d - player.d) < 2.2;
+    if (!ev.scored) c.vt = Math.max(c.vt, player.v + 7);
+    // right behind you it holds your lane; further back it may go round other cars to reach you
+    c.fixed = !ev.scored && same && gap > 0 && gap < 25;
+    // close behind you in your lane it flashes its high beams: two quick flashes, then a pause
+    const flashing = c.fixed && gap < 18;
+    if (flashing) ev.flashT += dt;
+    const ph = ev.flashT % 1.2, lit = flashing && (ph < 0.12 || (ph > 0.24 && ph < 0.36));
+    c.beams.forEach((b) => { b.visible = lit; });
+    if (lit) beam = 'white';
+    if (!ev.scored && ev.flashT > 0.3) txt = T.tailBehind;
+    if (!ev.scored && ev.flashT > 0.3 && !same && gap > -2 && gap < 35) { ev.scored = true; c.vt = player.v + 12; evPoints(120, T.tailOk); }
+    else if (!ev.scored && ev.flashT > 10) { ev.scored = true; c.vt = player.v + 12; }
+    if (!ev.scored && c.tl === c.lane && Math.abs(laneD(player.laneT) - c.d) > 1 && gap > 25 && laneClear(c.t, player.laneT, c, 8, 12)) c.tl = player.laneT;
+    if (c.t - player.t > 300) evEnd();
+  }
+  if (hud.beam.dataset.c !== beam) hud.beam.dataset.c = beam;
+  return txt;
 }
 
 // ---------- player ----------
@@ -1389,7 +1491,7 @@ const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPla
   control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city' }, store.get('settings', {}));
 function saveSettings() { store.set('settings', settings); }
 
-const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0 };
+const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0, nitro: 0, boost: 0, boostCap: 1, boostK: 1, extraPts: 0, nitroReq: false, evT: 40, hornWas: false };
 
 // ---------- input ----------
 const keys = {};
@@ -1402,6 +1504,7 @@ addEventListener('keydown', (e) => {
   keys[e.code] = true;
   if (e.repeat && ['KeyC', 'KeyP', 'Escape'].includes(e.code)) return;
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
+  if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat) game.nitroReq = true;
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
   if ((e.code === 'KeyP' || e.code === 'Escape') && game.mode === 'drive') togglePause();
 });
@@ -1422,6 +1525,7 @@ function bindHold(el, key) {
   el.addEventListener('pointerdown', on); el.addEventListener('pointerup', off); el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off);
 }
 document.querySelectorAll('[data-hold]').forEach((el) => bindHold(el, el.dataset.hold));
+$('#btnNitro').addEventListener('pointerdown', (e) => { e.preventDefault(); game.nitroReq = true; audioInit(); });
 
 // the stick: fixed at the bottom ("stick"), or it jumps under your thumb ("onehand", "tilt")
 const stickEl = $('#stick'), knobEl = $('#knob');
@@ -1518,7 +1622,7 @@ SND.apply(settings);
 // ---------- HUD ----------
 const hud = {
   speed: $('#hSpeed'), limit: $('#hLimit'), time: $('#hTime'), score: $('#hScore'), viol: $('#hViol'), dmg: $('#hDmgBar'),
-  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave'), gear: $('#hGear'), rpm: $('#hRpm')
+  next: $('#hNext'), remain: $('#hRemain'), toast: $('#toast'), warn: $('#warn'), weave: $('#hWeave'), gear: $('#hGear'), rpm: $('#hRpm'), nitro: $('#hNitro'), nitroBtn: $('#btnNitro'), beam: $('#beam')
 };
 let toastTimer = 0;
 function toast(msg, kind) { hud.toast.textContent = msg; hud.toast.className = 'toast show ' + (kind || ''); toastTimer = 2.4; }
@@ -1565,9 +1669,9 @@ function startTrip(opts) {
   const trips = tripList(); const tr = trips[opts.free ? trips.length - 1 : Math.min(settings.trip, trips.length - 1)];
   trafficLevel = opts.traffic != null ? opts.traffic : settings.traffic;
   player.t = tOfS(tr.from.s) + 30; player.d = laneD(Math.min(1, LANES - 1)); player.v = 0; player.cruise = 40 / 3.6; player.lat = 0; player.steer = 0; player.laneT = Math.min(1, LANES - 1); player.dmg = 0;
-  Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour, lastOpts: opts.tour ? { free: true } : opts });
+  Object.assign(game, { mode: 'drive', time: 0, dist: 0, startT: player.t, tripLen: tr.free ? 0 : tr.len - 30, dest: tr.free ? null : tr.to, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, nitro: 0, boost: 0, boostCap: 1, boostK: 1, extraPts: 0, nitroReq: false, evT: mr(25, 45), paused: false, free: !!tr.free, lap: !!tr.lap, trip: tr, tour: !!opts.tour, lastOpts: opts.tour ? { free: true } : opts });
   game.lastS = sOfT(player.t); for (const ev of events) ev.lastT = null;
-  resetTraffic();
+  evEnd(); resetTraffic();
   showScreen(null);
   $('#hud').hidden = false; $('#touch').hidden = !isTouch();
   hud.limit.textContent = C.limit;
@@ -1615,7 +1719,7 @@ function soundFrame() {
   if (!live) SND.horn(false);
 }
 function finishTrip(reason) {
-  game.mode = 'done'; resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
+  game.mode = 'done'; evEnd(); resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
   const score = computeScore();
   const key = 'best:' + settings.dir + ':' + settings.trip;
@@ -1626,6 +1730,7 @@ function finishTrip(reason) {
     [T.rTime, fmtTime(game.time)], [T.rDist, (game.dist / 1000).toFixed(1) + ' ' + T.km], [T.rAvg, fmt(game.time > 0 ? game.dist / game.time * 3.6 : 0) + ' ' + T.kmh],
     [T.rWeave, fmt(game.weaves)], [T.rRadar, fmt(game.radar)], [T.rCrash, fmt(game.crashes)], [T.rFines, fmt(game.fines) + ' ' + C.currency]
   ];
+  if (game.extraPts) rows.push([T.rExtra, '+' + fmt(game.extraPts)]);
   if (C.tollsAt) rows.push([T.tollName, fmt(game.tolls) + ' ' + C.currency]);
   $('#rStats').innerHTML = rows.map(([k, v]) => `<div class="stat"><span>${k}</span><b>${v}</b></div>`).join('');
   $('#rScore').textContent = fmt(score);
@@ -1634,16 +1739,16 @@ function finishTrip(reason) {
   $('#rRate').textContent = reason !== 'arrive' ? T.rateBad : viol === 0 && game.weaves >= 5 ? T.rateTop : viol <= 2 ? T.rateMid : T.rateBad;
   showScreen('#result');
 }
-function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.bonus - game.radar * 250 - game.crashes * 400)); }
+function computeScore() { return Math.max(0, Math.round(game.dist / 10 + game.weavePts + game.extraPts + game.bonus - game.radar * 250 - game.crashes * 400)); }
 function tourEndShown() { return !$('#tourEnd').hidden; }
 function togglePause() {
   if (game.mode !== 'drive' || tourEndShown()) return;
   game.paused = !game.paused;
-  SND.radio.pause(game.paused);
+  SND.radio.pause(game.paused); if (game.paused) { SND.siren(null); hud.beam.dataset.c = ''; }
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { SND.radio.stop(); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { evEnd(); SND.radio.stop(); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -1675,8 +1780,24 @@ function step(dt) {
   if (brake) { a -= player.v > 0.5 ? (5 + 0.09 * settings.brakeFeel) * brakeAmt : 0; player.cruise = player.v; }
   if (gas || brake) a -= 0.25 + 0.0006 * player.v * player.v;
   else a += clamp((player.cruise - player.v) * 1.2, -2.5, player.accel * 0.6);
+  // nitro: fire it for a burst; fired with the gauge in the gold part it pushes harder and pays points
+  if (game.nitroReq) {
+    game.nitroReq = false;
+    if (game.boost <= 0 && game.nitro >= 0.25) {
+      const perfect = game.nitro >= NITRO_SWEET[0] && game.nitro <= NITRO_SWEET[1];
+      game.boost = 1.2 + game.nitro * 3; game.boostCap = perfect ? 1.25 : 1.15; game.boostK = perfect ? 1.3 : 1; game.nitro = 0;
+      if (perfect) { game.extraPts += 150; toast(T.nitroPerfect, 'good'); vibrate([20, 30, 40]); } else vibrate(25);
+      SND.nitro(perfect);
+    }
+  }
+  // the cruise speed stays where it was, so the car eases back to it once the burst ends
+  if (game.boost > 0) { game.boost -= dt; a += player.accel * 0.9 * game.boostK; }
   const dmgSlow = player.dmg > 60 ? 0.8 : 1;
-  player.v = clamp(player.v + a * dt, 0, player.vmax * dmgSlow);
+  // past the top speed (after a boost, or once damage slows the car) ease back down instead of stopping dead
+  const vCap = player.vmax * dmgSlow * (game.boost > 0 ? game.boostCap : 1);
+  let nv = player.v + a * dt; if (nv > vCap) nv = Math.max(vCap, Math.min(nv, player.v) - 3 * dt);
+  player.v = Math.max(0, nv);
+  if (game.boost <= 0) player.cruise = Math.min(player.cruise, player.vmax * dmgSlow);
   // steering
   trackAt(player.t, player.d, P);
   // keys are on/off, so ease the input in and out to feel like turning a wheel
@@ -1726,7 +1847,7 @@ function step(dt) {
         game.weaves++; game.combo = game.comboT > 0 ? game.combo + 1 : 1; game.comboT = 3;
         const pts = 40 * game.combo; game.weavePts += pts;
         hud.weave.textContent = T.weave + (game.combo > 1 ? ' x' + game.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
-        SND.combo(game.combo); vibrate(game.combo >= 3 ? [20, 30, 20] : 12);
+        SND.combo(game.combo); vibrate(game.combo >= 3 ? [20, 30, 20] : 12); game.nitro = Math.min(1, game.nitro + 0.1);
         if (Math.random() < 0.3) SND.otherHorn(dd, 8, C.horn);
       }
     } else if (c.passed && dt2 > lenSum) { c.passed = false; if (Math.abs(dd) < 6.5 && c.v > player.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5); }
@@ -1737,6 +1858,12 @@ function step(dt) {
     if (c.ahead && !ahead) { const gap = Math.abs(c.d - player.d); if (gap < 16) SND.passBy(-1, sizeOf(c.kind), 1 - (gap - 3) / 15); }
     c.ahead = ahead;
   }
+  // riding close behind a car fills the nitro slowly
+  let draft = false;
+  if (player.v > 14 && game.boost <= 0) for (const c of SAME) { const g = c.t - player.t - (c.len + player.len) / 2; if (g > 0 && g < 24 && Math.abs(c.d - player.d) < 1.3) { draft = true; break; } }
+  if (draft) game.nitro = Math.min(1, game.nitro + dt * 0.06);
+  const hornTap = horn && !game.hornWas; game.hornWas = horn;
+  const evTxt = roadEvent(dt, hornTap);
   // events
   const sNow = sOfT(player.t); const moved = player.t - prevT;
   let warnTxt = '';
@@ -1756,6 +1883,7 @@ function step(dt) {
       }
     }
   }
+  if (!warnTxt) warnTxt = evTxt;
   hud.warn.textContent = warnTxt; hud.warn.hidden = !warnTxt;
   // distance milestones
   if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
@@ -1779,12 +1907,17 @@ function step(dt) {
   hud.speed.textContent = kmh; hud.speed.closest('.speedo').classList.toggle('over', kmh > C.limit + C.tolerance);
   hud.time.textContent = fmtTime(game.time); hud.score.textContent = fmt(computeScore()); hud.viol.textContent = game.radar + game.crashes;
   hud.dmg.style.width = player.dmg + '%';
+  const sweet = game.boost <= 0 && game.nitro >= NITRO_SWEET[0] && game.nitro <= NITRO_SWEET[1];
+  const nShow = game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro;
+  hud.nitro.style.setProperty('--n', nShow.toFixed(3)); hud.nitroBtn.style.setProperty('--n', nShow.toFixed(3));
+  hud.nitro.classList.toggle('sweet', sweet); hud.nitro.classList.toggle('on', game.boost > 0);
+  hud.nitroBtn.classList.toggle('sweet', sweet); hud.nitroBtn.classList.toggle('on', game.boost > 0); hud.nitroBtn.classList.toggle('ready', game.boost <= 0 && game.nitro >= 0.25);
   if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) hud.toast.className = 'toast'; }
 }
 function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
 const fxEl = document.querySelector('#fx');
-const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0; let camRoll = 0;
+const camPos = new THREE.Vector3(), camLook = new THREE.Vector3(); let camInit = false; let orbit = 0; let camRoll = 0; let nitroFov = 0;
 const tmpEuler = new THREE.Euler();
 function render(dt) {
   // player
@@ -1822,7 +1955,8 @@ function render(dt) {
     camera.lookAt(camLook);
     camRoll += (clamp(player.lat * 0.006, -0.03, 0.03) - camRoll) * Math.min(1, dt * 5);
     camera.rotateZ(camRoll);
-    camera.fov = (62 + Math.min(14, player.v * 0.18)) * (camera.aspect < 0.8 ? 0.8 : 1); camera.updateProjectionMatrix();
+    nitroFov += ((game.boost > 0 ? 9 : 0) - nitroFov) * Math.min(1, dt * (game.boost > 0 ? 6 : 2));
+    camera.fov = (62 + Math.min(14, player.v * 0.18) + nitroFov) * (camera.aspect < 0.8 ? 0.8 : 1); camera.updateProjectionMatrix();
   } else {
     orbit += dt * 0.12;
     const r = 11;
@@ -1840,7 +1974,7 @@ function render(dt) {
   }
   if (wheel) wheel.rotation.z += dt * 0.02;
   if (game.mode === 'drive') drawMini(P.x, P.z);
-  fxEl.style.setProperty('--spd', game.mode === 'drive' ? clamp((player.v * 3.6 - 90) / 90, 0, 1).toFixed(2) : 0);
+  fxEl.style.setProperty('--spd', game.mode === 'drive' ? clamp(Math.max((player.v * 3.6 - 90) / 90, game.boost > 0 ? 0.8 : 0), 0, 1).toFixed(2) : 0);
   renderer.render(scene, camera);
 }
 
@@ -1920,6 +2054,7 @@ function syncSettingsUI() {
   segmented('#segFx', 'fx', applyControls);
   segmented('#segMini', 'mini', applyControls);
   segmented('#segSound', 'sound', () => SND.apply(settings));
+  segmented('#segHornStyle', 'hornStyle', () => { SND.apply(settings); SND.horn(true, C.horn, (CARS[settings.car] || CARS[0]).kind); setTimeout(() => SND.horn(false), 600); });
   segmented('#segMusic', 'music', () => { SND.apply(settings); if (game.mode === 'drive') radioStart(); });
   segmented('#segVib', 'vib', () => { SND.apply(settings); vibrate([20, 40, 20]); });
   segmented('#segAutoQ', 'autoQ', applyQuality);
@@ -2064,7 +2199,7 @@ $('#wTour').onclick = () => { store.set('welcomed', 1); startTour(); };
 $('#wSkip').onclick = () => { store.set('welcomed', 1); showScreen('#menu'); };
 $('#teDrive').onclick = () => {
   showScreen(null); game.paused = false; game.tour = false; $('#touch').hidden = !isTouch(); game.lastOpts = { free: true };
-  Object.assign(game, { time: 0, dist: 0, weaves: 0, combo: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000 });
+  Object.assign(game, { time: 0, dist: 0, weaves: 0, combo: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, nitro: 0, boost: 0, boostCap: 1, boostK: 1, extraPts: 0, nitroReq: false, evT: mr(25, 45) });
   player.dmg = 0;
 };
 $('#teMenu').onclick = () => { game.tour = false; toMenu(); };
@@ -2081,7 +2216,7 @@ async function boot() {
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  window.__game = { scene, trackAt, game, player, L, LMS, settings, startTrip, keys, step, SAME, startTour, nextTourStep, touch };
+  window.__game = { scene, trackAt, game, player, L, LMS, settings, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud };
 }
 boot();
 })();
