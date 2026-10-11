@@ -610,15 +610,17 @@ window.CITY = {
   ],
   colors: [0xf4f3ef, 0x141414, 0xc9a24a, 0x5a5f66, 0xc0141c, 0xc8a979],
   traffic: [
-    { kind: 'suv', colors: [0xf4f3ef, 0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979], speed: [90, 130] },
-    { kind: 'suv', colors: [0xf4f3ef, 0x141414], speed: [90, 130] },
-    { kind: 'sedan', colors: [0xf4f3ef, 0xb9bec4, 0x5a5f66, 0x1d1f22, 0x2c4a7a], speed: [85, 120] },
+    // white is common in the heat, but black, silver, grey, gold and dark blue are on every road too
+    { kind: 'suv', colors: [0xf4f3ef, 0x141414, 0x9aa0a6, 0xc8a979, 0x5a5f66, 0x1f3556, 0x6e1a22], speed: [90, 130] },
+    { kind: 'suv', colors: [0x141414, 0xb9bec4, 0xf4f3ef, 0x3a3d42, 0x8a7a5a], speed: [90, 130] },
+    { kind: 'sedan', colors: [0xb9bec4, 0x5a5f66, 0x1d1f22, 0x2c4a7a, 0xf4f3ef, 0x8c1c24, 0xa89f8e], speed: [85, 120] },
     { kind: 'sports', colors: [0xc0141c, 0xf2c12e, 0x141414, 0x2a7de1, 0xf4f3ef], speed: [110, 140], wild: 0.6 },
     { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0xd2232a }, speed: [85, 115] },
     { kind: 'dtaxi', colors: [0xe9dcc0], extra: { roof: 0x2e8b57 }, speed: [85, 115] },
-    { kind: 'pickup', colors: [0xf4f3ef], speed: [75, 100] },
-    { kind: 'bus', colors: [0xf4f4f0], extra: { stripe: 0xc8102e }, speed: [70, 90] },
-    { kind: 'truck', colors: [0xf4f3ef, 0x2b5b8f], extra: { cargo: 0xe2ddd2 }, speed: [65, 85] }
+    { kind: 'pickup', colors: [0xf4f3ef, 0xb9bec4, 0x3a3d42, 0xc8a979], speed: [75, 100] },
+    // public buses are white with red, school buses are yellow
+    { kind: 'bus', colors: [0xf4f4f0, 0xd7dbe0, 0xf2b705], extra: { stripe: 0xc8102e }, speed: [70, 90] },
+    { kind: 'truck', colors: [0xb3261e, 0x2b5b8f, 0xf4f3ef, 0xd9822b, 0x2f6b3a], extra: { cargo: 0xe2ddd2 }, speed: [65, 85] }
   ],
   flag(g, w, h) {
     g.fillStyle = '#00843d'; g.fillRect(0, 0, w, h / 3); g.fillStyle = '#fff'; g.fillRect(0, h / 3, w, h / 3);
@@ -1712,8 +1714,9 @@ function buildTerrain() {
   g.setAttribute('color', new THREE.BufferAttribute(cols, 3)); g.computeVertexNormals();
   const ground = new THREE.Mesh(g, new THREE.MeshLambertMaterial({ vertexColors: true })); ground.receiveShadow = true; scene.add(ground);
   if (coast) {
-    const wg = new THREE.PlaneGeometry(w + 30000, d + 30000); wg.rotateX(-Math.PI / 2);
-    const wm = new THREE.MeshPhongMaterial({ color: C.look.sea, shininess: 90, specular: 0x667788, transparent: true, opacity: 0.94 });
+    // many small tiles and a push away from the camera: one huge flat sheet loses depth precision far from the middle and shows through the road
+    const wg = new THREE.PlaneGeometry(w + 30000, d + 30000, 48, 48); wg.rotateX(-Math.PI / 2);
+    const wm = new THREE.MeshPhongMaterial({ color: C.look.sea, shininess: 90, specular: 0x667788, transparent: true, opacity: 0.94, polygonOffset: true, polygonOffsetFactor: 4, polygonOffsetUnits: 4 });
     const water = new THREE.Mesh(wg, wm); water.position.set((minX + maxX) / 2, -0.8, (minZ + maxZ) / 2); scene.add(water);
   }
 }
@@ -2141,6 +2144,8 @@ const WEATHER = {
   dust: { fogTo: '#c9a26a', fogMix: 0.8, fogK: 0.14, sunK: 0.45, hemiK: 0.95, clouds: 0, cloudColor: '#c9a26a', skyMix: 0.75 }
 };
 const headlight = new THREE.SpotLight(0xfff1d6, 0, 90, 0.48, 0.65, 1.1);
+// the light and its target must never sit on the same spot, or the light's direction comes out as NaN and the ground turns dark
+headlight.position.set(0, 1, 0); headlight.target.position.set(0, 0, -10); headlight.visible = false;
 scene.add(headlight); scene.add(headlight.target);
 const atm = { night: C.look.night, wx: null };
 const mixHex = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t);
@@ -2166,6 +2171,7 @@ function applyTime() {
   ATM_U.night.value = night; atm.night = night; atm.wx = W ? C.weather : null;
   LAMP_MAT.color.set(night > 0.3 ? 0xffd9a0 : 0xd8d8d0);
   headlight.intensity = night > 0.5 ? 3.2 * night : 0;
+  headlight.visible = headlight.intensity > 0;
   $('#wx').hidden = !W; $('#wx').dataset.kind = W ? C.weather : '';
   SND.weather(W ? C.weather : null);
 }
