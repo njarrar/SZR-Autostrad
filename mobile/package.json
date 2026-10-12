@@ -1,7 +1,7 @@
 {
   "name": "szr-autostrad-app",
   "private": true,
-  "version": "2.13.0",
+  "version": "2.15.0",
   "description": "iOS and Android apps that wrap the three city games",
   "type": "module",
   "scripts": {

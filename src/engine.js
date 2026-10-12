@@ -108,7 +108,7 @@ function terrainH(x, z) {
 {
   for (let i = 0; i < N; i++) PY[i] = terrainH(PX[i], PZ[i]);
   const tmp = new Float32Array(N);
-  for (let pass = 0; pass < 3; pass++) {
+  for (let pass = 0; pass < (C.hills ? 3 : 0); pass++) {
     const r = 30;
     for (let i = 0; i < N; i++) {
       let sum = 0;
@@ -401,6 +401,23 @@ function windowMaterial(opts, curtain) {
 }
 
 // ---------- canvas textures ----------
+// lots of tiny dots blended straight into the pixels; one fillRect per dot is slow on phones.
+// o.cols: the two dot colors, o.p: share of the first, o.a / o.sx / o.sy: [base, random extra]
+function grain(g, w, h, n, o) {
+  const cols = o.cols || [[0, 0, 0], [255, 255, 255]], p = o.p || 0.5, sx = o.sx || [1.5, 0], sy = o.sy || [1.5, 0];
+  const img = g.getImageData(0, 0, w, h), d = img.data;
+  // a fractional size rounds up or down at random, so dots average the size asked for
+  const size = (s) => Math.max(1, Math.floor(s[0] + Math.random() * s[1] + Math.random()));
+  for (let i = 0; i < n; i++) {
+    const c = Math.random() < p ? cols[0] : cols[1], a = o.a[0] + Math.random() * o.a[1];
+    const x0 = Math.floor(Math.random() * w), y0 = Math.floor(Math.random() * h);
+    const x1 = Math.min(w, x0 + size(sx)), y1 = Math.min(h, y0 + size(sy));
+    for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
+      const k = (y * w + x) * 4; d[k] += (c[0] - d[k]) * a; d[k + 1] += (c[1] - d[k + 1]) * a; d[k + 2] += (c[2] - d[k + 2]) * a;
+    }
+  }
+  g.putImageData(img, 0, 0);
+}
 function canvasTex(w, h, draw, repeat) {
   const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); draw(g, w, h);
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4;
@@ -423,7 +440,7 @@ function buildRoad() {
       g.fillStyle = gr; for (const dy of [-h, 0, h]) g.fillRect(x - r, y - r + dy, r * 2, r * 2);
     }
     // fine aggregate mineral grain
-    for (let i = 0; i < 85000; i++) { const v = Math.random() < 0.52 ? 0 : 255; g.fillStyle = `rgba(${v},${v},${v},${0.045 + Math.random() * 0.075})`; g.fillRect(Math.random() * w, Math.random() * h, 1 + Math.random() * 1.5, 1 + Math.random() * 1.5); }
+    grain(g, w, h, 85000, { p: 0.52, a: [0.045, 0.075], sx: [1, 1.5], sy: [1, 1.5] });
     // worn tyre tracks in every lane, plus an oily streak down the middle
     for (const sgn of [-1, 1]) for (let i = 0; i < LANES; i++) {
       const c = sgn * (MED + SH + LW * (i + 0.5));
@@ -483,7 +500,7 @@ function buildRoad() {
   // concrete jersey barriers: [lat center, base width, height]; 4 m blocks with a joint and reflector tabs
   const barTex = canvasTex(256, 256, (g, w, h) => {
     const c = new THREE.Color(C.look.barrier); g.fillStyle = '#' + c.getHexString(); g.fillRect(0, 0, w, h);
-    for (let i = 0; i < 9000; i++) { const v = Math.random() < 0.5 ? 0 : 255; g.fillStyle = `rgba(${v},${v},${v},${0.03 + Math.random() * 0.05})`; g.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+    grain(g, w, h, 9000, { a: [0.03, 0.05] });
     for (const [a, b] of [[0, 0.22], [1, 0.78]]) { const gr = g.createLinearGradient(a * w, 0, b * w, 0); gr.addColorStop(0, 'rgba(40,30,20,0.38)'); gr.addColorStop(1, 'rgba(40,30,20,0)'); g.fillStyle = gr; g.fillRect(Math.min(a, b) * w, 0, Math.abs(b - a) * w, h); }
     g.fillStyle = 'rgba(255,255,255,0.14)'; g.fillRect(w * 0.44, 0, w * 0.12, h);
     g.fillStyle = 'rgba(0,0,0,0.42)'; g.fillRect(0, 0, w, 4); g.fillStyle = 'rgba(255,255,255,0.2)'; g.fillRect(0, 4, w, 2);
@@ -1145,18 +1162,29 @@ shadows.frustumCulled = false; scene.add(shadows);
 
 // ---------- scenery ----------
 const tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3(), tmpS = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+// scenery is cut into square cells, one instanced mesh each, so the camera and the
+// shadow pass skip what they can't see and render() hides cells lost in the fog
+const CHUNK = 1000, CHUNKS = [];
 function makeInstanced(geo, mat, list, colored, castShadow = true) {
-  const im = new THREE.InstancedMesh(geo, mat, Math.max(1, list.length));
+  // small batches stay whole: splitting them costs more draw calls than it saves
+  const tris = (geo.index ? geo.index.count : geo.attributes.position.count) / 3, whole = tris * list.length < 100000;
+  const cells = new Map();
+  for (const it of list) {
+    const k = whole ? 0 : Math.floor(it.x / CHUNK) + ',' + Math.floor(it.z / CHUNK);
+    let a = cells.get(k); if (!a) { a = []; cells.set(k, a); } a.push(it);
+  }
   const c = new THREE.Color();
-  list.forEach((it, i) => {
-    tmpQ.setFromAxisAngle(UP, it.yaw || 0);
-    tmpM.compose(tmpV.set(it.x, it.y, it.z), tmpQ, tmpS.set(it.sx, it.sy, it.sz));
-    im.setMatrixAt(i, tmpM);
-    if (colored) im.setColorAt(i, c.set(it.c));
-  });
-  im.count = list.length;
-  im.computeBoundingSphere(); im.frustumCulled = true; im.castShadow = castShadow; im.receiveShadow = true;
-  scene.add(im); return im;
+  for (const part of cells.values()) {
+    const im = new THREE.InstancedMesh(geo, mat, part.length);
+    part.forEach((it, i) => {
+      tmpQ.setFromAxisAngle(UP, it.yaw || 0);
+      tmpM.compose(tmpV.set(it.x, it.y, it.z), tmpQ, tmpS.set(it.sx, it.sy, it.sz));
+      im.setMatrixAt(i, tmpM);
+      if (colored) im.setColorAt(i, c.set(it.c));
+    });
+    im.computeBoundingSphere(); im.frustumCulled = true; im.castShadow = castShadow; im.receiveShadow = true;
+    scene.add(im); CHUNKS.push(im);
+  }
 }
 
 // no buildings inside a landmark's clear ring; `view` widens it so a tall landmark shows over the street
@@ -1532,7 +1560,7 @@ function buildVerge() {
   const tex = canvasTex(256, 256, (g, w, h) => {
     g.fillStyle = '#5f8a3a'; g.fillRect(0, 0, w, h);
     for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)'; g.fillRect(i * w / 8, 0, w / 8, h); }
-    for (let i = 0; i < 9000; i++) { const v = Math.random(); g.fillStyle = `rgba(${v < 0.5 ? '40,70,20' : '150,190,90'},${0.15 + Math.random() * 0.2})`; g.fillRect(Math.random() * w, Math.random() * h, 1.5, 2.5); }
+    grain(g, w, h, 9000, { cols: [[40, 70, 20], [150, 190, 90]], a: [0.15, 0.2], sy: [2.5, 0] });
   }, true);
   const pos = [], uv = [], a = {}, b = {}, c = {}, d = {};
   const step = 8, x0 = HW + 0.6, x1 = HW + C.verge.width;
@@ -1556,7 +1584,7 @@ function buildSidewalk() {
     g.fillStyle = pave; g.fillRect(0, 0, w, h);
     const n = 4, sz = w / n;
     for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const v = Math.random() * 0.12 - 0.06; g.fillStyle = v > 0 ? `rgba(255,255,255,${v})` : `rgba(0,0,0,${-v})`; g.fillRect(i * sz + 2, j * sz + 2, sz - 4, sz - 4); }
-    for (let i = 0; i < 6000; i++) { const v = Math.random() < 0.5 ? 0 : 255; g.fillStyle = `rgba(${v},${v},${v},${0.04 + Math.random() * 0.06})`; g.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+    grain(g, w, h, 6000, { a: [0.04, 0.06] });
     g.fillStyle = 'rgba(0,0,0,0.25)'; for (let i = 0; i <= n; i++) { g.fillRect(i * sz - 1.5, 0, 3, h); g.fillRect(0, i * sz - 1.5, w, 3); }
   }, true);
   const kerbTex = canvasTex(64, 128, (g, w, h) => { g.fillStyle = kerb[0]; g.fillRect(0, 0, w, h / 2); g.fillStyle = kerb[1]; g.fillRect(0, h / 2, w, h / 2); }, true);
@@ -2376,10 +2404,12 @@ LB.jumeirahMosque = (g) => {
 };
 
 // Najdi mud walls end in a row of small stepped points; one helper adds them along a wall top
+const MERLON_G = new THREE.ConeGeometry(0.85, 1.9, 4);
 function merlons(g, mat, x0, x1, z0, z1, y, gap) {
-  const geo = new THREE.ConeGeometry(0.85, 1.9, 4); gap = gap || 3;
-  const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(len / gap));
-  for (let k = 0; k <= n; k++) { const f = k / n; g.add(mesh(geo, mat, x0 + (x1 - x0) * f, y + 0.95, z0 + (z1 - z0) * f)); }
+  gap = gap || 3;
+  const len = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(len / gap)), parts = [];
+  for (let k = 0; k <= n; k++) { const f = k / n; parts.push({ g: MERLON_G, x: x0 + (x1 - x0) * f, y: y + 0.95, z: z0 + (z1 - z0) * f }); }
+  g.add(new THREE.Mesh(mergeParts(parts), mat)); // one mesh per wall, not one per point
 }
 function merlonBox(g, mat, w, d, y, gap, cx) {
   const a = (cx || 0) - w / 2, b = (cx || 0) + w / 2;
@@ -2833,7 +2863,8 @@ addEventListener('keydown', (e) => {
   if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused) game.nitroReq = true;
   if ((e.code === 'KeyR' || e.code === 'KeyM') && !e.repeat && game.mode === 'drive') radioKey(e.code);
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
-  if ((e.code === 'KeyP' || e.code === 'Escape') && game.mode === 'drive') togglePause();
+  if (e.code === 'Escape') goBack();
+  else if (e.code === 'KeyP' && game.mode === 'drive') togglePause();
 });
 addEventListener('keyup', (e) => { keys[e.code] = false; });
 function resetInputs() {
@@ -3515,7 +3546,11 @@ function render(dt) {
   }
   if (headlight.intensity > 0) { trackAt(player.t + 1.8, player.d, Q); headlight.position.set(Q.x, Q.y + 0.75, Q.z); trackAt(player.t + 26, player.d, Q); headlight.target.position.set(Q.x, Q.y, Q.z); }
   drawWeather(dt);
-  sun.target.position.set(P.x, P.y, P.z); sun.position.set(P.x + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, P.z + SUN_DIR.z * 400);
+  // centre the shadow box a little ahead of the car, where the camera looks
+  const sunX = P.x + P.fx * 30, sunZ = P.z + P.fz * 30;
+  sun.target.position.set(sunX, P.y, sunZ); sun.position.set(sunX + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, sunZ + SUN_DIR.z * 400);
+  const fogFar = scene.fog.far * 1.3, cp = camera.position; // fog works on depth, so leave room at the screen edges
+  for (const im of CHUNKS) { const b = im.boundingSphere, r = fogFar + b.radius; im.visible = b.center.distanceToSquared(cp) < r * r; }
   let si = 0; const setShadow = (x, y, z, yw, w, l) => { if (si >= MAXS) return; tmpQ.setFromAxisAngle(UP, yw); tmpM.compose(tmpV.set(x, y + 0.04, z), tmpQ, tmpS.set(w * 1.3, 1, l * 1.15)); shadows.setMatrixAt(si++, tmpM); };
   if (game.walk) setShadow(P.x, P.y + SW_Y, P.z, yaw, 0.45, 0.4); else setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
   // cars further than this are a few pixels; skip drawing them
@@ -3869,9 +3904,27 @@ $('#teDrive').onclick = () => {
 };
 $('#teMenu').onclick = () => { game.tour = false; toMenu(); };
 
+// Escape and the phone's back button close the top thing on screen, or pause a drive.
+// Returns false on the plain menu, so the app can step aside.
+function goBack() {
+  const open = (sel) => { const el = $(sel); return !!el && !el.hidden; };
+  if (!radioMenu.hidden) radioMenuOpen(false);
+  else if (open('#settings')) $('#setClose').click();
+  else if (open('#booklet')) showScreen('#menu');
+  else if (open('#welcome')) $('#wSkip').click();
+  else if (open('#tourEnd')) $('#teMenu').click();
+  else if (game.mode === 'drive') togglePause();
+  else if (open('#result')) $('#btnMenu').click();
+  else if (open('#garage')) $('#garage').hidden = true;
+  else if (open('#moreBox')) $('#btnMore').click();
+  else return false;
+  return true;
+}
+window.autostradBack = goBack;
+
 // ---------- boot ----------
 async function boot() {
-  try { await Promise.race([Promise.all([document.fonts.load(`80px Lalezar`), document.fonts.load(`600 40px 'IBM Plex Sans Arabic'`)]), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* fonts optional */ }
+  try { await Promise.race([Promise.all([document.fonts.load(`80px Lalezar`), document.fonts.load(`600 40px 'IBM Plex Sans Arabic'`), document.fonts.load(`700 40px 'IBM Plex Sans Arabic'`)]), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* fonts optional */ }
   const status = $('#loading');
   const stage = (msg) => new Promise((r) => { status.textContent = msg; setTimeout(r, 16); });
   await stage(T.loadRoad); buildRoad(); buildTerrain();

@@ -565,12 +565,14 @@ const SND = (() => {
   // ---------- phone buzz ----------
   const VIB = [0, 0.6, 1, 1.5];
   let vibLevel = 2, lastVib = 0;
+  // iPhones have no navigator.vibrate; the iOS app hands a buzz length to the phone's own haptics
+  const iosHaptics = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.haptics;
   function vibrate(p) {
     if (!vibLevel || !gestured) return;
     const t = performance.now(); if (t - lastVib < 50) return; lastVib = t;
     const k = VIB[vibLevel];
     const pat = (Array.isArray(p) ? p : [p]).map((v, i) => (i % 2 ? v : clampN(Math.round(v * k), 8, 90)));
-    try { if (navigator.vibrate) navigator.vibrate(pat); else if (ac && sfxOn) cue('tick'); } catch (e) { /* ignore */ }
+    try { if (navigator.vibrate) navigator.vibrate(pat); else if (iosHaptics) iosHaptics.postMessage(pat[0]); else if (ac && sfxOn) cue('tick'); } catch (e) { /* ignore */ }
   }
 
   return {
@@ -584,6 +586,6 @@ const SND = (() => {
       if (!sfxOn) { hornStop(); siren(null); }
       applyVolumes();
     },
-    canVibrate: !!navigator.vibrate
+    canVibrate: !!(navigator.vibrate || iosHaptics)
   };
 })();
