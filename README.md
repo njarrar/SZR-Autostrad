@@ -264,11 +264,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 
 ### 2.15 (October 2026)
 
-- **Smoother on phones.** Houses, towers, trees and roof clutter are now split into blocks of the city, so the game skips the blocks that are behind you or lost in the haze. Each frame Amman now draws about 55% fewer triangles, Dubai about half and Riyadh about 60% fewer. The Najdi wall tops in Riyadh are now one piece per wall instead of one per point.
+- **Smoother on phones.** Houses, towers, trees and roof clutter are now split into blocks of the city, so the game skips the blocks that are behind you or lost in the haze. Each frame Amman now draws about 55% fewer triangles, Dubai about half and Riyadh about 60% fewer. The Najdi wall tops in Riyadh are now one piece per wall instead of one per point, and the stair rooms on Amman's roofs are plain boxes instead of full buildings.
 - **Faster start.** The road texture is made about seven times faster, and flat cities skip the hill smoothing.
 - **Sharper shadows ahead.** The shadow area now sits a little in front of the car, where you look, instead of centred on it.
-- **Esc and the back button.** `Esc` now closes the radio list, settings, the photo album, the welcome screen and the garage, not just pause. In the Android app the phone's back button does the same, and only leaves the game from the plain menu.
+- **Esc and the back button.** `Esc` now closes the radio list, settings, the photo album, the welcome screen, the guided tour and the garage, not just pause. In the Android app the phone's back button does the same, and only leaves the game from the plain menu.
 - **Haptics on iPhone.** The iOS app now gives a light, medium or hard tap where Android phones vibrate, and edge swipes reach the game first, so a thumb at the bottom no longer flips you out of the app.
+- **No language change mid drive.** Settings opened from pause no longer show the Language tab, since changing the language reloads the page and ended the drive.
 - **Small fixes.** A site icon in the browser tab, the bold sign font loads before the city is built, and the iOS app no longer asks for old 32 bit devices.
 
 ### 2.14 (October 2026)

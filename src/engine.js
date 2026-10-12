@@ -1203,7 +1203,7 @@ function baseH(x, z, w, d) {
 }
 function buildScenery() {
   const bList = [], fillList = [], tanks = [], trees = [], palmT = [], palmC = [], crowns = [];
-  const glassT = [], roundT = [], taperT = [], balc = [], solar = [], dishes = [], rebar = [];
+  const glassT = [], roundT = [], taperT = [], balc = [], solar = [], dishes = [], rebar = [], stairs = [];
   const o = {};
   // a point on a building in its own frame (x across the road, z along it)
   const local = (x, z, yaw, lx, lz) => [x + lx * Math.cos(yaw) + lz * Math.sin(yaw), z - lx * Math.sin(yaw) + lz * Math.cos(yaw)];
@@ -1224,7 +1224,7 @@ function buildScenery() {
     for (let k = 0; k < nT; k++) { const [px, pz] = local(x, z, yaw, R(-w * 0.35, w * 0.35), R(-dp * 0.35, dp * 0.35)); tanks.push({ x: px, y, z: pz, sx: 1, sy: 1, sz: 1, yaw: 0, c: pick(C.look.tanks) }); }
     if (rand() < 0.55 * p) { const [px, pz] = local(x, z, yaw, R(-w * 0.3, w * 0.3), R(-dp * 0.3, dp * 0.3)); solar.push({ x: px, y, z: pz, sx: 1, sy: 1, sz: 1, yaw: R(-0.3, 0.3) }); }
     if (rand() < 0.35 * p) { const [px, pz] = local(x, z, yaw, R(-w * 0.4, w * 0.4), R(-dp * 0.4, dp * 0.4)); dishes.push({ x: px, y, z: pz, sx: 1, sy: 1, sz: 1, yaw: R(2.2, 3.4) }); }
-    if (rand() < 0.4 * p) { const [px, pz] = local(x, z, yaw, R(-w * 0.2, w * 0.2), R(-dp * 0.2, dp * 0.2)); bList.push({ x: px, y: y - 0.2, z: pz, sx: 3.2, sy: 3, sz: 3.6, yaw, c: col }); }
+    if (rand() < 0.4 * p) { const [px, pz] = local(x, z, yaw, R(-w * 0.2, w * 0.2), R(-dp * 0.2, dp * 0.2)); stairs.push({ x: px, y: y - 0.2, z: pz, sx: 3.2, sy: 3, sz: 3.6, yaw, c: col }); }
     if (rand() < 0.22 * p) for (const [a, b] of [[1, 1], [1, -1], [-1, 1], [-1, -1]]) { const [px, pz] = local(x, z, yaw, a * (w / 2 - 0.4), b * (dp / 2 - 0.4)); rebar.push({ x: px, y, z: pz, sx: 0.35, sy: R(1.2, 2.2), sz: 0.35, yaw }); }
   }
   const occ = new Map(); // occupancy grid to stop overlaps
@@ -1380,6 +1380,7 @@ function buildScenery() {
     makeInstanced(dg, new THREE.MeshLambertMaterial({ vertexColors: true }), dishes, false, false);
   }
   if (rebar.length) { const rg = BOX.clone(); rg.translate(0, 0.5, 0); makeInstanced(rg, new THREE.MeshLambertMaterial({ color: 0x9a948a }), rebar, false, false); }
+  if (stairs.length) { const sg = BOX.clone(); sg.translate(0, 0.5, 0); makeInstanced(sg, new THREE.MeshLambertMaterial(), stairs, true, false); }
   if (tanks.length) { const tg = CYL(0.65, 0.65, 1.3, 10, 1, false); tg.translate(0, 0.85, 0); makeInstanced(tg, new THREE.MeshLambertMaterial(), tanks, true, false); }
   if (crowns.length) {
     const cg = mergeParts([{ g: CYL(0.35, 0.68, 0.45, 8), c: 0xe2e6ea, y: 0.22 }, { g: CYL(0.06, 0.18, 0.65, 6), c: 0xf0f4f8, y: 0.72 }]);
@@ -3742,7 +3743,11 @@ function syncSettingsUI() {
 // settings screen: opened from the menu or the pause screen, and goes back to where it came from
 let setFrom = '#menu';
 function openSettings(from) {
-  setFrom = from; syncSettingsUI(); showScreen('#settings'); showTab(store.get('tab', 'ctl'));
+  setFrom = from; syncSettingsUI(); showScreen('#settings');
+  // changing the language reloads the page, so it is not offered mid drive
+  const mid = from === '#pause', lng = $('#settings [data-tab="lng"]'), tab = store.get('tab', 'ctl');
+  if (lng) lng.hidden = mid;
+  showTab(mid && tab === 'lng' ? 'ctl' : tab);
 }
 function showTab(k) {
   document.querySelectorAll('#settings .tabs button').forEach((b) => { b.classList.toggle('sel', b.dataset.tab === k); b.setAttribute('aria-selected', b.dataset.tab === k); });
@@ -3913,6 +3918,7 @@ function goBack() {
   else if (open('#booklet')) showScreen('#menu');
   else if (open('#welcome')) $('#wSkip').click();
   else if (open('#tourEnd')) $('#teMenu').click();
+  else if (open('#tour')) skipTour();
   else if (game.mode === 'drive') togglePause();
   else if (open('#result')) $('#btnMenu').click();
   else if (open('#garage')) $('#garage').hidden = true;
