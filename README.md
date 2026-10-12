@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.13** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.14** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -262,6 +262,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 
 ## What's new
 
+### 2.14 (October 2026)
+
+- **Phone and tablet apps.** The `ios/` and `android/` folders hold apps of all three cities for iPhone, iPad, Android phones and Android tablets. They carry three.js and the fonts inside, so they play with no network, run full screen, and keep the screen on while you drive. See [Phone and tablet apps](#phone-and-tablet-apps).
+
 ### 2.13 (October 2026)
 
 - **Treats in Haitham Mode.** Pick up a falafel sandwich, a lemon and mint juice or a coffee off the pavement. Falafel forgives a bump, lemon juice speeds Haitham up, and coffee makes everyone step aside.
@@ -388,6 +392,13 @@ lang/ar.xml            Shared Arabic text
 build.mjs              Builds the start page and one page per city into dist/
 dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
+ios/                   The iPhone and iPad app (Xcode project)
+android/               The Android phone and tablet app (Android Studio project)
+mobile/                Shared tools for both apps
+  prepare.mjs          Builds the games and copies them, with three.js and the fonts, into mobile/www
+  icons.mjs            Makes the app icons and launch screens from mobile/assets
+  assets/              App icon and launch screen (assets/android holds Android's copy)
+build/                 Ready to install app builds
 ```
 
 ## Build
@@ -403,6 +414,27 @@ This writes the start page `dist/index.html` and one page per city, `dist/amman/
 ```json
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html", "riyadh": "https://example.com/riyadh.html" }
 ```
+
+## Phone and tablet apps
+
+The iPhone and iPad app lives in `ios/` and the Android phone and tablet app in `android/`. Both use [Capacitor](https://capacitorjs.com/), which shows the games in the device's own web view, and share the tools in `mobile/`. On tablets the stick sits in the bottom corner and the buttons are bigger. You need Node.js 22, plus Android Studio for Android and a Mac with Xcode for iOS.
+
+```bash
+cd mobile
+npm install
+npm run sync      # build the games into mobile/www and copy them into both apps
+npm run android   # open android/ in Android Studio
+npm run ios       # open ios/ in Xcode
+npm run apk       # or build a test Android app at android/app/build/outputs/apk/debug/
+```
+
+Run `npm run sync` again after each change to the games. It also sets both apps' version to the games' version from `build.mjs`.
+
+**Builds.** `build/android/autostrad.apk` is a test build to install on any Android phone or tablet (allow installs from unknown sources). The iOS app has to be built on a Mac with Xcode, so `build/ios/` only has a note on how to do it.
+
+**New icon.** Replace `mobile/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `mobile/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle, plus `icon-monochrome.png`, the white marks alone, for Android's tinted icons), and `splash.png` (2732 by 2732) in both folders, then run `npm run icons`.
+
+**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open `android/` in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, open `ios/App/App.xcodeproj` in Xcode, pick your team under **Signing & Capabilities**, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `mobile/capacitor.config.json` and both projects before the first upload if you want another.
 
 ## Add a language
 
@@ -436,5 +468,6 @@ Landmark models are small builder functions in `src/engine.js` (the `LB` object)
 
 - [three.js](https://threejs.org/) 0.160.0
 - [Lalezar](https://fonts.google.com/specimen/Lalezar) and [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic) from Google Fonts
+- [Capacitor](https://capacitorjs.com/) 8 for the iOS and Android apps
 
 The routes follow real places but are drawn by hand from a handful of map points, so distances and curves are close, not exact.
