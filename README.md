@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.14** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.15** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -80,7 +80,7 @@ The car drives on its own and keeps its speed. You speed it up, slow it down and
 | Change camera | `C` | Settings > Display |
 | Next radio station | `R` | Radio button, then pick a station |
 | Radio on or off | `M` | Radio button, then Radio off |
-| Pause | `P` or `Esc` | Pause button |
+| Pause | `P` or `Esc` | Pause button (or the phone's back button in the Android app) |
 
 Let go and the car holds its current speed. A quick tap left or right moves you one lane over, and the car settles in the middle of that lane. Hold it to cross several lanes.
 
@@ -261,6 +261,16 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.15 (October 2026)
+
+- **Smoother on phones.** Houses, towers, trees and roof clutter are now split into blocks of the city, so the game skips the blocks that are behind you or lost in the haze. Each frame Amman now draws about 55% fewer triangles, Dubai about half and Riyadh about 60% fewer. The Najdi wall tops in Riyadh are now one piece per wall instead of one per point, and the stair rooms on Amman's roofs are plain boxes instead of full buildings.
+- **Faster start.** The road texture is made about seven times faster, and flat cities skip the hill smoothing.
+- **Sharper shadows ahead.** The shadow area now sits a little in front of the car, where you look, instead of centred on it.
+- **Esc and the back button.** `Esc` now closes the radio list, settings, the photo album, the welcome screen, the guided tour and the garage, not just pause. In the Android app the phone's back button does the same, and only leaves the game from the plain menu.
+- **Haptics on iPhone.** The iOS app now gives a light, medium or hard tap where Android phones vibrate, and edge swipes reach the game first, so a thumb at the bottom no longer flips you out of the app.
+- **No language change mid drive.** Settings opened from pause no longer show the Language tab, since changing the language reloads the page and ended the drive.
+- **Small fixes.** A site icon in the browser tab, the bold sign font loads before the city is built, and the iOS app no longer asks for old 32 bit devices.
 
 ### 2.14 (October 2026)
 
