@@ -200,5 +200,7 @@
     <string key="text.walkHow">وضع هيثم: امشِ 400 م للبقالة. يمين ويسار عشان تتفادى، لفوق أسرع، المسافة تقول لو سمحت، وN يطلّع الكلب وراك</string>
     <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، الهرن يقول لو سمحت، والنيترو يطلّع الكلب وراك</string>
     <string key="text.walkExcuse">لو سمحت!</string>
+    <string key="text.walkFalafel">ساندويش فلافل! راحت خبطة</string>
+    <string key="text.walkCoffee">قهوة! الكل يوسّع لك</string>
 </city>
 </language>
