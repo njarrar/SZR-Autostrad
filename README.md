@@ -392,10 +392,13 @@ lang/ar.xml            Shared Arabic text
 build.mjs              Builds the start page and one page per city into dist/
 dist/                  Ready to play builds
 docs/screenshots/      Images used in this README
-app/                   iOS and Android apps that wrap the games
-  prepare.mjs          Builds the games and copies them, with three.js and the fonts, into app/www
-  assets/              App icon and launch screen; icons.mjs makes the platform icons from these
-  android/  ios/       The Android Studio and Xcode projects
+ios/                   The iPhone and iPad app (Xcode project)
+android/               The Android phone and tablet app (Android Studio project)
+mobile/                Shared tools for both apps
+  prepare.mjs          Builds the games and copies them, with three.js and the fonts, into mobile/www
+  icons.mjs            Makes the app icons and launch screens from mobile/assets
+  assets/              App icon and launch screen (assets/android holds Android's copy)
+build/                 Ready to install app builds
 ```
 
 ## Build
@@ -412,24 +415,26 @@ This writes the start page `dist/index.html` and one page per city, `dist/amman/
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html", "riyadh": "https://example.com/riyadh.html" }
 ```
 
-## Phone apps
+## Phone and tablet apps
 
-The apps use [Capacitor](https://capacitorjs.com/), which shows the games in the phone's own web view. You need Node.js 22, plus Android Studio for Android and a Mac with Xcode for iOS.
+The iPhone and iPad app lives in `ios/` and the Android phone and tablet app in `android/`. Both use [Capacitor](https://capacitorjs.com/), which shows the games in the device's own web view, and share the tools in `mobile/`. On tablets the stick sits in the bottom corner and the buttons are bigger. You need Node.js 22, plus Android Studio for Android and a Mac with Xcode for iOS.
 
 ```bash
-cd app
+cd mobile
 npm install
-npm run sync      # build the games into app/www and copy them into both apps
-npm run android   # open the Android project in Android Studio
-npm run ios       # open the iOS project in Xcode
+npm run sync      # build the games into mobile/www and copy them into both apps
+npm run android   # open android/ in Android Studio
+npm run ios       # open ios/ in Xcode
 npm run apk       # or build a test Android app at android/app/build/outputs/apk/debug/
 ```
 
-Run `npm run sync` again after each change to the games.
+Run `npm run sync` again after each change to the games. It also sets both apps' version to the games' version from `build.mjs`.
 
-**New icon.** The icon is a green road sign. Replace `app/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `app/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle), plus `splash.png` and `splash-dark.png` (2732 by 2732) in both folders, then run `npm run icons`.
+**Builds.** `build/android/autostrad.apk` is a test build to install on any Android phone or tablet (allow installs from unknown sources). The iOS app has to be built on a Mac with Xcode, so `build/ios/` only has a note on how to do it.
 
-**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open the project in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, pick your team under **Signing & Capabilities** in Xcode, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `app/capacitor.config.json` and both projects before the first upload if you want another.
+**New icon.** Replace `mobile/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `mobile/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle, plus `icon-monochrome.png`, the white marks alone, for Android's tinted icons), and `splash.png` (2732 by 2732) in both folders, then run `npm run icons`.
+
+**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open `android/` in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, open `ios/App/App.xcodeproj` in Xcode, pick your team under **Signing & Capabilities**, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `mobile/capacitor.config.json` and both projects before the first upload if you want another.
 
 ## Add a language
 
