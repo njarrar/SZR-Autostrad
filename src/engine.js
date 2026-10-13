@@ -227,6 +227,58 @@ function applyQuality() {
   if (typeof resize === 'function') resize();
 }
 
+// pixel look: the city is drawn into a small picture, about 200 pixels on its short side, and blown up with hard edges.
+// Colours snap to a few steps with a 4x4 dither between them, and a dark line traces anything near that stands in
+// front of something far. The tone mapping happens here too, since three.js skips it when drawing into a target.
+const PIX_SHORT = 200;
+const pix = { rt: null, w: 0, h: 0 };
+const pixMat = new THREE.ShaderMaterial({
+  depthTest: false, depthWrite: false,
+  uniforms: { tCol: { value: null }, tDep: { value: null }, res: { value: new THREE.Vector2(1, 1) }, exposure: { value: 1 }, near: { value: camera.near }, far: { value: camera.far } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+  fragmentShader: `uniform sampler2D tCol; uniform sampler2D tDep; uniform vec2 res; uniform float exposure; uniform float near; uniform float far; varying vec2 vUv;
+    vec3 fit(vec3 v){ vec3 a = v * (v + 0.0245786) - 0.000090537; vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081; return a / b; }
+    vec3 aces(vec3 c){ c *= exposure / 0.6;
+      c = mat3(0.59719, 0.07600, 0.02840, 0.35458, 0.90834, 0.13383, 0.04823, 0.01566, 0.83777) * c; c = fit(c);
+      c = mat3(1.60475, -0.10208, -0.00327, -0.53108, 1.10813, -0.07276, -0.07367, -0.00605, 1.07602) * c; return clamp(c, 0.0, 1.0); }
+    vec3 srgb(vec3 c){ return mix(pow(c, vec3(0.41666)) * 1.055 - 0.055, c * 12.92, vec3(lessThanEqual(c, vec3(0.0031308)))); }
+    float dist(vec2 p){ float d = texture2D(tDep, p).x; return near * far / (far - d * (far - near)); }
+    float b2(vec2 a){ a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75))); }
+    void main(){
+      vec2 px = floor(vUv * res) + 0.5, uv = px / res, e = 1.0 / res;
+      vec3 c = srgb(aces(texture2D(tCol, uv).rgb));
+      // a flat surface has 1/distance changing evenly across the screen, so a bend in it marks an edge;
+      // only the near side of an edge gets the line, so a road seen low and far never fills with stripes
+      float z = dist(uv), i0 = 1.0 / z;
+      float ix = (1.0 / dist(uv + vec2(e.x, 0.0)) + 1.0 / dist(uv - vec2(e.x, 0.0)) - 2.0 * i0) * z;
+      float iy = (1.0 / dist(uv + vec2(0.0, e.y)) + 1.0 / dist(uv - vec2(0.0, e.y)) - 2.0 * i0) * z;
+      float edge = (z < 380.0 && min(ix, iy) < -0.1) ? 1.0 : 0.0;
+      float l = dot(c, vec3(0.299, 0.587, 0.114)); c = clamp(mix(vec3(l), c, 1.2), 0.0, 1.0);
+      float b = b2(px * 0.5) * 0.25 + b2(px) + 0.03125 - 0.5;
+      c = floor(c * 7.0 + 0.5 + b * 0.35) / 7.0;
+      c = mix(c, c * 0.3 + vec3(0.02, 0.015, 0.04), edge * 0.85);
+      gl_FragColor = vec4(c, 1.0);
+    }`
+});
+const pixScene = new THREE.Scene(), pixCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+{ const q = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), pixMat); q.frustumCulled = false; pixScene.add(q); }
+function pixTarget() {
+  const w = innerWidth, h = innerHeight, k = PIX_SHORT / Math.max(1, Math.min(w, h));
+  const pw = Math.max(16, Math.round(w * k)), ph = Math.max(16, Math.round(h * k));
+  if (pix.rt && pix.w === pw && pix.h === ph) return;
+  if (pix.rt) { pix.rt.depthTexture.dispose(); pix.rt.dispose(); }
+  // half floats keep the bright parts for the tone mapping; old phones without WebGL 2 get plain bytes
+  pix.rt = new THREE.WebGLRenderTarget(pw, ph, { minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, type: renderer.capabilities.isWebGL2 ? THREE.HalfFloatType : THREE.UnsignedByteType });
+  pix.rt.depthTexture = new THREE.DepthTexture(pw, ph);
+  Object.assign(pix, { w: pw, h: ph }); pixMat.uniforms.tCol.value = pix.rt.texture; pixMat.uniforms.tDep.value = pix.rt.depthTexture; pixMat.uniforms.res.value.set(pw, ph);
+}
+function drawFrame() {
+  if (settings.look !== 'pixel') { renderer.render(scene, camera); return; }
+  pixTarget(); pixMat.uniforms.exposure.value = renderer.toneMappingExposure;
+  renderer.setRenderTarget(pix.rt); renderer.render(scene, camera); renderer.setRenderTarget(null); renderer.render(pixScene, pixCam);
+}
+function applyLook() { document.body.classList.toggle('pixel', settings.look === 'pixel'); }
+
 // sky dome
 {
   const g = new THREE.SphereGeometry(30000, 32, 16);
@@ -1654,8 +1706,36 @@ function buildSigns() {
     for (const dir of [1, -1]) {
       const sSign = lm.s - dir * 450;
       addGantry(sSign, dir, signTexture(lm.ar, lm.en, '450 ' + T.meters, C.look.signColor), false);
+      addBrownSign(lm, dir);
     }
   }
+}
+// brown landmark signs on a post at the roadside, 200 m before each landmark, with an arrow to the side it stands on
+const BROWN_POST = new THREE.MeshLambertMaterial({ color: 0x8a8f96 });
+function brownTexture(ar, en, arrow) {
+  return canvasTex(512, 256, (g, w, h) => {
+    g.fillStyle = '#6b3b1f'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#ffffff'; g.lineWidth = 7; g.strokeRect(10, 10, w - 20, h - 20);
+    g.fillStyle = '#ffffff'; g.save(); g.translate(78, 128);
+    if (arrow === 'ahead') g.rotate(-Math.PI / 2); else if (arrow === 'left') g.rotate(Math.PI);
+    g.beginPath(); g.moveTo(-44, -13); g.lineTo(10, -13); g.lineTo(10, -40); g.lineTo(50, 0); g.lineTo(10, 40); g.lineTo(10, 13); g.lineTo(-44, 13); g.closePath(); g.fill(); g.restore();
+    const fit = (txt, size, wt, font, max) => { let z = size; g.font = `${wt} ${z}px ${font}`; while (z > 18 && g.measureText(txt).width > max) { z -= 2; g.font = `${wt} ${z}px ${font}`; } };
+    g.textAlign = 'center'; g.direction = 'rtl'; fit(ar, 78, '', FONT_AR, 330); g.fillText(ar, 318, 118);
+    g.direction = 'ltr'; fit(en, 40, 600, FONT_BODY, 330); g.fillText(en, 318, 190);
+  });
+}
+function addBrownSign(lm, dir) {
+  const s = lm.s - dir * 200, lat = dir * (HW + 1.6), o = curveAt(s, lat, {});
+  SIDE_OBS.push({ s, lat, hl: 0.15, hw: 0.15, kind: 'pole' });
+  const arrow = lm.dist < HW + 8 ? 'ahead' : (lm.side * dir > 0 ? 'right' : 'left');
+  const g = new THREE.Group();
+  // one post, with the panel up above head height so people on the sidewalk walk under it
+  const post = new THREE.Mesh(CYL(0.09, 0.09, 4.2), BROWN_POST); post.position.set(0, 2.1, 0); g.add(post);
+  const pg = new THREE.PlaneGeometry(3.6, 1.8);
+  const face = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ map: brownTexture(lm.ar, lm.en, arrow) })); face.position.set(0, 3.3, 0.1); g.add(face);
+  const back = new THREE.Mesh(pg, BROWN_POST); back.position.set(0, 3.3, 0.08); back.rotation.y = Math.PI; g.add(back);
+  g.position.set(o.x, o.y, o.z); g.rotation.y = Math.atan2(-dir * o.tx, -dir * o.tz);
+  scene.add(g);
 }
 
 // speed cameras, bumps, toll gates, passenger stops & roadside fuel/service stations
@@ -2843,7 +2923,10 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1 }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal' }, store.get('settings', {}));
+// ?look=pixel or ?look=normal in the address picks the look
+try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
+applyLook();
 function saveSettings() { store.set('settings', settings); }
 const album = Object.assign({}, store.get('album', {}));
 function saveAlbum() { store.set('album', album); }
@@ -2864,6 +2947,7 @@ addEventListener('keydown', (e) => {
   if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused) game.nitroReq = true;
   if ((e.code === 'KeyR' || e.code === 'KeyM') && !e.repeat && game.mode === 'drive') radioKey(e.code);
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
+  if (e.code === 'KeyV' && !e.repeat) { settings.look = settings.look === 'pixel' ? 'normal' : 'pixel'; saveSettings(); applyLook(); syncSettingsUI(); }
   if (e.code === 'Escape') goBack();
   else if (e.code === 'KeyP' && game.mode === 'drive') togglePause();
 });
@@ -3166,13 +3250,15 @@ function startTrip(opts) {
   if (hud.chipPax) hud.chipPax.hidden = player.paxCap <= 0;
   if (hud.chipFuel) hud.chipFuel.hidden = false;
   hud.limit.textContent = C.limit;
-  hud.next.textContent = tr.free ? T.freeDrive : tr.to.name;
+  setText(hud.next, tr.free ? T.freeDrive : tr.to.name);
+  // free drive has no goal, so the 'heading to' label goes and the line says where you are
+  hud.next.parentNode.querySelector('.lbl').hidden = !!tr.free;
   if (!opts.tour) toast(player.paxCap > 0 ? T.serviceMode : (tr.free ? T.freeHint : T.goTo + ' ' + tr.to.name));
   game.count = opts.tour ? 0 : 3; game.countN = 4; player.cruise = opts.tour ? player.cruise : 0;
   walkClear(); game.walk = null;
   if (opts.walk) {
     walkSetup(); game.free = false; game.dest = null; game.tripLen = WALK_GOAL;
-    hud.next.textContent = T.walkGoal; if (hud.chipFuel) hud.chipFuel.hidden = true; if (hud.chipPax) hud.chipPax.hidden = true;
+    setText(hud.next, T.walkGoal); hud.next.parentNode.querySelector('.lbl').hidden = false; if (hud.chipFuel) hud.chipFuel.hidden = true; if (hud.chipPax) hud.chipPax.hidden = true;
     toast(isTouch() ? T.walkHowTouch : T.walkHow);
   }
   if (haitham) haitham.g.visible = !!game.walk;
@@ -3522,8 +3608,15 @@ function drawHud() {
   setClass(hud.nitroBtn, 'sweet', sweet); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
   // the hint and the toast share one spot on phones, so the toast wins while it shows
   const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
+  // free drive has no goal, so the top line says which landmark you are passing
+  if (game.free) setText(hud.next, nearName());
   const km = game.free ? game.dist : Math.max(0, game.tripLen - (player.t - game.startT));
   setText(hud.remain, (km / 1000).toFixed(1) + ' ' + T.km);
+}
+function nearName() {
+  const s = sOfT(player.t); let best = null, bd = 1500;
+  for (const lm of LMS) { const d = Math.min(aheadDist(s, lm.s), aheadDist(lm.s, s)); if (d < bd) { bd = d; best = lm; } }
+  return best ? T.near.replace('{place}', best.name) : T.freeDrive;
 }
 function flash() { const f = $('#flash'); f.classList.remove('go'); void f.offsetWidth; f.classList.add('go'); }
 
@@ -3634,7 +3727,7 @@ function render(dt) {
   const spd = game.mode === 'drive' ? clamp(Math.max((player.v * 3.6 - 90) / 90, game.boost > 0 ? 0.8 : 0), 0, 1).toFixed(2) : '0.00';
   if (spd !== lastSpd) { lastSpd = spd; fxEl.style.setProperty('--spd', spd); setClass(fxEl, 'fast', spd !== '0.00'); }
   updateFxCanvas(dt);
-  renderer.render(scene, camera);
+  drawFrame();
 }
 
 function placeMenuCar() {
@@ -3719,6 +3812,7 @@ function syncSettingsUI() {
   segmented('#segQual', 'quality', () => { autoQ.step = 0; autoQ.t = autoQ.slow = autoQ.all = 0; applyQuality(); });
   segmented('#segFx', 'fx', applyControls);
   segmented('#segMini', 'mini', applyControls);
+  segmented('#segLook', 'look', applyLook);
   segmented('#segSound', 'sound', () => SND.apply(settings));
   segmented('#segHornStyle', 'hornStyle', () => { SND.apply(settings); SND.horn(true, C.horn, (CARS[settings.car] || CARS[0]).kind); setTimeout(() => SND.horn(false), 600); });
   segmented('#segMusic', 'music', () => { SND.apply(settings); if (game.mode === 'drive') radioStart(); });

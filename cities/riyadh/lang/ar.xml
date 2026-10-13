@@ -57,7 +57,7 @@
     <string key="page.T_SOUND">الصوت</string>
     <string key="page.T_ON">شغّال</string>
     <string key="page.T_OFF">طافي</string>
-    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · البوري <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · الراديو <kbd>R</kbd> · وقوف <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · البوري <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · الراديو <kbd>R</kbd> · البكسل <kbd>V</kbd> · وقوف <kbd>P</kbd>]]></string>
     <string key="page.T_MAPNOTE">الطريق مرسوم تقريباً على أماكن حقيقية في الرياض. البوري يخلّي السيارة اللي قدامك توسّع لك.</string>
     <string key="page.T_PAUSED">استراحة</string>
     <string key="page.T_RESUME">كمّل</string>
