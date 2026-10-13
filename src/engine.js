@@ -1911,7 +1911,9 @@ function paxStopStep(dt, gas) {
     if (a < 2.5 || player.v < 0.6) beginDwell(st, a);
     return;
   }
-  // standing at the stop: the car stays put until everyone is on
+  // standing at the stop: the car stays put until everyone is on, or until you press gas to drive on.
+  // Gas was up when the stop began (it skips the stop otherwise), so any press here is a fresh one.
+  if (gas) { st.gone = true; endDwell(st, true); return; }
   player.v = 0; player.cruise = 0; player.lat = 0;
   player.d += (PULL_D() - player.d) * Math.min(1, dt * 2);
   st.t += dt;
@@ -1931,12 +1933,13 @@ function beginDwell(st, a) {
   toast(T.paxAhead + (showOff ? ' · ' + T.paxOff : showOn ? ' · ' + T.paxOn : ''), 'good');
   SND.cue('ok');
   const getOn = () => {
-    if (!showOn) return;
+    if (!showOn || st.gone) return; // drove off before it was their turn
     if (ev.paxMeshes && ev.paxMeshes[DIR]) ev.paxMeshes[DIR].visible = false; // the people at the shelter start walking
     let boarded = 0;
     for (let k = 0; k < showOn; k++) {
       const t0 = stopT + (k % 3 - 1) * 1.15 - Math.floor(k / 3) * 0.9, d0 = HW + 2.05 + Math.floor(k / 3) * 0.6;
       walk([[t0, d0], [doorT + 0.6, curb], [doorT, carSide], [doorT, carSide - 0.6]], 0.15 + k * 0.55, () => {
+        if (st.gone) return; // the car left without them
         boarded++;
         const n = Math.round(addN * boarded / showOn) - Math.round(addN * (boarded - 1) / showOn);
         game.pax = Math.min(player.paxCap, game.pax + n);
@@ -1963,9 +1966,9 @@ function beginDwell(st, a) {
   } else getOn();
   vibrate([15, 25, 15]);
 }
-function endDwell(st) {
+function endDwell(st, early) {
   game.stop = null; player.laneT = LANES - 1; player.cruise = 45 / 3.6;
-  game.nitro = Math.min(1, game.nitro + 0.14);
+  if (!early) game.nitro = Math.min(1, game.nitro + 0.14); // the nitro bonus is for waiting until everyone is on
 }
 // timers that run on game time, so a pause also pauses them
 const stepTimers = [];
