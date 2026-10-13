@@ -487,6 +487,20 @@ Each city lives in its own folder under `cities/`. To add one:
 
 Landmark models are small builder functions in `src/engine.js` (the `LB` object). Add a new builder there if a landmark needs its own shape.
 
+## Study other games with REA
+
+The repo ships [REA](https://github.com/morluto/rea) (MIT) set up for coding agents. `.mcp.json` starts its MCP server with `npx -y rea-agents@6.3.0 mcp`, and `.claude/skills/reverse-engineer-anything` holds its workflow notes. Any agent that reads `.mcp.json` picks it up when opened in this folder. Needs Node.js 22.19 or newer.
+
+From a terminal:
+
+```bash
+npm install --global rea-agents
+rea doctor
+rea analyze-javascript-application /absolute/path/to/src --json
+```
+
+To study a live web game, start Chrome with `--remote-debugging-port=9222`, open the page, then run `rea list-browser-targets http://127.0.0.1:9222` and `rea analyze-web-bundle http://127.0.0.1:9222 <target id>`.
+
 ## Built with
 
 - [three.js](https://threejs.org/) 0.160.0
