@@ -232,11 +232,17 @@ function applyQuality() {
 // front of something far. The tone mapping happens here too, since three.js skips it when drawing into a target.
 const PIX_SHORT = 200;
 const pix = { rt: null, w: 0, h: 0 };
+// the palette: the city's own colours (C.look.pixelPalette, up to PIX_CITY) and PIX_TIME more from the time of day.
+// Colours are kept in sRGB, the space the shader compares in; without a city palette the old 7 steps per channel stay.
+const PIX_CITY = 44, PIX_TIME = 8, PIX_N = PIX_CITY + PIX_TIME;
+const hexV = (h) => { const n = parseInt(String(h).replace('#', ''), 16); return new THREE.Vector3((n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255); };
+const PIX_PAL = Array.from({ length: PIX_N }, () => new THREE.Vector3());
+{ const cp = (C.look.pixelPalette || []).slice(0, PIX_CITY); for (let i = 0; i < PIX_CITY; i++) PIX_PAL[i].copy(hexV(cp.length ? cp[i % cp.length] : '#000000')); }
 const pixMat = new THREE.ShaderMaterial({
   depthTest: false, depthWrite: false,
-  uniforms: { tCol: { value: null }, tDep: { value: null }, res: { value: new THREE.Vector2(1, 1) }, exposure: { value: 1 }, near: { value: camera.near }, far: { value: camera.far } },
+  uniforms: { tCol: { value: null }, tDep: { value: null }, res: { value: new THREE.Vector2(1, 1) }, exposure: { value: 1 }, near: { value: camera.near }, far: { value: camera.far }, pal: { value: PIX_PAL }, usePal: { value: C.look.pixelPalette ? 1 : 0 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
-  fragmentShader: `uniform sampler2D tCol; uniform sampler2D tDep; uniform vec2 res; uniform float exposure; uniform float near; uniform float far; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tCol; uniform sampler2D tDep; uniform vec2 res; uniform float exposure; uniform float near; uniform float far; uniform vec3 pal[${PIX_N}]; uniform float usePal; varying vec2 vUv;
     vec3 fit(vec3 v){ vec3 a = v * (v + 0.0245786) - 0.000090537; vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081; return a / b; }
     vec3 aces(vec3 c){ c *= exposure / 0.6;
       c = mat3(0.59719, 0.07600, 0.02840, 0.35458, 0.90834, 0.13383, 0.04823, 0.01566, 0.83777) * c; c = fit(c);
@@ -255,7 +261,12 @@ const pixMat = new THREE.ShaderMaterial({
       float edge = (z < 380.0 && min(ix, iy) < -0.1) ? 1.0 : 0.0;
       float l = dot(c, vec3(0.299, 0.587, 0.114)); c = clamp(mix(vec3(l), c, 1.2), 0.0, 1.0);
       float b = b2(px * 0.5) * 0.25 + b2(px) + 0.03125 - 0.5;
-      c = floor(c * 7.0 + 0.5 + b * 0.35) / 7.0;
+      if (usePal > 0.5) {
+        // nudge by the dither, then take the nearest palette colour; green counts most, blue least, as the eye sees them
+        vec3 q = c + vec3(b * 0.08), best = c; float bd = 1e9;
+        for (int i = 0; i < ${PIX_N}; i++) { vec3 d = (pal[i] - q) * vec3(0.8, 1.0, 0.6); float e = dot(d, d); if (e < bd) { bd = e; best = pal[i]; } }
+        c = best;
+      } else c = floor(c * 7.0 + 0.5 + b * 0.35) / 7.0;
       c = mix(c, c * 0.3 + vec3(0.02, 0.015, 0.04), edge * 0.85);
       gl_FragColor = vec4(c, 1.0);
     }`
@@ -1527,6 +1538,10 @@ function applyTime() {
   headlight.visible = headlight.intensity > 0;
   $('#wx').hidden = !W; $('#wx').dataset.kind = W ? C.weather : '';
   SND.weather(W ? C.weather : null);
+  // the time of day lends the pixel palette its sky, haze and glow, and a darker step of each
+  const srgb = (col) => hexV(col.getHexString()), dark = (col, k) => srgb(col.clone().multiplyScalar(k));
+  const tc = [srgb(u.top.value), srgb(fog), srgb(u.glow.value), srgb(fog.clone().lerp(u.top.value, 0.5)), dark(u.top.value, 0.45), dark(fog, 0.35), dark(fog, 0.6), hexV(L.winLit || '#ffd58a')];
+  for (let i = 0; i < PIX_TIME; i++) PIX_PAL[PIX_CITY + i].copy(tc[i]);
 }
 // rain streaks or blowing sand, drawn flat over the picture
 const wxEl = $('#wx'), wxG = wxEl.getContext('2d'); const wxP = []; let wxW = innerWidth, wxH = innerHeight;
@@ -3180,6 +3195,16 @@ const hud = {
   pax: $('#hPax'), fuel: $('#hFuelBar'), chipPax: $('#chipPax'), chipFuel: $('#chipFuel')
 };
 let toastTimer = 0;
+// a pixel postcard of the landmark slides down from the top for a few seconds
+let postcardTimer = 0;
+function showPostcard(lm) {
+  const box = $('#postcard'); if (!box) { toast(`${T.cardUnlocked} ${lm.name}`, 'good'); return; }
+  box.querySelector('img').src = POSTCARD.url(C.id, lm.idx);
+  box.querySelector('small').textContent = T.cardUnlocked.replace(/[:：]\s*$/, '');
+  box.querySelector('b').textContent = lm.name;
+  box.classList.add('show'); clearTimeout(postcardTimer);
+  postcardTimer = setTimeout(() => box.classList.remove('show'), 4000);
+}
 function toast(msg, kind) { hud.toast.textContent = msg; hud.toast.className = 'toast show ' + (kind || ''); toastTimer = 2.4; }
 const mini = $('#mini'); const mctx = mini.getContext('2d');
 let miniPath = null, miniScale = 1, miniOff = [0, 0];
@@ -3555,7 +3580,7 @@ function step(dt) {
     for (const lm of LMS) {
       if (!album[lm.idx] && aheadDist(sPrev, lm.s) <= moved) {
         album[lm.idx] = 1; saveAlbum();
-        toast(`${T.cardUnlocked} ${lm.name}`, 'good');
+        showPostcard(lm);
         spawnFxText(P.x, P.y + 2.6, P.z, `★ ${lm.name}`, '#fbbf24');
         SND.cue('bonus');
       }
@@ -3892,7 +3917,7 @@ function renderBooklet() {
   grid.innerHTML = LMS.map((lm) => {
     const ok = !!album[lm.idx];
     return `<div class="pcard${ok ? ' unlocked' : ' locked'}">
-      <div class="art" style="background:${ok ? 'linear-gradient(135deg,#2e8b57,#1f6e43)' : '#3a4250'}">${ok ? '✓' : '🔒'}</div>
+      <div class="pic"><img class="art" src="${POSTCARD.url(C.id, lm.idx, !ok)}" alt="">${ok ? '' : '<i>🔒</i>'}</div>
       <b>${lm.name}</b>
       <span>${LANG === 'ar' ? lm.en : lm.ar}</span>
     </div>`;

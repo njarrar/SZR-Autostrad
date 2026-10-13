@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 const here = new URL('.', import.meta.url).pathname;
 const tpl = fs.readFileSync(here + 'src/template.html', 'utf8');
-const engine = fs.readFileSync(here + 'src/audio.js', 'utf8') + '\n' + fs.readFileSync(here + 'src/engine.js', 'utf8');
+const engine = fs.readFileSync(here + 'src/audio.js', 'utf8') + '\n' + fs.readFileSync(here + 'src/pixelart.js', 'utf8') + '\n' + fs.readFileSync(here + 'src/engine.js', 'utf8');
 const links = fs.existsSync(here + 'links.json') ? JSON.parse(fs.readFileSync(here + 'links.json', 'utf8')) : {};
 // every folder in cities/ with a city.js is a game; sorted by its `order`, then by name
 const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here + `cities/${d}/city.js`)).map((id) => {
@@ -12,7 +12,7 @@ const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here 
 if (!CITIES.length) throw new Error('no cities found in cities/');
 const DEFAULT_LANG = 'ar';
 // shown on each game's start screen and on the landing cards; raise VERSION with each release
-const VERSION = '2.16';
+const VERSION = '2.17';
 const BUILT = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 const STAMP = `v${VERSION} · ${BUILT}`;
 

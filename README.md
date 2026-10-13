@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.16** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.17** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -210,7 +210,7 @@ Open **Garage** under **More options** in the menu to change the paint, the plat
 
 ### Landmark album
 
-Drive past a landmark to collect its postcard. Open **Landmark Album** under **More options** in the menu to see the ones you have.
+Drive past a landmark to collect its postcard. Each postcard is a small pixel picture of the landmark, and it slides in at the top of the screen as you pass. Open **Landmark Album** under **More options** in the menu to see the ones you have. The ones you haven't found yet show as dark shapes, so you can guess what is still out there.
 
 ![The landmark album](docs/screenshots/amman-album.png)
 
@@ -262,6 +262,19 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.17 (October 2026)
+
+- **Pixel postcards.** Every landmark in the three cities now has its own pixel picture: the blue dome of the King Abdullah I Mosque, the Dubai Frame against the sunset, Masmak Fort with its corner towers, and 30 more. Drive past a landmark and its postcard slides in at the top of the screen for a few seconds. The album shows the postcards you have, and the ones still to find as dark shapes on a dim sky. The pictures are drawn in code on a grid 96 pixels wide, with no image files.
+- **City colours in the pixel look.** The pixel look now snaps each colour to the city's own set of 44, plus 8 taken from the time of day. Amman keeps its white stone and blue sky, Dubai its purple and orange sunset with blue glass, and Riyadh its mud browns and sand. The dot pattern between colours is finer, so walls and sky look cleaner.
+
+![A postcard slides in as you pass Burj Khalifa](docs/screenshots/dubai-postcard.png)
+
+![All 33 pixel postcards, with one still to find](docs/screenshots/postcards.png)
+
+| Amman | Dubai | Riyadh |
+| --- | --- | --- |
+| ![Amman with its own colours in the pixel look](docs/screenshots/amman-palette.png) | ![Dubai at sunset with its own colours](docs/screenshots/dubai-palette.png) | ![Riyadh with its own colours](docs/screenshots/riyadh-palette.png) |
 
 ### 2.16 (October 2026)
 
@@ -407,6 +420,7 @@ cities/                One folder per city; the build finds them on its own
   riyadh/...           The same for Riyadh (Najdi Arabic)
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
 src/audio.js           Engine, road, horn, siren, nitro and crash sounds, rain and wind, phone buzz, and the car radio
+src/pixelart.js        The pixel postcard of each landmark, drawn in code
 src/template.html      Page layout and styles
 src/landing.html       The start page with a card for each city
 lang/en.xml            Shared English text: menus, settings, HUD and the start page
@@ -486,6 +500,8 @@ Each city lives in its own folder under `cities/`. To add one:
 5. Run `node build.mjs`. The new city gets its own page at `dist/jeddah/`, a card on the start page, and the link at the bottom of each game points to the next city.
 
 Landmark models are small builder functions in `src/engine.js` (the `LB` object). Add a new builder there if a landmark needs its own shape.
+
+Each landmark also gets a pixel postcard. Add the city's colours to `PAL` in `src/pixelart.js` and one drawing function per landmark to `ART`, in the same order as `landmarks` in `city.js`. A landmark without a drawing gets a plain card. Set `look.pixelPalette` in `city.js` to the colours the pixel look should snap to (up to 44).
 
 ## Built with
 
