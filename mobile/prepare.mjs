@@ -10,7 +10,7 @@ fs.rmSync(www, { recursive: true, force: true });
 fs.cpSync(root + 'dist', www, { recursive: true });
 
 const THREE = 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js';
-const FONTS = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap';
+const FONTS = 'https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&family=Silkscreen&display=swap';
 const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36';
 const get = async (url, type) => {
   const r = await fetch(url, { headers: { 'user-agent': UA } });

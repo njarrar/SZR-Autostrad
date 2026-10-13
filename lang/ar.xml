@@ -42,6 +42,11 @@
     <string key="page.T_LOUD">عالي</string>
     <string key="page.T_SPEEDFX">مؤثرات السرعة</string>
     <string key="page.T_MINIMAP">الخريطة</string>
+    <string key="page.T_LOOK">الشكل</string>
+    <string key="page.T_LOOK0">عادي</string>
+    <string key="page.T_LOOK1">بكسل</string>
+    <string key="page.T_LOOK_D"><![CDATA[البكسل يرسم المدينة بمربعات كبيرة وألوان قليلة، مثل ألعاب الأتاري القديمة. على الكمبيوتر <kbd>V</kbd> يبدّل الشكل.]]></string>
+    <string key="text.near">قريب من {place}</string>
     <string key="page.T_SHOW">بيّن</string>
     <string key="page.T_HIDE">خبّي</string>
     <string key="page.tryCity">جرّب {city}</string>

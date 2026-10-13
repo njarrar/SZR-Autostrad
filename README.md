@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.15** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.16** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -78,6 +78,7 @@ The car drives on its own and keeps its speed. You speed it up, slow it down and
 | Horn | `Space` or `H` | Round horn button |
 | Nitro | `N` or `Shift` | N₂O button above the horn |
 | Change camera | `C` | Settings > Display |
+| Normal or pixel look | `V` | Settings > Display |
 | Next radio station | `R` | Radio button, then pick a station |
 | Radio on or off | `M` | Radio button, then Radio off |
 | Pause | `P` or `Esc` | Pause button (or the phone's back button in the Android app) |
@@ -97,7 +98,7 @@ Open **Settings** from **More options** in the menu, or from the pause screen. I
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
 - **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
@@ -261,6 +262,18 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.16 (October 2026)
+
+- **Pixel look.** Settings > Display > Look now has **Pixel**, which draws the city in big square pixels, like an old arcade game. The picture is drawn about 200 pixels high and blown up with hard edges, the colours snap to a few steps with a fine dot pattern between them, and a dark line traces the edge of anything near that stands in front of something far. The HUD gets square panels and a pixel font for the numbers. `V` switches the look on a computer, and `?look=pixel` in the address opens a game in it.
+- **Brown landmark signs.** A brown sign on a post now stands at the roadside 200 m before each landmark, with its name in Arabic and English and an arrow to the side it stands on.
+- **Where you are in free drive.** Free drive has no goal, so the top panel now names the landmark you are passing, like "Near Amman Citadel", instead of just saying free drive.
+
+| Amman | Dubai | Riyadh |
+| --- | --- | --- |
+| ![Amman in the pixel look](docs/screenshots/amman-pixel.png) | ![Dubai in the pixel look, with a brown landmark sign](docs/screenshots/dubai-pixel.png) | ![Riyadh in the pixel look](docs/screenshots/riyadh-pixel.png) |
+
+The pixel look, the brown signs and the "near" line take ideas from [Pixel Path](https://github.com/jonwheatley/pixel-path) by Jon Wheatley (MIT), a pixel art trip along a real road. The code here is written for this game.
 
 ### 2.15 (October 2026)
 
@@ -477,7 +490,7 @@ Landmark models are small builder functions in `src/engine.js` (the `LB` object)
 ## Built with
 
 - [three.js](https://threejs.org/) 0.160.0
-- [Lalezar](https://fonts.google.com/specimen/Lalezar) and [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic) from Google Fonts
+- [Lalezar](https://fonts.google.com/specimen/Lalezar), [IBM Plex Sans Arabic](https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic) and [Silkscreen](https://fonts.google.com/specimen/Silkscreen) from Google Fonts
 - [Capacitor](https://capacitorjs.com/) 8 for the iOS and Android apps
 
 The routes follow real places but are drawn by hand from a handful of map points, so distances and curves are close, not exact.

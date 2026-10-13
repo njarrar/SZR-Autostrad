@@ -41,7 +41,7 @@
     <string key="page.T_SOUND">Sound</string>
     <string key="page.T_ON">On</string>
     <string key="page.T_OFF">Off</string>
-    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Radio <kbd>R</kbd> · Pause <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Radio <kbd>R</kbd> · Pixel look <kbd>V</kbd> · Pause <kbd>P</kbd>]]></string>
     <string key="page.T_PAUSED">Paused</string>
     <string key="page.T_RESUME">Resume</string>
     <string key="page.T_QUIT">Back to menu</string>
@@ -171,6 +171,11 @@
     <string key="page.T_LOUD">Loud</string>
     <string key="page.T_SPEEDFX">Speed effects</string>
     <string key="page.T_MINIMAP">Map</string>
+    <string key="page.T_LOOK">Look</string>
+    <string key="page.T_LOOK0">Normal</string>
+    <string key="page.T_LOOK1">Pixel</string>
+    <string key="page.T_LOOK_D"><![CDATA[Pixel draws the city in big square pixels and few colours, like an old arcade game. On a computer <kbd>V</kbd> switches the look.]]></string>
+    <string key="text.near">Near {place}</string>
     <string key="page.T_SHOW">Show</string>
     <string key="page.T_HIDE">Hide</string>
     <string key="tour.0.touch">Push the stick up until your speed passes 45. Let go and the car keeps that speed.</string>

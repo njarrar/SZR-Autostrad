@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&family=Silkscreen&display=swap">
 <style>
 /* Layout: full-bleed 3D road, a side sheet for the menu, a thin HUD frame over the drive. */
 :root {
@@ -452,6 +452,12 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .tb { width: 88px; height: 88px; }
   .tb.gas { height: 128px; }
 }
+/* pixel look: square HUD panels and a pixel font for the numbers */
+body.pixel { --pixfont: 'Silkscreen', var(--display); }
+body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, body.pixel #btnPause, body.pixel #btnRadio { border-radius: 0; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); }
+body.pixel .speedo .num, body.pixel .trip-hud .rem, body.pixel .chip b, body.pixel .gearbox b, body.pixel #count, body.pixel #hWeave { font-family: var(--pixfont); font-weight: 400; letter-spacing: -.02em; }
+body.pixel .speedo .num { font-size: 38px; }
+body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 </style>
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
@@ -622,6 +628,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
       <div><div class="label">__T_WX__</div><div class="seg" id="segWx"><button type="button" data-v="0">__T_WXOFF__</button><button type="button" data-v="1">__T_WXON__</button></div></div>
       <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
       <div><div class="label">__T_SPEEDFX__</div><div class="seg " id="segFx"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
+      <div><div class="label">__T_LOOK__</div><div class="seg" id="segLook"><button type="button" data-v="normal">__T_LOOK0__</button><button type="button" data-v="pixel">__T_LOOK1__</button></div><p class="note">__T_LOOK_D__</p></div>
       <div><div class="label">__T_MINIMAP__</div><div class="seg " id="segMini"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
     </div>
     <div class="panel" data-panel="lng" hidden>

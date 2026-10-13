@@ -56,7 +56,7 @@
     <string key="page.T_SOUND">الصوت</string>
     <string key="page.T_ON">شغّال</string>
     <string key="page.T_OFF">مسكّر</string>
-    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الزامور <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · الراديو <kbd>R</kbd> · وقوف <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[السواقة بالأسهم أو <kbd>WASD</kbd> · الزامور <kbd>Space</kbd> · نيترو <kbd>N</kbd> · الكاميرا <kbd>C</kbd> · الراديو <kbd>R</kbd> · البكسل <kbd>V</kbd> · وقوف <kbd>P</kbd>]]></string>
     <string key="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية بعمّان. الزامور بخلّي السيارة اللي قدامك توسّعلك.</string>
     <string key="page.T_PAUSED">استراحة</string>
     <string key="page.T_RESUME">كمّل</string>
