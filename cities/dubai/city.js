@@ -97,6 +97,11 @@ window.CITY = {
     clouds: 0.3, cloudColor: '#f1b49a', exposure: 1.2, night: 0.8, fog: '#e3a98a', fogNear: 1400, fogFar: 11000, skyTop: '#26295a', sunGlow: '#ffb070',
     skyLight: 0x9aa3d6, groundLight: 0x6b5040, hemi: 1.55, sunColor: 0xffa26b, sun: 1.7, sunDir: [-0.8, 0.12, -0.45],
     winLit: '#ffd9a0', winGlass: '#2d3a4a', windows: { floor: 3.6, bay: 2.4, size: 0.7 },
+    // the pixel look snaps every colour to this palette, plus a few colours taken from the time of day
+    pixelPalette: ['#151724', '#26295a', '#41306a', '#3a3442', '#5b4569', '#743f76', '#7b5670', '#c25e78', '#f0916f', '#ffb878', '#ffe2a0', '#fbf8f2', '#e8d6b4', '#c9a27a', '#a8825e', '#7a6050', '#2d3a4a', '#4f6f8f', '#7091b0', '#9ab8cf', '#2f5a3a', '#4f7a3e', '#e5b548', '#2f5f86',
+      '#2a2a30', '#45454e', '#6b6b72', '#9a9aa0', '#c4c4c2', '#e2e1dc',
+      '#c8d2dc', '#a8b4bf', '#dce2e8', '#8a96a6', '#b0a0b0', '#d8b0a0', '#5f8fb0', '#ffd9a0', '#e3a98a', '#f1b49a',
+      '#d6342c', '#7a1f1f', '#2a4a1c', '#4f6b2a'],
     ground: ['#cdb38a', '#c4a77a', '#8d8478'], sand: '#e6d4ad', sea: '#1d5b78', asphalt: '#4a4b50', median: '#9a958c',
     lineEdge: '#f0e6c8', lineLane: '#f2f2f2', paving: '#b3b2ad', kerb: ['#f2f2ee', '#1c1c1c'], barrier: 0xc9c5bc, pole: 0xb0b4b8, tanks: [0xe8e8e8],
     treeDark: 0x3e5a33, treeLight: 0x6f8a4a, signColor: '#0a4f8f', warnColor: '#a8740a', radarColor: 0xdedede, tollColor: '#127a63',
