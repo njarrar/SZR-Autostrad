@@ -1,7 +1,7 @@
 name: Play Store
 
 # Builds the Android app for Google Play. Run it from Actions > Play Store > Run workflow,
-# or push a tag such as v2.20. With the four UPLOAD_* secrets set (see play-store/README.md)
+# or push a tag such as v2.20. With the four UPLOAD_* secrets set (see "Store release" in README.md)
 # the bundle is signed with your upload key; without them it is built unsigned.
 # The .aab and .apk appear under Artifacts on the run page.
 on:
@@ -64,7 +64,7 @@ jobs:
           if [ "${{ steps.key.outputs.signed }}" = yes ]; then
             echo "### Autostrad $v is signed and ready for Google Play" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "### Autostrad $v is NOT signed. Add the UPLOAD_* secrets (see play-store/README.md) and run again." >> "$GITHUB_STEP_SUMMARY"
+            echo "### Autostrad $v is NOT signed. Add the four UPLOAD_* secrets and run again." >> "$GITHUB_STEP_SUMMARY"
           fi
           echo "Download it under **Artifacts** below." >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4

@@ -490,7 +490,7 @@ This writes the start page `dist/index.html` and one page per city, `dist/amman/
 
 ## Phone and tablet apps
 
-The iPhone and iPad app lives in `ios/` and the Android phone and tablet app in `android/`. Both use [Capacitor](https://capacitorjs.com/), which shows the games in the device's own web view, and share the tools in `mobile/`. On tablets the stick sits in the bottom corner and the buttons are bigger. You need Node.js 20 or newer, plus Android Studio to open the Android app (not needed to publish it, see below) and a Mac with Xcode for iOS.
+The iPhone and iPad app lives in `ios/` and the Android phone and tablet app in `android/`. Both use [Capacitor](https://capacitorjs.com/), which shows the games in the device's own web view, and share the tools in `mobile/`. On tablets the stick sits in the bottom corner and the buttons are bigger. You need Node.js 22, plus Android Studio for Android and a Mac with Xcode for iOS.
 
 ```bash
 cd mobile
@@ -503,11 +503,11 @@ npm run apk       # or build a test Android app at android/app/build/outputs/apk
 
 Run `npm run sync` again after each change to the games. It also sets both apps' version to the games' version from `build.mjs`.
 
-**Builds.** `build/android/autostrad.apk` is a test build to install on any Android phone or tablet (allow installs from unknown sources). The iOS app has to be built on a Mac with Xcode; see [app-store/README.md](app-store/README.md).
+**Builds.** `build/android/autostrad.apk` is a test build to install on any Android phone or tablet (allow installs from unknown sources). The iOS app has to be built on a Mac with Xcode, so `build/ios/` only has a note on how to do it.
 
 **New icon.** Replace `mobile/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `mobile/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle, plus `icon-monochrome.png`, the white marks alone, for Android's tinted icons), and `splash.png` (2732 by 2732) in both folders, then run `npm run icons`.
 
-**Store release.** Both stores need your own developer account (Google Play Console, Apple Developer Program). [play-store/README.md](play-store/README.md) walks through Google Play: the **Play Store** workflow in GitHub Actions builds and signs the `.aab` with your upload key, so you don't need Android Studio. [app-store/README.md](app-store/README.md) walks through the App Store, which needs a Mac with Xcode. Each folder holds the store text in English and Arabic, the icon and the screenshots. The app id is `com.njarrar.autostrad`.
+**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, the **Play Store** workflow in GitHub Actions builds the `.aab` and signs it with your upload key from four repository secrets (`UPLOAD_KEYSTORE_BASE64`, `UPLOAD_KEYSTORE_PASSWORD`, `UPLOAD_KEY_ALIAS`, `UPLOAD_KEY_PASSWORD`); without them it builds the bundle unsigned. For iOS, open `ios/App/App.xcodeproj` in Xcode, pick your team under **Signing & Capabilities**, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `mobile/capacitor.config.json` and both projects before the first upload if you want another.
 
 ## Add a language
 
