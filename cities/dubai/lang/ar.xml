@@ -45,7 +45,7 @@
     <string key="page.T_SETTINGS">الإعدادات</string>
     <string key="page.T_CARS">السيارة</string>
     <string key="page.T_COLOR">اللون</string>
-    <string key="page.T_FIXEDCOLOR">لون التاكسي ثابت</string>
+    <string key="page.T_FIXEDCOLOR">لون هذي السيارة ثابت</string>
     <string key="page.T_PLATE">رقم اللوحة</string>
     <string key="page.T_CAM">الكاميرا</string>
     <string key="page.T_CAM0">قريبة</string>

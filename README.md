@@ -170,7 +170,7 @@ Each city has the cars you see on its roads every day. Each one has four bars on
 | Toyota Coaster (minibus) | 155 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 | Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
 
-Every city also has a **Formula 1 car**: open wheels, wings front and back, a driver in a helmet and a high, screaming engine. It has no plate, sticker or charm.
+Every city also has a red **Formula 1 car**: open wheels, wings front and back, a driver in a helmet and a high, screaming engine. It has no plate, sticker or charm.
 
 Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
 
@@ -507,7 +507,7 @@ Run `npm run sync` again after each change to the games. It also sets both apps'
 
 **New icon.** Replace `mobile/assets/icon-only.png` (1024 by 1024, for iOS) and the files in `mobile/assets/android/` (the same icon without the sign's white border, since Android cuts icons to a circle or squircle, plus `icon-monochrome.png`, the white marks alone, for Android's tinted icons), and `splash.png` (2732 by 2732) in both folders, then run `npm run icons`.
 
-**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, open `android/` in Android Studio and use **Build > Generate Signed App Bundle** to make the `.aab` for Play. For iOS, open `ios/App/App.xcodeproj` in Xcode, pick your team under **Signing & Capabilities**, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `mobile/capacitor.config.json` and both projects before the first upload if you want another.
+**Store release.** Both stores need your own developer account (Apple Developer Program, Google Play Console). For Android, the **Play Store** workflow in GitHub Actions builds the `.aab` and signs it with your upload key from four repository secrets (`UPLOAD_KEYSTORE_BASE64`, `UPLOAD_KEYSTORE_PASSWORD`, `UPLOAD_KEY_ALIAS`, `UPLOAD_KEY_PASSWORD`); without them it builds the bundle unsigned. For iOS, open `ios/App/App.xcodeproj` in Xcode, pick your team under **Signing & Capabilities**, then **Product > Archive** and upload it to App Store Connect. The app id is `com.njarrar.autostrad`; change it in `mobile/capacitor.config.json` and both projects before the first upload if you want another.
 
 ## Add a language
 

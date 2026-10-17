@@ -65,7 +65,7 @@ window.CITY = {
     { kind: 'dtaxi', fixedColor: 0xf4f4f0, extra: { roof: 0x1d8a4e }, vmax: 185, accel: 4.6, grip: 1.0, tough: 1.0, role: 'taxi', paxCap: 4 },
     { kind: 'sedan', vmax: 170, accel: 3.9, grip: 1.18, tough: 1.25, role: 'weave' },
     { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x0b6e3a }, vmax: 155, accel: 3.8, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 },
-    { kind: 'f1', vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, role: 'race' }
+    { kind: 'f1', fixedColor: 0xd40000, vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, role: 'race' }
   ],
   stickers: ['', 'ما شاء الله', 'هذا من فضل ربي', 'لا تسرع يا شيخ', 'عز الرياض', 'طويق', 'الله يحفظك'],
   // Haitham Mode: what people on the sidewalk say, and the street seller's cart
