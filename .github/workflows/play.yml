@@ -4,8 +4,22 @@ name: Play Store
 # or push a tag such as v2.20. With the four UPLOAD_* secrets set (see "Store release" in README.md)
 # the bundle is signed with your upload key; without them it is built unsigned.
 # The .aab and .apk appear under Artifacts on the run page.
+# With the PLAY_SERVICE_ACCOUNT_JSON secret set, a signed bundle also goes straight to Google Play,
+# to the track picked when you run it (internal testing unless you pick another), with the notes
+# in android/whatsnew/.
 on:
   workflow_dispatch:
+    inputs:
+      track:
+        description: Google Play track
+        type: choice
+        options: [internal, alpha, beta, production, none]
+        default: internal
+      status:
+        description: Release status (draft waits for you to press Release in Play Console)
+        type: choice
+        options: [completed, draft]
+        default: completed
   push:
     tags: ['v*']
 
@@ -71,3 +85,29 @@ jobs:
         with:
           name: Autostrad-Android-${{ steps.ver.outputs.v }}
           path: out/
+      - name: Check for the Google Play key
+        id: play
+        env:
+          PLAY: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          track="${{ inputs.track || 'internal' }}"
+          if [ -n "$PLAY" ] && [ "${{ steps.key.outputs.signed }}" = yes ] && [ "$track" != none ]; then
+            echo "go=yes" >> "$GITHUB_OUTPUT"; echo "track=$track" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=no" >> "$GITHUB_OUTPUT"
+            echo "Not sent to Google Play: it needs PLAY_SERVICE_ACCOUNT_JSON, a signed bundle and a track." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Send to Google Play
+        if: steps.play.outputs.go == 'yes'
+        uses: r0adkll/upload-google-play@v1.1.3
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.njarrar.autostrad
+          releaseFiles: out/Autostrad-${{ steps.ver.outputs.v }}.aab
+          releaseName: ${{ steps.ver.outputs.v }}
+          track: ${{ steps.play.outputs.track }}
+          status: ${{ inputs.status || 'completed' }}
+          whatsNewDirectory: android/whatsnew
+      - name: Note the Google Play upload
+        if: steps.play.outputs.go == 'yes'
+        run: echo "Sent ${{ steps.ver.outputs.v }} to the Google Play ${{ steps.play.outputs.track }} track." >> "$GITHUB_STEP_SUMMARY"
