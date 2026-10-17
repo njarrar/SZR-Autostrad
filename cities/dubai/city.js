@@ -57,7 +57,8 @@ window.CITY = {
     { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55, role: 'vip' },
     { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5, role: 'weave' },
     { kind: 'dtaxi', fixedColor: 0xe9dcc0, extra: { roof: 0xd2232a }, vmax: 190, accel: 4.8, grip: 1.0, tough: 1.0, role: 'taxi', paxCap: 4 },
-    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0xc8102e }, vmax: 165, accel: 4.0, grip: 0.94, tough: 0.45, role: 'bus', paxCap: 14 }
+    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0xc8102e }, vmax: 165, accel: 4.0, grip: 0.94, tough: 0.45, role: 'bus', paxCap: 14 },
+    { kind: 'f1', vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, role: 'race' }
   ],
   stickers: ['', 'ما شاء الله', 'دار الحي', 'عزّك يا دبي', 'حفظك الله', 'تبارك الرحمن', 'الملكي'],
   // Haitham Mode: what people on the sidewalk say, and the street seller's cart

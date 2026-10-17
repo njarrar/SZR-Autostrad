@@ -194,6 +194,10 @@
       <string key="car.4.sub">Toyota Coaster</string>
       <string key="car.4.pros">يشيل ركّاب كثير ويعطيك نقاط مضاعفة بالأجرة</string>
       <string key="car.4.cons">كبير وثقيل في التجاوز</string>
+      <string key="car.5.name">سيارة فورمولا 1</string>
+      <string key="car.5.sub">سيارة سباق</string>
+      <string key="car.5.pros">أسرع سيارة في اللعبة، وثابتة على الطريق</string>
+      <string key="car.5.cons">خفيفة، وأي صدمة تضرّها</string>
       <string key="place.10">الدرعية</string>
       <string key="text.walkGoal">البقالة</string>
     <string key="text.walkTiredSub">هيثم رجع البيت</string>

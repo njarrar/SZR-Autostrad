@@ -138,6 +138,9 @@
     <string key="page.T_KAGAIN">كمان مرة!</string>
     <string key="page.T_KSTOP">قِف</string>
     <string key="page.T_KBEEP">بيب</string>
+    <string key="page.T_KSTEER">طريقة السواقة</string>
+    <string key="page.T_KARROWS">سوق بالأسهم</string>
+    <string key="page.T_KWHEEL">سوق بالستيرنج</string>
     <string key="text.kidsCar">اختار سيارتك!</string>
     <string key="text.kidsPlace">وين بدنا نروح؟</string>
     <string key="text.kidsGoTo">يلا على {place}!</string>
@@ -148,6 +151,9 @@
     <string key="text.kidsTaxi">تكسي</string>
     <string key="text.kidsBus">باص</string>
     <string key="text.kidsFast">سيارة سريعة</string>
+    <string key="text.kidsF1">سيارة سباق</string>
+    <string key="text.kidsArrows">الأسهم!</string>
+    <string key="text.kidsWheel">الستيرنج!</string>
     <string key="text.kidsBig">سيارة كبيرة</string>
     <string key="text.kidsPickup">بكب</string>
     <string key="text.kidsSmall">سيارة صغيرة</string>

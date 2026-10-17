@@ -673,6 +673,7 @@ const BOX = new THREE.BoxGeometry(1, 1, 1);
 // roundRect is missing on Safari before 16 and Firefox before 112
 const rrect = (g, x, y, w, h, r) => { if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h); };
 const CYL = (rt, rb, h, s) => new THREE.CylinderGeometry(rt, rb, h, s || 8);
+const BALL_G = new THREE.SphereGeometry(1, 12, 9);
 const box = (c, x, y, z, sx, sy, sz, extra) => Object.assign({ g: BOX, c, x, y, z, sx, sy, sz }, extra || {});
 
 // ---------- vehicles ----------
@@ -1130,6 +1131,41 @@ function carParts(kind, body, extra) {
     P.push(box(TRIM, 0, y0 - 0.04, 0, wid * 0.72, 0.32, len - 0.35));
     wheels(len, wid - 0.08, 0.50, P); lights(len, wid, y0 + 0.48, 0.32, false);
     return { parts: P, lightParts: Lp, len, wid, tailY: y0 + 0.48 };
+  }
+  if (kind === 'f1') {
+    // Formula 1 car: low narrow tub, open wheels, wings front and back, a driver in a helmet under the halo
+    const len = 4.9, wid = 1.9;
+    P.push({ g: extrudeProfile([[-2.42, 0.17], [1.95, 0.17], [1.95, 0.52], ['q', 1.1, 0.6, 0.12, 1.0], [0.0, 1.0], ['q', -0.16, 0.99, -0.24, 0.78], [-0.95, 0.68], ['q', -1.45, 0.64, -1.95, 0.4], [-2.38, 0.27], ['q', -2.47, 0.23, -2.42, 0.17]], 0.62, 0.06, 3), c: body });
+    for (const s of [-1, 1]) {
+      // sidepods with dark intakes, mirrors, and the arms out to each wheel
+      P.push({ g: extrudeProfile([[-0.72, 0.16], [1.45, 0.16], [1.45, 0.36], ['q', 0.45, 0.64, -0.5, 0.64], [-0.72, 0.58]], 0.4, 0.05, 2), c: body, x: s * 0.5 });
+      P.push(box(0x101215, s * 0.5, 0.48, -0.74, 0.34, 0.16, 0.04));
+      P.push(box(TRIM, s * 0.42, 0.8, -0.95, 0.14, 0.07, 0.05)); P.push(box(TRIM, s * 0.34, 0.74, -0.95, 0.03, 0.12, 0.03));
+      for (const z of [-1.47, 1.47]) { P.push(box(TRIM, s * 0.6, 0.36, z - 0.08, 0.62, 0.025, 0.05)); P.push(box(TRIM, s * 0.6, 0.3, z + 0.08, 0.62, 0.025, 0.05)); }
+      // wing end plates
+      P.push(box(body, s * 0.97, 0.21, -2.3, 0.03, 0.18, 0.5));
+      P.push(box(TRIM, s * 0.54, 0.86, 2.2, 0.03, 0.5, 0.56));
+    }
+    // floor, front wing in two layers, rear wing with its flap, diffuser and airbox
+    P.push(box(TRIM, 0, 0.12, 0.1, 1.4, 0.04, 3.6));
+    P.push(box(body, 0, 0.14, -2.32, 1.94, 0.04, 0.4));
+    P.push(box(TRIM, 0, 0.21, -2.24, 1.88, 0.03, 0.22, { rx: -0.3 }));
+    P.push(box(body, 0, 1.0, 2.2, 1.06, 0.05, 0.42));
+    P.push(box(body, 0, 1.1, 2.33, 1.06, 0.04, 0.2, { rx: 0.4 }));
+    P.push(box(TRIM, 0, 0.74, 2.05, 0.05, 0.46, 0.12));
+    P.push(box(TRIM, 0, 0.22, 2.02, 1.0, 0.12, 0.3, { rx: -0.25 }));
+    P.push(box(0x101215, 0, 0.94, -0.03, 0.2, 0.14, 0.05));
+    P.push(box(0xf6f6f2, 0, 0.53, -2.0, 0.2, 0.02, 0.6, { rx: 0.3 }));
+    // driver: helmet, dark visor and the halo hoop over the cockpit
+    P.push({ g: BALL_G, c: 0xf2c12e, x: 0, y: 0.84, z: -0.55, sx: 0.16, sy: 0.15, sz: 0.18 });
+    P.push(box(0x101215, 0, 0.86, -0.7, 0.2, 0.06, 0.04));
+    P.push(box(TRIM, 0, 0.86, -1.1, 0.05, 0.22, 0.05, { rx: 0.35 }));
+    P.push(box(TRIM, 0, 0.98, -0.98, 0.42, 0.04, 0.05));
+    for (const s of [-1, 1]) P.push(box(TRIM, s * 0.22, 0.98, -0.62, 0.04, 0.04, 0.74));
+    wheels(len, wid - 0.36, 0.34, P, 0.3);
+    // the red rain light under the rear wing
+    Lp.push(box(TAIL, 0, 0.42, 2.0, 0.14, 0.08, 0.03));
+    return { parts: P, lightParts: Lp, len, wid, tailY: 0.42 };
   }
   return carParts('sedan', body, extra);
 }
@@ -2888,11 +2924,15 @@ function buildPlayer() {
   const m = new THREE.Mesh(cg.g, carMat); m.castShadow = true; g.add(m);
   g.add(new THREE.Mesh(cg.lg, lightMat));
   player.len = cg.len; player.wid = cg.wid;
-  for (const s of [-1, 1]) { const b = new THREE.Mesh(new THREE.BoxGeometry(cg.wid * 0.23, 0.13, 0.03), brakeMat); b.userData.own = true; b.position.set(s * cg.wid * 0.36, cg.tailY, cg.len / 2 + 0.045); g.add(b); }
+  // the F1 car has one brake light under its rear wing and no plate, sticker or charm
+  const f1 = kind === 'f1';
+  for (const s of f1 ? [0] : [-1, 1]) { const b = new THREE.Mesh(new THREE.BoxGeometry(f1 ? 0.16 : cg.wid * 0.23, f1 ? 0.1 : 0.13, 0.03), brakeMat); b.userData.own = true; b.position.set(s * cg.wid * 0.36, cg.tailY, f1 ? 2.02 : cg.len / 2 + 0.045); g.add(b); }
   player.brakeMat = brakeMat;
   if (!plateTex) drawPlate();
+  if (!f1) {
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(0.52, 0.13), new THREE.MeshBasicMaterial({ map: plateTex })); plate.userData.own = true;
   plate.position.set(0, Math.max(0.42, cg.tailY - 0.25), cg.len / 2 + 0.1); g.add(plate);
+  }
 
   // Underglow Neon LED plane
   const ledCol = LED_COLS[settings.led || 0] || 0;
@@ -2905,7 +2945,7 @@ function buildPlayer() {
 
   // Rear-Window Arabic Calligraphy Sticker
   drawSticker();
-  if (settings.sticker > 0 && C.stickers && C.stickers[settings.sticker]) {
+  if (!f1 && settings.sticker > 0 && C.stickers && C.stickers[settings.sticker]) {
     const stM = new THREE.Mesh(new THREE.PlaneGeometry(cg.wid * 0.62, 0.18), new THREE.MeshBasicMaterial({ map: stickerTex, transparent: true, depthWrite: false }));
     stM.userData.own = true;
     stM.position.set(0, cg.tailY + (kind === 'coaster' ? 0.92 : 0.46), cg.len / 2 + 0.06);
@@ -2914,7 +2954,7 @@ function buildPlayer() {
 
   // Swinging 3D Rear/Mirror Charm (سبحة / خمسة وعين / ميدالية)
   player.charmMesh = null;
-  if (settings.charm > 0) {
+  if (!f1 && settings.charm > 0) {
     const chGrp = new THREE.Group();
     const cord = new THREE.Mesh(CYL(0.01, 0.01, 0.22, 4), new THREE.MeshBasicMaterial({ color: 0xd4af37 }));
     cord.userData.own = true; cord.position.y = -0.11; chGrp.add(cord);
@@ -2942,7 +2982,7 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1 }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1, kidsSteer: 'arrows' }, store.get('settings', {}));
 // ?look=pixel or ?look=normal in the address picks the look
 try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
 applyLook();
@@ -3511,7 +3551,7 @@ function step(dt) {
     if (lt !== player.laneT && (stick.on || settings.control === 'tilt')) vibrate(10);
     player.laneT = lt;
   }
-  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += game.kids ? clamp((laneD(player.laneT) - player.d) * 1.7, -3.2, 3.2) : clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
+  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += game.kids ? clamp((laneD(player.laneT) - player.d) * 1.7, -KIDS_SIDE(), KIDS_SIDE()) : clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
   player.lat += (tgt - player.lat) * Math.min(1, dt * 5.5);
   // curves only push you outward when you take them faster than the car's grip allows
   const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
@@ -3971,13 +4011,15 @@ $('#btnMenu').onclick = toMenu;
 
 // ---------- Kids Mode: the car drives itself, two arrows change lanes, stars to catch, bumps only go boing ----------
 const KIDS_V = 46 / 3.6, KIDS_LEN = 1500;
+// how fast the car slides sideways: a bit quicker with the wheel, so it keeps up with the turn
+const KIDS_SIDE = () => kidsWheelOn() ? 4.8 : 3.2;
 const kids = { step: 0, items: [], stars: 0, oopsT: 0, hintT: 0, emoji: '🚕' };
 // the three cars on offer: the taxi, the bus, and the most fun of the rest
 function kidsCars() {
   const pickRole = (r) => CARS.findIndex((c) => c.role === r);
   const out = [pickRole('taxi'), pickRole('bus')].filter((i) => i >= 0);
   const rest = CARS.map((c, i) => i).filter((i) => !out.includes(i));
-  const fun = ['sports', 'bmw', 'suv', 'pickup'];
+  const fun = ['f1', 'sports', 'bmw', 'suv', 'pickup'];
   rest.sort((a, b) => ((fun.indexOf(CARS[a].kind) + 9) % 9) - ((fun.indexOf(CARS[b].kind) + 9) % 9));
   return out.concat(rest).slice(0, 3);
 }
@@ -3985,6 +4027,7 @@ function kidsCarLook(i) {
   const c = CARS[i], k = c.kind;
   if (c.role === 'taxi') return ['🚕', T.kidsTaxi];
   if (c.role === 'bus') return ['🚌', T.kidsBus];
+  if (k === 'f1') return ['🏎️', T.kidsF1];
   if (k === 'sports' || k === 'bmw') return ['🏎️', T.kidsFast];
   if (k === 'suv') return ['🚙', T.kidsBig];
   if (k === 'pickup') return ['🛻', T.kidsPickup];
@@ -4041,11 +4084,31 @@ function kidsStart() {
 // one tap moves exactly one lane
 function kidsLane(k) {
   if (!game.kids || game.mode !== 'drive' || game.paused || game.count > 0) return;
-  const lt = clamp(player.laneT + k, 0, LANES - 1);
+  const lt = clamp(Math.round(player.laneT) + k, 0, LANES - 1);
   if (lt === player.laneT) { vibrate(25); return; }
   player.laneT = lt; vibrate(10); SND.cue('click');
-  kids.hintT = 0; $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint');
+  kidsHintOff();
 }
+function kidsHintOff() { kids.hintT = 0; for (const el of document.querySelectorAll('#kidsUI .hint')) el.classList.remove('hint'); }
+// arrows or a steering wheel: the switch sits on the picker, top right
+const kidsWheelOn = () => settings.kidsSteer === 'wheel';
+function kidsSteerShow() {
+  $('#kidsUI').classList.toggle('wheel', kidsWheelOn());
+  document.querySelectorAll('#kSteer [data-steer]').forEach((b) => { const on = b.dataset.steer === settings.kidsSteer; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+}
+document.querySelectorAll('#kSteer [data-steer]').forEach((b) => b.onclick = () => {
+  audioInit(); settings.kidsSteer = b.dataset.steer; saveSettings(); kidsSteerShow(); SND.cue('click'); say(kidsWheelOn() ? T.kidsWheel : T.kidsArrows);
+});
+kidsSteerShow();
+// the wheel turns as the finger slides sideways, and springs back when let go
+const kWheel = { on: false, x0: 0, a: 0 }, kWheelEl = $('#kWheel');
+kWheelEl.addEventListener('pointerdown', (e) => {
+  e.preventDefault(); audioInit(); kWheelEl.setPointerCapture(e.pointerId);
+  kWheel.on = true; kWheel.x0 = e.clientX - kWheel.a * kWheelEl.clientWidth * 0.5; kidsHintOff();
+});
+kWheelEl.addEventListener('pointermove', (e) => { if (kWheel.on) kWheel.a = clamp((e.clientX - kWheel.x0) / (kWheelEl.clientWidth * 0.5), -1, 1); });
+const kWheelUp = () => { if (!kWheel.on) return; kWheel.on = false; if (game.kids) player.laneT = clamp(Math.round(player.laneT), 0, LANES - 1); };
+kWheelEl.addEventListener('pointerup', kWheelUp); kWheelEl.addEventListener('pointercancel', kWheelUp);
 document.querySelectorAll('[data-kid]').forEach((el) => {
   el.addEventListener('pointerdown', (e) => { e.preventDefault(); audioInit(); el.classList.add('on'); kidsLane(+el.dataset.kid); });
   const off = () => el.classList.remove('on');
@@ -4087,7 +4150,10 @@ function kidsSetup() {
 }
 function kidsStep(dt) {
   if (kids.oopsT > 0 && (kids.oopsT -= dt) <= 0) $('#kOops').hidden = true;
-  if (kids.hintT > 0 && (kids.hintT -= dt) <= 0) { $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint'); }
+  if (kids.hintT > 0 && (kids.hintT -= dt) <= 0) kidsHintOff();
+  // held over, the wheel slides the car across the lanes; let go, it settles in the nearest one
+  if (kWheel.on) { if (Math.abs(kWheel.a) > 0.12) player.laneT = clamp(player.laneT + kWheel.a * 1.3 * dt, 0, LANES - 1); }
+  else kWheel.a *= Math.max(0, 1 - 8 * dt);
   for (const it of kids.items) {
     if (it.got) continue;
     if (Math.abs(it.t - player.t) < 2.6 && Math.abs(laneD(it.lane) - player.d) < 1.8) {
@@ -4114,11 +4180,11 @@ function kidsRender() {
 function kidsOops() {
   SND.cue('boing'); vibrate(40); game.shake = 0.25;
   spawnFxText(P.x, P.y + 2.4, P.z, 'BOING!', '#ffd23f');
-  const opts = [player.laneT - 1, player.laneT + 1].filter((l) => l >= 0 && l < LANES);
+  const ln = Math.round(player.laneT), opts = [ln - 1, ln + 1].filter((l) => l >= 0 && l < LANES);
   const free = opts.find((l) => laneClear(player.t, l, null, 6, 30));
-  const k = (free == null ? opts[0] : free) < player.laneT ? -1 : 1;
-  const btn = $(k < 0 ? '#kidsUI .kL' : '#kidsUI .kR');
-  $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint'); btn.classList.add('hint'); kids.hintT = 4;
+  const k = (free == null ? opts[0] : free) < ln ? -1 : 1;
+  const btn = kidsWheelOn() ? kWheelEl : $(k < 0 ? '#kidsUI .kL' : '#kidsUI .kR');
+  kidsHintOff(); btn.classList.add('hint'); kids.hintT = 4;
   $('#kOopsTxt').textContent = T.kidsOops; $('#kOopsArr').textContent = k < 0 ? '⬅' : '➡';
   const box = $('#kOops'); box.hidden = false; box.style.animation = 'none'; void box.offsetWidth; box.style.animation = '';
   if (kids.oopsT <= 0) say(T.kidsOops);
@@ -4126,6 +4192,7 @@ function kidsOops() {
 }
 function kidsHud() {
   setText($('#kStars'), kids.stars);
+  setStyle(kWheelEl, '--a', (kWheel.a * 110).toFixed(1) + 'deg');
   const f = clamp((player.t - game.startT) / game.tripLen, 0, 1);
   setStyle($('#kDoneBar'), 'width', (f * 100).toFixed(1) + '%'); setStyle($('#kMe'), 'left', (f * 100).toFixed(1) + '%');
 }

@@ -169,6 +169,10 @@
     <string key="car.3.sub">Toyota Coaster</string>
     <string key="car.3.pros">يشيل ركّاب وايد ويعطيك نقاط مضاعفة بالورديّة</string>
     <string key="car.3.cons">كبير وثقيل في التجاوز</string>
+    <string key="car.4.name">سيارة فورمولا 1</string>
+    <string key="car.4.sub">سيارة سباق</string>
+    <string key="car.4.pros">أسرع سيارة في اللعبة، وثابتة على الشارع</string>
+    <string key="car.4.cons">خفيفة، وأي صدمة تضرّها</string>
     <string key="place.0">برواز دبي</string>
     <string key="place.1">المركز التجاري العالمي</string>
     <string key="place.2">متحف المستقبل</string>

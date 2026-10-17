@@ -49,6 +49,10 @@
     <string key="car.4.sub">Minibus</string>
     <string key="car.4.pros">Carries many passengers for big fare bonuses</string>
     <string key="car.4.cons">Wide and heavy to weave</string>
+    <string key="car.5.name">Formula 1 car</string>
+    <string key="car.5.sub">Race car</string>
+    <string key="car.5.pros">The fastest car in the game, and it grips like glue</string>
+    <string key="car.5.cons">Fragile, so every crash hurts</string>
     <string key="place.0">Masmak Fort</string>
     <string key="place.1">Grand Mosque</string>
     <string key="place.2">Murabba Palace</string>

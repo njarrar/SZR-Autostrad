@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.19** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.20** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -147,6 +147,7 @@ Each city has the cars you see on its roads every day. Each one has four bars on
 | Toyota Hilux | 160 km/h | Takes the least damage | Slow and heavy in curves |
 | Toyota Coaster (service bus) | 150 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 | Lana BMW (BMW 3 Series) | 215 km/h | Fast, quick to pick up and sure in curves | Low and soft, so bumps and crashes hurt |
+| Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
 
 **Dubai**
 
@@ -156,6 +157,7 @@ Each city has the cars you see on its roads every day. Each one has four bars on
 | Lamborghini Huracán | 300 km/h | Fastest and best grip | One crash hurts a lot |
 | Toyota Camry (taxi) | 190 km/h | Even all round, carries 4 passengers | Nothing stands out |
 | Toyota Coaster (minibus) | 165 km/h | Carries up to 14 passengers | Wide and heavy to weave |
+| Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
 
 **Riyadh**
 
@@ -166,6 +168,9 @@ Each city has the cars you see on its roads every day. Each one has four bars on
 | Toyota Camry (white taxi) | 185 km/h | Even all round, carries 4 passengers | Nothing stands out |
 | Hyundai Accent | 170 km/h | Light, good grip, easy to weave | Slow to pick up |
 | Toyota Coaster (minibus) | 155 km/h | Carries up to 14 passengers | Wide and heavy to weave |
+| Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
+
+Every city also has a **Formula 1 car**: open wheels, wings front and back, a driver in a helmet and a high, screaming engine. It has no plate, sticker or charm.
 
 Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
 
@@ -188,7 +193,8 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** at the top of the menu. The game stays in Kids Mode, even after you close it, until a grown-up holds the lock in the top corner for three seconds.
 
 - Two big steps with no reading needed: pick a car from three pictures, then pick a place from three landmark postcards. A voice reads each question out loud when the phone has one for the chosen language.
-- The car drives itself at 46 km/h. Two big arrows move it one lane per tap. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
+- Pick a taxi, a bus or a race car (the Formula 1 car).
+- The car drives itself at 46 km/h. Two big arrows move it one lane per tap. A switch at the top right of the picker swaps the arrows for a big steering wheel: slide it left or right to turn, and when you let go the car settles into the nearest lane. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
 - Stars and balloons float over the lanes. Steer into them to catch them.
 - A bar at the top shows the car on its way from home to the place. There is no speed, fine, fuel, damage, radio or map.
 - Bumping into a car only goes BOING. The car slows down, and the arrow toward the free lane glows. Nothing is lost and there is no game over.
@@ -275,6 +281,13 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.20 (October 2026)
+
+- **Formula 1 car.** Every city has a new car, a Formula 1 car with open wheels, front and rear wings, a halo over the driver and a high, screaming engine with eight gears. It is the fastest car in the game, but crashes hurt it a lot. Kids Mode offers it as the race car. See [Cars](#cars).
+- **Steering wheel in Kids Mode.** A switch at the top right of the Kids Mode picker swaps the two arrows for a big steering wheel. Slide it left or right and the car turns; let go and it settles into the nearest lane. The game remembers the choice. See [Kids Mode](#kids-mode).
+
+![The Formula 1 car, and the Kids Mode steering wheel](docs/screenshots/f1-wheel.png)
 
 ### 2.19 (October 2026)
 
