@@ -268,6 +268,9 @@
     <string key="page.T_KAGAIN">Again!</string>
     <string key="page.T_KSTOP">STOP</string>
     <string key="page.T_KBEEP">BEEP</string>
+    <string key="page.T_KSTEER">How to steer</string>
+    <string key="page.T_KARROWS">Steer with arrows</string>
+    <string key="page.T_KWHEEL">Steer with the wheel</string>
     <string key="text.kidsCar">Pick your car!</string>
     <string key="text.kidsPlace">Where shall we go?</string>
     <string key="text.kidsGoTo">Let's go to {place}!</string>
@@ -278,6 +281,9 @@
     <string key="text.kidsTaxi">Taxi</string>
     <string key="text.kidsBus">Bus</string>
     <string key="text.kidsFast">Fast car</string>
+    <string key="text.kidsF1">Race car</string>
+    <string key="text.kidsArrows">Arrows!</string>
+    <string key="text.kidsWheel">Steering wheel!</string>
     <string key="text.kidsBig">Big car</string>
     <string key="text.kidsPickup">Pickup</string>
     <string key="text.kidsSmall">Little car</string>

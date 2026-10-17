@@ -49,6 +49,10 @@
     <string key="car.4.sub">BMW 3 Series</string>
     <string key="car.4.pros">Fast, quick to pick up and sure in curves</string>
     <string key="car.4.cons">Low and soft, so bumps and crashes hurt</string>
+    <string key="car.5.name">Formula 1 car</string>
+    <string key="car.5.sub">Race car</string>
+    <string key="car.5.pros">The fastest car in the game, and it grips like glue</string>
+    <string key="car.5.cons">Fragile, so every crash hurts</string>
     <string key="place.0">Interior Circle</string>
     <string key="place.1">Abdali Boulevard</string>
     <string key="place.2">King Abdullah I Mosque</string>

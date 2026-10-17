@@ -45,6 +45,10 @@
     <string key="car.3.sub">Minibus</string>
     <string key="car.3.pros">Carries many passengers for big fare bonuses</string>
     <string key="car.3.cons">Wide and heavy to weave</string>
+    <string key="car.4.name">Formula 1 car</string>
+    <string key="car.4.sub">Race car</string>
+    <string key="car.4.pros">The fastest car in the game, and it grips like glue</string>
+    <string key="car.4.cons">Fragile, so every crash hurts</string>
     <string key="place.0">Dubai Frame</string>
     <string key="place.1">World Trade Centre</string>
     <string key="place.2">Museum of the Future</string>

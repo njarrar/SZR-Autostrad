@@ -172,6 +172,10 @@
     <string key="car.4.sub">BMW 3 Series</string>
     <string key="car.4.pros">سريعة وبتشد منيح وثابتة بالكوع</string>
     <string key="car.4.cons">واطية وناعمة، المطبات والضربات بتأثر فيها</string>
+    <string key="car.5.name">سيارة فورمولا 1</string>
+    <string key="car.5.sub">سيارة سباق</string>
+    <string key="car.5.pros">أسرع سيارة باللعبة، ولازقة بالشارع</string>
+    <string key="car.5.cons">خفيفة، وكل خبطة بتأذيها</string>
     <string key="place.0">دوار الداخلية</string>
     <string key="place.1">بوليفارد العبدلي</string>
     <string key="place.2">مسجد الملك عبدالله</string>

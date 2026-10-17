@@ -86,6 +86,7 @@ const SND = (() => {
     sports: { base: 42, span: 175, bite: 1.5, biteG: 0.36, fire: 2.5, fireWave: 'sawtooth', depth: 0.3, lp: 900, lpSpan: 4200, peak: 700, peakQ: 1.6, peakG: 6, comb: 0.0012, vol: 0.085, rum: 0.02, rumF: 5, whine: 8, whineG: 0.02, gears: 7 },
     dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 },
     sedan:  { base: 32, span: 92, bite: 2, biteG: 0.28, fire: 2, fireWave: 'triangle', depth: 0.24, lp: 680, lpSpan: 2500, peak: 420, peakQ: 1.1, peakG: 4, comb: 0.0019, vol: 0.075, rum: 0.016, rumF: 3, whine: 5, whineG: 0.022, gears: 6 },
+    f1:     { base: 70, span: 300, bite: 1.2, biteG: 0.3, fire: 2, fireWave: 'sawtooth', depth: 0.22, lp: 1300, lpSpan: 5600, peak: 1100, peakQ: 1.8, peakG: 6, comb: 0.0009, vol: 0.08, rum: 0.012, rumF: 6, whine: 12, whineG: 0.03, gears: 8 },
     coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
@@ -237,7 +238,7 @@ const SND = (() => {
     if (!ac || !sfxOn) { hornStop(); return; }
     if (on && !myHorn) {
       const H = HORNS[hornStyle] || HORNS.city;
-      const k = ({ pickup: 0.85, suv: 0.82, sports: 1.12, bmw: 1.04, hatch: 1.06, sedan: 1.08 }[kind] || 1) * (H.k || 1);
+      const k = ({ pickup: 0.85, suv: 0.82, sports: 1.12, f1: 1.2, bmw: 1.04, hatch: 1.06, sedan: 1.08 }[kind] || 1) * (H.k || 1);
       const notes = H.chord || (chord || [400, 500]).map((f) => f * k);
       const opts = { gain: H.gain || 0.11, wave: H.wave || (kind === 'hatch' ? 'square' : 'sawtooth'), throat: H.throat, bell: H.bell, lp: H.lp };
       if (H.tune) {
