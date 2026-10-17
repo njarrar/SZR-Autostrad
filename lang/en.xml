@@ -29,7 +29,7 @@
     <string key="page.T_SETTINGS">Settings</string>
     <string key="page.T_CARS">Car</string>
     <string key="page.T_COLOR">Color</string>
-    <string key="page.T_FIXEDCOLOR">The taxi keeps its own color</string>
+    <string key="page.T_FIXEDCOLOR">This car keeps its own color</string>
     <string key="page.T_PLATE">Plate number</string>
     <string key="page.T_CAM">Camera</string>
     <string key="page.T_CAM0">Close</string>
