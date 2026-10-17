@@ -125,6 +125,32 @@
     <string key="text.walkFalafel">عروس فلافل! راحت خبطة</string>
     <string key="text.walkLemon">ليمون ونعنع! صرت أسرع</string>
     <string key="text.walkCoffee">قهوة! الكل بوسّعلك</string>
+    <!-- Kids Mode: big pictures, two arrows, no numbers -->
+    <string key="page.T_KIDS">حوّل لوضع الأطفال</string>
+    <string key="page.T_KIDS_SUB">سواقة سهلة للصغار، من 4 لـ 7 سنين</string>
+    <string key="page.T_KIDS_EXIT">للكبار: اضغط مطوّل لتطلع من وضع الأطفال</string>
+    <string key="page.T_KBACK">رجوع</string>
+    <string key="page.T_KSAY">اسمعها كمان مرة</string>
+    <string key="page.T_KGO">يلا!</string>
+    <string key="page.T_KYAY">برافو عليك! وصلت</string>
+    <string key="page.T_KSTICKER">ستيكر جديد!</string>
+    <string key="page.T_KHOME">البيت</string>
+    <string key="page.T_KAGAIN">كمان مرة!</string>
+    <string key="page.T_KSTOP">قِف</string>
+    <string key="page.T_KBEEP">بيب</string>
+    <string key="text.kidsCar">اختار سيارتك!</string>
+    <string key="text.kidsPlace">وين بدنا نروح؟</string>
+    <string key="text.kidsGoTo">يلا على {place}!</string>
+    <string key="text.kidsHow">اضغط على الأسهم والقط النجوم!</string>
+    <string key="text.kidsOops">أوه! جرّب المسرب الثاني</string>
+    <string key="text.kidsGot">نجومك: {n}</string>
+    <string key="text.kidsAlbum">لألبومك</string>
+    <string key="text.kidsTaxi">تكسي</string>
+    <string key="text.kidsBus">باص</string>
+    <string key="text.kidsFast">سيارة سريعة</string>
+    <string key="text.kidsBig">سيارة كبيرة</string>
+    <string key="text.kidsPickup">بكب</string>
+    <string key="text.kidsSmall">سيارة صغيرة</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>

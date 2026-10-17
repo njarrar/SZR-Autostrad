@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.18** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.19** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -183,6 +183,18 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 - Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
 - Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
 
+### Kids Mode
+
+A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** at the top of the menu. The game stays in Kids Mode, even after you close it, until a grown-up holds the lock in the top corner for three seconds.
+
+- Two big steps with no reading needed: pick a car from three pictures, then pick a place from three landmark postcards. A voice reads each question out loud when the phone has one for the chosen language.
+- The car drives itself at 46 km/h. Two big arrows move it one lane per tap. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
+- Stars and balloons float over the lanes. Steer into them to catch them.
+- A bar at the top shows the car on its way from home to the place. There is no speed, fine, fuel, damage, radio or map.
+- Bumping into a car only goes BOING. The car slows down, and the arrow toward the free lane glows. Nothing is lost and there is no game over.
+- Each trip is 1.5 km and always ends with three stars, confetti and the place's postcard for the album. The place cards fill up with stars as a child visits them again.
+- The sky is always a clear morning and the traffic is light.
+
 ### Haitham Mode
 
 Leave the car and walk. Press **Haitham Mode** next to the start button in the menu, in any city. Haitham sets off on the sidewalk beside the ring road at walking speed, 5 km/h, and has to reach the corner shop 400 m away.
@@ -263,6 +275,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.19 (October 2026)
+
+- **Kids Mode.** A new way to play for children aged 4 to 7, opened by the **Switch to Kids Mode** button at the top of the menu. Children pick a car and a place from big pictures, a voice reads the questions, and the car drives itself while two big arrows change lanes. They catch stars and balloons on the way, bumps only go BOING, and every trip ends with stars, confetti and a sticker for the album. A grown-up holds the lock for three seconds to leave. See [Kids Mode](#kids-mode).
+
+![Kids Mode: picking a car, driving with two arrows, and the finish](docs/screenshots/kids-mode.png)
 
 ### 2.18 (October 2026)
 

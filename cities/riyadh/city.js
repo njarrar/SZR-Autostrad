@@ -57,6 +57,8 @@ window.CITY = {
     { lat: 24.7372, lon: 46.5777, build: 'diriyah', clear: 110 }
   ],
   // the cars you see most on Riyadh roads
+  // Kids Mode: the three places little ones pick from, by landmark
+  kids: ['kingdomCentre', 'masmak', 'tvTower'],
   cars: [
     { kind: 'suv', vmax: 205, accel: 5.0, grip: 0.86, tough: 0.55, role: 'vip' },
     { kind: 'pickup', vmax: 175, accel: 4.3, grip: 0.84, tough: 0.5, role: 'tough' },

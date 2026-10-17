@@ -46,6 +46,8 @@ window.CITY = {
     { lat: 31.9775, lon: 35.8460, build: 'mall', clear: 110, ink: '#7a1f2b' },
     { lat: 31.9845, lon: 35.8800, build: 'shops', clear: 140 }
   ],
+  // Kids Mode: the three places little ones pick from, by landmark
+  kids: ['citadel', 'flagpole', 'theatre'],
   cars: [
     { kind: 'taxi', fixedColor: 0xf2c12e, vmax: 175, accel: 4.6, grip: 1.05, tough: 1.0, role: 'taxi', paxCap: 4 },
     { kind: 'hatch', vmax: 165, accel: 3.8, grip: 1.22, tough: 1.3, role: 'weave' },
