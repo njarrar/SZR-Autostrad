@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.21** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.22** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -281,6 +281,11 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.22 (October 2026)
+
+- **iPhone app builds again.** Xcode stopped with "Overriding non-open property" because the app tried to change a setting on Capacitor's own view. A small parent view now hides the home bar, lets edge swipes reach the game and shows the status bar in menus.
+- **Straight to Google Play.** The Play Store workflow now sends the signed bundle to Google Play by itself. See Store release.
 
 ### 2.21 (October 2026)
 
