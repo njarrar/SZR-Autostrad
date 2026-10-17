@@ -1513,8 +1513,9 @@ scene.add(headlight); scene.add(headlight.target);
 const atm = { night: C.look.night, wx: null };
 const mixHex = (a, b, t) => new THREE.Color(a).lerp(new THREE.Color(b), t);
 function applyTime() {
-  const L = Object.assign({}, C.look, TIMES[settings.time] || {});
-  const W = settings.weather ? WEATHER[C.weather] : null;
+  // kids always drive on a clear, sunny morning
+  const L = Object.assign({}, C.look, TIMES[game.kids ? 'morning' : settings.time] || {});
+  const W = settings.weather && !game.kids ? WEATHER[C.weather] : null;
   const fogK = (L.fogK || 1) * (W ? W.fogK : 1);
   const fog = W ? mixHex(L.fog, W.fogTo, W.fogMix) : new THREE.Color(L.fog);
   scene.fog.color.copy(fog); scene.background.copy(fog);
@@ -2710,7 +2711,7 @@ function updateTraffic(dt, honk) {
     if (Math.abs(player.d - c.d) < 2.2) {
       const g = player.t - c.t - (player.len + c.len) / 2; if (g > -1 && g < gap) { gap = g; lv = player.v; }
       // a car stuck behind you lets you know
-      if (game.mode === 'drive' && !game.tour && g > -1 && g < 14 && c.vt > player.v + 4 && game.time > (c.honkT || 0)) { c.honkT = game.time + mr(5, 9); SND.otherHorn(c.d - player.d, g + 4, C.horn); }
+      if (game.mode === 'drive' && !game.tour && !game.kids && g > -1 && g < 14 && c.vt > player.v + 4 && game.time > (c.honkT || 0)) { c.honkT = game.time + mr(5, 9); SND.otherHorn(c.d - player.d, g + 4, C.horn); }
     }
     let target = c.vt;
     const safe = c.close ? 5 + c.v * 0.18 : 8 + c.v * 0.9; // a tailgater sits much closer than other drivers
@@ -2880,7 +2881,7 @@ function buildPlayer() {
     player.group.traverse((o) => { if (o.userData.own) { o.geometry.dispose(); if (o.material !== brakeMat) o.material.dispose(); } });
     scene.remove(player.group);
   }
-  const car = CARS[settings.car] || CARS[0];
+  const car = CARS[curCar()] || CARS[0];
   const kind = car.kind;
   const cg = carGeo(kind, car.fixedColor || settings.color, car.extra);
   const g = new THREE.Group();
@@ -2941,7 +2942,7 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 // ---------- state ----------
 const CARS = C.cars;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal' }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1 }, store.get('settings', {}));
 // ?look=pixel or ?look=normal in the address picks the look
 try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
 applyLook();
@@ -2949,6 +2950,8 @@ function saveSettings() { store.set('settings', settings); }
 const album = Object.assign({}, store.get('album', {}));
 function saveAlbum() { store.set('album', album); }
 
+// kids mode keeps its own car, so the grown-up's pick stays as it was
+const curCar = () => game.kids ? settings.kidsCar : settings.car;
 const game = { mode: 'menu', time: 0, dist: 0, startT: 0, tripLen: 0, dest: null, weaves: 0, combo: 0, comboT: 0, weavePts: 0, radar: 0, crashes: 0, fines: 0, tolls: 0, bumps: 0, bonus: 0, nextBonus: 10000, nextShop: 25000, crashCool: 0, shake: 0, lastS: 0, paused: false, free: false, lap: false, count: 0, nitro: 0, boost: 0, boostCap: 1, boostK: 1, extraPts: 0, nitroReq: false, evT: 40, hornWas: false, pax: 0, fares: 0, fuel: 100, fuelWarned: false };
 
 // ---------- input ----------
@@ -2962,7 +2965,8 @@ addEventListener('keydown', (e) => {
   keys[e.code] = true;
   if (e.repeat && ['KeyC', 'KeyP', 'Escape'].includes(e.code)) return;
   if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.code)) e.preventDefault();
-  if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused) game.nitroReq = true;
+  if (game.kids && !e.repeat && ['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD'].includes(e.code)) kidsLane(e.code === 'ArrowLeft' || e.code === 'KeyA' ? -1 : 1);
+  if ((e.code === 'KeyN' || e.code === 'ShiftLeft' || e.code === 'ShiftRight') && !e.repeat && game.mode === 'drive' && !game.paused && !game.kids) game.nitroReq = true;
   if ((e.code === 'KeyR' || e.code === 'KeyM') && !e.repeat && game.mode === 'drive') radioKey(e.code);
   if (e.code === 'KeyC') { settings.cam = (settings.cam + 1) % 3; saveSettings(); syncSettingsUI(); }
   if (e.code === 'KeyV' && !e.repeat) { settings.look = settings.look === 'pixel' ? 'normal' : 'pixel'; saveSettings(); applyLook(); syncSettingsUI(); }
@@ -3258,6 +3262,7 @@ function startTrip(opts) {
   opts = opts || {}; clearFx();
   resetInputs();
   audioInit();
+  game.kids = !!opts.kids; document.body.classList.toggle('kids', game.kids || !!settings.kids);
   buildPlayer();
   DIR = settings.dir;
   const trips = tripList(); const tr = trips[opts.free ? trips.length - 1 : Math.min(settings.trip, trips.length - 1)];
@@ -3292,6 +3297,19 @@ function startTrip(opts) {
   if (haitham) haitham.g.visible = !!game.walk;
   player.group.visible = !game.walk;
   $('#hud').classList.toggle('walk', !!game.walk); $('#touch').classList.toggle('walk', !!game.walk);
+  if (game.kids) {
+    // a short trip that ends at the picked place, in the middle lane, on a sunny morning
+    const lm = LMS[opts.place] || kidsPlaces()[0];
+    player.t = tOfS(lm.s) - KIDS_LEN; player.laneT = Math.min(1, LANES - 1); player.d = laneD(player.laneT); player.paxCap = 0;
+    Object.assign(game, { startT: player.t, tripLen: KIDS_LEN, dest: lm, free: false, lap: false, pax: 0 });
+    game.lastS = sOfT(player.t); resetTraffic();
+    kids.emoji = kidsCarLook(curCar())[0]; $('#kMe').textContent = kids.emoji; $('#kDest').src = POSTCARD.url(C.id, lm.idx);
+    $('#kOops').hidden = true; $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint');
+    kidsSetup(); applyTime();
+    hud.toast.className = 'toast'; toastTimer = 0;
+    say(T.kidsGoTo.replace('{place}', lm.name) + ' ' + T.kidsHow);
+  }
+  $('#kidsUI').hidden = !game.kids;
   radioStart();
 }
 // 3, 2, 1, go: the car waits at the line, then sets off
@@ -3351,7 +3369,7 @@ const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck'
 // engine, road and wind follow the car every frame; the dashboard shows the gear the engine is in
 function soundFrame() {
   const live = game.mode === 'drive' && !game.paused && !game.walk;
-  const car = CARS[settings.car] || CARS[0];
+  const car = CARS[curCar()] || CARS[0];
   const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
   s.gas = !!player.input.gas && game.count <= 0; s.brake = !!player.input.brake; s.brakeAmt = player.input.brakeAmt || 0; s.cruising = player.input.cruising; s.slip = player.slip;
   const d = SND.drive(s);
@@ -3365,6 +3383,7 @@ function finishTrip(reason) {
   game.mode = 'done'; evEnd(); resetInputs(); SND.cue(reason === 'arrive' ? 'finish' : 'wreck'); SND.radio.pause(true); $('#count').hidden = true;
   $('#hud').hidden = true; $('#touch').hidden = true;
   if (game.walk) return finishWalk(reason);
+  if (game.kids) return kidsFinish();
   const score = computeScore();
   const key = 'best:' + settings.dir + ':' + settings.trip;
   const best = store.get(key, 0); if (reason === 'arrive' && score > best) store.set(key, score);
@@ -3412,7 +3431,7 @@ function togglePause() {
   showScreen(game.paused ? '#pause' : null);
   if (tour) $('#tour').hidden = game.paused;
 }
-function toMenu() { clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; showScreen('#menu'); placeMenuCar(); }
+function toMenu() { const wasKids = game.kids; game.kids = false; kidsClear(); $('#kidsUI').hidden = true; if (wasKids) { buildPlayer(); applyTime(); } clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; if (settings.kids) kidsHome(0); else showScreen('#menu'); placeMenuCar(); }
 function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
@@ -3435,6 +3454,8 @@ function step(dt) {
   }
   if (settings.control === 'tilt' && tilt.ok && !steerIn) steerIn = tilt.x;
   if (settings.control === 'wheel' && wheelIn.on && !steerIn) steerIn = wheelIn.x;
+  // kids never steer or press gas: the arrows pick a lane and the car keeps a gentle speed; STOP holds it back
+  if (game.kids) { gasAmt = 0; steerIn = 0; brakeAmt = keys.ArrowDown || keys.KeyS || touch.brake ? 1 : 0; game.nitroReq = false; }
   const gas = gasAmt > 0, brake = brakeAmt > 0;
   const horn = keys.Space || keys.KeyH || touch.horn;
   if (game.walk) {
@@ -3447,12 +3468,13 @@ function step(dt) {
     return;
   }
   // fuel consumption
-  if (!game.tour && player.v > 2) {
+  if (!game.tour && !game.kids && player.v > 2) {
     game.fuel = Math.max(0, game.fuel - dt * (0.28 + (gas ? 0.26 : 0) + (game.boost > 0 ? 0.45 : 0)));
     if (game.fuel < 22 && !game.fuelWarned) { game.fuelWarned = true; toast(T.fuelLow, 'bad'); SND.cue('bad'); }
   }
   // speed: the car cruises on its own; gas raises the cruise speed, brake lowers it
   const feel = 1.35 - 0.007 * settings.steerFeel; // light steering reacts faster
+  if (game.kids) player.cruise = KIDS_V;
   let a = 0;
   if (gas) { a += player.accel * gasAmt * (1 - Math.pow(player.v / player.vmax, 2)); player.cruise = player.v; }
   if (brake) { a -= player.v > 0.5 ? (5 + 0.09 * settings.brakeFeel) * brakeAmt : 0; player.cruise = player.v; }
@@ -3489,7 +3511,7 @@ function step(dt) {
     if (lt !== player.laneT && (stick.on || settings.control === 'tilt')) vibrate(10);
     player.laneT = lt;
   }
-  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
+  if (Math.abs(player.steer) < 0.05 && player.v > 2) tgt += game.kids ? clamp((laneD(player.laneT) - player.d) * 1.7, -3.2, 3.2) : clamp((laneD(player.laneT) - player.d) * 1.1, -2.2, 2.2);
   player.lat += (tgt - player.lat) * Math.min(1, dt * 5.5);
   // curves only push you outward when you take them faster than the car's grip allows
   const need = Math.abs(P.k) * player.v * player.v, cap = 6.5 * player.grip;
@@ -3498,9 +3520,10 @@ function step(dt) {
   player.d += player.lat * dt;
   if (player.d < D_MIN || player.d > D_MAX) {
     player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
-    if (player.v > 8) { player.v *= 1 - 0.8 * dt; if (!game.tour) player.dmg += 4 * dt * player.tough; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
+    if (player.v > 8 && !game.kids) { player.v *= 1 - 0.8 * dt; if (!game.tour) player.dmg += 4 * dt * player.tough; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
   }
   paxStopStep(dt, gas);
+  if (game.kids) kidsStep(dt);
   runStepTimers(dt); updateWalkers(dt);
   const prevT = player.t;
   player.t += player.v * dt;
@@ -3512,11 +3535,12 @@ function step(dt) {
     const dt2 = c.t - player.t, dd = c.d - player.d;
     const lenSum = (c.len + player.len) / 2, widSum = (c.wid + player.wid) / 2;
     if (Math.abs(dt2) < lenSum && Math.abs(dd) < widSum - 0.1 && game.crashCool <= 0) {
-      game.crashCool = 1.2; if (!game.tour) { game.crashes++; game.fines += C.fines.crash; player.dmg += (8 + player.v * 0.35) * player.tough; } game.shake = 0.6; game.combo = 0;
+      game.crashCool = 1.2; if (!game.tour && !game.kids) { game.crashes++; game.fines += C.fines.crash; player.dmg += (8 + player.v * 0.35) * player.tough; } game.shake = 0.6; game.combo = 0;
       player.cruise = Math.min(player.cruise, player.v * 0.8);
       if (dt2 > 0) { player.v = Math.min(player.v, c.v) * 0.55; player.t = c.t - lenSum - 0.3; } else { c.v = Math.min(c.v, player.v) * 0.6; c.t = player.t - lenSum - 0.3; }
       player.lat = -Math.sign(dd || 1) * 3;
       if (Math.abs(dd) > 1) player.laneT = clamp(Math.round((player.d - MED - SH) / LW - 0.5 - Math.sign(dd) * 0.5), 0, LANES - 1);
+      if (game.kids) { kidsOops(); continue; }
       toast(T.crash, 'bad'); SND.crash(Math.abs(player.v - c.v) * 3.6 / 50 + 0.25); vibrate([60, 30, 90]); SND.otherHorn(dd * 2, Math.abs(dt2) + 3, C.horn);
       spawnSparks(P.x, P.y + 0.9, P.z, 16, '#fbbf24');
       if (C.barks && C.barks.cut) spawnBark(c, mpick(C.barks.cut));
@@ -3525,7 +3549,7 @@ function step(dt) {
     if (!c.passed && dt2 < -lenSum) {
       c.passed = true;
       if (Math.abs(dd) < 6.5 && player.v > c.v + 3) SND.passBy(Math.sign(dd) || 1, sizeOf(c.kind), 1 - Math.abs(dd) / 7.5);
-      if (Math.abs(dd) < 3.8 && player.v > c.v + 3 && player.v > 15) {
+      if (Math.abs(dd) < 3.8 && player.v > c.v + 3 && player.v > 15 && !game.kids) {
         game.weaves++; game.combo = game.comboT > 0 ? game.combo + 1 : 1; game.comboT = 3;
         const pts = 40 * game.combo; game.weavePts += pts;
         hud.weave.textContent = T.weave + (game.combo > 1 ? ' x' + game.combo : '') + '  +' + pts; hud.weave.classList.remove('pop'); void hud.weave.offsetWidth; hud.weave.classList.add('pop');
@@ -3546,11 +3570,12 @@ function step(dt) {
   if (player.v > 14 && game.boost <= 0) for (const c of SAME) { const g = c.t - player.t - (c.len + player.len) / 2; if (g > 0 && g < 24 && Math.abs(c.d - player.d) < 1.3) { draft = true; break; } }
   if (draft) game.nitro = Math.min(1, game.nitro + dt * 0.06);
   const hornTap = horn && !game.hornWas; game.hornWas = horn;
-  const evTxt = roadEvent(dt, hornTap);
+  const evTxt = game.kids ? '' : roadEvent(dt, hornTap);
   // events & landmark postcards
   const sNow = sOfT(player.t), sPrev = sOfT(prevT); const moved = player.t - prevT;
   let warnTxt = '';
-  for (const ev of events) {
+  // kids skip cameras, bumps, tolls, stops and fuel: nothing to pay or fail
+  if (!game.kids) for (const ev of events) {
     const ahead = aheadDist(sNow, ev.s), prevAhead = aheadDist(sPrev, ev.s);
     if (ev.type === 'radar' && ahead < 350) warnTxt = T.radarAhead + ' ' + Math.round(ahead) + ' ' + T.meters;
     else if (ev.type === 'paxStop' && player.paxCap > 0 && ahead < 260 && !warnTxt && !game.stop && !(ev.doneT != null && Math.abs(player.t - ev.doneT) < 300)) warnTxt = T.paxAhead + ' ' + Math.round(ahead) + ' ' + T.meters + ' · ' + T.paxHow;
@@ -3592,10 +3617,10 @@ function step(dt) {
   if (!warnTxt) warnTxt = evTxt;
   game.warnTxt = warnTxt;
   // distance milestones
-  if (game.dist >= game.nextBonus) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
+  if (game.dist >= game.nextBonus && !game.kids) { game.bonus += 500; game.nextBonus += 10000; toast(T.bonus, 'good'); SND.cue('bonus'); vibrate([30, 40, 30, 40, 60]); }
   if (game.free && game.dist >= game.nextShop) { game.nextShop += 25000; player.dmg = 0; game.fuel = 100; toast(T.workshop, 'good'); }
   // horn
-  SND.horn(horn, C.horn, CARS[settings.car].kind);
+  SND.horn(horn, C.horn, (CARS[curCar()] || CARS[0]).kind);
   const pin = player.input; pin.gas = gas; pin.brakeAmt = brakeAmt; pin.cruising = !gas && !brake && player.v > 2;
   if (pin.brake !== brake) { pin.brake = brake; player.brakeMat.color.set(brake ? 0xff2a1a : 0x550000); }
   // destination
@@ -3614,6 +3639,7 @@ function setStyle(el, k, v) { const key = k + '|'; let m = hudLast.get(key); if 
 function setClass(el, c, on) { if (el.classList.contains(c) !== on) el.classList.toggle(c, on); }
 let speedoEl = null;
 function drawHud() {
+  if (game.kids) { kidsHud(); return; }
   if (game.walk) {
     setText(hud.speed, Math.round(player.v * 3.6)); setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(walkScore()));
     setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS);
@@ -3657,6 +3683,7 @@ let miniTick = 0, lastSpd = '';
 function render(dt) {
   // player
   if (game.walk) walkRender();
+  if (game.kids) kidsRender();
   trackAt(player.t, player.d, P);
   const yaw = yawOf(P.fx, P.fz) - Math.atan2(player.lat, Math.max(player.v, 4)) * 0.8;
   player.group.position.set(P.x, P.y, P.z);
@@ -3942,6 +3969,196 @@ $('#btnQuit').onclick = toMenu;
 $('#btnAgain').onclick = () => startTrip(game.lastOpts || {});
 $('#btnMenu').onclick = toMenu;
 
+// ---------- Kids Mode: the car drives itself, two arrows change lanes, stars to catch, bumps only go boing ----------
+const KIDS_V = 46 / 3.6, KIDS_LEN = 1500;
+const kids = { step: 0, items: [], stars: 0, oopsT: 0, hintT: 0, emoji: '🚕' };
+// the three cars on offer: the taxi, the bus, and the most fun of the rest
+function kidsCars() {
+  const pickRole = (r) => CARS.findIndex((c) => c.role === r);
+  const out = [pickRole('taxi'), pickRole('bus')].filter((i) => i >= 0);
+  const rest = CARS.map((c, i) => i).filter((i) => !out.includes(i));
+  const fun = ['sports', 'bmw', 'suv', 'pickup'];
+  rest.sort((a, b) => ((fun.indexOf(CARS[a].kind) + 9) % 9) - ((fun.indexOf(CARS[b].kind) + 9) % 9));
+  return out.concat(rest).slice(0, 3);
+}
+function kidsCarLook(i) {
+  const c = CARS[i], k = c.kind;
+  if (c.role === 'taxi') return ['🚕', T.kidsTaxi];
+  if (c.role === 'bus') return ['🚌', T.kidsBus];
+  if (k === 'sports' || k === 'bmw') return ['🏎️', T.kidsFast];
+  if (k === 'suv') return ['🚙', T.kidsBig];
+  if (k === 'pickup') return ['🛻', T.kidsPickup];
+  return ['🚗', T.kidsSmall];
+}
+function kidsPlaces() {
+  const out = (C.kids || []).map((b) => LMS.find((lm) => lm.build === b)).filter(Boolean);
+  for (const lm of LMS) if (out.length < 3 && !out.includes(lm)) out.push(lm);
+  return out;
+}
+// a friendly voice reads the question out loud, when the phone has a voice for this language
+function say(text) {
+  try {
+    const ss = window.speechSynthesis; if (!ss || !text || !settings.sound) return;
+    const v = ss.getVoices().find((x) => (x.lang || '').toLowerCase().startsWith(LANG));
+    if (!v && LANG !== 'en') return;
+    ss.cancel(); const u = new SpeechSynthesisUtterance(text);
+    if (v) u.voice = v; u.lang = v ? v.lang : 'en-US'; u.rate = 0.92; u.pitch = 1.15;
+    ss.speak(u);
+  } catch (e) { /* no voice */ }
+}
+function kidsHome(stepN) {
+  kids.step = stepN || 0;
+  document.body.classList.add('kids');
+  const carStep = kids.step === 0;
+  const q = carStep ? T.kidsCar : T.kidsPlace;
+  $('#kQ').textContent = q; $('#kBack').hidden = carStep;
+  $('#kDot0').className = carStep ? 'on' : ''; $('#kDot1').className = carStep ? '' : 'on';
+  if (!kidsCars().includes(settings.kidsCar)) settings.kidsCar = kidsCars()[0];
+  const places = kidsPlaces();
+  if (!places.some((lm) => lm.idx === settings.kidsPlace)) settings.kidsPlace = places[0].idx;
+  const done = store.get('kids:done', {});
+  const card = (sel, pic, name, extra, v) => `<button type="button" class="kCard${sel ? ' sel' : ''}" data-v="${v}" aria-pressed="${sel}">${pic}<span class="kTxt"><b>${name}</b>${extra}</span></button>`;
+  $('#kCards').innerHTML = carStep
+    ? kidsCars().map((i) => { const [e, n] = kidsCarLook(i); return card(i === settings.kidsCar, `<span class="kPic" aria-hidden="true">${e}</span>`, n, '', i); }).join('')
+    : places.map((lm) => { const n = Math.min(3, done[lm.idx] || 0); return card(lm.idx === settings.kidsPlace, `<img class="kPic" alt="" src="${POSTCARD.url(C.id, lm.idx)}">`, lm.name, `<span class="kSt" aria-hidden="true">${'★'.repeat(n)}<i>${'★'.repeat(3 - n)}</i></span>`, lm.idx); }).join('');
+  $('#kCards').querySelectorAll('.kCard').forEach((b) => b.onclick = () => {
+    audioInit(); SND.cue('click');
+    if (carStep) { settings.kidsCar = +b.dataset.v; say(kidsCarLook(settings.kidsCar)[1]); } else { settings.kidsPlace = +b.dataset.v; say(LMS[settings.kidsPlace].name); }
+    saveSettings();
+    $('#kCards').querySelectorAll('.kCard').forEach((x) => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); });
+  });
+  showScreen('#kids');
+  say(q);
+}
+function kidsSwitch(on) {
+  settings.kids = on ? 1 : 0; saveSettings();
+  document.body.classList.toggle('kids', !!on);
+  if (on) kidsHome(0); else { if (window.speechSynthesis) speechSynthesis.cancel(); showScreen('#menu'); }
+}
+function kidsStart() {
+  startTrip({ kids: true, place: settings.kidsPlace, traffic: 0 });
+}
+// one tap moves exactly one lane
+function kidsLane(k) {
+  if (!game.kids || game.mode !== 'drive' || game.paused || game.count > 0) return;
+  const lt = clamp(player.laneT + k, 0, LANES - 1);
+  if (lt === player.laneT) { vibrate(25); return; }
+  player.laneT = lt; vibrate(10); SND.cue('click');
+  kids.hintT = 0; $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint');
+}
+document.querySelectorAll('[data-kid]').forEach((el) => {
+  el.addEventListener('pointerdown', (e) => { e.preventDefault(); audioInit(); el.classList.add('on'); kidsLane(+el.dataset.kid); });
+  const off = () => el.classList.remove('on');
+  el.addEventListener('pointerup', off); el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off);
+});
+// stars and balloons float over the lanes
+let kidsGeo = null;
+function kidsMeshes() {
+  if (kidsGeo) return kidsGeo;
+  const sh = new THREE.Shape();
+  for (let i = 0; i < 10; i++) { const r = i % 2 ? 0.25 : 0.6, a = Math.PI / 2 + i * Math.PI / 5; sh[i ? 'lineTo' : 'moveTo'](Math.cos(a) * r, Math.sin(a) * r); }
+  const star = new THREE.ExtrudeGeometry(sh, { depth: 0.16, bevelEnabled: true, bevelSize: 0.05, bevelThickness: 0.05, bevelSegments: 1 }); star.center();
+  const ball = new THREE.SphereGeometry(0.45, 18, 14); ball.scale(1, 1.18, 1);
+  const knot = new THREE.ConeGeometry(0.08, 0.12, 8); knot.rotateX(Math.PI); knot.translate(0, -0.56, 0);
+  const str = new THREE.CylinderGeometry(0.012, 0.012, 0.9, 4); str.translate(0, -1.05, 0);
+  kidsGeo = {
+    star, ball, knot, str,
+    starMat: new THREE.MeshStandardMaterial({ color: 0xffcc22, emissive: 0xffa800, emissiveIntensity: 0.55, roughness: 0.35, metalness: 0.2 }),
+    strMat: new THREE.MeshBasicMaterial({ color: 0xf2f2f2 }),
+    ballMats: [0xff3b4e, 0x2f8bff, 0xff6fd0, 0x2fcf6a, 0xffa31a].map((c) => new THREE.MeshStandardMaterial({ color: c, roughness: 0.3, metalness: 0.05, emissive: c, emissiveIntensity: 0.12 }))
+  };
+  return kidsGeo;
+}
+function kidsClear() { for (const it of kids.items) scene.remove(it.obj); kids.items.length = 0; }
+function kidsSetup() {
+  kidsClear(); const G = kidsMeshes();
+  kids.stars = 0; kids.oopsT = 0; kids.hintT = 0;
+  let lane = player.laneT;
+  for (let t = 60; t < KIDS_LEN - 50; t += R(30, 46)) {
+    // most stars sit one lane over, so catching them means using the arrows
+    lane = clamp(lane + (Math.random() < 0.6 ? (Math.random() < 0.5 ? -1 : 1) : 0), 0, LANES - 1);
+    const balloon = Math.random() < 0.25;
+    let obj;
+    if (balloon) { obj = new THREE.Group(); const m = mpick(G.ballMats); obj.add(new THREE.Mesh(G.ball, m), new THREE.Mesh(G.knot, m), new THREE.Mesh(G.str, G.strMat)); }
+    else obj = new THREE.Mesh(G.star, G.starMat);
+    obj.visible = false; scene.add(obj);
+    kids.items.push({ t: player.t + t, lane, obj, balloon, got: false, ph: Math.random() * 6 });
+  }
+}
+function kidsStep(dt) {
+  if (kids.oopsT > 0 && (kids.oopsT -= dt) <= 0) $('#kOops').hidden = true;
+  if (kids.hintT > 0 && (kids.hintT -= dt) <= 0) { $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint'); }
+  for (const it of kids.items) {
+    if (it.got) continue;
+    if (Math.abs(it.t - player.t) < 2.6 && Math.abs(laneD(it.lane) - player.d) < 1.8) {
+      it.got = true; it.obj.visible = false; kids.stars++;
+      trackAt(it.t, laneD(it.lane), Q);
+      spawnSparks(Q.x, Q.y + 1.3, Q.z, 14, it.balloon ? '#ff6fd0' : '#ffd23f');
+      spawnFxText(Q.x, Q.y + 2.2, Q.z, '+1 ★', '#ffd23f');
+      SND.cue('star'); vibrate(12);
+      const sc = $('#kScore'); sc.classList.remove('pop'); void sc.offsetWidth; sc.classList.add('pop');
+    }
+  }
+}
+function kidsRender() {
+  const tm = performance.now() / 1000;
+  for (const it of kids.items) {
+    const rel = it.t - player.t, vis = !it.got && rel > -8 && rel < 320;
+    it.obj.visible = vis; if (!vis) continue;
+    trackAt(it.t, laneD(it.lane), Q);
+    it.obj.position.set(Q.x, Q.y + (it.balloon ? 1.9 : 1.25) + Math.sin(tm * 2.2 + it.ph) * 0.15, Q.z);
+    it.obj.rotation.set(0, it.balloon ? Math.sin(tm + it.ph) * 0.3 : tm * 2.4 + it.ph, it.balloon ? Math.sin(tm * 1.3 + it.ph) * 0.12 : 0);
+  }
+}
+// a bump: no damage and no fine, the car slows, and the free lane lights up
+function kidsOops() {
+  SND.cue('boing'); vibrate(40); game.shake = 0.25;
+  spawnFxText(P.x, P.y + 2.4, P.z, 'BOING!', '#ffd23f');
+  const opts = [player.laneT - 1, player.laneT + 1].filter((l) => l >= 0 && l < LANES);
+  const free = opts.find((l) => laneClear(player.t, l, null, 6, 30));
+  const k = (free == null ? opts[0] : free) < player.laneT ? -1 : 1;
+  const btn = $(k < 0 ? '#kidsUI .kL' : '#kidsUI .kR');
+  $('#kidsUI .kL').classList.remove('hint'); $('#kidsUI .kR').classList.remove('hint'); btn.classList.add('hint'); kids.hintT = 4;
+  $('#kOopsTxt').textContent = T.kidsOops; $('#kOopsArr').textContent = k < 0 ? '⬅' : '➡';
+  const box = $('#kOops'); box.hidden = false; box.style.animation = 'none'; void box.offsetWidth; box.style.animation = '';
+  if (kids.oopsT <= 0) say(T.kidsOops);
+  kids.oopsT = 2.8;
+}
+function kidsHud() {
+  setText($('#kStars'), kids.stars);
+  const f = clamp((player.t - game.startT) / game.tripLen, 0, 1);
+  setStyle($('#kDoneBar'), 'width', (f * 100).toFixed(1) + '%'); setStyle($('#kMe'), 'left', (f * 100).toFixed(1) + '%');
+}
+function kidsFinish() {
+  const lm = game.dest;
+  $('#kidsUI').hidden = true; $('#kOops').hidden = true; kidsClear();
+  if (lm) {
+    if (!album[lm.idx]) { album[lm.idx] = 1; saveAlbum(); }
+    const done = store.get('kids:done', {}); done[lm.idx] = (done[lm.idx] || 0) + 1; store.set('kids:done', done);
+    $('#kStkImg').src = POSTCARD.url(C.id, lm.idx); $('#kStkName').textContent = lm.name + ' · ' + T.kidsAlbum;
+  }
+  $('#kGot').textContent = T.kidsGot.replace('{n}', kids.stars) + ' ★';
+  const conf = $('#kConf'), cols = ['#ff4d4d', '#ffcc1a', '#20b456', '#1f72e0', '#ff7ad9', '#7a4dff'];
+  conf.innerHTML = Array.from({ length: 70 }, (_, i) => `<i style="left:${(Math.random() * 100).toFixed(1)}%;background:${cols[i % 6]};animation-duration:${mr(2.4, 4.6).toFixed(2)}s;animation-delay:-${mr(0, 4).toFixed(2)}s"></i>`).join('');
+  showScreen('#kidsDone');
+  say(S['page.T_KYAY']);
+}
+$('#btnKids').onclick = () => { audioInit(); kidsSwitch(true); };
+$('#kGo').onclick = () => { audioInit(); SND.cue('click'); if (kids.step === 0) kidsHome(1); else kidsStart(); };
+$('#kBack').onclick = () => kidsHome(0);
+$('#kSpk').onclick = () => say($('#kQ').textContent);
+$('#kPause').onclick = togglePause;
+$('#kHome').onclick = () => toMenu();
+$('#kAgain').onclick = () => startTrip(game.lastOpts || { kids: true, place: settings.kidsPlace, traffic: 0 });
+// grown-ups hold the lock for three seconds to leave
+(() => {
+  const lock = $('#kLock'), hint = $('#kLockHint'); let tm = 0;
+  const stop = () => { clearTimeout(tm); lock.classList.remove('hold'); setTimeout(() => { hint.hidden = true; }, 1200); };
+  lock.addEventListener('pointerdown', (e) => { e.preventDefault(); try { lock.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ } hint.hidden = false; lock.classList.add('hold'); clearTimeout(tm); tm = setTimeout(() => { stop(); kidsSwitch(false); }, 3000); });
+  lock.addEventListener('pointerup', stop); lock.addEventListener('pointercancel', stop);
+  lock.addEventListener('click', (e) => e.preventDefault());
+})();
+
 // ---------- welcome + guided tour ----------
 let tour = null;
 const TT = C.tour;
@@ -4039,6 +4256,8 @@ function goBack() {
   else if (open('#settings')) $('#setClose').click();
   else if (open('#booklet')) showScreen('#menu');
   else if (open('#welcome')) $('#wSkip').click();
+  else if (open('#kidsDone')) toMenu();
+  else if (open('#kids') && kids.step > 0) kidsHome(0);
   else if (open('#tourEnd')) $('#teMenu').click();
   else if (open('#tour')) skipTour();
   else if (game.mode === 'drive') togglePause();
@@ -4061,9 +4280,10 @@ async function boot() {
   prepMini(); buildPlayer(); placeMenuCar(); applyQuality(); applyTime();
   renderTrips(); renderGarage(); renderBooklet(); syncSettingsUI();
   resize(); status.hidden = true; $('#menuBody').hidden = false;
-  if (!store.get('welcomed', 0)) showScreen('#welcome');
+  if (settings.kids) kidsHome(0);
+  else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud };
+  window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud, kids };
 }
 boot();
 })();

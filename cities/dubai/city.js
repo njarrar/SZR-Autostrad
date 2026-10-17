@@ -51,6 +51,8 @@ window.CITY = {
     { lat: 25.1412, lon: 55.1853, build: 'burjAlArab', clear: 90, sea: true },
     { lat: 25.2340, lon: 55.2655, build: 'jumeirahMosque', clear: 50 }
   ],
+  // Kids Mode: the three places little ones pick from, by landmark
+  kids: ['burjKhalifa', 'ainDubai', 'burjAlArab'],
   cars: [
     { kind: 'suv', vmax: 210, accel: 5.2, grip: 0.85, tough: 0.55, role: 'vip' },
     { kind: 'sports', vmax: 300, accel: 8.5, grip: 1.25, tough: 1.5, role: 'weave' },

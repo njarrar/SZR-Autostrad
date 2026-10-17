@@ -473,6 +473,99 @@ body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, bo
 body.pixel .speedo .num, body.pixel .trip-hud .rem, body.pixel .chip b, body.pixel .gearbox b, body.pixel #count, body.pixel #hWeave { font-family: var(--pixfont); font-weight: 400; letter-spacing: -.02em; }
 body.pixel .speedo .num { font-size: 38px; }
 body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
+
+/* ---------- kids mode: big pictures, two arrows, no numbers ---------- */
+.kidsGo { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; border-radius: 16px; padding: 10px 14px; text-align: start; background: linear-gradient(135deg, #ffd23f, #ff9f1c); color: #3b2300; box-shadow: 0 4px 0 #d27a00; }
+.kidsGo .kE { font-size: 34px; line-height: 1; }
+.kidsGo b { display: block; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.15; }
+.kidsGo small { display: block; font-size: 13px; font-weight: 600; opacity: .85; }
+.kidsGo:active { transform: translateY(3px); box-shadow: 0 1px 0 #d27a00; }
+#kids, #kidsDone { --kink: #1d2b4f; align-items: center; justify-content: center; pointer-events: auto; background: rgba(255, 248, 230, .5); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: var(--kink); font-family: var(--display); }
+.kTop { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); display: flex; gap: 10px; direction: ltr; }
+.kRound { width: 48px; height: 48px; border-radius: 50%; border: 0; background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 #c9d4e8; font-size: 24px; position: relative; padding: 0; color: var(--kink); }
+.kRound svg { width: 26px; height: 26px; }
+#kLock { background: rgba(255,255,255,.7); }
+#kLock .ring { position: absolute; inset: -4px; width: auto; height: auto; transform: rotate(-90deg); }
+#kLock .ring circle { fill: none; stroke: #20b456; stroke-width: 4; stroke-dasharray: 151; stroke-dashoffset: 151; }
+#kLock.hold .ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset 3s linear; }
+#kLockHint { position: absolute; top: 4px; left: 56px; white-space: nowrap; background: var(--kink); color: #fff; font-family: var(--body); font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 10px; }
+.kAsk { display: flex; align-items: center; gap: 12px; background: #fff; border: 3px solid #ffcc1a; border-radius: 30px; padding: 6px 22px 6px 8px; box-shadow: 0 4px 0 #f0b400; max-width: calc(100vw - 150px); }
+[dir=rtl] .kAsk { padding: 6px 8px 6px 22px; }
+.kAsk b { font-weight: 400; font-size: clamp(22px, 5.2vmin, 34px); line-height: 1.15; }
+#kSpk { width: 44px; height: 44px; background: #ffcc1a; box-shadow: none; flex: none; }
+.kBody { display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 3.5vmin, 26px); width: 100%; }
+.kCards { display: flex; gap: clamp(10px, 2.6vmin, 22px); justify-content: center; }
+.kCard { width: clamp(120px, 24vmin + 6vw, 220px); aspect-ratio: 1 / 1.02; border-radius: 28px; border: 4px solid #fff; background: #fff; color: var(--kink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; box-shadow: 0 7px 0 #c9d4e8, 0 12px 20px rgba(0,0,0,.12); position: relative; padding: 8px; transition: transform .15s; }
+.kCard .kPic { font-size: clamp(56px, 15vmin, 100px); line-height: 1; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.kCard img.kPic { width: 88%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 14px; image-rendering: pixelated; }
+.kCard b { font-weight: 400; font-size: clamp(17px, 3.8vmin, 24px); line-height: 1.1; text-align: center; }
+.kCard .kSt { font-size: clamp(14px, 3vmin, 20px); letter-spacing: 2px; line-height: 1; color: #ffb400; }
+.kCard .kSt i { font-style: normal; opacity: .25; }
+.kCard.sel { border-color: #20b456; transform: translateY(-6px) scale(1.04); box-shadow: 0 8px 0 #148a3f, 0 16px 26px rgba(0,0,0,.18); }
+.kCard.sel::after { content: '✓'; position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; background: #20b456; color: #fff; font-family: var(--body); font-weight: 800; font-size: 24px; display: grid; place-items: center; border: 4px solid #fff; }
+.kGoBtn { position: absolute; right: max(22px, env(safe-area-inset-right, 0px)); bottom: calc(max(14px, env(safe-area-inset-bottom, 0px)) + 30px); width: clamp(96px, 22vmin, 136px); height: clamp(96px, 22vmin, 136px); border-radius: 50%; border: 6px solid #fff; background: radial-gradient(circle at 35% 30%, #4ee07e, #18a24a 70%); box-shadow: 0 8px 0 #0e7434, 0 14px 26px rgba(0,0,0,.25); display: grid; place-items: center; padding: 0; color: #fff; }
+.kGoBtn svg { width: 46%; height: 46%; }
+.kGoBtn .kLbl { position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%); background: #fff; color: #0e7434; border-radius: 14px; padding: 0 12px; font-size: 20px; line-height: 28px; white-space: nowrap; }
+.kGoBtn:active, .kCard:active, .kRound:active { transform: translateY(3px); }
+.kDots { position: absolute; left: max(26px, env(safe-area-inset-left, 0px)); bottom: max(22px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; direction: ltr; }
+.kDots i { width: 16px; height: 16px; border-radius: 10px; background: rgba(29,43,79,.25); transition: width .2s; }
+.kDots i.on { width: 40px; background: #20b456; }
+@media (orientation: portrait) {
+  .kCards { flex-direction: column; }
+  .kCard { flex-direction: row; width: min(86vw, 380px); aspect-ratio: auto; height: clamp(84px, 17vh, 140px); justify-content: flex-start; gap: 14px; padding: 8px 16px; }
+  .kCard img.kPic { width: auto; height: 82%; }
+  .kCard .kTxt { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .kAsk { max-width: calc(100vw - 32px); margin-top: 52px; }
+  .kGoBtn { left: 50%; right: auto; transform: translateX(-50%); }
+  .kGoBtn:active { transform: translateX(-50%) translateY(3px); }
+  .kBody { padding-bottom: clamp(110px, 20vh, 170px); }
+}
+@media (orientation: landscape) { .kCard .kTxt { display: contents; } .kBody { padding-right: clamp(80px, 16vmin, 130px); } }
+/* while driving */
+body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPause, body.kids #btnRadio, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet { display: none !important; }
+#kidsUI { position: fixed; inset: 0; z-index: 5; pointer-events: none; font-family: var(--display); color: #1d2b4f; direction: ltr; }
+#kidsUI > * { pointer-events: auto; }
+.kScore { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); height: 54px; padding: 0 16px 0 10px; border-radius: 27px; background: #ffcc1a; box-shadow: 0 4px 0 #d39b00; display: flex; align-items: center; gap: 6px; font-size: 30px; }
+.kScore .e { font-size: 30px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.kScore.pop { animation: kpop .35s; }
+@keyframes kpop { 50% { transform: scale(1.25); } }
+.kTrip { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(400px, calc(100vw - 260px)); height: 54px; background: rgba(255,255,255,.92); border-radius: 27px; box-shadow: 0 4px 0 #c9d4e8; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; pointer-events: none !important; }
+.kTrip .e { font-size: 24px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; line-height: 1; }
+.kLine { position: relative; flex: 1; height: 12px; background: #cfd8ea; border-radius: 6px; }
+.kLine i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #20b456; border-radius: 6px; }
+.kLine .kMe { position: absolute; left: 0; top: 50%; transform: translate(-50%, -58%); font-size: 30px; line-height: 1; }
+.kTrip img { height: 40px; aspect-ratio: 3 / 2; border-radius: 8px; image-rendering: pixelated; }
+#kPause { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); width: 46px; height: 46px; background: rgba(255,255,255,.6); box-shadow: none; }
+.kBig { position: absolute; bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: clamp(100px, 25vmin, 132px); height: clamp(100px, 25vmin, 132px); border-radius: 50%; border: 6px solid #fff; padding: 0; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #5fb2ff, #1f72e0 70%); box-shadow: 0 8px 0 #1553a8, 0 12px 22px rgba(0,0,0,.25); touch-action: none; }
+.kBig svg { width: 52%; height: 52%; }
+.kBig.kL { left: max(18px, env(safe-area-inset-left, 0px)); }
+.kBig.kR { right: max(18px, env(safe-area-inset-right, 0px)); }
+.kBig.on { transform: translateY(5px); box-shadow: 0 3px 0 #1553a8; }
+.kBig.hint { animation: khint .8s ease-in-out infinite; }
+@keyframes khint { 50% { box-shadow: 0 0 0 12px rgba(32,180,86,.55), 0 0 0 26px rgba(32,180,86,.2), 0 8px 0 #1553a8; } }
+.kSmall { position: absolute; bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + clamp(100px, 25vmin, 132px) + 18px); width: clamp(70px, 17vmin, 88px); height: clamp(70px, 17vmin, 88px); border-radius: 50%; border: 5px solid #fff; padding: 0; font-family: var(--display); font-size: clamp(17px, 4.2vmin, 22px); touch-action: none; }
+.kStop { left: max(34px, env(safe-area-inset-left, 0px)); background: radial-gradient(circle at 35% 30%, #ff7a7a, #e02d2d 70%); color: #fff; box-shadow: 0 6px 0 #a81c1c, 0 10px 18px rgba(0,0,0,.2); }
+.kBeep { right: max(34px, env(safe-area-inset-right, 0px)); background: radial-gradient(circle at 35% 30%, #ffe36b, #ffb300 70%); color: #6b4200; box-shadow: 0 6px 0 #c98600, 0 10px 18px rgba(0,0,0,.2); }
+.kSmall.on { transform: translateY(4px); }
+#kOops { position: absolute; top: 24%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; background: #fff; border: 3px solid #ffcc1a; border-radius: 24px; padding: 8px 18px; box-shadow: 0 4px 0 #f0b400; font-size: clamp(20px, 4.6vmin, 28px); white-space: nowrap; pointer-events: none !important; animation: kpop .35s; }
+#kOops .e { font-size: 1.3em; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+#kOops .arr { font-size: 1.3em; color: #20b456; font-family: var(--body); font-weight: 800; }
+@media (orientation: portrait) { .kTrip { top: calc(max(10px, env(safe-area-inset-top, 0px)) + 64px); width: calc(100vw - 32px); } #kOops { top: 32%; white-space: normal; width: max-content; max-width: 86vw; } }
+/* the finish */
+#kidsDone .kDone { background: #fff; border-radius: 34px; box-shadow: 0 8px 0 #c9d4e8, 0 16px 30px rgba(0,0,0,.18); text-align: center; padding: 18px 30px 22px; width: min(480px, calc(100vw - 32px)); position: relative; z-index: 2; }
+#kidsDone h2 { margin: 0; font-weight: 400; font-size: clamp(28px, 7vmin, 40px); line-height: 1.1; }
+#kidsDone .kBigStars { font-size: clamp(40px, 11vmin, 60px); color: #ffc21a; letter-spacing: 6px; line-height: 1.2; text-shadow: 0 3px 0 #e09a00; }
+#kidsDone .kGot { font-family: var(--body); font-weight: 700; color: #5a6a8a; font-size: 16px; }
+.kStk { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; text-align: start; }
+.kStk img { width: 110px; aspect-ratio: 3 / 2; border-radius: 12px; border: 4px dashed #20b456; padding: 3px; transform: rotate(-6deg); image-rendering: pixelated; background: #e8f7ee; }
+.kStk b { display: block; color: var(--kink); font-weight: 400; font-size: 24px; line-height: 1.1; }
+#kStkName { font-family: var(--body); font-weight: 600; font-size: 15px; color: #5a6a8a; }
+#kHome { position: absolute; left: max(22px, env(safe-area-inset-left, 0px)); bottom: max(26px, env(safe-area-inset-bottom, 0px)); width: clamp(76px, 18vmin, 96px); height: clamp(76px, 18vmin, 96px); font-size: clamp(36px, 9vmin, 46px); font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+#kConf { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+#kConf i { position: absolute; top: -20px; width: 10px; height: 6px; border-radius: 2px; animation: kfall linear infinite; }
+@keyframes kfall { to { transform: translateY(110vh) rotate(720deg); } }
+@media (orientation: portrait) { #kHome { left: max(22px, env(safe-area-inset-left, 0px)); } #kidsDone .kGoBtn { left: auto; right: max(22px, env(safe-area-inset-right, 0px)); transform: none; } #kidsDone .kDone { margin-bottom: 120px; } }
+@media (prefers-reduced-motion: reduce) { #kConf i, .kBig.hint, .kScore.pop, #kOops { animation: none; } }
 </style>
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
@@ -536,6 +629,16 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
   <button class="horn" data-hold="horn" type="button" aria-label="__T_HORN__"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></button>
 </div>
 
+<div id="kidsUI" hidden>
+  <div class="kScore" id="kScore"><span class="e" aria-hidden="true">⭐</span><b id="kStars">0</b></div>
+  <div class="kTrip" aria-hidden="true"><span class="e">🏠</span><div class="kLine"><i id="kDoneBar"></i><span class="kMe e" id="kMe"></span></div><img id="kDest" alt=""></div>
+  <button class="kRound" id="kPause" type="button" aria-label="__T_PAUSE__"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="currentColor"/></svg></button>
+  <button class="kSmall kStop" data-hold="brake" type="button">__T_KSTOP__</button>
+  <button class="kSmall kBeep" data-hold="horn" type="button">__T_KBEEP__</button>
+  <button class="kBig kL" data-kid="-1" type="button" aria-label="__T_LEFT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="kBig kR" data-kid="1" type="button" aria-label="__T_RIGHT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <div id="kOops" hidden><span class="e" aria-hidden="true">😮</span><b id="kOopsTxt"></b><span class="arr" id="kOopsArr"></span></div>
+</div>
 
 <div id="menu" class="screen">
   <div class="sheet">
@@ -548,6 +651,7 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
+      <button class="kidsGo" id="btnKids" type="button"><span class="kE" aria-hidden="true">🧒🚗</span><span><b>__T_KIDS__</b><small>__T_KIDS_SUB__</small></span></button>
       <div><div class="label">__T_TRIP__</div><div id="trips"></div></div>
       <div><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
       <button class="more" id="btnMore" type="button" aria-expanded="false" aria-controls="moreBox"><span class="mOpen">__T_MORE__</span><span class="mShut">__T_LESS__</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -651,6 +755,31 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
       <div class="langs" id="langList"></div>
     </div>
   </div>
+</div>
+
+<div id="kids" class="screen" hidden>
+  <div class="kTop">
+    <button class="kRound" id="kLock" type="button" aria-label="__T_KIDS_EXIT__"><svg class="ring" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.4"/></svg><span id="kLockHint" hidden>__T_KIDS_EXIT__</span></button>
+    <button class="kRound" id="kBack" type="button" aria-label="__T_KBACK__" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <div class="kBody">
+    <div class="kAsk"><button class="kRound" id="kSpk" type="button" aria-label="__T_KSAY__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><b id="kQ"></b></div>
+    <div class="kCards" id="kCards"></div>
+  </div>
+  <div class="kDots" aria-hidden="true"><i id="kDot0"></i><i id="kDot1"></i></div>
+  <button class="kGoBtn" id="kGo" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16l13-8z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="kLbl">__T_KGO__</span></button>
+</div>
+
+<div id="kidsDone" class="screen" hidden>
+  <div id="kConf" aria-hidden="true"></div>
+  <div class="kDone">
+    <h2>__T_KYAY__</h2>
+    <div class="kBigStars" aria-hidden="true">★★★</div>
+    <div class="kGot" id="kGot"></div>
+    <div class="kStk"><img id="kStkImg" alt=""><div><b>__T_KSTICKER__</b><span id="kStkName"></span></div></div>
+  </div>
+  <button class="kRound" id="kHome" type="button" aria-label="__T_KHOME__">🏠</button>
+  <button class="kGoBtn" id="kAgain" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M19.5 3.5v5h-5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="kLbl">__T_KAGAIN__</span></button>
 </div>
 
 <div id="pause" class="screen" hidden>

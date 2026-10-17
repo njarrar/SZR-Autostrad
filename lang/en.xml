@@ -255,6 +255,32 @@
     <string key="text.walkFalafel">Falafel sandwich! One bump forgiven</string>
     <string key="text.walkLemon">Lemon and mint! Walking faster</string>
     <string key="text.walkCoffee">Coffee! Everyone makes way</string>
+    <!-- Kids Mode: big pictures, two arrows, no numbers -->
+    <string key="page.T_KIDS">Switch to Kids Mode</string>
+    <string key="page.T_KIDS_SUB">Easy driving for little ones, ages 4 to 7</string>
+    <string key="page.T_KIDS_EXIT">Grown-ups: hold to leave Kids Mode</string>
+    <string key="page.T_KBACK">Back</string>
+    <string key="page.T_KSAY">Say it again</string>
+    <string key="page.T_KGO">Go!</string>
+    <string key="page.T_KYAY">Yay! You made it!</string>
+    <string key="page.T_KSTICKER">New sticker!</string>
+    <string key="page.T_KHOME">Home</string>
+    <string key="page.T_KAGAIN">Again!</string>
+    <string key="page.T_KSTOP">STOP</string>
+    <string key="page.T_KBEEP">BEEP</string>
+    <string key="text.kidsCar">Pick your car!</string>
+    <string key="text.kidsPlace">Where shall we go?</string>
+    <string key="text.kidsGoTo">Let's go to {place}!</string>
+    <string key="text.kidsHow">Tap the arrows and catch the stars!</string>
+    <string key="text.kidsOops">Oops! Try the other lane</string>
+    <string key="text.kidsGot">Your stars: {n}</string>
+    <string key="text.kidsAlbum">For your album</string>
+    <string key="text.kidsTaxi">Taxi</string>
+    <string key="text.kidsBus">Bus</string>
+    <string key="text.kidsFast">Fast car</string>
+    <string key="text.kidsBig">Big car</string>
+    <string key="text.kidsPickup">Pickup</string>
+    <string key="text.kidsSmall">Little car</string>
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
