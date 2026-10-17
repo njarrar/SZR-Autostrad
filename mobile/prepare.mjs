@@ -51,4 +51,6 @@ setVersion('android/app/build.gradle', /versionName "[^"]*"/, `versionName "${ve
 const [major, minor] = version.split('.').map(Number);
 setVersion('android/app/build.gradle', /versionCode \d+/, `versionCode ${major * 100 + minor}`);
 setVersion('ios/App/App.xcodeproj/project.pbxproj', /MARKETING_VERSION = [^;]*;/g, `MARKETING_VERSION = ${version};`);
+// the App Store needs a new build number for each upload too
+setVersion('ios/App/App.xcodeproj/project.pbxproj', /CURRENT_PROJECT_VERSION = [^;]*;/g, `CURRENT_PROJECT_VERSION = ${major * 100 + minor};`);
 console.log('www ready, version ' + version);
