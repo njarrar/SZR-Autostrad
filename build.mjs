@@ -115,5 +115,7 @@ for (const id of CITIES) {
   // each city's cover picture
   fs.mkdirSync(here + 'dist/img', { recursive: true });
   for (const id of CITIES) if (fs.existsSync(here + `cities/${id}/cover.png`)) fs.copyFileSync(here + `cities/${id}/cover.png`, here + `dist/img/${id}.png`);
+  // the privacy policy the app stores link to
+  fs.copyFileSync(here + 'src/privacy.html', here + 'dist/privacy.html');
 }
 console.log('index.html', Object.keys(langs).join(' '), '·', CITIES.join(' '));

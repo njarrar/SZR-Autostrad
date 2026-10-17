@@ -34,7 +34,8 @@ for (const file of fs.readdirSync(www, { recursive: true }).filter((f) => f.ends
   const up = '../'.repeat(depth);
   let html = fs.readFileSync(www + file, 'utf8');
   html = html.replace(/<link rel="preconnect"[^>]*>\n?/g, '')
-    .split(FONTS).join(up + 'vendor/fonts.css')
+    // the game and the landing page ask for different font sets; the saved file holds them all
+    .replace(/https:\/\/fonts\.googleapis\.com\/css2\?[^"']*/g, up + 'vendor/fonts.css')
     .split(THREE).join(up + 'vendor/three.min.js')
     .replace(/href="((?:\.\.\/)?[a-z]+\/)"/g, 'href="$1index.html"')
     .replace(/(location\.replace\(')([a-z]+\/)'/g, "$1$2index.html'")
@@ -46,5 +47,8 @@ for (const file of fs.readdirSync(www, { recursive: true }).filter((f) => f.ends
 const version = fs.readFileSync(root + 'build.mjs', 'utf8').match(/const VERSION = '([^']+)'/)[1];
 const setVersion = (file, re, to) => { const f = root + file; fs.writeFileSync(f, fs.readFileSync(f, 'utf8').replace(re, to)); };
 setVersion('android/app/build.gradle', /versionName "[^"]*"/, `versionName "${version}"`);
+// Google Play needs a whole number that only goes up: 2.19 becomes 219
+const [major, minor] = version.split('.').map(Number);
+setVersion('android/app/build.gradle', /versionCode \d+/, `versionCode ${major * 100 + minor}`);
 setVersion('ios/App/App.xcodeproj/project.pbxproj', /MARKETING_VERSION = [^;]*;/g, `MARKETING_VERSION = ${version};`);
 console.log('www ready, version ' + version);
