@@ -31,7 +31,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 9vw, 62px); line-height: 1; margin: 4px 0 0; color: var(--accent); text-wrap: balance; }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .brandtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-.langbtn { border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
+.langbtn { position: relative; border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
+.langbtn::after { content: ''; position: absolute; inset: -9px -4px; }
 .flagbar { height: 6px; border-radius: 3px; background: var(--flagbar); }
 .label { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .04em; margin-bottom: 6px; }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--chip); border-radius: 10px; padding: 3px; gap: 3px; }
@@ -55,7 +56,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 #trips .tn { position: absolute; top: 8px; right: 10px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; direction: ltr; unicode-bidi: isolate; }
 #trips .tt { padding-inline-end: 34px; }
 [dir=rtl] #trips .tn { right: auto; left: 10px; }
-.tArrow { flex: none; width: 40px; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; display: grid; place-items: center; padding: 0; }
+.tArrow { flex: none; width: 44px; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; display: grid; place-items: center; padding: 0; }
 .tArrow svg { width: 20px; height: 20px; }
 .tArrow.next svg, [dir=rtl] .tArrow.prev svg { transform: scaleX(-1); }
 [dir=rtl] .tArrow.next svg { transform: none; }
@@ -71,6 +72,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .goBar .go { flex: 1; }
 .goBar .walkGo { flex: 0 0 auto; margin-inline-start: 8px; display: flex; align-items: center; gap: 6px; font-size: 19px; background: var(--chip); color: var(--ink); padding: 8px 12px 6px; }
 .walkGo svg { width: 22px; height: 22px; flex: none; }
+.walkGo .wTxt { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
+.walkGo small { font-family: var(--body); font-size: 11.5px; font-weight: 600; color: var(--muted); line-height: 1.15; }
 /* Haitham Mode: no gears, limit, fuel or damage while walking; nitro lets the dog loose */
 #hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .limit { display: none; }
 .chip .ic { display: none; }
@@ -78,15 +81,17 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .carStats .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
 .carStats .st { font-size: 12px; }
 .carStats .st i { width: 64px; }
-#carPick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+#carPick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; align-items: start; }
 .pick { text-align: start; border: 1.5px solid var(--line); background: transparent; border-radius: 10px; padding: 8px 9px; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pick b { font-size: 14px; line-height: 1.3; }
-.pick .en { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pick .en { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pick .bars { display: flex; flex-direction: column; gap: 3px; margin-top: 6px; }
 .pick .st, .carStats .st { display: flex; justify-content: space-between; align-items: center; gap: 4px; font-size: 10.5px; color: var(--muted); }
 .pick .st i, .carStats .st i { width: 44px; height: 5px; border-radius: 3px; flex: none; background: linear-gradient(to left, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
 [dir=ltr] .pick .st i, [dir=ltr] .carStats .st i { background: linear-gradient(to right, var(--accent) calc(var(--n) * 20%), var(--line) 0); }
 .pick.sel { border-color: var(--accent); background: var(--chip); }
+/* stat bars only on the picked car, so the grid stays short */
+.pick:not(.sel) .bars { display: none; }
 #carPros { margin: 6px 0 0; display: flex; flex-wrap: wrap; column-gap: 10px; font-size: 12.5px; line-height: 1.5; }
 #carPros .pro { color: var(--good); font-weight: 600; }
 #carPros .con { color: var(--bad); font-weight: 600; }
@@ -399,6 +404,21 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   .carStats { display: block; }
   .brand h1 { font-size: 34px; }
   .brand p { display: none; }
+  /* the start menu goes into two columns so the cars and the Go bar fit on a short screen */
+  #menu .sheet { width: min(820px, 100%); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-content: start; column-gap: 18px; row-gap: 10px; }
+  #menu .brand, #menu .mTrip, #menu #btnKids, #menu #btnMore, #menu #loading { grid-column: 1; }
+  #menu .brand h1 { font-size: 30px; }
+  #menu .flagbar { height: 4px; }
+  #menu .label { margin-bottom: 3px; }
+  #menu #trips .trip { padding: 5px 10px; }
+  #menu #trips .tt { font-size: 14px; }
+  #menu #btnKids { padding: 5px 10px; }
+  #menu #btnMore { padding: 7px 14px; }
+  #menu .mCars { grid-column: 2; grid-row: 1 / span 4; }
+  #menu .moreBox { grid-column: 1 / -1; }
+  #menu .goBar { grid-column: 1 / -1; }
+  #menu .go { font-size: 22px; padding: 7px 12px 4px; }
+  #menu .walkGo { font-size: 16px; }
   #welcome .sheet { width: min(640px, 100%); }
   #welcome h1 { font-size: 44px; }
   .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -452,9 +472,24 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   [dir=rtl] #warn, [dir=rtl] .toast { left: auto; right: var(--side); }
 }
 #fx:not(.fast) .streaks { animation: none; visibility: hidden; }
+/* upright phone: one slim stats row under the trip and speed, messages show over that row, and pause and radio sit on the free left side above the controls */
+@media (max-width: 640px) and (orientation: portrait) {
+  .stats { top: calc(var(--top) + 60px); inset-inline: 10px 92px; height: 32px; }
+  .chip { font-size: 13.5px; }
+  .chip .ic { opacity: 1; }
+  #mini { top: calc(var(--top) + 60px); width: 74px; height: 74px; }
+  #btnPause, #btnRadio { top: auto; inset-inline: 16px auto; width: 46px; height: 46px; border-radius: 14px; }
+  #btnPause { bottom: calc(env(safe-area-inset-bottom, 0px) + 250px); }
+  #btnRadio { bottom: calc(env(safe-area-inset-bottom, 0px) + 304px); }
+  #radioMenu { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 358px); inset-inline: 16px auto; }
+  #warn, .toast { top: calc(var(--top) + 60px); left: 10px; right: 92px; min-height: 32px; box-sizing: border-box; padding: 5px 12px; }
+  [dir=rtl] #warn, [dir=rtl] .toast { left: 92px; right: 10px; }
+  .toast { background: rgba(20, 20, 24, .94); }
+}
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
 /* version and build time under the blurb */
-.brand .ver { display: block; margin: 0; font-size: 11px; opacity: .6; direction: ltr; unicode-bidi: isolate; }
+@media (hover: none) and (pointer: coarse) { .keysNote { display: none; } }
+#settings .ver { margin: 0; font-size: 12px; color: var(--muted); direction: ltr; unicode-bidi: isolate; text-align: center; }
 /* tablets: the stick sits in the bottom corner, out of the way of the car, and the buttons grow for bigger hands on a bigger screen */
 @media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
   #touch { --stick: min(28vmin, 230px); --pad: calc(env(safe-area-inset-bottom, 0px) + 28px); }
@@ -475,11 +510,12 @@ body.pixel .speedo .num { font-size: 38px; }
 body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 
 /* ---------- kids mode: big pictures, two arrows, no numbers ---------- */
-.kidsGo { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; border-radius: 16px; padding: 10px 14px; text-align: start; background: linear-gradient(135deg, #ffd23f, #ff9f1c); color: #3b2300; box-shadow: 0 4px 0 #d27a00; }
-.kidsGo .kE { font-size: 34px; line-height: 1; }
-.kidsGo b { display: block; font-family: var(--display); font-weight: 400; font-size: 25px; line-height: 1.15; }
-.kidsGo small { display: block; font-size: 13px; font-weight: 600; opacity: .85; }
-.kidsGo:active { transform: translateY(3px); box-shadow: 0 1px 0 #d27a00; }
+.kidsGo { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; border-radius: 12px; padding: 8px 12px; text-align: start; background: var(--chip); color: var(--ink); box-shadow: inset 4px 0 0 #ffb21f; }
+[dir=rtl] .kidsGo { box-shadow: inset -4px 0 0 #ffb21f; }
+.kidsGo .kE { font-size: 24px; line-height: 1; }
+.kidsGo b { display: block; font-size: 15px; line-height: 1.25; }
+.kidsGo small { display: block; font-size: 12.5px; font-weight: 600; color: var(--muted); line-height: 1.3; }
+.kidsGo:active { transform: translateY(1px); }
 #kids, #kidsDone { --kink: #1d2b4f; align-items: center; justify-content: center; pointer-events: auto; background: rgba(255, 248, 230, .5); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: var(--kink); font-family: var(--display); }
 .kTop { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); display: flex; gap: 10px; direction: ltr; }
 .kRound { width: 48px; height: 48px; border-radius: 50%; border: 0; background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 #c9d4e8; font-size: 24px; position: relative; padding: 0; color: var(--kink); }
@@ -657,13 +693,12 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <h1>__NAME__</h1>
       <div class="flagbar"></div>
       <p>__BLURB__</p>
-      <p class="ver">__STAMP__</p>
     </div>
     <div id="loading">...</div>
     <div id="menuBody" hidden style="display:contents">
-      <button class="kidsGo" id="btnKids" type="button"><span class="kE" aria-hidden="true">🧒🚗</span><span><b>__T_KIDS__</b><small>__T_KIDS_SUB__</small></span></button>
-      <div><div class="label">__T_TRIP__</div><div id="trips"></div></div>
-      <div><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
+      <div class="mTrip"><div class="label">__T_TRIP__</div><div id="trips"></div></div>
+      <div class="mCars"><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
+      <button class="kidsGo" id="btnKids" type="button"><span class="kE" aria-hidden="true">🧒</span><span><b>__T_KIDS__</b><small>__T_KIDS_SUB__</small></span></button>
       <button class="more" id="btnMore" type="button" aria-expanded="false" aria-controls="moreBox"><span class="mOpen">__T_MORE__</span><span class="mShut">__T_LESS__</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <div class="moreBox" id="moreBox" hidden>
         <div class="carStats"><div class="label">__T_CARS__</div><div class="bars" id="carStats"></div></div>
@@ -684,7 +719,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
           __OTHER__
         </div>
       </div>
-      <div class="goBar"><button class="go" id="btnStart" type="button">__T_GO__</button><button class="go walkGo" id="btnWalk" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4" r="2.2" fill="currentColor"/><path d="m9.5 21 2.2-6.5 2.8 2.5V21M8 12l2.5-4.5 4 1 2.5 3.5M11.7 14.5 10.5 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_WALK__</span></button></div>
+      <div class="goBar"><button class="go" id="btnStart" type="button">__T_GO__</button><button class="go walkGo" id="btnWalk" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="13" cy="4" r="2.2" fill="currentColor"/><path d="m9.5 21 2.2-6.5 2.8 2.5V21M8 12l2.5-4.5 4 1 2.5 3.5M11.7 14.5 10.5 7.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="wTxt"><span>__T_WALK__</span><small>__T_WALK_SUB__</small></span></button></div>
     </div>
   </div>
 </div>
@@ -738,7 +773,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <div><div class="label"><label for="rBrake">__T_BRAKEFEEL__</label></div><div class="slider"><span>__T_SOFT__</span><input type="range" id="rBrake" min="0" max="100" step="1"><span>__T_HARD__</span></div></div>
       <div><div class="label">__T_HORNSIDE__</div><div class="seg segHorn" id="segHorn"><button type="button" data-v="left">__T_LEFT__</button><button type="button" data-v="right">__T_RIGHT__</button></div></div>
       <div><div class="label">__T_HORNSIZE__</div><div class="seg " id="segHornSize"><button type="button" data-v="small">__T_SMALL__</button><button type="button" data-v="normal">__T_NORMAL__</button></div></div>
-      <p class="note">__T_KEYSNOTE__</p>
+      <p class="note keysNote">__T_KEYSNOTE__</p>
     </div>
     <div class="panel" data-panel="snd" hidden>
       <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
@@ -759,11 +794,13 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <div><div class="label">__T_CAM__</div><div class="seg segCam" id="segCam"><button type="button" data-v="0">__T_CAM0__</button><button type="button" data-v="1">__T_CAM1__</button><button type="button" data-v="2">__T_CAM2__</button></div></div>
       <div><div class="label">__T_SPEEDFX__</div><div class="seg " id="segFx"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
       <div><div class="label">__T_LOOK__</div><div class="seg" id="segLook"><button type="button" data-v="normal">__T_LOOK0__</button><button type="button" data-v="pixel">__T_LOOK1__</button></div><p class="note">__T_LOOK_D__</p></div>
+      <div><div class="label">__T_SHAKE__</div><div class="seg " id="segShake"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
       <div><div class="label">__T_MINIMAP__</div><div class="seg " id="segMini"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
     </div>
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
+    <p class="ver">__STAMP__</p>
   </div>
 </div>
 

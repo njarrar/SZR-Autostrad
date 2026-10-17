@@ -2981,8 +2981,10 @@ function plateTexture(text) { return canvasTex(512, 128, (g, w, h) => C.drawPlat
 
 // ---------- state ----------
 const CARS = C.cars;
+// a phone or computer set to reduce motion starts with speed effects and screen shake off
+const calmMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
-  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1, kidsSteer: 'arrows' }, store.get('settings', {}));
+  control: 'stick', steerFeel: 50, brakeFeel: 50, fx: calmMotion ? 0 : 1, shake: calmMotion ? 0 : 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1, kidsSteer: 'arrows' }, store.get('settings', {}));
 // ?look=pixel or ?look=normal in the address picks the look
 try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
 applyLook();
@@ -3472,7 +3474,10 @@ function togglePause() {
   if (tour) $('#tour').hidden = game.paused;
 }
 function toMenu() { const wasKids = game.kids; game.kids = false; kidsClear(); $('#kidsUI').hidden = true; if (wasKids) { buildPlayer(); applyTime(); } clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; if (settings.kids) kidsHome(0); else showScreen('#menu'); placeMenuCar(); }
-function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); }
+function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); statusBar(!!sel); }
+// in the iPhone app the clock and battery show in menus and hide on the road
+function statusBar(show) { try { window.webkit.messageHandlers.statusBar.postMessage(show); } catch (e) { /* not the iPhone app */ } }
+statusBar(!!document.querySelector('.screen:not([hidden])'));
 const isTouch = () => matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
 
 // ---------- per-frame ----------
@@ -3780,7 +3785,7 @@ function render(dt) {
     if (!camInit || camPos.distanceTo(wantPos) > 30) { camPos.copy(wantPos); camLook.copy(wantLook); camInit = true; }
     camPos.lerp(wantPos, 1 - Math.exp(-dt * 8)); camLook.lerp(wantLook, 1 - Math.exp(-dt * 10));
     camera.position.copy(camPos);
-    if (game.shake > 0) { game.shake -= dt; camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; }
+    if (game.shake > 0) { game.shake -= dt; if (settings.shake) { camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; } }
     camera.lookAt(camLook);
     camera.fov = 60 * (camera.aspect < 0.8 ? 0.85 : 1); camera.updateProjectionMatrix();
   } else if (game.mode === 'drive' || game.mode === 'done') {
@@ -3792,7 +3797,7 @@ function render(dt) {
     const kPos = 1 - Math.exp(-dt * 10), kLook = 1 - Math.exp(-dt * 12);
     camPos.lerp(wantPos, kPos); camLook.lerp(wantLook, kLook);
     camera.position.copy(camPos);
-    if (game.shake > 0) { game.shake -= dt; camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; }
+    if (game.shake > 0) { game.shake -= dt; if (settings.shake) { camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; } }
     camera.lookAt(camLook);
     camRoll += (clamp(player.lat * 0.006, -0.03, 0.03) - camRoll) * (1 - Math.exp(-dt * 6));
     camera.rotateZ(camRoll);
@@ -3906,6 +3911,7 @@ function syncSettingsUI() {
   segmented('#segHornSize', 'hornSize', applyControls);
   segmented('#segQual', 'quality', () => { autoQ.step = 0; autoQ.t = autoQ.slow = autoQ.all = 0; applyQuality(); });
   segmented('#segFx', 'fx', applyControls);
+  segmented('#segShake', 'shake');
   segmented('#segMini', 'mini', applyControls);
   segmented('#segLook', 'look', applyLook);
   segmented('#segSound', 'sound', () => SND.apply(settings));

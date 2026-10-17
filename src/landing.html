@@ -25,7 +25,8 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--b
 .wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 40px; display: flex; flex-direction: column; gap: 36px; }
 header { display: flex; flex-direction: column; gap: 8px; }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.langbtn { font: 600 14px var(--body); color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+.langbtn { position: relative; font: 600 14px var(--body); color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
+.langbtn::after { content: ''; position: absolute; inset: -6px -4px; }
 .langbtn:focus-visible { outline: 3px solid var(--muted); outline-offset: 2px; }
 .eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
 h1 { font-family: var(--display); font-weight: 400; font-size: clamp(48px, 9vw, 92px); line-height: 1; margin: 0; text-wrap: balance; }
@@ -50,6 +51,22 @@ __CARD_COLORS__
 kbd { font: 600 12px var(--body); background: var(--card); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; direction: ltr; display: inline-block; }
 footer { font-size: 13px; color: var(--muted); }
 footer a { color: inherit; }
+.introShort, .app .web { display: none; }
+/* phones: a short intro and the three cities as rows, so every Play button is on the first screen */
+@media (max-width: 560px) {
+  .wrap { padding-top: 24px; gap: 22px; }
+  h1 { font-size: 38px; }
+  .intro { display: none; }
+  .introShort { display: block; font-size: 15px; }
+  .cities { grid-template-columns: 1fr; gap: 10px; }
+  .city { flex-direction: row; }
+  .city img { width: 116px; aspect-ratio: auto; flex: none; }
+  .city .txt { padding: 10px 12px; gap: 2px; }
+  .city .en { font-size: 11px; }
+  .city h2 { font-size: 28px; }
+  .city p, .city .ver { display: none; }
+  .play { margin-top: 6px; font-size: 18px; padding: 6px 16px 3px; }
+}
 @media (prefers-reduced-motion: reduce) { .city { transition: none; } .city:hover { transform: none; } }
 </style>
 </head>
@@ -58,7 +75,8 @@ footer a { color: inherit; }
   <header>
     <div class="top"><span class="eyebrow">SZR AUTOSTRAD</span><button class="langbtn" type="button" data-lang-switch></button></div>
     <h1 data-t="h1">__L_h1__</h1>
-    <p data-t="intro">__L_intro__</p>
+    <p class="intro"><span data-t="intro">__L_intro__</span> <span class="web" data-t="introWeb">__L_introWeb__</span></p>
+    <p class="introShort" data-t="introShort">__L_introShort__</p>
   </header>
   <section class="cities">
 __CARDS__
@@ -90,6 +108,9 @@ __LANGS__
     b.onclick = function () { l = next; try { localStorage.setItem(KEY, l); } catch (e) {} apply(); };
   }
   apply();
+  // inside the phone apps: no talk of browsers, and on iPhone the clock and battery show
+  if (window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform()) document.documentElement.classList.add('app');
+  try { window.webkit.messageHandlers.statusBar.postMessage(true); } catch (e) {}
 })();
 </script>
 </body>
