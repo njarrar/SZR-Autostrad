@@ -170,6 +170,7 @@
     <string key="page.T_QUIET">Quiet</string>
     <string key="page.T_LOUD">Loud</string>
     <string key="page.T_SPEEDFX">Speed effects</string>
+    <string key="page.T_SHAKE">Screen shake</string>
     <string key="page.T_MINIMAP">Map</string>
     <string key="page.T_LOOK">Look</string>
     <string key="page.T_LOOK0">Normal</string>
@@ -234,6 +235,7 @@
     <string key="text.rFares">Fares</string>
     <!-- Haitham Mode: walking on the sidewalk -->
     <string key="page.T_WALK">Haitham Mode</string>
+    <string key="page.T_WALK_SUB">Walk the dog to the shop</string>
     <string key="page.T_BUMPS">Bumps</string>
     <string key="text.walkGoal">The corner shop</string>
     <string key="text.walkHow">Haitham Mode: walk 400 m to the shop. Left and right to dodge, up walks faster, Space says excuse me, N lets the dog loose</string>
@@ -291,7 +293,9 @@
   <landing>
     <string key="title">SZR Autostrad</string>
     <string key="h1">Drive the roads of Amman, Dubai and Riyadh</string>
-    <string key="intro">Three 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera. Plays in the browser on a computer or a phone.</string>
+    <string key="intro">Three 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera.</string>
+    <string key="introWeb">Plays in the browser on a computer or a phone.</string>
+    <string key="introShort">Three 3D driving games on real roads. Pick a city and go.</string>
     <string key="play">Play</string>
     <string key="how1t">Driving</string>
     <string key="how1"><![CDATA[<kbd>↑</kbd> gas, <kbd>↓</kbd> brake, <kbd>←</kbd> <kbd>→</kbd> change lane, <kbd>Space</kbd> horn, <kbd>N</kbd> nitro. On a phone, use the buttons on screen.]]></string>

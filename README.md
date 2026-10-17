@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.20** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.21** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -98,7 +98,7 @@ Open **Settings** from **More options** in the menu, or from the pause screen. I
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
 - **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects, screen shake, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
@@ -190,7 +190,7 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 
 ### Kids Mode
 
-A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** at the top of the menu. The game stays in Kids Mode, even after you close it, until a grown-up holds the lock in the top corner for three seconds.
+A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** in the menu, under the cars. The game stays in Kids Mode, even after you close it, until a grown-up holds the lock in the top corner for three seconds.
 
 - Two big steps with no reading needed: pick a car from three pictures, then pick a place from three landmark postcards. A voice reads each question out loud when the phone has one for the chosen language.
 - Pick a taxi, a bus or a race car (the Formula 1 car).
@@ -281,6 +281,18 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.21 (October 2026)
+
+- **Phone held sideways.** The start menu now has two columns, the trip on one side and the cars on the other, with the start buttons always in view. Before, the cars and the other options were cut off below the screen.
+- **A calmer menu.** The trip and the car come first, and **Switch to Kids Mode** is now a small row under the cars. The version and build time moved from the menu to the bottom of Settings. **Haitham Mode** has a line under it that says what it is. On a computer only the picked car shows its speed and grip bars.
+- **More road on a phone.** Held upright, the driving screen keeps two rows at the top instead of three. Messages show over the stats row for a moment instead of over the road, the map is smaller, and pause and radio sit on the side above the controls.
+- **City picker on a phone.** All three cities fit on the first screen, each with its Play button. Inside the phone apps the page no longer talks about browsers.
+- **Less motion.** A new **Screen shake** switch in Settings > Display turns off the camera shake from crashes and speed bumps. If your phone or computer is set to reduce motion, the game starts with shake and speed effects off.
+- **Status bar on iPhone.** In the iPhone app the clock and battery show in menus and hide while you drive.
+- Bigger tap areas for the language button and the trip arrows, and no keyboard tips in Settings on a touch screen.
+
+![Phone menus upright and sideways, and the driving screen](docs/screenshots/phone-menus.png)
 
 ### 2.20 (October 2026)
 
