@@ -273,6 +273,11 @@
     <string key="page.T_KSTEER">How to steer</string>
     <string key="page.T_KARROWS">Steer with arrows</string>
     <string key="page.T_KWHEEL">Steer with the wheel</string>
+    <string key="page.T_KSTICK">Steer with the joystick</string>
+    <string key="page.T_KSWAP">Change how to steer</string>
+    <string key="page.T_KARROWS_S">Arrows</string>
+    <string key="page.T_KWHEEL_S">Wheel</string>
+    <string key="page.T_KSTICK_S">Joystick</string>
     <string key="text.kidsCar">Pick your car!</string>
     <string key="text.kidsPlace">Where shall we go?</string>
     <string key="text.kidsGoTo">Let's go to {place}!</string>
@@ -286,6 +291,7 @@
     <string key="text.kidsF1">Race car</string>
     <string key="text.kidsArrows">Arrows!</string>
     <string key="text.kidsWheel">Steering wheel!</string>
+    <string key="text.kidsStick">Joystick!</string>
     <string key="text.kidsBig">Big car</string>
     <string key="text.kidsPickup">Pickup</string>
     <string key="text.kidsSmall">Little car</string>

@@ -561,15 +561,45 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPause, body.kids #btnRadio, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet { display: none !important; }
 #kidsUI { position: fixed; inset: 0; z-index: 5; pointer-events: none; font-family: var(--display); color: #1d2b4f; direction: ltr; }
 #kidsUI > * { pointer-events: auto; }
-.kSteer { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); display: flex; gap: 4px; padding: 4px; background: #fff; border-radius: 28px; box-shadow: 0 3px 0 #c9d4e8; direction: ltr; z-index: 2; }
-.kSteer button { width: 58px; height: 44px; border: 0; border-radius: 22px; background: transparent; display: grid; place-items: center; padding: 0; color: var(--kink); }
-.kSteer button svg { width: 30px; height: 30px; }
+.kSteer { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); display: flex; gap: 4px; padding: 4px; background: #fff; border-radius: 28px; box-shadow: 0 3px 0 #c9d4e8; direction: ltr; z-index: 2; width: min(300px, calc(100vw - 88px)); }
+.kSteer button { flex: 1; min-width: 0; height: 58px; border: 0; border-radius: 24px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px; color: var(--kink); font: 15px/1 var(--display); white-space: nowrap; }
+.kSteer button svg { width: 28px; height: 28px; flex: none; }
 .kSteer button.on { background: #1f72e0; color: #fff; }
 .kWheel { --w: clamp(150px, 40vmin, 220px); position: absolute; left: 50%; bottom: max(10px, env(safe-area-inset-bottom, 0px)); width: var(--w); height: var(--w); margin-left: calc(var(--w) / -2); border-radius: 50%; touch-action: none; display: none; }
 .kWheel svg { width: 100%; height: 100%; transform: rotate(var(--a, 0deg)); filter: drop-shadow(0 6px 0 rgba(0,0,0,.22)); }
 .kWheel.hint { animation: khint .8s ease-in-out infinite; }
 #kidsUI.wheel .kWheel { display: block; }
 #kidsUI.wheel .kBig { display: none; }
+#kSwap { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: calc(max(14px, env(safe-area-inset-right, 0px)) + 58px); width: 46px; height: 46px; background: rgba(255,255,255,.85); box-shadow: none; }
+#kSwap svg { width: 28px; height: 28px; }
+.kStick { --s: clamp(160px, 46vmin, 200px); position: absolute; left: 50%; bottom: max(14px, env(safe-area-inset-bottom, 0px)); width: var(--s); height: var(--s); margin-left: calc(var(--s) / -2); touch-action: none; display: none; }
+#kidsUI.stick .kStick { display: block; }
+#kidsUI.stick .kBig { display: none; }
+.kStick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.kStick .base { fill: rgba(16,18,24,.38); }
+.kStick .rim { fill: none; stroke: rgba(255,255,255,.34); stroke-width: 2; }
+.kStick::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; pointer-events: none; box-shadow: inset 0 2px 10px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); }
+.kStick .dead { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.kStick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .32; }
+.kStick .trk.up { stroke: #f6c445; } .kStick .trk.dn { stroke: #ff5a3c; }
+.kStick .chev path { fill: none; stroke: rgba(255,255,255,.5); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.kStick .chev path:last-child { opacity: .35; }
+.kStick.left .chev.l path, .kStick.right .chev.r path { stroke: #fff; opacity: 1; filter: drop-shadow(0 0 4px rgba(255,255,255,.8)); }
+.kStick .knob { position: absolute; left: 50%; top: 50%; width: 40%; height: 40%; margin: -20% 0 0 -20%; border-radius: 50%; background: radial-gradient(circle at 38% 30%, #fff, #dfe3e8 55%, #b9c0c9); box-shadow: 0 6px 16px rgba(0,0,0,.45), inset 0 -4px 8px rgba(0,0,0,.2), inset 0 2px 3px rgba(255,255,255,.9); transition: transform .18s cubic-bezier(.34,1.56,.64,1); }
+.kStick .knob::after { content: ''; position: absolute; inset: 36%; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #fff, #c7ccd3); box-shadow: inset 0 1px 2px rgba(0,0,0,.25); }
+.kStick.held .knob { transition: none; }
+.kStick.gas .knob { box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 0 3px rgba(255,210,86,.85), 0 0 18px rgba(255,210,86,.6); }
+.kStick.brake .knob { box-shadow: 0 6px 16px rgba(0,0,0,.45), 0 0 0 3px rgba(255,90,60,.85), 0 0 18px rgba(255,90,60,.6); }
+.kStick .lbl { position: absolute; left: 50%; transform: translateX(-50%); font: 700 13px var(--body); color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.7); white-space: nowrap; pointer-events: none; opacity: .8; }
+.kStick.gas .lbl.u { opacity: 1; color: #ffd256; } .kStick.brake .lbl.d { opacity: 1; color: #ff7a5c; }
+.kStick .lbl.u { top: 7%; } .kStick .lbl.d { bottom: 7%; }
+.kStick.hint { animation: khint .8s ease-in-out infinite; border-radius: 50%; }
+/* sideways: the stick sits bottom left, STOP and BEEP go bottom right */
+@media (orientation: landscape) {
+  .kStick { left: max(24px, env(safe-area-inset-left, 0px)); margin-left: 0; --s: clamp(150px, 42vmin, 200px); }
+  #kidsUI.stick .kSmall { bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
+  #kidsUI.stick .kStop { left: auto; right: calc(max(34px, env(safe-area-inset-right, 0px)) + clamp(70px, 17vmin, 88px) + 20px); }
+}
 .kScore { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); height: 54px; padding: 0 16px 0 10px; border-radius: 27px; background: #ffcc1a; box-shadow: 0 4px 0 #d39b00; display: flex; align-items: center; gap: 6px; font-size: 30px; }
 .kScore .e { font-size: 30px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
 .kScore.pop { animation: kpop .35s; }
@@ -610,7 +640,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 #kConf i { position: absolute; top: -20px; width: 10px; height: 6px; border-radius: 2px; animation: kfall linear infinite; }
 @keyframes kfall { to { transform: translateY(110vh) rotate(720deg); } }
 @media (orientation: portrait) { #kHome { left: max(22px, env(safe-area-inset-left, 0px)); } #kidsDone .kGoBtn { left: auto; right: max(22px, env(safe-area-inset-right, 0px)); transform: none; } #kidsDone .kDone { margin-bottom: 120px; } }
-@media (prefers-reduced-motion: reduce) { #kConf i, .kBig.hint, .kScore.pop, #kOops { animation: none; } }
+@media (prefers-reduced-motion: reduce) { #kConf i, .kBig.hint, .kWheel.hint, .kStick.hint, .kScore.pop, #kOops { animation: none; } }
 </style>
 
 <canvas id="gl" aria-label="__ALT__"></canvas>
@@ -683,6 +713,17 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   <button class="kBig kL" data-kid="-1" type="button" aria-label="__T_LEFT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <button class="kBig kR" data-kid="1" type="button" aria-label="__T_RIGHT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="kWheel" id="kWheel" aria-label="__T_KWHEEL__"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="41" fill="none" stroke="#fff" stroke-width="17"/><circle cx="50" cy="50" r="41" fill="none" stroke="#2b3346" stroke-width="11"/><path d="M13 53 37 50M63 50l24 3M50 63v24" stroke="#2b3346" stroke-width="11" stroke-linecap="round"/><circle cx="50" cy="50" r="16" fill="#1f72e0" stroke="#fff" stroke-width="5"/><rect x="43" y="3" width="14" height="13" rx="4" fill="#ffcc1a" stroke="#fff" stroke-width="2"/></svg></div>
+  <div class="kStick" id="kStick" aria-label="__T_KSTICK__">
+    <svg viewBox="-100 -100 200 200" aria-hidden="true">
+      <circle class="base" r="94"/><circle class="rim" r="94"/><circle class="dead" r="26"/>
+      <path class="trk up" d="M-46 -65.5 A80 80 0 0 1 46 -65.5"/><path class="trk dn" d="M-46 65.5 A80 80 0 0 0 46 65.5"/>
+      <g class="chev l"><path d="M-58 -11 L-70 0 L-58 11"/><path d="M-70 -11 L-82 0 L-70 11"/></g>
+      <g class="chev r"><path d="M58 -11 L70 0 L58 11"/><path d="M70 -11 L82 0 L70 11"/></g>
+    </svg>
+    <div class="knob"></div>
+    <span class="lbl u">__T_GAS__</span><span class="lbl d">__T_BRAKE__</span>
+  </div>
+  <button class="kRound" id="kSwap" type="button" aria-label="__T_KSWAP__"></button>
   <div id="kOops" hidden><span class="e" aria-hidden="true">😮</span><b id="kOopsTxt"></b><span class="arr" id="kOopsArr"></span></div>
 </div>
 
@@ -810,8 +851,9 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <button class="kRound" id="kBack" type="button" aria-label="__T_KBACK__" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
   <div class="kSteer" id="kSteer" role="group" aria-label="__T_KSTEER__">
-    <button type="button" data-steer="arrows" aria-label="__T_KARROWS__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 3 12l6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-    <button type="button" data-steer="wheel" aria-label="__T_KWHEEL__"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/><path d="M3.6 12.6 9.2 12M14.8 12l5.6.6M12 14.8V21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg></button>
+    <button type="button" data-steer="arrows" aria-label="__T_KARROWS__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 3 12l6 6M15 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_KARROWS_S__</span></button>
+    <button type="button" data-steer="wheel" aria-label="__T_KWHEEL__"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="12" cy="12" r="2.8" fill="currentColor"/><path d="M3.6 12.6 9.2 12M14.8 12l5.6.6M12 14.8V21" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>__T_KWHEEL_S__</span></button>
+    <button type="button" data-steer="stick" aria-label="__T_KSTICK__"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="currentColor"/><path d="M5.5 9.5 3.5 12l2 2.5M18.5 9.5l2 2.5-2 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_KSTICK_S__</span></button>
   </div>
   <div class="kBody">
     <div class="kAsk"><button class="kRound" id="kSpk" type="button" aria-label="__T_KSAY__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><b id="kQ"></b></div>

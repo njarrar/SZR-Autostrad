@@ -3500,7 +3500,7 @@ function step(dt) {
   if (settings.control === 'tilt' && tilt.ok && !steerIn) steerIn = tilt.x;
   if (settings.control === 'wheel' && wheelIn.on && !steerIn) steerIn = wheelIn.x;
   // kids never steer or press gas: the arrows pick a lane and the car keeps a gentle speed; STOP holds it back
-  if (game.kids) { gasAmt = 0; steerIn = 0; brakeAmt = keys.ArrowDown || keys.KeyS || touch.brake ? 1 : 0; game.nitroReq = false; }
+  if (game.kids) { gasAmt = 0; steerIn = 0; brakeAmt = keys.ArrowDown || keys.KeyS || touch.brake || kStick.y > 0.4 ? 1 : 0; game.nitroReq = false; }
   const gas = gasAmt > 0, brake = brakeAmt > 0;
   const horn = keys.Space || keys.KeyH || touch.horn;
   if (game.walk) {
@@ -4018,7 +4018,7 @@ $('#btnMenu').onclick = toMenu;
 // ---------- Kids Mode: the car drives itself, two arrows change lanes, stars to catch, bumps only go boing ----------
 const KIDS_V = 46 / 3.6, KIDS_LEN = 1500;
 // how fast the car slides sideways: a bit quicker with the wheel, so it keeps up with the turn
-const KIDS_SIDE = () => kidsWheelOn() ? 4.8 : 3.2;
+const KIDS_SIDE = () => settings.kidsSteer === 'arrows' ? 3.2 : 4.8;
 const kids = { step: 0, items: [], stars: 0, oopsT: 0, hintT: 0, emoji: '🚕' };
 // the three cars on offer: the taxi, the bus, and the most fun of the rest
 function kidsCars() {
@@ -4096,16 +4096,24 @@ function kidsLane(k) {
   kidsHintOff();
 }
 function kidsHintOff() { kids.hintT = 0; for (const el of document.querySelectorAll('#kidsUI .hint')) el.classList.remove('hint'); }
-// arrows or a steering wheel: the switch sits on the picker, top right
+// arrows, a steering wheel or the grown-up stick: the switch sits on the picker, top right,
+// and the round button by pause swaps to the next one while driving
+const KSTEER = ['arrows', 'wheel', 'stick'];
 const kidsWheelOn = () => settings.kidsSteer === 'wheel';
 function kidsSteerShow() {
-  $('#kidsUI').classList.toggle('wheel', kidsWheelOn());
+  if (!KSTEER.includes(settings.kidsSteer)) settings.kidsSteer = 'arrows';
+  const ui = $('#kidsUI'); ui.classList.toggle('wheel', kidsWheelOn()); ui.classList.toggle('stick', settings.kidsSteer === 'stick');
   document.querySelectorAll('#kSteer [data-steer]').forEach((b) => { const on = b.dataset.steer === settings.kidsSteer; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
+  const next = $(`#kSteer [data-steer="${KSTEER[(KSTEER.indexOf(settings.kidsSteer) + 1) % 3]}"] svg`);
+  $('#kSwap').innerHTML = next ? next.outerHTML : '';
 }
-document.querySelectorAll('#kSteer [data-steer]').forEach((b) => b.onclick = () => {
-  audioInit(); settings.kidsSteer = b.dataset.steer; saveSettings(); kidsSteerShow(); SND.cue('click'); say(kidsWheelOn() ? T.kidsWheel : T.kidsArrows);
-});
-kidsSteerShow();
+function kidsSteerSet(v) {
+  audioInit(); kWheelUp(); kStickUp();
+  settings.kidsSteer = v; saveSettings(); kidsSteerShow(); SND.cue('click');
+  say({ arrows: T.kidsArrows, wheel: T.kidsWheel, stick: T.kidsStick }[v]);
+}
+document.querySelectorAll('#kSteer [data-steer]').forEach((b) => b.onclick = () => kidsSteerSet(b.dataset.steer));
+$('#kSwap').onclick = () => kidsSteerSet(KSTEER[(KSTEER.indexOf(settings.kidsSteer) + 1) % 3]);
 // the wheel turns as the finger slides sideways, and springs back when let go
 const kWheel = { on: false, x0: 0, a: 0 }, kWheelEl = $('#kWheel');
 kWheelEl.addEventListener('pointerdown', (e) => {
@@ -4115,6 +4123,32 @@ kWheelEl.addEventListener('pointerdown', (e) => {
 kWheelEl.addEventListener('pointermove', (e) => { if (kWheel.on) kWheel.a = clamp((e.clientX - kWheel.x0) / (kWheelEl.clientWidth * 0.5), -1, 1); });
 const kWheelUp = () => { if (!kWheel.on) return; kWheel.on = false; if (game.kids) player.laneT = clamp(Math.round(player.laneT), 0, LANES - 1); };
 kWheelEl.addEventListener('pointerup', kWheelUp); kWheelEl.addEventListener('pointercancel', kWheelUp);
+// the stick: sideways slides across the lanes like the wheel, pulled down it brakes
+const kStick = { on: false, x: 0, y: 0, ox: 0, oy: 0 }, kStickEl = $('#kStick'), kKnob = kStickEl.querySelector('.knob');
+function kStickMove(px, py) {
+  const r = kStickEl.offsetWidth * 0.42 || 60;
+  let dx = px - kStick.ox, dy = py - kStick.oy; const m = Math.hypot(dx, dy);
+  if (m > r) { dx *= r / m; dy *= r / m; }
+  kStick.x = dx / r; kStick.y = dy / r;
+  kKnob.style.transform = `translate(${dx.toFixed(1)}px, ${dy.toFixed(1)}px)`;
+  kStickEl.classList.toggle('gas', kStick.y < -0.4); kStickEl.classList.toggle('brake', kStick.y > 0.4);
+  kStickEl.classList.toggle('left', kStick.x < -0.3); kStickEl.classList.toggle('right', kStick.x > 0.3);
+}
+kStickEl.addEventListener('pointerdown', (e) => {
+  e.preventDefault(); audioInit(); kStickEl.setPointerCapture(e.pointerId); kidsHintOff();
+  const b = kStickEl.getBoundingClientRect(); kStick.ox = b.left + b.width / 2; kStick.oy = b.top + b.height / 2;
+  kStick.on = true; kStickEl.classList.add('held'); kStickMove(e.clientX, e.clientY);
+});
+kStickEl.addEventListener('pointermove', (e) => { if (kStick.on) kStickMove(e.clientX, e.clientY); });
+function kStickUp() {
+  if (!kStick.on) return;
+  kStick.on = false; kStick.x = kStick.y = 0; kKnob.style.transform = '';
+  kStickEl.classList.remove('held', 'gas', 'brake', 'left', 'right');
+  if (game.kids) player.laneT = clamp(Math.round(player.laneT), 0, LANES - 1);
+}
+kStickEl.addEventListener('pointerup', kStickUp); kStickEl.addEventListener('pointercancel', kStickUp);
+addEventListener('blur', () => { kWheelUp(); kStickUp(); });
+kidsSteerShow();
 document.querySelectorAll('[data-kid]').forEach((el) => {
   el.addEventListener('pointerdown', (e) => { e.preventDefault(); audioInit(); el.classList.add('on'); kidsLane(+el.dataset.kid); });
   const off = () => el.classList.remove('on');
@@ -4160,6 +4194,7 @@ function kidsStep(dt) {
   // held over, the wheel slides the car across the lanes; let go, it settles in the nearest one
   if (kWheel.on) { if (Math.abs(kWheel.a) > 0.12) player.laneT = clamp(player.laneT + kWheel.a * 1.3 * dt, 0, LANES - 1); }
   else kWheel.a *= Math.max(0, 1 - 8 * dt);
+  if (kStick.on && Math.abs(kStick.x) > 0.2) player.laneT = clamp(player.laneT + kStick.x * 1.3 * dt, 0, LANES - 1);
   for (const it of kids.items) {
     if (it.got) continue;
     if (Math.abs(it.t - player.t) < 2.6 && Math.abs(laneD(it.lane) - player.d) < 1.8) {
@@ -4189,7 +4224,7 @@ function kidsOops() {
   const ln = Math.round(player.laneT), opts = [ln - 1, ln + 1].filter((l) => l >= 0 && l < LANES);
   const free = opts.find((l) => laneClear(player.t, l, null, 6, 30));
   const k = (free == null ? opts[0] : free) < ln ? -1 : 1;
-  const btn = kidsWheelOn() ? kWheelEl : $(k < 0 ? '#kidsUI .kL' : '#kidsUI .kR');
+  const btn = kidsWheelOn() ? kWheelEl : settings.kidsSteer === 'stick' ? kStickEl : $(k < 0 ? '#kidsUI .kL' : '#kidsUI .kR');
   kidsHintOff(); btn.classList.add('hint'); kids.hintT = 4;
   $('#kOopsTxt').textContent = T.kidsOops; $('#kOopsArr').textContent = k < 0 ? '⬅' : '➡';
   const box = $('#kOops'); box.hidden = false; box.style.animation = 'none'; void box.offsetWidth; box.style.animation = '';

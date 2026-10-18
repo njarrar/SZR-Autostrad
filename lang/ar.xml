@@ -143,6 +143,11 @@
     <string key="page.T_KSTEER">طريقة السواقة</string>
     <string key="page.T_KARROWS">سوق بالأسهم</string>
     <string key="page.T_KWHEEL">سوق بالستيرنج</string>
+    <string key="page.T_KSTICK">سوق بالجويستك</string>
+    <string key="page.T_KSWAP">غيّر طريقة السواقة</string>
+    <string key="page.T_KARROWS_S">أسهم</string>
+    <string key="page.T_KWHEEL_S">ستيرنج</string>
+    <string key="page.T_KSTICK_S">جويستك</string>
     <string key="text.kidsCar">اختار سيارتك!</string>
     <string key="text.kidsPlace">وين بدنا نروح؟</string>
     <string key="text.kidsGoTo">يلا على {place}!</string>
@@ -156,6 +161,7 @@
     <string key="text.kidsF1">سيارة سباق</string>
     <string key="text.kidsArrows">الأسهم!</string>
     <string key="text.kidsWheel">الستيرنج!</string>
+    <string key="text.kidsStick">الجويستك!</string>
     <string key="text.kidsBig">سيارة كبيرة</string>
     <string key="text.kidsPickup">بكب</string>
     <string key="text.kidsSmall">سيارة صغيرة</string>
