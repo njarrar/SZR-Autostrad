@@ -23,7 +23,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.22** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.23** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -194,7 +194,7 @@ A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** in 
 
 - Two big steps with no reading needed: pick a car from three pictures, then pick a place from three landmark postcards. A voice reads each question out loud when the phone has one for the chosen language.
 - Pick a taxi, a bus or a race car (the Formula 1 car).
-- The car drives itself at 46 km/h. Two big arrows move it one lane per tap. A switch at the top right of the picker swaps the arrows for a big steering wheel: slide it left or right to turn, and when you let go the car settles into the nearest lane. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
+- The car drives itself at 46 km/h. A switch at the top right of the picker offers three ways to steer: **Arrows** (two big arrows, one lane per tap), **Wheel** (a big steering wheel: slide it left or right to turn) and **Joystick** (the round stick from the normal game: slide it sideways to change lanes, pull it down to slow down). With the wheel or the joystick the car settles into the nearest lane when you let go. While driving, the round button next to pause swaps to the next way. The game remembers the choice. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
 - Stars and balloons float over the lanes. Steer into them to catch them.
 - A bar at the top shows the car on its way from home to the place. There is no speed, fine, fuel, damage, radio or map.
 - Bumping into a car only goes BOING. The car slows down, and the arrow toward the free lane glows. Nothing is lost and there is no game over.
@@ -281,6 +281,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.23 (October 2026)
+
+- **Joystick in Kids Mode.** Kids Mode now has three ways to steer: Arrows, Wheel and Joystick. The joystick is the same round stick as the normal game, with Gas on top, Brake below and arrows at the sides. Slide it sideways to change lanes and pull it down to slow down. The switch on the picker now shows a word under each picture, and a round button next to pause swaps the way to steer during a drive. See [Kids Mode](#kids-mode).
+
+![Kids Mode: the three ways to steer, and the joystick on a phone held upright and sideways](docs/screenshots/kids-steer.png)
 
 ### 2.22 (October 2026)
 
