@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- johannesburg: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
+<language code="en" name="English" dir="ltr">
+  <city>
+    <string key="page.T_WXON">Highveld storm</string>
+    <string key="card.tag">46 KM LOOP</string>
+    <string key="card.name">Joburg Loop</string>
+    <string key="card.text">Carlton Centre, the Mandela Bridge, Ponte, up the M1 to Sandton, then down to Soweto, the Orlando Towers, Soccer City and Gold Reef City. Keep left, give the taxis space.</string>
+    <string key="card.alt">A white minibus taxi under purple jacarandas, the Johannesburg skyline behind it</string>
+    <string key="text.radio0">Jozi Piano</string>
+    <string key="text.radio1">Kasi Kwaito</string>
+    <string key="text.radio2">Soweto Jive</string>
+    <string key="page.title">Joburg Loop</string>
+    <string key="page.name">Joburg Loop</string>
+    <string key="page.eyebrow">Johannesburg · Jozi</string>
+    <string key="page.alt">Driving through Johannesburg</string>
+    <string key="page.blurb">From the Carlton Centre over the Mandela Bridge, up the M1 under the jacarandas to Sandton, then down to Soweto past the painted Orlando Towers, Soccer City and the mine dumps. South Africa drives on the left.</string>
+    <string key="page.T_MAPNOTE">The road roughly follows real places in Johannesburg. South Africa drives on the left, so the slow lane is on the left. The horn makes the car ahead move over.</string>
+    <string key="page.T_R1S">Pick a trip between Joburg landmarks, from the Carlton Centre to Sandton to Soweto, and reach the end.</string>
+    <string key="page.T_R3S">Cameras flash above 110 km/h, and crashes damage the car.</string>
+    <string key="text.bumpSign"></string>
+    <string key="text.tollName"></string>
+    <string key="text.tollPrice"></string>
+    <string key="text.wreckedSub">Call the tow truck, eish</string>
+    <string key="text.rateTop">Lekker! Sharp sharp!</string>
+    <string key="text.rateBad">Eish, you need some practice</string>
+    <string key="text.bumpHit"></string>
+    <string key="text.bumpOk"></string>
+    <string key="text.loadCity">Building Joburg...</string>
+    <string key="text.currency">rand</string>
+    <string key="text.paxHow">keep left and slow down</string>
+    <string key="text.fuelLow">Low fuel! Pull into the next left-lane garage</string>
+    <string key="text.refuel">Tank filled at the garage! +100</string>
+    <string key="text.paxAhead">Taxi rank</string>
+    <string key="text.walkFalafel">Vetkoek! One bump forgiven</string>
+    <string key="text.walkLemon">Ginger beer! Walking faster</string>
+    <string key="text.walkCoffee">Rooibos! Everyone makes way</string>
+    <string key="text.kidsBus">Taxi</string>
+    <string key="tour.7.body">The white dot is you and the green dots are landmarks. Your destination shows bigger.</string>
+    <string key="car.0.name">BMW 325is "Gusheshe"</string>
+    <string key="car.0.sub">Sports sedan</string>
+    <string key="car.0.pros">Fast and sharp, a Soweto legend</string>
+    <string key="car.0.cons">Light, so crashes hurt</string>
+    <string key="car.1.name">Toyota Quantum</string>
+    <string key="car.1.sub">Minibus taxi</string>
+    <string key="car.1.pros">Fourteen seats for big fare bonuses</string>
+    <string key="car.1.cons">Tall and slow to weave</string>
+    <string key="car.2.name">Toyota Hilux</string>
+    <string key="car.2.sub">Bakkie</string>
+    <string key="car.2.pros">Tough and cheap to run</string>
+    <string key="car.2.cons">Slow and loose in curves</string>
+    <string key="car.3.name">VW Polo Vivo</string>
+    <string key="car.3.sub">Small hatch</string>
+    <string key="car.3.pros">Light, nimble and easy to weave</string>
+    <string key="car.3.cons">Slow to pick up</string>
+    <string key="car.4.name">Toyota Fortuner</string>
+    <string key="car.4.sub">SUV</string>
+    <string key="car.4.pros">Strong and shrugs off crashes</string>
+    <string key="car.4.cons">Heavy and slow to turn</string>
+    <string key="car.5.name">Formula 1 car</string>
+    <string key="car.5.sub">Race car</string>
+    <string key="car.5.pros">The fastest car in the game, and it grips like glue</string>
+    <string key="car.5.cons">Fragile, so every crash hurts</string>
+    <string key="place.0">Carlton Centre</string>
+    <string key="place.1">Nelson Mandela Bridge</string>
+    <string key="place.2">Hillbrow Tower</string>
+    <string key="place.3">Ponte City</string>
+    <string key="place.4">Sandton</string>
+    <string key="place.5">Nelson Mandela Square</string>
+    <string key="place.6">Orlando Towers</string>
+    <string key="place.7">FNB Stadium</string>
+    <string key="place.8">Gold Reef City</string>
+    <string key="place.9">Mine Dumps</string>
+  </city>
+</language>

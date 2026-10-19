@@ -87,6 +87,7 @@ const SND = (() => {
     dtaxi:  { base: 28, span: 76, bite: 2, biteG: 0.3, fire: 2, fireWave: 'sine', depth: 0.32, lp: 650, lpSpan: 2100, peak: 360, peakQ: 1.2, peakG: 4, comb: 0.002, vol: 0.08, rum: 0.02, rumF: 3, whine: 7, whineG: 0.03, gears: 6 },
     sedan:  { base: 32, span: 92, bite: 2, biteG: 0.28, fire: 2, fireWave: 'triangle', depth: 0.24, lp: 680, lpSpan: 2500, peak: 420, peakQ: 1.1, peakG: 4, comb: 0.0019, vol: 0.075, rum: 0.016, rumF: 3, whine: 5, whineG: 0.022, gears: 6 },
     f1:     { base: 70, span: 300, bite: 1.2, biteG: 0.3, fire: 2, fireWave: 'sawtooth', depth: 0.22, lp: 1300, lpSpan: 5600, peak: 1100, peakQ: 1.8, peakG: 6, comb: 0.0009, vol: 0.08, rum: 0.012, rumF: 6, whine: 12, whineG: 0.03, gears: 8 },
+    van:    { base: 22, span: 58, bite: 2.5, biteG: 0.38, fire: 2, fireWave: 'triangle', depth: 0.46, lp: 520, lpSpan: 1600, peak: 280, peakQ: 1.3, peakG: 5, comb: 0.0027, vol: 0.1, rum: 0.045, rumF: 5, whine: 6, whineG: 0.03, gears: 5 },
     coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
@@ -367,14 +368,18 @@ const SND = (() => {
   // each station builds a short tune from its seed, repeats it with small changes, then writes a new one.
   const MAQAM = {
     hijaz: [0, 100, 400, 500, 700, 800, 1000], nahawand: [0, 200, 300, 500, 700, 800, 1100], bayati: [0, 150, 300, 500, 700, 800, 1000],
-    ajam: [0, 200, 400, 500, 700, 900, 1100], kurd: [0, 100, 300, 500, 700, 800, 1000], rast: [0, 200, 350, 500, 700, 900, 1050], saba: [0, 150, 300, 400, 700, 800, 1000]
+    ajam: [0, 200, 400, 500, 700, 900, 1100], kurd: [0, 100, 300, 500, 700, 800, 1000], rast: [0, 200, 350, 500, 700, 900, 1050], saba: [0, 150, 300, 400, 700, 800, 1000],
+    // plain western scales for the African stations: the bright major, its bluesy cousin, and the five note scale
+    major: [0, 200, 400, 500, 700, 900, 1100], mixo: [0, 200, 400, 500, 700, 900, 1000], penta: [0, 200, 400, 700, 900], minor: [0, 200, 300, 500, 700, 800, 1000]
   };
   // D = deep drum, T = sharp drum, k = soft hit, C = hand clap, . = rest; sixteen steps a bar
   const RHYTHM = {
     maqsum:  'D.T...T.D...T...', baladi: 'D.D...T.D...T...', saidi: 'D.T...D.D...T...',
     khaleeji: 'D..CT.C.D..CT.C.', fallahi: 'D.T.D.T.D.T.D.T.', chobi: 'D..TD.T.D..TD.TT',
     // Najd: samri leans on hand claps, ardah is the slow march of the big drums
-    samri: 'D.C..CT.D.C..CT.', ardah: 'D...D...D.TTD...'
+    samri: 'D.C..CT.D.C..CT.', ardah: 'D...D...D.TTD...',
+    // Kenya: benga runs fast on the hi hat, gengetone bounces; South Africa: the amapiano log drum (L) and kwaito's slow house beat
+    benga: 'D.TkD.TkD.TkD.Tk', gengetone: 'D..TD.k.D.kTD.k.', amapiano: 'D..L..L.D.kL..L.', kwaito: 'D.k.T.k.D.k.T.kC'
   };
   const radio = (() => {
     let stations = [], cur = -1, timer = null, nextT = 0, step = 0, bar = 0, motif = null, rng = Math.random, duckUntil = 0, level = 0, mixG = null;
@@ -407,6 +412,13 @@ const SND = (() => {
         const g = gainN(0); g.gain.setValueAtTime(v * 0.7 * accent, t); g.gain.setTargetAtTime(0, t, 0.015); chain(o, g, dest); o.start(t); o.stop(t + 0.1);
       } else if (type === 'C') {
         for (let i = 0; i < 3; i++) burst(t + i * 0.009, 0.05, 0.12 * accent, [filt('bandpass', 1200, 1.5)], dest, 3);
+      } else if (type === 'L') { // the amapiano log drum: a deep, woody note that drops in pitch
+        const f0 = hz(rng() < 0.3 ? 4 : 0, -1);
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.setValueAtTime(f0 * 1.9, t); o.frequency.exponentialRampToValueAtTime(f0, t + 0.06);
+        const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.setValueAtTime(f0 * 2, t);
+        const sh = filt('lowpass', 900, 4), g = gainN(0), g2 = gainN(0.25); o2.connect(g2); g2.connect(sh); o.connect(sh);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.42 * accent, t + 0.008); g.gain.setTargetAtTime(0, t + 0.05, 0.16);
+        chain(sh, g, dest); o.start(t); o2.start(t); stopAt([o, o2], t + 0.8);
       } else if (type === 'r') { // riq jingles
         burst(t, 0.05, 0.035 * accent, [filt('highpass', 7000, 0.7)], dest, 3);
       }
@@ -419,7 +431,17 @@ const SND = (() => {
     }
     function lead(f, t, len, kind) {
       const g = gainN(0), dest = mixG; const oscs = [];
-      if (kind === 'qanun' || kind === 'oud') {
+      if (kind === 'guitar' || kind === 'piano' || kind === 'marimba') {
+        // benga and mbaqanga guitar picks bright and fast; amapiano keys ring soft; the marimba is a wooden knock
+        const gt = kind === 'guitar', mb = kind === 'marimba';
+        const o = ac.createOscillator(); o.type = gt ? 'sawtooth' : mb ? 'sine' : 'triangle'; o.frequency.value = f;
+        const o2 = ac.createOscillator(); o2.type = 'sine'; o2.frequency.value = f * (mb ? 4 : 2); o2.detune.value = gt ? 6 : 2;
+        const lp = filt('lowpass', 2000, gt ? 3 : 1); lp.frequency.setValueAtTime(gt ? 4200 : 2600, t); lp.frequency.setTargetAtTime(gt ? 900 : 1200, t, gt ? 0.05 : 0.2);
+        const og = gainN(mb ? 0.5 : 0.3); o2.connect(og); og.connect(lp); o.connect(lp); lp.connect(g);
+        const v = gt ? 0.1 : mb ? 0.16 : 0.11, tail = gt ? 0.12 : mb ? 0.07 : 0.35;
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + 0.004); g.gain.setTargetAtTime(0, t + 0.01, tail);
+        oscs.push(o, o2); len = Math.max(len, tail * 5);
+      } else if (kind === 'qanun' || kind === 'oud') {
         // plucked strings: a bright attack that dulls quickly
         const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f;
         const o2 = ac.createOscillator(); o2.type = 'triangle'; o2.frequency.value = f * (kind === 'oud' ? 1 : 2); o2.detune.value = 4;
