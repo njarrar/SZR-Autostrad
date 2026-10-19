@@ -206,7 +206,7 @@
     <string key="text.rExtra">Road events</string>
     <string key="text.noWebGL">This device can&apos;t show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.</string>
     <string key="text.noGpu">Your browser is drawing without the graphics card, so the game will be slow and blurry. Turn on hardware acceleration (in Chrome: Settings, System, &quot;Use graphics acceleration when available&quot;), then restart the browser.</string>
-    <string key="text.noDriver">Windows has no graphics driver in use (it shows &quot;Microsoft Basic Render Driver&quot;), so the game will be very slow. Install the graphics driver from your PC maker, Intel, AMD or NVIDIA, or through Windows Update, then restart the PC.</string>
+    <string key="text.noDriver">Your browser is drawing with Windows&apos; fallback driver (&quot;Microsoft Basic Render Driver&quot;), not your graphics card, so the game will be very slow. Turn on hardware acceleration in the browser (in Chrome: Settings, System, &quot;Use graphics acceleration when available&quot;) and relaunch it. If it&apos;s already on, update the graphics driver from your PC maker, Intel, AMD or NVIDIA. Over Remote Desktop the browser can&apos;t use the graphics card.</string>
     <string key="page.T_LED">Underbody neon glow</string>
     <string key="page.T_STICKER">Rear window sticker</string>
     <string key="page.T_CHARM">Mirror charm</string>
