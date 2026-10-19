@@ -4772,7 +4772,8 @@ async function boot() {
   prepMini(); buildPlayer(); placeMenuCar(); applyQuality(); applyTime();
   renderTrips(); renderGarage(); renderBooklet(); syncSettingsUI();
   resize(); status.hidden = true; $('#menuBody').hidden = false;
-  if (GPU.soft) { $('#noGpu').textContent = T.noGpu; $('#noGpu').hidden = false; }
+  // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
+  if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
   if (GPU.name) $('#settings .ver').textContent += ' · ' + GPU.name;
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
