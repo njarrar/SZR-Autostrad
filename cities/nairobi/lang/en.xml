@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- nairobi: names, places, cars, tour and card text. A key here wins over the same key in lang/en.xml. -->
+<language code="en" name="English" dir="ltr">
+  <city>
+    <string key="page.T_WXON">Short rains</string>
+    <string key="card.tag">32 KM LOOP</string>
+    <string key="card.name">Nairobi Loop</string>
+    <string key="card.text">KICC, Uhuru Park, Nyayo Stadium, giraffes in the National Park, Bomas, Upper Hill and Westlands. Keep left, dodge the matatus, mind the bumps.</string>
+    <string key="card.alt">A matatu covered in bright art on Uhuru Highway, the KICC tower behind it</string>
+    <string key="text.radio0">Benga Radio</string>
+    <string key="text.radio1">Mtaani FM</string>
+    <string key="text.radio2">Pwani Taarab</string>
+    <string key="page.title">Nairobi Loop</string>
+    <string key="page.name">Nairobi Loop</string>
+    <string key="page.eyebrow">Nairobi · Kenya</string>
+    <string key="page.alt">Driving through Nairobi</string>
+    <string key="page.blurb">Down Uhuru Highway from KICC, out past Wilson Airport and the National Park where giraffes graze by the road, round through Karen and back up past Upper Hill and Westlands. Kenya drives on the left.</string>
+    <string key="page.T_MAPNOTE">The road roughly follows real places in Nairobi. Kenya drives on the left, so the slow lane is on the left. The horn makes the car ahead move over.</string>
+    <string key="page.T_R1S">Pick a trip between Nairobi landmarks, from KICC to the National Park to Westlands, and reach the end.</string>
+    <string key="page.T_R3S">Cameras flash above 90 km/h. Speed bumps and crashes damage the car.</string>
+    <string key="text.bumpSign">BUMPS AHEAD</string>
+    <string key="text.tollName"></string>
+    <string key="text.tollPrice"></string>
+    <string key="text.wreckedSub">Call the breakdown</string>
+    <string key="text.rateTop">Poa sana! Driving master!</string>
+    <string key="text.rateBad">Sawa, but you need more practice</string>
+    <string key="text.bumpHit">Bump! Pole pole</string>
+    <string key="text.bumpOk">Smooth over the bump</string>
+    <string key="text.loadCity">Building Nairobi...</string>
+    <string key="text.currency">KSh</string>
+    <string key="text.paxHow">keep left and slow down</string>
+    <string key="text.fuelLow">Low fuel! Pull into the next left-lane station</string>
+    <string key="text.walkFalafel">Mandazi! One bump forgiven</string>
+    <string key="text.walkLemon">Passion juice! Walking faster</string>
+    <string key="text.walkCoffee">Chai! Everyone makes way</string>
+    <string key="text.kidsBus">Matatu</string>
+    <string key="tour.7.body">The white dot is you and the green dots are landmarks. Your destination shows bigger.</string>
+    <string key="car.0.name">Toyota Land Cruiser Prado</string>
+    <string key="car.0.sub">SUV</string>
+    <string key="car.0.pros">Strong and shrugs off crashes</string>
+    <string key="car.0.cons">Heavy and slow to turn</string>
+    <string key="car.1.name">Matatu</string>
+    <string key="car.1.sub">Minibus</string>
+    <string key="car.1.pros">Fourteen seats for big fare bonuses, and the loudest art in town</string>
+    <string key="car.1.cons">Tall and slow to weave</string>
+    <string key="car.2.name">Toyota Axio</string>
+    <string key="car.2.sub">Taxi</string>
+    <string key="car.2.pros">Even all round, and picks up fares</string>
+    <string key="car.2.cons">Nothing stands out</string>
+    <string key="car.3.name">Subaru WRX</string>
+    <string key="car.3.sub">Rally car</string>
+    <string key="car.3.pros">Quick and grippy, made for the Safari Rally</string>
+    <string key="car.3.cons">Thirsty and hard to hold at the limit</string>
+    <string key="car.4.name">Toyota Hilux</string>
+    <string key="car.4.sub">Pickup</string>
+    <string key="car.4.pros">Tough and laughs at potholes</string>
+    <string key="car.4.cons">Slow and loose in curves</string>
+    <string key="car.5.name">Formula 1 car</string>
+    <string key="car.5.sub">Race car</string>
+    <string key="car.5.pros">The fastest car in the game, and it grips like glue</string>
+    <string key="car.5.cons">Fragile, so every crash hurts</string>
+    <string key="place.0">KICC</string>
+    <string key="place.1">Uhuru Park</string>
+    <string key="place.2">Nyayo Stadium</string>
+    <string key="place.3">Wilson Airport</string>
+    <string key="place.4">Nairobi National Park</string>
+    <string key="place.5">Bomas of Kenya</string>
+    <string key="place.6">The Junction</string>
+    <string key="place.7">Upper Hill</string>
+    <string key="place.8">Westlands</string>
+    <string key="place.9">National Museum</string>
+  </city>
+</language>

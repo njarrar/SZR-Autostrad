@@ -1,16 +1,20 @@
 # SZR Autostrad
 
-Three 3D driving games that run in the browser, set on real roads in three Arab cities:
+Five 3D driving games that run in the browser, set on real roads in three Arab cities and two African ones:
 
 - **لفّة عمّان (Amman Loop):** a 22 km loop over the hills of Amman, past Abdali, the King Abdullah I Mosque, the Citadel, the Raghadan flagpole, the Roman Theatre, Rainbow Street, Abdoun Bridge, the 7th Circle and Mecca Mall.
 - **لفّة دبي (Dubai Loop):** a 47 km loop at sunset, down Sheikh Zayed Road past the Dubai Frame, the Museum of the Future, Emirates Towers, Burj Khalifa and Mall of the Emirates to the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab and Jumeirah Mosque.
 - **لفّة الرياض (Riyadh Loop):** a 43 km loop on a hot, hazy afternoon, from Masmak Fort and the Grand Mosque in the old town past Murabba Palace, the Water Tower and the TV Tower, up King Fahd Road past Al Faisaliah and Kingdom Centre to the financial district, then west past Riyadh Park and Boulevard City to old Diriyah and back.
+- **Nairobi Loop:** a 32 km loop under the jacaranda trees, from KICC and Uhuru Park past Nyayo Stadium and Wilson Airport, along the edge of Nairobi National Park with its giraffes and acacias, out to Bomas of Kenya and The Junction, then up through Upper Hill and Westlands to the National Museum.
+- **Johannesburg Loop:** a 46 km loop on the highveld, from the Carlton Centre over Nelson Mandela Bridge past Hillbrow Tower and Ponte, north to Sandton and Mandela Square, then south west to Soweto's painted Orlando Towers, FNB Stadium, Gold Reef City and the yellow mine dumps.
 
-Each city has its own look. Amman has white and beige stone houses stacked up the hills on both sides of the road, with balconies, black and white water tanks, solar heaters and dishes on the roofs, and steel bars left on top for the next floor. Dubai has a wall of glass towers along Sheikh Zayed Road that mirror the sunset sky, the Metro running beside the road on its raised track with gold stations and a moving train, and green lawns and palms along the road. Riyadh has low mud colored Najdi walls with pointed tops in the old town, glass and stone towers along King Fahd Road with the blue Metro line on its raised track beside it, walled beige villas with palms, and the mud brick lanes of Diriyah.
+Each city has its own look. Amman has white and beige stone houses stacked up the hills on both sides of the road, with balconies, black and white water tanks, solar heaters and dishes on the roofs, and steel bars left on top for the next floor. Dubai has a wall of glass towers along Sheikh Zayed Road that mirror the sunset sky, the Metro running beside the road on its raised track with gold stations and a moving train, and green lawns and palms along the road. Riyadh has low mud colored Najdi walls with pointed tops in the old town, glass and stone towers along King Fahd Road with the blue Metro line on its raised track beside it, walled beige villas with palms, and the mud brick lanes of Diriyah. Nairobi has red tin roofs, purple jacaranda trees, flat topped acacias and loud matatus with art down their sides. Johannesburg has rows of small Soweto houses with tin roofs, glass towers in Sandton, white minibus taxis and flat yellow mine dumps.
+
+In Nairobi and Johannesburg you drive on the left, so the slow lane, the stops and the fuel stations are on the left too.
 
 The cars have shiny paint that reflects the sky, rounded bodies, wheel arches and five spoke wheels.
 
-The games come in English and Arabic. The Arabic text uses each city's own dialect (Jordanian, Gulf and Najdi), and the layout flips right to left.
+The games come in English and Arabic. The Arabic text uses each city's own dialect (Jordanian, Gulf and Najdi), Nairobi's passengers mix English, Swahili and Sheng, and Johannesburg's talk South African slang, and the layout flips right to left.
 
 ![Amman welcome screen](docs/screenshots/amman-welcome.png)
 
@@ -23,7 +27,12 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | --- | --- |
 | ![Driving in Riyadh past Kingdom Centre](docs/screenshots/riyadh-drive.png) | ![The TV Tower on the way up King Fahd Road](docs/screenshots/riyadh-tv-tower.png) |
 
-**Version 2.23** (October 2026). See [What's new](#whats-new) for the changes.
+| Nairobi | Johannesburg |
+| --- | --- |
+| ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
+| ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
+
+**Version 2.24** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -38,13 +47,15 @@ The page lets you pick a city. Each game also has its own address:
 - Amman: https://njarrar.github.io/SZR-Autostrad/amman/
 - Dubai: https://njarrar.github.io/SZR-Autostrad/dubai/
 - Riyadh: https://njarrar.github.io/SZR-Autostrad/riyadh/
+- Nairobi: https://njarrar.github.io/SZR-Autostrad/nairobi/
+- Johannesburg: https://njarrar.github.io/SZR-Autostrad/johannesburg/
 
 They work on a computer or a phone, upright or sideways.
 
 To play offline:
 
 1. Download or clone this repo.
-2. Open `dist/amman.html`, `dist/dubai.html` or `dist/riyadh.html` in Chrome, Edge, Safari or Firefox.
+2. Open `dist/amman.html`, `dist/dubai.html`, `dist/riyadh.html`, `dist/nairobi.html` or `dist/johannesburg.html` in Chrome, Edge, Safari or Firefox.
 
 That's it. Each game is one file. It needs an internet connection the first time to load three.js and the fonts.
 
@@ -54,7 +65,7 @@ If your browser blocks local files, serve the folder instead:
 npx http-server dist
 ```
 
-Then open the address it prints and pick `amman.html`, `dubai.html` or `riyadh.html`.
+Then open the address it prints and pick one of the city pages, such as `amman.html` or `nairobi.html`.
 
 ## Language
 
@@ -98,7 +109,7 @@ Open **Settings** from **More options** in the menu, or from the pause screen. I
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
 - **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh), camera distance, speed effects, screen shake, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh, the short rains in Nairobi and a highveld thunderstorm in Johannesburg), camera distance, speed effects, screen shake, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
@@ -109,7 +120,7 @@ Every sound is made live in the browser. There are no sound files.
 - **Road.** Tyre roar and wind grow with your speed, the tyres squeal when you brake hard or take a curve too fast, and the city hums in the background.
 - **Traffic.** You hear cars whoosh past on the side they pass you. A car stuck behind you honks, and horns sound from where the car is.
 - **Crashes.** A thump, crunching metal and, on a big hit, breaking glass.
-- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. On a keyboard, press `R` for the next station or `M` to turn the radio on or off. The music is made up as you drive from Arab rhythms (maqsum, baladi, khaleeji, the Najdi samri and ardah, and more) and maqam scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
+- **Radio.** Press the radio button next to the pause button to open a short list of the city's three stations and **Radio off**, then tap the one you want. A line across the radio icon means it's off. On a keyboard, press `R` for the next station or `M` to turn the radio on or off. The music is made up as you drive from each city's own rhythms (maqsum, baladi, khaleeji, the Najdi samri and ardah, Kenyan benga and gengetone, South African amapiano and kwaito, and more) and scales, so every trip sounds a little different. The radio gets quieter while you honk or get flashed by a camera.
 
 | Amman | Dubai |
 | --- | --- |
@@ -122,6 +133,12 @@ Every sound is made live in the browser. There are no sound files.
 | Tuwaiq FM: oud over a samri beat with hand claps |
 | Olaya Nights: Saudi pop with a synth lead |
 | Najd Drums: the slow ardah march with a one string rababa |
+
+| Nairobi | Johannesburg |
+| --- | --- |
+| Benga Radio: quick benga guitar over a bouncing bass | Jozi Piano: amapiano keys over a log drum |
+| Mtaani FM: gengetone with a synth lead | Kasi Kwaito: slow kwaito with a synth lead |
+| Pwani Taarab: coast taarab with a qanun | Soweto Jive: township jive on guitar |
 
 Each trip starts with a 3, 2, 1 countdown. On phones that support it, you feel a buzz on crashes, close passes, camera flashes and lane changes.
 
@@ -170,6 +187,28 @@ Each city has the cars you see on its roads every day. Each one has four bars on
 | Toyota Coaster (minibus) | 155 km/h | Carries up to 14 passengers | Wide and heavy to weave |
 | Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
 
+**Nairobi**
+
+| Car | Top speed | Good at | Weak at |
+| --- | --- | --- | --- |
+| Toyota Land Cruiser Prado | 195 km/h | Strong, shrugs off crashes | Heavy and slow to turn |
+| Matatu (Toyota HiAce) | 160 km/h | Carries up to 14 passengers, loudest art in town | Tall and slow to weave |
+| Toyota Axio (taxi) | 175 km/h | Even all round, carries 4 passengers | Nothing stands out |
+| Subaru WRX | 225 km/h | Quick and grippy | Hard to hold at the limit |
+| Toyota Hilux | 170 km/h | Takes the least damage | Slow and loose in curves |
+| Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
+
+**Johannesburg**
+
+| Car | Top speed | Good at | Weak at |
+| --- | --- | --- | --- |
+| BMW 325is "Gusheshe" | 230 km/h | Fast and sharp | Light, so crashes hurt |
+| Toyota Quantum (minibus taxi) | 160 km/h | Carries up to 14 passengers | Tall and slow to weave |
+| Toyota Hilux (bakkie) | 175 km/h | Takes the least damage | Slow and loose in curves |
+| VW Polo Vivo | 175 km/h | Light, nimble, easy to weave | Slow to pick up |
+| Toyota Fortuner | 190 km/h | Strong, shrugs off crashes | Heavy and slow to turn |
+| Formula 1 car | 320 km/h | Fastest car in the game, grips like glue | Fragile, so every crash hurts |
+
 Every city also has a red **Formula 1 car**: open wheels, wings front and back, a driver in a helmet and a high, screaming engine. It has no plate, sticker or charm.
 
 Damage from crashes, the barrier and speed bumps grows or shrinks with the car's toughness.
@@ -178,7 +217,7 @@ Damage from crashes, the barrier and speed bumps grows or shrinks with the car's
 
 The taxis and the Coaster bus work a service shift. Green stops wait near each landmark.
 
-- Keep to the right lane and slow below 75 km/h as a stop comes up. The car pulls onto the shoulder and stops by the shelter.
+- Keep to the kerb lane (the right one, or the left one in Nairobi and Johannesburg) and slow below 75 km/h as a stop comes up. The car pulls onto the shoulder and stops by the shelter.
 - People on board climb out and walk off, then the ones waiting walk over and get in. The car sets off again once they are all in. Each drop pays a fare, and fares add points.
 - Press the gas to skip a stop. Drive past and the people are left waiting.
 - Press the gas while stopped to drive off before everyone is in. People who already got out still pay, but anyone still walking to the car stays behind, and you miss the small nitro top-up you get for waiting.
@@ -215,7 +254,7 @@ Leave the car and walk. Press **Haitham Mode** next to the start button in the m
   - **Coffee:** for 8 seconds everyone ahead makes way, even the people on their phone.
 - Each bump costs points and stops you for a moment. A banana peel spins you round. After 6 bumps Haitham gives up and goes home.
 - Points come from the distance you walk and from slipping close past people and things without touching them, more for a chain of them.
-- People talk back in the city's own dialect, and the sellers call out what they sell: ka'ak and corn in Amman, karak tea in Dubai, dates and coffee in Riyadh.
+- People talk back in the city's own dialect, and the sellers call out what they sell: ka'ak and corn in Amman, karak tea in Dubai, dates and coffee in Riyadh, mandazi and chai in Nairobi, vetkoek and ginger beer in Johannesburg.
 
 ![Haitham walking past a ka'ak seller in Amman](docs/screenshots/haitham-mode.png)
 
@@ -266,7 +305,8 @@ About once a minute something happens on the road:
   | 51 to 60 km/h | 100 JD | 1,000 AED | 3,000 SAR |
   | over 60 km/h | 100 JD | 2,000 AED | 3,000 SAR |
 
-- **Crashes.** Hitting a car costs a fine (20 JD in Amman, 400 AED in Dubai, 300 SAR in Riyadh) and damage, and ends your pass streak. Cameras and crashes never take away points.
+- **Nairobi and Johannesburg.** Nairobi fines you above 90 km/h (80 limit plus 10), from KSh 3,000 up to KSh 20,000. Johannesburg fines you above 110 km/h (100 limit plus 10), from R500 up to R2,500.
+- **Crashes.** Hitting a car costs a fine (20 JD in Amman, 400 AED in Dubai, 300 SAR in Riyadh, KSh 5,000 in Nairobi, R1,000 in Johannesburg) and damage, and ends your pass streak. Cameras and crashes never take away points.
 - **The barrier.** Scraping it slows you down and adds damage.
 - **Speed bumps (Amman).** Take them under 35 km/h.
 - **Salik gates (Dubai).** Each one adds 4 dirhams to your trip.
@@ -281,6 +321,17 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.24 (October 2026)
+
+- **Nairobi.** A fourth city: a 32 km loop from KICC and Uhuru Park past Nyayo Stadium, Wilson Airport and Nairobi National Park, out to Bomas of Kenya and The Junction, and back through Upper Hill and Westlands. Red tin roofs, jacaranda trees, acacias with giraffes in the park, and the short rains in the weather setting.
+- **Johannesburg.** A fifth city: a 46 km loop from the Carlton Centre over Nelson Mandela Bridge past Hillbrow Tower and Ponte, up to Sandton, then down to Soweto's Orlando Towers, FNB Stadium, Gold Reef City and the mine dumps. Rows of small Soweto houses, towers in Sandton, and highveld thunderstorms.
+- **Driving on the left.** Both new cities keep left. Traffic, lanes, stops, fuel stations, signs, cameras and the steering all flip to match.
+- **Matatus and minibus taxis.** A new minibus, the Toyota HiAce. In Nairobi it's a matatu with loud art, a name board and a roof rack; in Johannesburg it's a white Quantum taxi. Both carry 14 passengers.
+- **Local sound and talk.** Six new radio stations built on benga, gengetone, taarab, amapiano, kwaito and jive, with a log drum, guitar, piano and marimba. Passengers talk in Sheng and Swahili in Nairobi ("Shukisha hapa stage, makanga!") and South African slang in Johannesburg ("Short left, driver!"). Fines and fares show in shillings and rand, and plates are Kenyan and Gauteng.
+- **Kids Mode and the album.** Both cities have three Kids Mode places and ten pixel postcards each.
+
+![Pixel postcards of Nairobi and Johannesburg](docs/screenshots/postcards-africa.png)
 
 ### 2.23 (October 2026)
 
@@ -477,6 +528,8 @@ cities/                One folder per city; the build finds them on its own
   amman/cover.png      The picture on the start page card
   dubai/...            The same for Dubai (Gulf Arabic)
   riyadh/...           The same for Riyadh (Najdi Arabic)
+  nairobi/...          The same for Nairobi (drives on the left)
+  johannesburg/...     The same for Johannesburg (drives on the left)
 src/engine.js          The game: road, terrain, buildings, landmarks, traffic, scoring, HUD and guided tour
 src/audio.js           Engine, road, horn, siren, nitro and crash sounds, rain and wind, phone buzz, and the car radio
 src/pixelart.js        The pixel postcard of each landmark, drawn in code
@@ -505,7 +558,7 @@ You need Node.js 18 or newer. There are no packages to install.
 node build.mjs
 ```
 
-This writes the start page `dist/index.html` and one page per city, `dist/amman/index.html`, `dist/dubai/index.html` and `dist/riyadh/index.html`. The old `dist/amman.html`, `dist/dubai.html` and `dist/riyadh.html` addresses forward to the new pages. To add a link from each game to the other, create `links.json` next to `build.mjs`:
+This writes the start page `dist/index.html` and one page per city, such as `dist/amman/index.html` and `dist/nairobi/index.html`. The old `dist/amman.html` style addresses forward to the new pages. To add a link from each game to the other, create `links.json` next to `build.mjs`:
 
 ```json
 { "amman": "https://example.com/amman.html", "dubai": "https://example.com/dubai.html", "riyadh": "https://example.com/riyadh.html" }

@@ -168,10 +168,10 @@
   </common>
   <landing>
     <string key="title">SZR Autostrad</string>
-    <string key="h1">سوق بشوارع عمّان ودبي والرياض</string>
-    <string key="intro">ثلاث ألعاب سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار.</string>
+    <string key="h1">سوق بشوارع عمّان ودبي والرياض ونيروبي وجوهانسبرغ</string>
+    <string key="intro">خمس ألعاب سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار.</string>
     <string key="introWeb">بتشتغل عالمتصفح، عالكمبيوتر والموبايل.</string>
-    <string key="introShort">ثلاث ألعاب سواقة على طرق حقيقية. اختار مدينة ويلا.</string>
+    <string key="introShort">خمس ألعاب سواقة على طرق حقيقية. اختار مدينة ويلا.</string>
     <string key="play">العب</string>
     <string key="how1t">السواقة</string>
     <string key="how1"><![CDATA[<kbd>↑</kbd> بنزين، <kbd>↓</kbd> بريك، <kbd>←</kbd> <kbd>→</kbd> تغيير المسرب، <kbd>Space</kbd> زامور، <kbd>N</kbd> نيترو. عالموبايل في أزرار عالشاشة.]]></string>
