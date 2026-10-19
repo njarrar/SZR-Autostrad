@@ -205,6 +205,7 @@
     <string key="text.tailOk">You let it pass +120</string>
     <string key="text.rExtra">Road events</string>
     <string key="text.noWebGL">This device can&apos;t show 3D graphics (WebGL is off). Try another browser or turn on hardware acceleration.</string>
+    <string key="text.noGpu">Your browser is drawing without the graphics card, so the game will be slow and blurry. Turn on hardware acceleration (in Chrome: Settings, System, &quot;Use graphics acceleration when available&quot;), then restart the browser.</string>
     <string key="page.T_LED">Underbody neon glow</string>
     <string key="page.T_STICKER">Rear window sticker</string>
     <string key="page.T_CHARM">Mirror charm</string>

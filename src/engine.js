@@ -192,9 +192,23 @@ const LMS = C.landmarks.map((lm, idx) => {
 
 // ---------- three setup ----------
 const canvas = $('#gl');
+// a browser with hardware acceleration off draws on the processor, often at a frame a second or worse:
+// then draw as little as possible, and tell the player how to fix it
+const GPU = (() => {
+  try {
+    const c = document.createElement('canvas'), gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return { name: '', soft: false };
+    const e = gl.getExtension('WEBGL_debug_renderer_info'), name = String(gl.getParameter(e ? e.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    const lose = gl.getExtension('WEBGL_lose_context'); if (lose) lose.loseContext();
+    // browsers refuse this flag on a software renderer even when they hide its name
+    const fast = document.createElement('canvas').getContext('webgl', { failIfMajorPerformanceCaveat: true });
+    if (fast) { const l2 = fast.getExtension('WEBGL_lose_context'); if (l2) l2.loseContext(); }
+    return { name, soft: /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name) || !fast };
+  } catch (err) { return { name: '', soft: false }; }
+})();
 // phones skip MSAA: it costs a lot of memory bandwidth on mobile GPUs
 let renderer;
-try { renderer = new THREE.WebGLRenderer({ canvas, antialias: !matchMedia('(pointer: coarse)').matches, powerPreference: 'high-performance' }); }
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: !matchMedia('(pointer: coarse)').matches && !GPU.soft, powerPreference: 'high-performance' }); }
 catch (e) { $('#loading').textContent = T.noWebGL; return; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -223,14 +237,14 @@ const AUTO_SCALE = [1, 0.85, 0.85, 0.72, 0.6], AUTO_SHADOW = 2;
 const PIX_BUDGET = { high: 3.7e6, low: 2.1e6 };
 function pixelRatio() {
   const hi = settings.quality === 'high', area = Math.max(1, innerWidth * innerHeight);
-  const r = Math.min(window.devicePixelRatio || 1, hi ? 1.5 : 1, Math.sqrt(PIX_BUDGET[hi ? 'high' : 'low'] / area));
+  const r = GPU.soft ? Math.min(0.5, Math.sqrt(0.3e6 / area)) : Math.min(window.devicePixelRatio || 1, hi ? 1.5 : 1, Math.sqrt(PIX_BUDGET[hi ? 'high' : 'low'] / area));
   return Math.max(0.5, r * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]);
 }
 function applyQuality() {
   const hi = settings.quality === 'high';
   if (!settings.autoQ) autoQ.step = 0;
   const shadowsWere = renderer.shadowMap.enabled;
-  renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SHADOW;
+  renderer.shadowMap.enabled = hi && !GPU.soft && autoQ.step < AUTO_SHADOW;
   // materials only need a rebuild when shadows turn on or off
   if (shadowsWere !== renderer.shadowMap.enabled) scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
   if (typeof resize === 'function') resize();
@@ -1342,13 +1356,13 @@ function makeInstanced(geo, mat, list, colored, castShadow = true, lod = null) {
     im.computeBoundingSphere(); im.frustumCulled = true; im.castShadow = castShadow; im.receiveShadow = true;
     scene.add(im); CHUNKS.push(im);
     if (whole || !lod) continue;
-    im.userData.near = lod.near;
+    im.userData.near = GPU.soft ? Math.min(lod.near, 150) : lod.near;
     if (!lod.geo) continue;
     // the plain copy shares the same matrices and colours
     const lo = new THREE.InstancedMesh(lod.geo, mat, part.length);
     lo.instanceMatrix = im.instanceMatrix; lo.instanceColor = im.instanceColor;
     lo.boundingSphere = im.boundingSphere; lo.castShadow = false; lo.receiveShadow = true;
-    lo.userData.far = lod.near; scene.add(lo); CHUNKS.push(lo);
+    lo.userData.far = im.userData.near; scene.add(lo); CHUNKS.push(lo);
   }
 }
 
@@ -1643,7 +1657,9 @@ function applyTime() {
   const fogK = (L.fogK || 1) * (W ? W.fogK : 1);
   const fog = W ? mixHex(L.fog, W.fogTo, W.fogMix) : new THREE.Color(L.fog);
   scene.fog.color.copy(fog); scene.background.copy(fog);
-  scene.fog.near = C.look.fogNear * fogK; scene.fog.far = C.look.fogFar * fogK;
+  // without a graphics card, thick fog lets the far city go undrawn
+  const softK = GPU.soft ? Math.min(1, 1000 / C.look.fogFar) : 1;
+  scene.fog.near = C.look.fogNear * fogK * softK; scene.fog.far = C.look.fogFar * fogK * softK;
   hemi.color.set(L.skyLight); hemi.groundColor.set(L.groundLight); hemi.intensity = L.hemi * (W ? W.hemiK : 1);
   sun.color.set(L.sunColor); sun.intensity = L.sun * (W ? W.sunK : 1);
   SUN_DIR.fromArray(L.sunDir).normalize();
@@ -4170,7 +4186,7 @@ function render(dt) {
   }
   if (window.__cam) { camera.position.fromArray(window.__cam[0]); camera.lookAt(new THREE.Vector3().fromArray(window.__cam[1])); camera.fov = 55; camera.updateProjectionMatrix(); }
   // scenery cells: hide what the fog hides, and swap far buildings for plain boxes; after the camera moves, so a jump never shows a plain frame
-  const fogFar = scene.fog.far * 1.3, cp = camera.position; // fog works on depth, so leave room at the screen edges
+  const fogFar = scene.fog.far * (GPU.soft ? 1 : 1.3), cp = camera.position; // fog works on depth, so leave room at the screen edges
   for (const im of CHUNKS) {
     const b = im.boundingSphere, r = fogFar + b.radius, d2 = b.center.distanceToSquared(cp), u = im.userData;
     let vis = d2 < r * r;
@@ -4213,7 +4229,8 @@ let last = performance.now();
 const STEP = 1 / 120; let stepAcc = 0; let pauseTick = 0;
 function watchSpeed(ms) {
   const q = autoQ.ms;
-  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { q.length = 0; return; }
+  // a gap over 2.5 s is a tab switch or a pause, not slow drawing
+  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 2500) { q.length = 0; return; }
   q.push(ms); let t = 0, best = 1e9; for (const m of q) { t += m; if (m < best) best = m; }
   if (t < 3000) return;
   // a frame is slow when it misses a 60 Hz screen's beat; on a screen held at 30 Hz (battery saver) every frame
@@ -4755,6 +4772,8 @@ async function boot() {
   prepMini(); buildPlayer(); placeMenuCar(); applyQuality(); applyTime();
   renderTrips(); renderGarage(); renderBooklet(); syncSettingsUI();
   resize(); status.hidden = true; $('#menuBody').hidden = false;
+  if (GPU.soft) { $('#noGpu').textContent = T.noGpu; $('#noGpu').hidden = false; }
+  if (GPU.name) $('#settings .ver').textContent += ' · ' + GPU.name;
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);

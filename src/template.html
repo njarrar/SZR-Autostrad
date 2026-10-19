@@ -129,6 +129,7 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .foot a { color: var(--accent); font-weight: 700; }
 kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; padding: 1px 5px; direction: ltr; display: inline-block; }
 #loading { font-weight: 600; color: var(--muted); padding: 10px 0; }
+#noGpu { margin: 0; padding: 10px 12px; border-radius: 10px; background: #fff3cd; color: #6b4e00; font-size: 13px; line-height: 1.4; }
 
 /* ---------- HUD ---------- */
 #hud { position: fixed; inset: 0; pointer-events: none; z-index: 3; font-variant-numeric: tabular-nums; }
@@ -736,6 +737,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <p>__BLURB__</p>
     </div>
     <div id="loading">...</div>
+    <p id="noGpu" hidden></p>
     <div id="menuBody" hidden style="display:contents">
       <div class="mTrip"><div class="label">__T_TRIP__</div><div id="trips"></div></div>
       <div class="mCars"><div class="label">__T_CARS__</div><div id="carPick"></div><p id="carPros"></p></div>
