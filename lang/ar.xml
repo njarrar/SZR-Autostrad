@@ -75,6 +75,7 @@
     <string key="text.tailOk">خلّيتها تمرق +120</string>
     <string key="text.rExtra">مواقف الطريق</string>
     <string key="text.noWebGL">هذا الجهاز لا يعرض الرسوم ثلاثية الأبعاد (WebGL متوقف). جرّب متصفحاً آخر أو فعّل تسريع الرسوم.</string>
+    <string key="text.noGpu">المتصفح يرسم بدون كرت الشاشة، فاللعبة رح تكون بطيئة وغير واضحة. فعّل تسريع الرسوم (في Chrome: الإعدادات، النظام، &quot;استخدام تسريع الرسومات عند توفره&quot;) ثم أعد تشغيل المتصفح.</string>
     <string key="page.T_LED">إضاءة نيون تحت السيارة</string>
     <string key="page.T_STICKER">ملصق الزجاج الخلفي</string>
     <string key="page.T_CHARM">تعليقة المراية</string>

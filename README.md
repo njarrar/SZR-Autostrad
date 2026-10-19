@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.25** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.26** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -321,6 +321,12 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.26 (October 2026)
+
+- **Browsers without the graphics card.** When hardware acceleration is off, the browser draws on the processor and the game can drop to a frame a second. The game now spots this, says how to turn it back on, and draws far less: no shadows or smoothing, fewer pixels, thicker fog and plain buildings sooner.
+- **Auto quality on very slow frames.** Frames slower than 0.4 s used to be ignored, so auto quality never stepped in on the slowest computers. Now only gaps over 2.5 s, such as switching tabs, are ignored.
+- **Graphics card name in Settings.** The line at the bottom of Settings shows which graphics card the browser uses.
 
 ### 2.25 (October 2026)
 
