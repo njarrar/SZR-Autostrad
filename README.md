@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.27** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.28** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -321,6 +321,10 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.28 (October 2026)
+
+- **Clearer graphics card note.** The "Microsoft Basic Render Driver" note now says to turn on the browser's hardware acceleration first, and to update the driver only if that is already on, since the browser can ignore a driver that Windows has installed.
 
 ### 2.27 (October 2026)
 
