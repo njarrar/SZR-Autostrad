@@ -855,7 +855,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <p class="ver">v2.24 · 2026-10-19 10:20 UTC</p>
+    <p class="ver">v2.25 · 2026-10-19 13:56 UTC</p>
   </div>
 </div>
 
@@ -2522,15 +2522,21 @@ scene.add(sun); scene.add(sun.target);
 const SUN_DIR = new THREE.Vector3().fromArray(C.look.sunDir).normalize(); // changes with the time of day
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 // quality: high = real shadows and sharper pixels, low = faster on phones
-// auto: when frames run slow for a few seconds, draw fewer pixels, then drop the shadows
-const autoQ = { step: 0, slow: 0, all: 0, t: 0, told: false, prevShadow: null };
-const AUTO_SCALE = [1, 0.85, 0.72, 0.6];
+// auto: when frames run slow for a few seconds, draw fewer pixels, then drop the shadows, then fewer pixels again
+const autoQ = { step: 0, ms: [], told: false };
+const AUTO_SCALE = [1, 0.85, 0.85, 0.72, 0.6], AUTO_SHADOW = 2;
+// a big or sharp desktop screen would ask for 6 million pixels or more a frame; high keeps to about a 1440p screen's worth
+const PIX_BUDGET = { high: 3.7e6, low: 2.1e6 };
+function pixelRatio() {
+  const hi = settings.quality === 'high', area = Math.max(1, innerWidth * innerHeight);
+  const r = Math.min(window.devicePixelRatio || 1, hi ? 1.5 : 1, Math.sqrt(PIX_BUDGET[hi ? 'high' : 'low'] / area));
+  return Math.max(0.5, r * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]);
+}
 function applyQuality() {
   const hi = settings.quality === 'high';
   if (!settings.autoQ) autoQ.step = 0;
   const shadowsWere = renderer.shadowMap.enabled;
-  renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SCALE.length;
-  renderer.setPixelRatio(Math.max(0.5, Math.min(window.devicePixelRatio || 1, hi ? 1.75 : 1) * AUTO_SCALE[Math.min(autoQ.step, AUTO_SCALE.length - 1)]));
+  renderer.shadowMap.enabled = hi && autoQ.step < AUTO_SHADOW;
   // materials only need a rebuild when shadows turn on or off
   if (shadowsWere !== renderer.shadowMap.enabled) scene.traverse((o) => { if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => { m.needsUpdate = true; }); } });
   if (typeof resize === 'function') resize();
@@ -2884,16 +2890,21 @@ function buildRoad() {
     const prof = [[-0.5, -0.3], [-0.5, 0.08], [-0.27, 0.33], [-0.14, hgt], [0.14, hgt], [0.27, 0.33], [0.5, 0.08], [0.5, -0.3]].map(([x, y]) => [x * bw, y]);
     const lens = [0]; for (let k = 1; k < prof.length; k++) lens.push(lens[k - 1] + Math.hypot(prof[k][0] - prof[k - 1][0], prof[k][1] - prof[k - 1][1]));
     const tot = lens[lens.length - 1], np = prof.length;
-    const P = [], U = [], I = [];
-    for (let i = 0; i <= N; i++) {
-      curveAt(i * ds, 0, o);
-      for (let k = 0; k < np; k++) { const l = lc + prof[k][0]; P.push(o.x - o.tz * l, o.y + prof[k][1], o.z + o.tx * l); U.push(lens[k] / tot, (i * ds) / 4); }
-      if (i < N) for (let k = 0; k < np - 1; k++) { const a = i * np + k, b = a + np; I.push(a, b, a + 1, a + 1, b, b + 1); }
+    // cut into pieces about 500 m long, so the camera and the shadow pass skip the parts they can't see
+    const piece = Math.max(1, Math.round(500 / ds));
+    for (let i0 = 0; i0 < N; i0 += piece) {
+      const i1 = Math.min(N, i0 + piece), P = [], U = [], I = [];
+      for (let i = i0; i <= i1; i++) {
+        curveAt(i * ds, 0, o);
+        for (let k = 0; k < np; k++) { const l = lc + prof[k][0]; P.push(o.x - o.tz * l, o.y + prof[k][1], o.z + o.tx * l); U.push(lens[k] / tot, (i * ds) / 4); }
+        if (i < i1) for (let k = 0; k < np - 1; k++) { const a = (i - i0) * np + k, b = a + np; I.push(a, b, a + 1, a + 1, b, b + 1); }
+      }
+      const bg = new THREE.BufferGeometry();
+      bg.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); bg.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); bg.setIndex(I); bg.computeVertexNormals();
+      const wm = new THREE.Mesh(bg, barMat); wm.receiveShadow = true; wm.castShadow = true; scene.add(wm);
     }
-    const bg = new THREE.BufferGeometry();
-    bg.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); bg.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); bg.setIndex(I); bg.computeVertexNormals();
-    const wm = new THREE.Mesh(bg, barMat); wm.material.side = THREE.DoubleSide; wm.receiveShadow = true; wm.castShadow = true; scene.add(wm);
   }
+  barMat.side = THREE.DoubleSide;
 }
 
 // ---------- terrain ----------
@@ -3614,8 +3625,10 @@ shadows.frustumCulled = false; scene.add(shadows);
 const tmpM = new THREE.Matrix4(), tmpQ = new THREE.Quaternion(), tmpV = new THREE.Vector3(), tmpS = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
 // scenery is cut into square cells, one instanced mesh each, so the camera and the
 // shadow pass skip what they can't see and render() hides cells lost in the fog
+// lod: { near, geo } draws the cell in full detail only while the camera is within `near` metres of its edge,
+// and past that in `geo` (a plain shape) or not at all; a few pixels of posts and ledges far off cost the GPU the same as near
 const CHUNK = 1000, CHUNKS = [];
-function makeInstanced(geo, mat, list, colored, castShadow = true) {
+function makeInstanced(geo, mat, list, colored, castShadow = true, lod = null) {
   // small batches stay whole: splitting them costs more draw calls than it saves
   const tris = (geo.index ? geo.index.count : geo.attributes.position.count) / 3, whole = tris * list.length < 100000;
   const cells = new Map();
@@ -3634,6 +3647,14 @@ function makeInstanced(geo, mat, list, colored, castShadow = true) {
     });
     im.computeBoundingSphere(); im.frustumCulled = true; im.castShadow = castShadow; im.receiveShadow = true;
     scene.add(im); CHUNKS.push(im);
+    if (whole || !lod) continue;
+    im.userData.near = lod.near;
+    if (!lod.geo) continue;
+    // the plain copy shares the same matrices and colours
+    const lo = new THREE.InstancedMesh(lod.geo, mat, part.length);
+    lo.instanceMatrix = im.instanceMatrix; lo.instanceColor = im.instanceColor;
+    lo.boundingSphere = im.boundingSphere; lo.castShadow = false; lo.receiveShadow = true;
+    lo.userData.far = lod.near; scene.add(lo); CHUNKS.push(lo);
   }
 }
 
@@ -3772,8 +3793,11 @@ function buildScenery() {
     box(0xffffff, -0.485, 0.975, 0, 0.045, 0.05, 0.94)
   ]);
   const winMat = windowMaterial(C.look.windows);
-  makeInstanced(bGeo, winMat, bList, true, true);
-  if (fillList.length) makeInstanced(bGeo, winMat, fillList, true, false);
+  // past a few hundred metres a building is a plain box; the window shader still draws its face
+  const plain = BOX.clone(); plain.translate(0, 0.5, 0);
+  const bLod = { near: 450, geo: plain }, clutter = { near: 450 }, treesLod = { near: 800 };
+  makeInstanced(bGeo, winMat, bList, true, true, bLod);
+  if (fillList.length) makeInstanced(bGeo, winMat, fillList, true, false, bLod);
   if (glassT.length + roundT.length + taperT.length) {
     const gm = windowMaterial(C.look.windows, true);
     if (glassT.length) {
@@ -3824,19 +3848,19 @@ function buildScenery() {
       box(0x2d3c4a, 0.68, 0.76, -1.60, 1.28, 0.36, 0.05),
       box(0x3a3d42, 1.30, 0.98, 0, 0.08, 0.06, 3.32)
     ]);
-    makeInstanced(bg, new THREE.MeshLambertMaterial({ vertexColors: true }), balc, true, false);
+    makeInstanced(bg, new THREE.MeshLambertMaterial({ vertexColors: true }), balc, true, false, clutter);
   }
   if (solar.length) {
     const sg = mergeParts([box(0x1d2a3a, 0, 1.0, 0.2, 2.0, 0.06, 1.3, { rx: -0.7 }), box(0x9a9a9a, 0, 0.5, 0.45, 2.0, 1.0, 0.06), { g: CYL(0.28, 0.28, 2.0, 8), c: 0xe8e8e4, x: 0, y: 1.45, z: -0.35, rz: Math.PI / 2 }]);
-    makeInstanced(sg, new THREE.MeshLambertMaterial({ vertexColors: true }), solar, false, false);
+    makeInstanced(sg, new THREE.MeshLambertMaterial({ vertexColors: true }), solar, false, false, clutter);
   }
   if (dishes.length) {
     const dg = mergeParts([{ g: CYL(0.45, 0.12, 0.18, 9), c: 0xe9e9e6, y: 1.0, rx: 1.1 }, box(0x777777, 0, 0.5, 0, 0.06, 1.0, 0.06)]);
-    makeInstanced(dg, new THREE.MeshLambertMaterial({ vertexColors: true }), dishes, false, false);
+    makeInstanced(dg, new THREE.MeshLambertMaterial({ vertexColors: true }), dishes, false, false, clutter);
   }
-  if (rebar.length) { const rg = BOX.clone(); rg.translate(0, 0.5, 0); makeInstanced(rg, new THREE.MeshLambertMaterial({ color: 0x9a948a }), rebar, false, false); }
-  if (stairs.length) { const sg = BOX.clone(); sg.translate(0, 0.5, 0); makeInstanced(sg, new THREE.MeshLambertMaterial(), stairs, true, false); }
-  if (tanks.length) { const tg = CYL(0.65, 0.65, 1.3, 10, 1, false); tg.translate(0, 0.85, 0); makeInstanced(tg, new THREE.MeshLambertMaterial(), tanks, true, false); }
+  if (rebar.length) { const rg = BOX.clone(); rg.translate(0, 0.5, 0); makeInstanced(rg, new THREE.MeshLambertMaterial({ color: 0x9a948a }), rebar, false, false, clutter); }
+  if (stairs.length) { const sg = BOX.clone(); sg.translate(0, 0.5, 0); makeInstanced(sg, new THREE.MeshLambertMaterial(), stairs, true, false, clutter); }
+  if (tanks.length) { const tg = CYL(0.65, 0.65, 1.3, 10, 1, false); tg.translate(0, 0.85, 0); makeInstanced(tg, new THREE.MeshLambertMaterial(), tanks, true, false, clutter); }
   if (crowns.length) {
     const cg = mergeParts([{ g: CYL(0.35, 0.68, 0.45, 8), c: 0xe2e6ea, y: 0.22 }, { g: CYL(0.06, 0.18, 0.65, 6), c: 0xf0f4f8, y: 0.72 }]);
     makeInstanced(cg, new THREE.MeshLambertMaterial({ vertexColors: true }), crowns, false, false);
@@ -3854,11 +3878,11 @@ function buildScenery() {
       { g: CYL(0.03, 0.05, 0.4, 5), c: 0x5a4632, x: 0.12, y: 0.82, rz: -0.5 }, { g: CYL(0.03, 0.05, 0.4, 5), c: 0x5a4632, x: -0.12, y: 0.82, rz: 0.5 },
       { g: CYL(0.5, 0.42, 0.12, 9), c: 0xffffff, y: 1.0 }, { g: CYL(0.32, 0.36, 0.1, 8), c: 0xe8f0e2, x: 0.18, y: 1.08, z: 0.1 }
     ]);
-    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), aca, true, true);
+    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), aca, true, true, treesLod);
   }
   if (cyp.length) {
     const g = mergeParts([{ g: CYL(0.18, 0.24, 0.22, 6), c: 0x5c432c, y: 0.11 }, { g: new THREE.ConeGeometry(1.25, 0.88, 8), c: 0xffffff, y: 0.56 }]);
-    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), cyp, true, true);
+    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), cyp, true, true, treesLod);
   }
   if (oli.length) {
     const g = mergeParts([
@@ -3867,11 +3891,11 @@ function buildScenery() {
       { g: new THREE.IcosahedronGeometry(0.65, 1), c: 0xe8f0e2, x: 0.45, y: 1.05, z: 0.3 },
       { g: new THREE.IcosahedronGeometry(0.62, 1), c: 0xdce6d5, x: -0.42, y: 1.0, z: -0.28 }
     ]);
-    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), oli, true, true);
+    makeInstanced(g, new THREE.MeshLambertMaterial({ vertexColors: true }), oli, true, true, treesLod);
   }
   if (palmT.length) {
     const tg = CYL(0.16, 0.28, 1, 8); tg.translate(0, 0.5, 0);
-    makeInstanced(tg, new THREE.MeshLambertMaterial({ color: 0x7a5c3e }), palmT, false, true);
+    makeInstanced(tg, new THREE.MeshLambertMaterial({ color: 0x7a5c3e }), palmT, false, true, treesLod);
     const leaves = [{ g: new THREE.SphereGeometry(0.38, 6, 5), c: 0x4f3b26, x: 0, y: -0.1, z: 0 }];
     for (let k = 0; k < 10; k++) {
       const a = k / 10 * Math.PI * 2;
@@ -3879,7 +3903,7 @@ function buildScenery() {
       leaves.push({ g: BOX, c: 0x2f6828, x: Math.sin(a) * 2.5, y: -0.45, z: Math.cos(a) * 2.5, sx: 0.36, sy: 0.06, sz: 1.7, ry: a, rx: 0.52 });
     }
     const lg = mergeParts(leaves);
-    makeInstanced(lg, new THREE.MeshLambertMaterial({ vertexColors: true }), palmC, false, true);
+    makeInstanced(lg, new THREE.MeshLambertMaterial({ vertexColors: true }), palmC, false, true, treesLod);
   }
   // street lights
   const poles = [], lamps = [];
@@ -6381,8 +6405,6 @@ function render(dt) {
   // centre the shadow box a little ahead of the car, where the camera looks
   const sunX = P.x + P.fx * 30, sunZ = P.z + P.fz * 30;
   sun.target.position.set(sunX, P.y, sunZ); sun.position.set(sunX + SUN_DIR.x * 400, P.y + SUN_DIR.y * 400, sunZ + SUN_DIR.z * 400);
-  const fogFar = scene.fog.far * 1.3, cp = camera.position; // fog works on depth, so leave room at the screen edges
-  for (const im of CHUNKS) { const b = im.boundingSphere, r = fogFar + b.radius; im.visible = b.center.distanceToSquared(cp) < r * r; }
   let si = 0; const setShadow = (x, y, z, yw, w, l) => { if (si >= MAXS) return; tmpQ.setFromAxisAngle(UP, yw); tmpM.compose(tmpV.set(x, y + 0.04, z), tmpQ, tmpS.set(w * 1.3, 1, l * 1.15)); shadows.setMatrixAt(si++, tmpM); };
   if (game.walk) setShadow(P.x, P.y + SW_Y, P.z, yaw, 0.45, 0.4); else setShadow(P.x, P.y, P.z, yaw, player.wid, player.len);
   // cars further than this are a few pixels; skip drawing them
@@ -6453,6 +6475,14 @@ function render(dt) {
     camera.fov = inGarage ? 44 : 50; camera.updateProjectionMatrix(); camInit = false;
   }
   if (window.__cam) { camera.position.fromArray(window.__cam[0]); camera.lookAt(new THREE.Vector3().fromArray(window.__cam[1])); camera.fov = 55; camera.updateProjectionMatrix(); }
+  // scenery cells: hide what the fog hides, and swap far buildings for plain boxes; after the camera moves, so a jump never shows a plain frame
+  const fogFar = scene.fog.far * 1.3, cp = camera.position; // fog works on depth, so leave room at the screen edges
+  for (const im of CHUNKS) {
+    const b = im.boundingSphere, r = fogFar + b.radius, d2 = b.center.distanceToSquared(cp), u = im.userData;
+    let vis = d2 < r * r;
+    if (vis && (u.near || u.far)) { const near = Math.sqrt(d2) - b.radius < (u.near || u.far); vis = u.near ? near : !near; }
+    im.visible = vis;
+  }
   scene.userData.sky.position.copy(camera.position);
   // flag wave
   if (flagMesh && flagMesh.getWorldPosition(tmpV).distanceToSquared(camera.position) < 2500 * 2500) {
@@ -6476,8 +6506,9 @@ function placeMenuCar() {
 }
 
 function resize() {
-  const w = innerWidth, h = innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h; wxW = w; wxH = h;
-  if (fxCanvas) { const dpr = Math.min(2, devicePixelRatio || 1); fxCanvas.width = w * dpr; fxCanvas.height = h * dpr; fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  const w = innerWidth, h = innerHeight; renderer.setPixelRatio(pixelRatio()); renderer.setSize(w, h, false); camera.aspect = w / h; wxW = w; wxH = h;
+  // sparks and text: no sharper than the 3D view under them
+  if (fxCanvas) { const dpr = Math.max(1, renderer.getPixelRatio()); fxCanvas.width = w * dpr; fxCanvas.height = h * dpr; fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0); }
   // upright phone: lift the picture so the car sits above the stick
   if (h > w * 1.2 && isTouch()) camera.setViewOffset(w, h, 0, h * 0.11, w, h); else camera.clearViewOffset();
   camera.updateProjectionMatrix();
@@ -6487,15 +6518,19 @@ addEventListener('resize', resize);
 let last = performance.now();
 const STEP = 1 / 120; let stepAcc = 0; let pauseTick = 0;
 function watchSpeed(ms) {
-  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { autoQ.t = autoQ.slow = autoQ.all = 0; return; }
-  autoQ.all++; if (ms > 26) autoQ.slow++; autoQ.t += ms;
-  if (autoQ.t < 3000) return;
+  const q = autoQ.ms;
+  if (!settings.autoQ || game.mode !== 'drive' || game.paused || document.hidden || ms > 400) { q.length = 0; return; }
+  q.push(ms); let t = 0, best = 1e9; for (const m of q) { t += m; if (m < best) best = m; }
+  if (t < 3000) return;
+  // a frame is slow when it misses a 60 Hz screen's beat; on a screen held at 30 Hz (battery saver) every frame
+  // takes 33 ms, so there only frames well past the fastest one count
+  const lim = Math.max(22, best * 1.3); let slow = 0; for (const m of q) if (m > lim) slow++;
   // more than a quarter of frames slow for three seconds: step down once, then measure again
-  if (autoQ.slow / autoQ.all > 0.25 && autoQ.step < AUTO_SCALE.length) {
+  if (slow / q.length > 0.25 && autoQ.step < AUTO_SCALE.length - 1) {
     autoQ.step++; applyQuality();
     if (!autoQ.told) { autoQ.told = true; toast(T.autoLow); }
   }
-  autoQ.t = autoQ.slow = autoQ.all = 0;
+  q.length = 0;
 }
 function loop(now) {
   watchSpeed(now - last);
@@ -6547,7 +6582,7 @@ function syncSettingsUI() {
   segmented('#segWx', 'weather', applyTime);
   segmented('#segHorn', 'hornSide', applyControls);
   segmented('#segHornSize', 'hornSize', applyControls);
-  segmented('#segQual', 'quality', () => { autoQ.step = 0; autoQ.t = autoQ.slow = autoQ.all = 0; applyQuality(); });
+  segmented('#segQual', 'quality', () => { autoQ.step = 0; autoQ.ms.length = 0; applyQuality(); });
   segmented('#segFx', 'fx', applyControls);
   segmented('#segShake', 'shake');
   segmented('#segMini', 'mini', applyControls);

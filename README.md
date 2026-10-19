@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.24** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.25** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -109,7 +109,7 @@ Open **Settings** from **More options** in the menu, or from the pause screen. I
   - **Buttons**: arrow buttons for lanes, plus gas and brake pedals.
   - **Wheel**: a steering wheel you turn with one thumb, with gas and brake pedals on the other side. Let go and it springs back to the middle.
 - **Sound**: sound on or off, separate volumes for the engine, horn, effects and radio, radio music on or off, the horn sound (normal, deep, truck or a tune), and how strong the phone vibrates (off, light, normal or strong).
-- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh, the short rains in Nairobi and a highveld thunderstorm in Johannesburg), camera distance, speed effects, screen shake, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows if it still can't keep up.
+- **Display**: graphics quality, auto quality, time of day (auto, morning, afternoon, sunset or night), weather (winter rain in Amman, a sandstorm in Dubai, a dust storm in Riyadh, the short rains in Nairobi and a highveld thunderstorm in Johannesburg), camera distance, speed effects, screen shake, the look (normal or pixel) and the map. With auto quality on, the game draws fewer pixels when it runs slow, then drops the shadows, then draws fewer pixels again if it still can't keep up.
 - **Language**: English or Arabic.
 
 ## Sound and radio
@@ -321,6 +321,14 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.25 (October 2026)
+
+- **Faster on computers.** The game ran slow on big and sharp desktop screens. It now does about half the work per frame, with the same look up close:
+  - Buildings past a few hundred metres are plain boxes with the same painted windows. Water tanks, balconies, solar heaters, dishes and trees far away are left out, since they were only a few pixels each.
+  - The concrete barriers come in 500 m pieces, so the parts behind you and outside the shadows are skipped.
+  - On a large or sharp screen the game draws at most about a 1440p screen's worth of pixels.
+  - Auto quality now steps down when the game misses a 60 Hz beat, not only when it falls under 38 frames a second, and turns off the shadows sooner.
 
 ### 2.24 (October 2026)
 
