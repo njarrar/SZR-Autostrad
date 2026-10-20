@@ -1,13 +1,15 @@
 // Fills in the App Store page through the App Store Connect API: app info, age rating,
 // store text in English and Arabic, screenshots, build, price, review notes.
-// Runs from .github/workflows/app-store.yml. Set SUBMIT=1 to send the version for review.
+// Runs from .github/workflows/app-store.yml. SHOTS=1 uploads the screenshots again, WAIT_BUILD=1 waits
+// for Apple to finish processing the build, SUBMIT=1 sends the version for review.
+// With --has-build it only says whether this version's build is already on App Store Connect.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 
 const env = process.env;
 const BUNDLE = 'com.njarrar.autostrad';
-const VERSION = env.VERSION || '2.29';
+const VERSION = env.VERSION || fs.readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname), '../build.mjs'), 'utf8').match(/const VERSION = '([\d.]+)'/)[1];
 const BUILD = String(Math.round(parseFloat(VERSION) * 100));
 const DIR = path.dirname(new URL(import.meta.url).pathname);
 const LOCALES = { 'en-US': 'en-US', 'ar-SA': 'ar' };
@@ -45,7 +47,14 @@ const failed = [];
 
 const app = (await get(`/v1/apps?filter[bundleId]=${BUNDLE}`)).data[0];
 if (!app) throw new Error('no app with bundle ID ' + BUNDLE);
-console.log('app', app.id, app.attributes.name);
+const findBuild = async () => (await get(`/v1/builds?filter[app]=${app.id}&filter[version]=${BUILD}&filter[preReleaseVersion.platform]=IOS`)).data[0];
+if (process.argv.includes('--has-build')) {
+  const b = await findBuild();
+  console.log(b ? `build ${BUILD} is already on App Store Connect` : `build ${BUILD} is new`);
+  if (env.GITHUB_OUTPUT) fs.appendFileSync(env.GITHUB_OUTPUT, `has=${b ? 1 : 0}\n`);
+  process.exit(0);
+}
+console.log('app', app.id, app.attributes.name, 'version', VERSION, 'build', BUILD);
 
 // ---------- app info: category, content rights, name and subtitle, age rating ----------
 const infos = (await get(`/v1/apps/${app.id}/appInfos`)).data;
@@ -72,8 +81,8 @@ await step('age rating 4+', async () => {
   const decl = (await get(`/v1/appInfos/${info.id}/ageRatingDeclaration`)).data;
   const attributes = {};
   for (const [k, v] of Object.entries(decl.attributes)) {
-    if (typeof v === 'boolean' || /^(gambling|unrestrictedWebAccess|lootBox|messagingAndChat|userGeneratedContent|advertising|parentalControls|ageAssurance|healthOrWellnessTopics|seventeenPlus)$/.test(k)) attributes[k] = false;
-    else if (k === 'kidsAgeBand' || k === 'ageRatingOverride' || k === 'ageRatingOverrideV2' || k === 'koreaAgeRatingOverride' || k === 'developerAgeRatingInfoUrl') continue;
+    if (typeof v === 'boolean' || /^(gambling|unrestrictedWebAccess|lootBox|messagingAndChat|userGeneratedContent|advertising|parentalControls|ageAssurance|healthOrWellnessTopics|seventeenPlus|socialMedia|socialMediaAgeRestricted)$/.test(k)) attributes[k] = false;
+    else if (k === 'kidsAgeBand' || k === 'gracRatingClassificationNumber' || k === 'ageRatingOverride' || k === 'ageRatingOverrideV2' || k === 'koreaAgeRatingOverride' || k === 'developerAgeRatingInfoUrl') continue;
     else attributes[k] = 'NONE';
   }
   console.log('     age rating fields:', Object.keys(attributes).join(', '));
@@ -90,10 +99,14 @@ const firstVersion = versions.every((v) => v.id === ver.id);
 await step('version ' + VERSION + ' and copyright', () => patch(`/v1/appStoreVersions/${ver.id}`, { data: { type: 'appStoreVersions', id: ver.id, attributes: { versionString: VERSION, copyright: '2026 njarrar', releaseType: 'AFTER_APPROVAL' } } }));
 
 await step('build ' + BUILD, async () => {
-  const builds = (await get(`/v1/builds?filter[app]=${app.id}&filter[version]=${BUILD}&filter[preReleaseVersion.platform]=IOS`)).data;
-  if (!builds.length) throw new Error('build ' + BUILD + ' not found yet');
-  const b = builds[0];
+  let b = await findBuild();
+  // a fresh upload takes Apple 5 to 30 minutes to process
+  for (let i = 0; env.WAIT_BUILD === '1' && i < 60 && (!b || b.attributes.processingState === 'PROCESSING'); i++) {
+    await new Promise((r) => setTimeout(r, 30000)); b = await findBuild();
+  }
+  if (!b) throw new Error('build ' + BUILD + ' not found yet');
   console.log('     build state', b.attributes.processingState);
+  if (b.attributes.processingState !== 'VALID') throw new Error('build ' + BUILD + ' is ' + b.attributes.processingState);
   if (b.attributes.usesNonExemptEncryption == null) await patch(`/v1/builds/${b.id}`, { data: { type: 'builds', id: b.id, attributes: { usesNonExemptEncryption: false } } }).catch(() => {});
   await patch(`/v1/appStoreVersions/${ver.id}/relationships/build`, { data: { type: 'builds', id: b.id } });
 });
@@ -122,7 +135,7 @@ async function uploadShot(setId, file) {
   await patch(`/v1/appScreenshots/${shot.id}`, { data: { type: 'appScreenshots', id: shot.id, attributes: { uploaded: true, sourceFileChecksum: md5 } } });
 }
 
-for (const loc of verLocs.filter((l) => LOCALES[l.attributes.locale])) {
+for (const loc of verLocs.filter((l) => LOCALES[l.attributes.locale] && env.SHOTS === '1')) {
   const sets = (await get(`/v1/appStoreVersionLocalizations/${loc.id}/appScreenshotSets`)).data;
   for (const [type, folder] of Object.entries(SHOT_SETS)) {
     await step(`screenshots ${loc.attributes.locale} ${folder}`, async () => {
@@ -138,8 +151,8 @@ for (const loc of verLocs.filter((l) => LOCALES[l.attributes.locale])) {
 // ---------- review details, price, countries ----------
 await step('review notes and contact', async () => {
   const attributes = { notes: REVIEW_NOTES, demoAccountRequired: false, contactEmail: env.REVIEW_EMAIL || 'njarrar@gmail.com' };
-  if (env.REVIEW_FIRST) attributes.contactFirstName = env.REVIEW_FIRST;
-  if (env.REVIEW_LAST) attributes.contactLastName = env.REVIEW_LAST;
+  attributes.contactFirstName = env.REVIEW_FIRST || 'Najeeb';
+  attributes.contactLastName = env.REVIEW_LAST || 'Jarrar';
   if (env.REVIEW_PHONE) attributes.contactPhone = env.REVIEW_PHONE;
   const have = await get(`/v1/appStoreVersions/${ver.id}/appStoreReviewDetail`).then((r) => r.data).catch(() => null);
   if (have) await patch(`/v1/appStoreReviewDetails/${have.id}`, { data: { type: 'appStoreReviewDetails', id: have.id, attributes } });
@@ -147,6 +160,7 @@ await step('review notes and contact', async () => {
 });
 
 await step('price: free', async () => {
+  if ((await get(`/v1/apps/${app.id}/appPriceSchedule`).catch(() => ({}))).data) return;
   const points = (await get(`/v1/apps/${app.id}/appPricePoints?filter[territory]=USA&limit=200`)).data;
   const free = points.find((p) => parseFloat(p.attributes.customerPrice) === 0);
   if (!free) throw new Error('no free price point');
@@ -157,6 +171,7 @@ await step('price: free', async () => {
 });
 
 await step('available in every country', async () => {
+  if (await get(`/v1/apps/${app.id}/appAvailabilityV2`).then((r) => r.data).catch(() => null)) return;
   let terr = [], url = '/v1/territories?limit=200';
   while (url) { const r = await get(url); terr = terr.concat(r.data); url = r.links && r.links.next; }
   await post('/v2/appAvailabilities', {
@@ -172,6 +187,27 @@ if (env.SUBMIT === '1') {
     await patch(`/v1/reviewSubmissions/${sub.id}`, { data: { type: 'reviewSubmissions', id: sub.id, attributes: { submitted: true } } });
   });
 }
+
+// ---------- read everything back ----------
+await step('check', async () => {
+  const show = (label, v) => console.log(`     ${v === undefined || v === null || v === '' ? 'EMPTY' : 'set  '} ${label}${v && String(v).length < 80 ? ': ' + v : ''}`);
+  const inf = (await get(`/v1/appInfos/${info.id}?include=primaryCategory,primarySubcategoryOne,primarySubcategoryTwo`));
+  show('category', inf.data.relationships.primaryCategory.data?.id);
+  show('subcategories', [inf.data.relationships.primarySubcategoryOne.data?.id, inf.data.relationships.primarySubcategoryTwo.data?.id].filter(Boolean).join(', '));
+  show('content rights', (await get(`/v1/apps/${app.id}`)).data.attributes.contentRightsDeclaration);
+  for (const l of (await get(`/v1/appInfos/${info.id}/appInfoLocalizations`)).data) for (const k of ['name', 'subtitle', 'privacyPolicyUrl']) show(`${l.attributes.locale} ${k}`, l.attributes[k]);
+  const v = (await get(`/v1/appStoreVersions/${ver.id}?include=build`));
+  show('version', v.data.attributes.versionString); show('copyright', v.data.attributes.copyright); show('build', v.data.relationships.build.data && BUILD);
+  for (const l of (await get(`/v1/appStoreVersions/${ver.id}/appStoreVersionLocalizations`)).data) {
+    for (const k of ['description', 'keywords', 'promotionalText', 'supportUrl', 'marketingUrl']) show(`${l.attributes.locale} ${k}`, l.attributes[k]);
+    for (const set of (await get(`/v1/appStoreVersionLocalizations/${l.id}/appScreenshotSets`)).data) show(`${l.attributes.locale} ${set.attributes.screenshotDisplayType} screenshots`, (await get(`/v1/appScreenshotSets/${set.id}/appScreenshots`)).data.length);
+  }
+  const rd = await get(`/v1/appStoreVersions/${ver.id}/appStoreReviewDetail`).then((r) => r.data).catch(() => null);
+  for (const k of ['contactFirstName', 'contactLastName', 'contactPhone', 'contactEmail', 'notes']) show('review ' + k, rd && rd.attributes[k]);
+  show('price schedule', (await get(`/v1/apps/${app.id}/appPriceSchedule`).catch(() => ({}))).data?.id);
+  show('countries', await get(`/v1/apps/${app.id}/appAvailabilityV2`).then((r) => r.data.attributes.availableInNewTerritories).catch(() => null));
+  console.log('     App Privacy ("Data Not Collected") has no API: set it once by hand');
+});
 
 console.log(failed.length ? '\nNot done: ' + failed.join('; ') : '\nAll done');
 if (failed.length) process.exitCode = 1;

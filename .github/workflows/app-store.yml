@@ -1,31 +1,99 @@
-name: App Store listing
+name: App Store
 
-# Fills in the App Store page (text, screenshots, build, age rating, price) from store-ios/.
-# Runs on a push to the app-store branch, or from Actions > App Store listing > Run workflow.
-# Put "submit" in the commit message to also send the version for review.
+# Builds the iPhone and iPad app on a Mac runner, uploads it to App Store Connect, fills in the
+# store page from store-ios/ and sends the version for review. It runs by itself when VERSION in
+# build.mjs changes on main, and skips the build when that version is already uploaded.
+# Needs the secrets ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (App Store Connect API key, App Manager),
+# APPLE_TEAM_ID, APPLE_CERTS_P12 and APPLE_CERTS_PASSWORD (distribution certificate, base64),
+# and REVIEW_PHONE for Apple's reviewers.
 on:
   push:
-    branches: [app-store]
+    branches: [main, app-store]
+    paths: [build.mjs, store-ios/**, .github/workflows/app-store.yml]
   workflow_dispatch:
+    inputs:
+      shots:
+        description: Upload the screenshots in store-ios/screenshots again
+        type: boolean
+        default: false
+      submit:
+        description: Send the version for review
+        type: boolean
+        default: true
 
 permissions:
   contents: read
 
+env:
+  ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+  ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+  ASC_KEY: ${{ secrets.ASC_KEY_P8 }}
+
 jobs:
-  listing:
-    runs-on: ubuntu-latest
+  ios:
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Fill in the App Store page
+      - name: Is this version new?
+        id: check
+        run: node store-ios/upload.mjs --has-build
+      # the app-store branch is for trying changes: build without uploading, and never submit
+      - name: Try-out build
+        if: github.ref_name == 'app-store'
+        run: echo "has=0" >> $GITHUB_OUTPUT
+      - name: Build the games into the app
+        if: steps.check.outputs.has == '0' || github.ref_name == 'app-store'
+        working-directory: mobile
+        run: |
+          npm ci
+          node prepare.mjs
+          npx cap sync ios
+      - name: Signing certificate and API key
+        if: steps.check.outputs.has == '0' || github.ref_name == 'app-store'
         env:
-          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
-          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          ASC_KEY: ${{ secrets.ASC_KEY_P8 }}
-          REVIEW_FIRST: ${{ secrets.REVIEW_FIRST_NAME }}
-          REVIEW_LAST: ${{ secrets.REVIEW_LAST_NAME }}
+          P12: ${{ secrets.APPLE_CERTS_P12 }}
+          P12_PASS: ${{ secrets.APPLE_CERTS_PASSWORD }}
+        run: |
+          KC=$RUNNER_TEMP/build.keychain-db
+          security create-keychain -p ci "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p ci "$KC"
+          echo "$P12" | base64 --decode > $RUNNER_TEMP/cert.p12
+          security import $RUNNER_TEMP/cert.p12 -P "$P12_PASS" -A -t cert -f pkcs12 -k "$KC"
+          security set-key-partition-list -S apple-tool:,apple: -k ci "$KC"
+          security list-keychain -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
+          mkdir -p $RUNNER_TEMP/keys
+          if echo "$ASC_KEY" | grep -q BEGIN; then echo "$ASC_KEY" > $RUNNER_TEMP/keys/key.p8; else echo "$ASC_KEY" | base64 --decode > $RUNNER_TEMP/keys/key.p8; fi
+      - name: Archive and upload
+        if: steps.check.outputs.has == '0' || github.ref_name == 'app-store'
+        env:
+          TEAM: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -o pipefail
+          AUTH="-allowProvisioningUpdates -authenticationKeyPath $RUNNER_TEMP/keys/key.p8 -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath $RUNNER_TEMP/App.xcarchive \
+            DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Automatic $AUTH archive | tail -40
+          cat > $RUNNER_TEMP/export.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM</string>
+            <key>signingStyle</key><string>automatic</string>
+          </dict></plist>
+          EOF
+          if [ "$GITHUB_REF_NAME" = app-store ]; then echo "try-out branch: archive built, not uploading"; exit 0; fi
+          xcodebuild -exportArchive -archivePath $RUNNER_TEMP/App.xcarchive \
+            -exportOptionsPlist $RUNNER_TEMP/export.plist -exportPath $RUNNER_TEMP/export $AUTH
+      - name: Fill in the store page
+        env:
           REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}
-          SUBMIT: ${{ contains(github.event.head_commit.message, 'submit') && '1' || '0' }}
+          WAIT_BUILD: ${{ github.ref_name == 'main' && '1' || '0' }}
+          SHOTS: ${{ inputs.shots && '1' || '0' }}
+          SUBMIT: ${{ ((github.event_name == 'push' && github.ref_name == 'main') || inputs.submit) && '1' || '0' }}
         run: node store-ios/upload.mjs
