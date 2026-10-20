@@ -45,6 +45,8 @@
     <string key="page.T_PAUSED">Paused</string>
     <string key="page.T_RESUME">Resume</string>
     <string key="page.T_QUIT">Back to menu</string>
+    <string key="page.T_CITIES">All cities</string>
+    <string key="page.T_CITIES_S">Cities</string>
     <string key="page.T_AGAIN">Again</string>
     <string key="page.T_NEWTRIP">New trip</string>
     <string key="page.T_HOWTO">How to play</string>

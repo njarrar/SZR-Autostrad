@@ -9,7 +9,7 @@
   },
   "ios": {
     "contentInset": "never",
-    "scrollEnabled": false,
+    "scrollEnabled": true,
     "path": "../ios"
   }
 }

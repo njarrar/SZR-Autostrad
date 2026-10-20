@@ -38,6 +38,7 @@ for (const file of fs.readdirSync(www, { recursive: true }).filter((f) => f.ends
     .replace(/https:\/\/fonts\.googleapis\.com\/css2\?[^"']*/g, up + 'vendor/fonts.css')
     .split(THREE).join(up + 'vendor/three.min.js')
     .replace(/href="((?:\.\.\/)?[a-z]+\/)"/g, 'href="$1index.html"')
+    .replace(/href="\.\.\/"/g, 'href="../index.html"')
     .replace(/(location\.replace\(')([a-z]+\/)'/g, "$1$2index.html'")
     .replace(/(url=)([a-z]+\/)"/g, '$1$2index.html"');
   if (/https:\/\/(fonts|cdn)\./.test(html)) throw new Error(file + ' still loads from the network');
