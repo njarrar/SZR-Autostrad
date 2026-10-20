@@ -1,0 +1,31 @@
+name: App Store listing
+
+# Fills in the App Store page (text, screenshots, build, age rating, price) from store-ios/.
+# Runs on a push to the app-store branch, or from Actions > App Store listing > Run workflow.
+# Put "submit" in the commit message to also send the version for review.
+on:
+  push:
+    branches: [app-store]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fill in the App Store page
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY: ${{ secrets.ASC_KEY_P8 }}
+          REVIEW_FIRST: ${{ secrets.REVIEW_FIRST_NAME }}
+          REVIEW_LAST: ${{ secrets.REVIEW_LAST_NAME }}
+          REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}
+          SUBMIT: ${{ contains(github.event.head_commit.message, 'submit') && '1' || '0' }}
+        run: node store-ios/upload.mjs

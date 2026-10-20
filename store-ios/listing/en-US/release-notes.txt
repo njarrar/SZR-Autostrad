@@ -1,0 +1,1 @@
+A Cities button on each city's menu and an All cities button on the pause screen take you back to the list of cities. The list of cities now scrolls, and all five fit on most phones.
