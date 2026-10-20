@@ -31,6 +31,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .brand h1 { font-family: var(--display); font-weight: 400; font-size: clamp(44px, 9vw, 62px); line-height: 1; margin: 4px 0 0; color: var(--accent); text-wrap: balance; }
 .brand p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .brandtop { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+/* back to the list of cities; the eyebrow takes the space between it and the language button */
+.brandtop .eyebrow { margin-inline-end: auto; }
+.homebtn { position: relative; display: inline-flex; align-items: center; gap: 2px; border: 1.5px solid var(--line); border-radius: 999px; padding: 3px 12px 3px 6px; font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; }
+.homebtn svg { width: 16px; height: 16px; }
+.homebtn::after { content: ''; position: absolute; inset: -9px -4px; }
+[dir="rtl"] .homebtn { padding: 3px 6px 3px 12px; }
+[dir="rtl"] .homebtn svg { transform: scaleX(-1); }
+#pause a.btn { color: var(--ink); text-decoration: none; text-align: center; }
 .langbtn { position: relative; border: 1.5px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 12px; font-size: 13px; font-weight: 600; }
 .langbtn::after { content: ''; position: absolute; inset: -9px -4px; }
 .flagbar { height: 6px; border-radius: 3px; background: var(--flagbar); }
@@ -731,7 +739,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 <div id="menu" class="screen">
   <div class="sheet">
     <div class="brand">
-      <div class="brandtop"><span class="eyebrow">__EYEBROW__</span><button class="langbtn" type="button" data-lang-switch></button></div>
+      <div class="brandtop"><a class="homebtn" href="../" data-home><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>__T_CITIES_S__</a><span class="eyebrow">__EYEBROW__</span><button class="langbtn" type="button" data-lang-switch></button></div>
       <h1>__NAME__</h1>
       <div class="flagbar"></div>
       <p>__BLURB__</p>
@@ -881,7 +889,8 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   <div class="sheet">
     <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)">__T_PAUSED__</h2>
     <div class="row"><button class="go" id="btnResume" type="button">__T_RESUME__</button></div>
-    <div class="row"><button class="btn" id="btnPauseSet" type="button">__T_SETTINGS__</button><button class="btn" id="btnQuit" type="button">__T_QUIT__</button></div>
+    <div class="row"><button class="btn" id="btnQuit" type="button">__T_QUIT__</button><a class="btn" href="../" data-home>__T_CITIES__</a></div>
+    <div class="row"><button class="btn" id="btnPauseSet" type="button">__T_SETTINGS__</button></div>
   </div>
 </div>
 

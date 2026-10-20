@@ -22,7 +22,7 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); line-height: 1.6; }
-.wrap { max-width: 1080px; margin: 0 auto; padding: 48px 20px 40px; display: flex; flex-direction: column; gap: 36px; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: max(48px, calc(env(safe-area-inset-top, 0px) + 12px)) max(20px, env(safe-area-inset-right, 0px)) max(40px, calc(env(safe-area-inset-bottom, 0px) + 24px)) max(20px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 36px; }
 header { display: flex; flex-direction: column; gap: 8px; }
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .langbtn { position: relative; font: 600 14px var(--body); color: var(--ink); background: transparent; border: 1.5px solid var(--line); border-radius: 999px; padding: 4px 14px; cursor: pointer; }
@@ -52,16 +52,16 @@ kbd { font: 600 12px var(--body); background: var(--card); border: 1px solid var
 footer { font-size: 13px; color: var(--muted); }
 footer a { color: inherit; }
 .introShort, .app .web { display: none; }
-/* phones: a short intro and the three cities as rows, so every Play button is on the first screen */
+/* phones: a short intro and the cities as slim rows, so every Play button fits on the first screen */
 @media (max-width: 560px) {
-  .wrap { padding-top: 24px; gap: 22px; }
-  h1 { font-size: 38px; }
+  .wrap { padding-top: max(24px, calc(env(safe-area-inset-top, 0px) + 12px)); gap: 22px; }
+  h1 { font-size: 30px; }
   .intro { display: none; }
   .introShort { display: block; font-size: 15px; }
-  .cities { grid-template-columns: 1fr; gap: 10px; }
+  .cities { grid-template-columns: 1fr; gap: 8px; }
   .city { flex-direction: row; }
-  .city img { width: 116px; aspect-ratio: auto; flex: none; }
-  .city .txt { padding: 10px 12px; gap: 2px; }
+  .city img { width: 104px; aspect-ratio: auto; flex: none; }
+  .city .txt { padding: 8px 12px; gap: 0; }
   .city .en { font-size: 11px; }
   .city h2 { font-size: 28px; }
   .city p, .city .ver { display: none; }
@@ -86,7 +86,7 @@ footer a { color: inherit; }
         <h2 data-t="amman.name">لفّة عمّان</h2>
         <p data-t="amman.text">العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.28 · 2026-10-19 15:16 UTC</span>
+        <span class="ver">v2.29 · 2026-10-20 17:15 UTC</span>
       </div>
     </a>
     <a class="city c-dubai" href="dubai/" data-game>
@@ -96,7 +96,7 @@ footer a { color: inherit; }
         <h2 data-t="dubai.name">لفّة دبي</h2>
         <p data-t="dubai.text">برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.28 · 2026-10-19 15:16 UTC</span>
+        <span class="ver">v2.29 · 2026-10-20 17:15 UTC</span>
       </div>
     </a>
     <a class="city c-riyadh" href="riyadh/" data-game>
@@ -106,7 +106,7 @@ footer a { color: inherit; }
         <h2 data-t="riyadh.name">لفّة الرياض</h2>
         <p data-t="riyadh.text">قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.28 · 2026-10-19 15:16 UTC</span>
+        <span class="ver">v2.29 · 2026-10-20 17:15 UTC</span>
       </div>
     </a>
     <a class="city c-nairobi" href="nairobi/" data-game>
@@ -116,7 +116,7 @@ footer a { color: inherit; }
         <h2 data-t="nairobi.name">لفّة نيروبي</h2>
         <p data-t="nairobi.text">مركز كينياتا، حديقة أوهورو، استاد نيايو، الزرافات بالمحمية، بوماس، أبر هيل وويستلاندز. السواقة عاليسار، انتبه للماتاتو والمطبات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.28 · 2026-10-19 15:16 UTC</span>
+        <span class="ver">v2.29 · 2026-10-20 17:15 UTC</span>
       </div>
     </a>
     <a class="city c-johannesburg" href="johannesburg/" data-game>
@@ -126,7 +126,7 @@ footer a { color: inherit; }
         <h2 data-t="johannesburg.name">لفّة جوهانسبرغ</h2>
         <p data-t="johannesburg.text">مركز كارلتون، جسر مانديلا، بونتي، طالع على M1 لساندتون، ونازل لسويتو وأبراج أورلاندو وملعب سوكر سيتي ومدينة غولد ريف. السواقة عاليسار، وانتبه للتكسيات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.28 · 2026-10-19 15:16 UTC</span>
+        <span class="ver">v2.29 · 2026-10-20 17:15 UTC</span>
       </div>
     </a>
   </section>

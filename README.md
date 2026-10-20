@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.28** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.29** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -321,6 +321,11 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.29 (October 2026)
+
+- **Back to the cities.** A "Cities" button at the top of each city's menu, and an "All cities" button on the pause screen, go back to the list of cities. On Android, the back button on a city's menu now goes to the list instead of closing the app.
+- **City list scrolls in the iPhone app.** The list of cities could not scroll in the iPhone app, so the last city was out of reach. It scrolls now, the cards are slimmer so all five fit on most phones, and the title sits below the clock.
 
 ### 2.28 (October 2026)
 

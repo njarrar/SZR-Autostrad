@@ -139,6 +139,8 @@
     <string key="page.T_KYAY">برافو عليك! وصلت</string>
     <string key="page.T_KSTICKER">ستيكر جديد!</string>
     <string key="page.T_KHOME">البيت</string>
+    <string key="page.T_CITIES">كل المدن</string>
+    <string key="page.T_CITIES_S">المدن</string>
     <string key="page.T_KAGAIN">كمان مرة!</string>
     <string key="page.T_KSTOP">قِف</string>
     <string key="page.T_KBEEP">بيب</string>

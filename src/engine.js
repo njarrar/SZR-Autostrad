@@ -4759,7 +4759,10 @@ function goBack() {
   else return false;
   return true;
 }
-window.autostradBack = goBack;
+// the app's back button goes one step further: from the plain menu to the list of cities
+window.autostradBack = () => goBack() || (location.href = $('[data-home]').href, true);
+// the list of cities opens in the language this game is in
+document.querySelectorAll('[data-home]').forEach((a) => { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + LANG; });
 
 // ---------- boot ----------
 async function boot() {
