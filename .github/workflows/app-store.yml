@@ -37,6 +37,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      # Apple only takes apps built with the iOS 26 SDK or later, so pick the newest Xcode 26 on the runner
+      - name: Use Xcode 26
+        run: |
+          X=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          [ -n "$X" ] || { echo "No Xcode 26 on this runner"; exit 1; }
+          sudo xcode-select -s "$X"
+          xcodebuild -version
       - name: Is this version new?
         id: check
         run: node store-ios/upload.mjs --has-build
