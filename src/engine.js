@@ -3783,7 +3783,7 @@ const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck'
 function soundFrame() {
   const live = game.mode === 'drive' && !game.paused && !game.walk;
   const car = CARS[curCar()] || CARS[0];
-  const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
+  const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = game.kids && /^(f1|sports|bmw)$/.test(car.kind) ? 'toy' : car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
   s.gas = !!player.input.gas && game.count <= 0; s.brake = !!player.input.brake; s.brakeAmt = player.input.brakeAmt || 0; s.cruising = player.input.cruising; s.slip = player.slip;
   const d = SND.drive(s);
   if (live) { setText(hud.gear, d.gear); setStyle(hud.rpm, 'width', Math.round(d.rpm * 100) + '%'); }
@@ -4659,20 +4659,25 @@ function startTour() {
   if (settings.control === 'tilt') askTilt();
   showScreen(null);
   startTrip({ free: true, traffic: 0, tour: true });
-  tour = { i: -1 };
+  tour = { i: -1, max: 0 };
   $('#tour').hidden = false;
   nextTourStep();
 }
-function nextTourStep() {
-  tour.i++;
+function nextTourStep() { showTourStep(tour.i + 1); }
+// steps already seen can be opened again: the Back button, a tap on a dot, or a swipe on the card
+function showTourStep(i) {
+  if (!tour || i < 0) return;
+  tour.i = i;
   if (tour.i >= TT.steps.length) { endTour(); return; }
+  tour.max = Math.max(tour.max, i);
   const st = TT.steps[tour.i];
   tour.done = false; tour.v0 = player.v; tour.d0 = player.d; tour.t0 = performance.now();
   $('#tourStep').textContent = (tour.i + 1) + ' / ' + TT.steps.length;
   $('#tourTitle').textContent = st.title;
   $('#tourBody').innerHTML = tourBody(st);
-  $('#tourDots').innerHTML = TT.steps.map((_, i) => `<i class="${i < tour.i ? 'past' : i === tour.i ? 'now' : ''}"></i>`).join('');
-  $('#tourNext').hidden = !!st.wait;
+  $('#tourDots').innerHTML = TT.steps.map((_, i) => `<i data-i="${i}" class="${i < tour.i ? 'past' : i === tour.i ? 'now' : ''}${i <= tour.max && i !== tour.i ? ' seen' : ''}"></i>`).join('');
+  $('#tourBack').hidden = tour.i === 0;
+  $('#tourNext').hidden = !!st.wait && tour.i >= tour.max;
   $('#tourTry').hidden = !st.wait;
   $('#tourTry').textContent = TT.tryIt;
   $('#tourTry').classList.remove('ok');
@@ -4729,6 +4734,24 @@ function skipTour() {
   tour = null; $('#tour').hidden = true; store.set('toured', 1); game.tour = false; toMenu();
 }
 $('#tourNext').onclick = nextTourStep;
+$('#tourBack').onclick = () => showTourStep(tour.i - 1);
+$('#tourDots').onclick = (e) => { const d = e.target.closest('i.seen'); if (d) showTourStep(+d.dataset.i); };
+{
+  // swipe toward the start of the line to go forward through seen steps, the other way to go back (mirrored in Arabic)
+  let sw = null;
+  const card = $('#tourCard');
+  card.addEventListener('pointerdown', (e) => { if (!e.target.closest('button')) sw = { x: e.clientX, y: e.clientY }; });
+  // hold on to the finger once it really moves, so a swipe that ends off the card still counts and taps stay taps
+  card.addEventListener('pointermove', (e) => { if (sw && !sw.cap && Math.abs(e.clientX - sw.x) > 12) { sw.cap = true; try { card.setPointerCapture(e.pointerId); } catch (err) { /* old browsers */ } } });
+  card.addEventListener('pointerup', (e) => {
+    if (!sw || !tour) return;
+    const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const back = (dx > 0) !== (document.documentElement.dir === 'rtl');
+    if (back) showTourStep(tour.i - 1); else if (tour.i < tour.max) showTourStep(tour.i + 1);
+  });
+  card.addEventListener('pointercancel', () => { sw = null; });
+}
 $('#tourSkip').onclick = skipTour;
 $('#btnTour').onclick = startTour;
 $('#wTour').onclick = () => { store.set('welcomed', 1); startTour(); };
@@ -4778,6 +4801,8 @@ async function boot() {
   // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
   if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
   if (GPU.name) $('#settings .ver').textContent += ' · ' + GPU.name;
+  // say whether this phone or browser could run WebGPU (Vulkan on Android, Metal on Apple), to plan a move to it
+  if (navigator.gpu) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);

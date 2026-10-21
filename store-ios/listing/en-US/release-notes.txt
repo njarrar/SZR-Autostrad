@@ -1,1 +1,1 @@
-A Cities button on each city's menu and an All cities button on the pause screen take you back to the list of cities. The list of cities now scrolls, and all five fit on most phones.
+Go back a step in the guided tour with the Back button, a tap on a dot, or a swipe. In Kids Mode the car on the trip bar faces the right way, and the race cars sound softer.

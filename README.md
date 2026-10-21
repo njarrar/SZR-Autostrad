@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.29** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.30** (October 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -75,7 +75,7 @@ The game picks English or Arabic from your browser language. Press the language 
 
 ## First time playing
 
-The game opens with a welcome screen that explains the three things to know. Press **Guided tour** (**جولة تعليمية** in Arabic) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. Crashes and fines don't count during the tour. You can start the tour again at any time from **More options** in the menu with **How to play** (**كيف ألعب؟**).
+The game opens with a welcome screen that explains the three things to know. Press **Guided tour** (**جولة تعليمية** in Arabic) for a one minute tour on an empty road. The tour asks you to try each control (gas, changing lanes, braking and the horn), waits until you do it, then points at each part of the screen and explains it. To see a step again, press **Back**, tap one of the dots, or swipe the card to the right (to the left in Arabic). Crashes and fines don't count during the tour. You can start the tour again at any time from **More options** in the menu with **How to play** (**كيف ألعب؟**).
 
 ## Controls
 
@@ -321,6 +321,13 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.30 (October 2026)
+
+- **Go back in the tour.** The guided tour has a **Back** button. You can also tap a dot to open a step you have seen, or swipe the card: to the right to go back and to the left to go forward again (the other way round in Arabic).
+- **Kids Mode car faces the right way.** The little car on the trip bar at the top now faces the place it drives to.
+- **Softer race car in Kids Mode.** The F1 and the other fast cars hum softly in Kids Mode, in place of a loud race engine.
+- **WebGPU check.** The bottom of Settings now says **WebGPU** when the phone or browser can run it, to help plan a move to newer graphics.
 
 ### 2.29 (October 2026)
 
