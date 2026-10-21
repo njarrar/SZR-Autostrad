@@ -382,6 +382,11 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #tourTry { font-weight: 700; font-size: 14px; color: var(--accent); background: var(--chip); padding: 8px 14px; border-radius: 999px; animation: pulse 1.4s ease-in-out infinite; }
 #tourTry.ok { animation: none; background: var(--good); color: #fff; }
 #tourNext { padding: 9px 22px; }
+#tourCard { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.tourBtns { display: flex; gap: 8px; align-items: center; margin-inline-start: auto; }
+#tourBack { padding: 9px 14px; font-size: 15px; font-weight: 700; border-radius: 999px; background: var(--chip); color: var(--accent); border: 0; }
+#tourDots i.seen { cursor: pointer; }
+#tourDots i.seen::before { content: ''; display: block; margin: -10px -3px; height: 28px; }
 @keyframes pulse { 50% { opacity: .55; } }
 #tourEnd { justify-content: center; align-items: center; }
 #tourEnd .sheet { margin: 0; }
@@ -631,7 +636,8 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 .kTrip .e { font-size: 24px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; line-height: 1; }
 .kLine { position: relative; flex: 1; height: 12px; background: #cfd8ea; border-radius: 6px; }
 .kLine i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #20b456; border-radius: 6px; }
-.kLine .kMe { position: absolute; left: 0; top: 50%; transform: translate(-50%, -58%); font-size: 30px; line-height: 1; }
+/* car emojis face left, so turn the car to face the place it drives to */
+.kLine .kMe { position: absolute; left: 0; top: 50%; transform: translate(-50%, -58%) scaleX(-1); font-size: 30px; line-height: 1; }
 .kTrip img { height: 40px; aspect-ratio: 3 / 2; border-radius: 8px; image-rendering: pixelated; }
 #kPause { position: absolute; top: max(14px, env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); width: 46px; height: 46px; background: rgba(255,255,255,.6); box-shadow: none; }
 .kBig { position: absolute; bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: clamp(100px, 25vmin, 132px); height: clamp(100px, 25vmin, 132px); border-radius: 50%; border: 6px solid #fff; padding: 0; display: grid; place-items: center; background: radial-gradient(circle at 35% 30%, #5fb2ff, #1f72e0 70%); box-shadow: 0 8px 0 #1553a8, 0 12px 22px rgba(0,0,0,.25); touch-action: none; }
@@ -815,7 +821,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="tourHead"><span id="tourStep"></span><button class="linkbtn" id="tourSkip" type="button"><span data-t="page.T_TSKIP">تخطّي الجولة</span></button></div>
     <h3 id="tourTitle"></h3>
     <p id="tourBody"></p>
-    <div class="tourFoot"><div id="tourDots"></div><span id="tourTry"></span><button class="go" id="tourNext" type="button" style="font-size:22px"><span data-t="page.T_TNEXT">التالي</span></button></div>
+    <div class="tourFoot"><div id="tourDots"></div><span id="tourTry"></span><span class="tourBtns"><button id="tourBack" type="button"><span data-t="page.T_KBACK">رجوع</span></button><button class="go" id="tourNext" type="button" style="font-size:22px"><span data-t="page.T_TNEXT">التالي</span></button></span></div>
   </div>
 </div>
 
@@ -865,7 +871,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <p class="ver">v2.29 · 2026-10-20 17:15 UTC</p>
+    <p class="ver">v2.30 · 2026-10-21 09:51 UTC</p>
   </div>
 </div>
 
@@ -1151,6 +1157,8 @@ const SND = (() => {
     sedan:  { base: 32, span: 92, bite: 2, biteG: 0.28, fire: 2, fireWave: 'triangle', depth: 0.24, lp: 680, lpSpan: 2500, peak: 420, peakQ: 1.1, peakG: 4, comb: 0.0019, vol: 0.075, rum: 0.016, rumF: 3, whine: 5, whineG: 0.022, gears: 6 },
     f1:     { base: 70, span: 300, bite: 1.2, biteG: 0.3, fire: 2, fireWave: 'sawtooth', depth: 0.22, lp: 1300, lpSpan: 5600, peak: 1100, peakQ: 1.8, peakG: 6, comb: 0.0009, vol: 0.08, rum: 0.012, rumF: 6, whine: 12, whineG: 0.03, gears: 8 },
     van:    { base: 22, span: 58, bite: 2.5, biteG: 0.38, fire: 2, fireWave: 'triangle', depth: 0.46, lp: 520, lpSpan: 1600, peak: 280, peakQ: 1.3, peakG: 5, comb: 0.0027, vol: 0.1, rum: 0.045, rumF: 5, whine: 6, whineG: 0.03, gears: 5 },
+    // kids mode race cars: a soft, round toy hum with no gear changes, in place of a screaming race engine
+    toy:    { base: 52, span: 60, bite: 1, biteG: 0.12, fire: 1, fireWave: 'sine', depth: 0.3, lp: 380, lpSpan: 520, peak: 300, peakQ: 0.8, peakG: 2, comb: 0.0015, vol: 0.06, rum: 0.006, rumF: 3, whine: 0, whineG: 0, gears: 1, drive: 0.35 },
     coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
@@ -1248,7 +1256,7 @@ const SND = (() => {
     set(e.saw.frequency, f, 0.04); set(e.sub.frequency, f * V.bite, 0.04); set(e.hi.frequency, f * 2.01, 0.04);
     set(e.lfo.frequency, f * V.fire, 0.03);
     e.saw.detune.setTargetAtTime((Math.random() * 2 - 1) * 5 * (1 - e.rpm), t, 0.25); // a rough idle that smooths out higher up
-    set(e.drive.gain, 0.6 + 2 * c, 0.08); // push harder into the clipper on throttle for a grittier tone
+    set(e.drive.gain, (0.6 + 2 * c) * (V.drive || 1), 0.08); // push harder into the clipper on throttle for a grittier tone
     set(e.lp.frequency, (V.lp + e.rpm * V.lpSpan) * (0.72 + 0.28 * c), 0.08);
     set(e.rbp.frequency, Math.max(70, f * V.rumF), 0.08); set(e.rg.gain, V.rum * (0.45 + e.rpm) * c, 0.1);
     if (e.whine) { set(e.whine.frequency, f * V.whine, 0.05); set(e.wG.gain, V.whineG * Math.max(0, e.rpm - 0.25) * 1.4 * (s.gas || V.gears <= 1 ? 1 : 0.4), 0.1); }
@@ -6077,7 +6085,7 @@ const sizeOf = (k) => (k === 'truck' || k === 'bus' || k === 'coaster' ? 'truck'
 function soundFrame() {
   const live = game.mode === 'drive' && !game.paused && !game.walk;
   const car = CARS[curCar()] || CARS[0];
-  const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
+  const s = driveIn; s.live = live; s.idle = !live || !!game.walk; s.kind = game.kids && /^(f1|sports|bmw)$/.test(car.kind) ? 'toy' : car.kind; s.kmh = player.v * 3.6; s.vmax = car.vmax;
   s.gas = !!player.input.gas && game.count <= 0; s.brake = !!player.input.brake; s.brakeAmt = player.input.brakeAmt || 0; s.cruising = player.input.cruising; s.slip = player.slip;
   const d = SND.drive(s);
   if (live) { setText(hud.gear, d.gear); setStyle(hud.rpm, 'width', Math.round(d.rpm * 100) + '%'); }
@@ -6953,20 +6961,25 @@ function startTour() {
   if (settings.control === 'tilt') askTilt();
   showScreen(null);
   startTrip({ free: true, traffic: 0, tour: true });
-  tour = { i: -1 };
+  tour = { i: -1, max: 0 };
   $('#tour').hidden = false;
   nextTourStep();
 }
-function nextTourStep() {
-  tour.i++;
+function nextTourStep() { showTourStep(tour.i + 1); }
+// steps already seen can be opened again: the Back button, a tap on a dot, or a swipe on the card
+function showTourStep(i) {
+  if (!tour || i < 0) return;
+  tour.i = i;
   if (tour.i >= TT.steps.length) { endTour(); return; }
+  tour.max = Math.max(tour.max, i);
   const st = TT.steps[tour.i];
   tour.done = false; tour.v0 = player.v; tour.d0 = player.d; tour.t0 = performance.now();
   $('#tourStep').textContent = (tour.i + 1) + ' / ' + TT.steps.length;
   $('#tourTitle').textContent = st.title;
   $('#tourBody').innerHTML = tourBody(st);
-  $('#tourDots').innerHTML = TT.steps.map((_, i) => `<i class="${i < tour.i ? 'past' : i === tour.i ? 'now' : ''}"></i>`).join('');
-  $('#tourNext').hidden = !!st.wait;
+  $('#tourDots').innerHTML = TT.steps.map((_, i) => `<i data-i="${i}" class="${i < tour.i ? 'past' : i === tour.i ? 'now' : ''}${i <= tour.max && i !== tour.i ? ' seen' : ''}"></i>`).join('');
+  $('#tourBack').hidden = tour.i === 0;
+  $('#tourNext').hidden = !!st.wait && tour.i >= tour.max;
   $('#tourTry').hidden = !st.wait;
   $('#tourTry').textContent = TT.tryIt;
   $('#tourTry').classList.remove('ok');
@@ -7023,6 +7036,24 @@ function skipTour() {
   tour = null; $('#tour').hidden = true; store.set('toured', 1); game.tour = false; toMenu();
 }
 $('#tourNext').onclick = nextTourStep;
+$('#tourBack').onclick = () => showTourStep(tour.i - 1);
+$('#tourDots').onclick = (e) => { const d = e.target.closest('i.seen'); if (d) showTourStep(+d.dataset.i); };
+{
+  // swipe toward the start of the line to go forward through seen steps, the other way to go back (mirrored in Arabic)
+  let sw = null;
+  const card = $('#tourCard');
+  card.addEventListener('pointerdown', (e) => { if (!e.target.closest('button')) sw = { x: e.clientX, y: e.clientY }; });
+  // hold on to the finger once it really moves, so a swipe that ends off the card still counts and taps stay taps
+  card.addEventListener('pointermove', (e) => { if (sw && !sw.cap && Math.abs(e.clientX - sw.x) > 12) { sw.cap = true; try { card.setPointerCapture(e.pointerId); } catch (err) { /* old browsers */ } } });
+  card.addEventListener('pointerup', (e) => {
+    if (!sw || !tour) return;
+    const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
+    const back = (dx > 0) !== (document.documentElement.dir === 'rtl');
+    if (back) showTourStep(tour.i - 1); else if (tour.i < tour.max) showTourStep(tour.i + 1);
+  });
+  card.addEventListener('pointercancel', () => { sw = null; });
+}
 $('#tourSkip').onclick = skipTour;
 $('#btnTour').onclick = startTour;
 $('#wTour').onclick = () => { store.set('welcomed', 1); startTour(); };
@@ -7072,6 +7103,8 @@ async function boot() {
   // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
   if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
   if (GPU.name) $('#settings .ver').textContent += ' · ' + GPU.name;
+  // say whether this phone or browser could run WebGPU (Vulkan on Android, Metal on Apple), to plan a move to it
+  if (navigator.gpu) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);

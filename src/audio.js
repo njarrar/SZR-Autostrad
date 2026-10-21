@@ -88,6 +88,8 @@ const SND = (() => {
     sedan:  { base: 32, span: 92, bite: 2, biteG: 0.28, fire: 2, fireWave: 'triangle', depth: 0.24, lp: 680, lpSpan: 2500, peak: 420, peakQ: 1.1, peakG: 4, comb: 0.0019, vol: 0.075, rum: 0.016, rumF: 3, whine: 5, whineG: 0.022, gears: 6 },
     f1:     { base: 70, span: 300, bite: 1.2, biteG: 0.3, fire: 2, fireWave: 'sawtooth', depth: 0.22, lp: 1300, lpSpan: 5600, peak: 1100, peakQ: 1.8, peakG: 6, comb: 0.0009, vol: 0.08, rum: 0.012, rumF: 6, whine: 12, whineG: 0.03, gears: 8 },
     van:    { base: 22, span: 58, bite: 2.5, biteG: 0.38, fire: 2, fireWave: 'triangle', depth: 0.46, lp: 520, lpSpan: 1600, peak: 280, peakQ: 1.3, peakG: 5, comb: 0.0027, vol: 0.1, rum: 0.045, rumF: 5, whine: 6, whineG: 0.03, gears: 5 },
+    // kids mode race cars: a soft, round toy hum with no gear changes, in place of a screaming race engine
+    toy:    { base: 52, span: 60, bite: 1, biteG: 0.12, fire: 1, fireWave: 'sine', depth: 0.3, lp: 380, lpSpan: 520, peak: 300, peakQ: 0.8, peakG: 2, comb: 0.0015, vol: 0.06, rum: 0.006, rumF: 3, whine: 0, whineG: 0, gears: 1, drive: 0.35 },
     coaster:{ base: 19, span: 48, bite: 2.5, biteG: 0.42, fire: 3, fireWave: 'triangle', depth: 0.52, lp: 460, lpSpan: 1400, peak: 250, peakQ: 1.4, peakG: 6, comb: 0.0031, vol: 0.105, rum: 0.055, rumF: 6, whine: 5, whineG: 0.025, gears: 6 }
   };
   let eng = null;
@@ -185,7 +187,7 @@ const SND = (() => {
     set(e.saw.frequency, f, 0.04); set(e.sub.frequency, f * V.bite, 0.04); set(e.hi.frequency, f * 2.01, 0.04);
     set(e.lfo.frequency, f * V.fire, 0.03);
     e.saw.detune.setTargetAtTime((Math.random() * 2 - 1) * 5 * (1 - e.rpm), t, 0.25); // a rough idle that smooths out higher up
-    set(e.drive.gain, 0.6 + 2 * c, 0.08); // push harder into the clipper on throttle for a grittier tone
+    set(e.drive.gain, (0.6 + 2 * c) * (V.drive || 1), 0.08); // push harder into the clipper on throttle for a grittier tone
     set(e.lp.frequency, (V.lp + e.rpm * V.lpSpan) * (0.72 + 0.28 * c), 0.08);
     set(e.rbp.frequency, Math.max(70, f * V.rumF), 0.08); set(e.rg.gain, V.rum * (0.45 + e.rpm) * c, 0.1);
     if (e.whine) { set(e.whine.frequency, f * V.whine, 0.05); set(e.wG.gain, V.whineG * Math.max(0, e.rpm - 0.25) * 1.4 * (s.gas || V.gears <= 1 ? 1 : 0.4), 0.1); }
