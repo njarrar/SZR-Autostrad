@@ -203,8 +203,19 @@ if (env.SUBMIT === '1') {
     const open = (await get(`/v1/reviewSubmissions?filter[app]=${app.id}&filter[platform]=IOS&filter[state]=UNRESOLVED_ISSUES,READY_FOR_REVIEW`)).data[0];
     const sub = open || (await post('/v1/reviewSubmissions', { data: { type: 'reviewSubmissions', attributes: { platform: 'IOS' }, relationships: { app: { data: { type: 'apps', id: app.id } } } } })).data;
     const items = (await get(`/v1/reviewSubmissions/${sub.id}/items?include=appStoreVersion`)).data;
-    if (!items.some((i) => i.relationships.appStoreVersion?.data?.id === ver.id)) await post('/v1/reviewSubmissionItems', { data: { type: 'reviewSubmissionItems', relationships: { reviewSubmission: { data: { type: 'reviewSubmissions', id: sub.id } }, appStoreVersion: { data: { type: 'appStoreVersions', id: ver.id } } } } });
-    await patch(`/v1/reviewSubmissions/${sub.id}`, { data: { type: 'reviewSubmissions', id: sub.id, attributes: { submitted: true } } });
+    let send = sub;
+    if (!items.some((i) => i.relationships.appStoreVersion?.data?.id === ver.id)) {
+      try {
+        await post('/v1/reviewSubmissionItems', { data: { type: 'reviewSubmissionItems', relationships: { reviewSubmission: { data: { type: 'reviewSubmissions', id: sub.id } }, appStoreVersion: { data: { type: 'appStoreVersions', id: ver.id } } } } });
+      } catch (e) {
+        // a version Apple sent back stays in its old submission: send that one again
+        const old = /ITEM_PART_OF_ANOTHER_SUBMISSION[\s\S]*reviewSubmission with id ([\w-]+)/.exec(e.message);
+        if (!old) throw e;
+        send = (await get(`/v1/reviewSubmissions/${old[1]}`)).data;
+        console.log('     version is in submission', send.id, send.attributes.state);
+      }
+    }
+    await patch(`/v1/reviewSubmissions/${send.id}`, { data: { type: 'reviewSubmissions', id: send.id, attributes: { submitted: true } } });
   });
 }
 
