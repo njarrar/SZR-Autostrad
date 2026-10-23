@@ -20,6 +20,8 @@ const URLS = {
   privacy: 'https://njarrar.github.io/SZR-Autostrad/privacy.html',
 };
 const REVIEW_NOTES = [
+  'About the Guideline 5.6 rejection: Autostrad has no hidden features, and nothing in it changes after review. The whole game ships inside the app: no code is downloaded, there are no remote settings, server switches or date-based features. We think some features were hard to find, so this build lists each one below. In 2.31 we also removed web-only switches and test code from the app, added a support page, and Kids Mode no longer stays on after a relaunch.',
+  '',
   'No account or sign-in. Free, no purchases, no ads. The app makes no network calls, has no remote settings and collects no data. Every feature is in the build you are reviewing and works from the first launch.',
   '',
   'Where each feature is:',
