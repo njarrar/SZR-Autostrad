@@ -1,8 +1,9 @@
 name: App Store
 
 # Builds the iPhone and iPad app on a Mac runner, uploads it to App Store Connect, fills in the
-# store page from store-ios/ and sends the version for review. It runs by itself when VERSION in
-# build.mjs changes on main, and skips the build when that version is already uploaded.
+# store page from store-ios/. It runs by itself when VERSION in build.mjs changes on main, and skips
+# the build when that version is already uploaded. It sends the version for review only when run by
+# hand (Actions > App Store > Run workflow), so a new build never lands while another is in review.
 # Needs the secrets ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_P8 (App Store Connect API key, App Manager),
 # APPLE_TEAM_ID, APPLE_CERTS_P12 and APPLE_CERTS_PASSWORD (distribution certificate, base64),
 # and REVIEW_PHONE for Apple's reviewers.
@@ -102,5 +103,5 @@ jobs:
           REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}
           WAIT_BUILD: ${{ github.ref_name == 'main' && '1' || '0' }}
           SHOTS: ${{ inputs.shots && '1' || '0' }}
-          SUBMIT: ${{ ((github.event_name == 'push' && github.ref_name == 'main') || inputs.submit) && '1' || '0' }}
+          SUBMIT: ${{ inputs.submit && '1' || '0' }}
         run: node store-ios/upload.mjs

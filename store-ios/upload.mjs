@@ -15,11 +15,25 @@ const DIR = path.dirname(new URL(import.meta.url).pathname);
 const LOCALES = { 'en-US': 'en-US', 'ar-SA': 'ar' };
 const SHOT_SETS = { APP_IPHONE_67: 'iphone-6.9', APP_IPAD_PRO_3GEN_129: 'ipad-13' };
 const URLS = {
-  support: 'https://github.com/njarrar/SZR-Autostrad',
+  support: 'https://njarrar.github.io/SZR-Autostrad/support.html',
   marketing: 'https://njarrar.github.io/SZR-Autostrad/',
   privacy: 'https://njarrar.github.io/SZR-Autostrad/privacy.html',
 };
-const REVIEW_NOTES = 'No account or sign-in. Pick a city and tap Let\'s go to drive. Kids Mode is the button under the cars on the menu; to leave it, hold the lock in the top corner for 3 seconds. The app makes no network calls and collects no data.';
+const REVIEW_NOTES = [
+  'No account or sign-in. Free, no purchases, no ads. The app makes no network calls, has no remote settings and collects no data. Every feature is in the build you are reviewing and works from the first launch.',
+  '',
+  'Where each feature is:',
+  '- Drive: pick a city, pick a trip and a car, tap Let\'s go. A short guided tour runs the first time.',
+  '- Haitham Mode (walk the sidewalk): the button next to Let\'s go.',
+  '- Kids Mode (ages 4 to 7): Switch to Kids Mode, the row under the cars. To leave, hold the lock in the top corner for 3 seconds (a grown-up gate). Each new launch starts on the normal menu.',
+  '- Garage, Landmark Album, Settings, How to play: tap More options on the menu.',
+  '- Pixel look: Settings > Display > Look.',
+  '- Radio: the radio button at the top while driving.',
+  '- Taxi, matatu, Coaster bus, Formula 1 car: the car list on the menu.',
+  '- Other cities: the back arrow at the top of the menu, or All cities on the pause screen.',
+  '- English and Arabic: the language button on the city list.',
+  '- With a hardware keyboard: arrows or WASD drive, Space horn, N nitro, C camera, R radio, V pixel look, P pause. Each one also has a button on screen or in Settings.',
+].join('\n');
 
 function token() {
   const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');

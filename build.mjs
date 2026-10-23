@@ -12,7 +12,7 @@ const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here 
 if (!CITIES.length) throw new Error('no cities found in cities/');
 const DEFAULT_LANG = 'ar';
 // shown on each game's start screen and on the landing cards; raise VERSION with each release
-const VERSION = '2.30';
+const VERSION = '2.31';
 const BUILT = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 const STAMP = `v${VERSION} · ${BUILT}`;
 
@@ -117,5 +117,6 @@ for (const id of CITIES) {
   for (const id of CITIES) if (fs.existsSync(here + `cities/${id}/cover.png`)) fs.copyFileSync(here + `cities/${id}/cover.png`, here + `dist/img/${id}.png`);
   // the privacy policy the app stores link to
   fs.copyFileSync(here + 'src/privacy.html', here + 'dist/privacy.html');
+  fs.copyFileSync(here + 'src/support.html', here + 'dist/support.html');
 }
 console.log('index.html', Object.keys(langs).join(' '), '·', CITIES.join(' '));
