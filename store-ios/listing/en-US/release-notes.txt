@@ -1,1 +1,1 @@
-Go back a step in the guided tour with the Back button, a tap on a dot, or a swipe. In Kids Mode the car on the trip bar faces the right way, and the race cars sound softer.
+Each launch now opens on the normal menu, and Kids Mode shows grown-ups how to leave. Small fixes for the app.

@@ -871,7 +871,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <p class="ver">v2.30 · 2026-10-21 09:51 UTC</p>
+    <p class="ver">v2.31 · 2026-10-23 18:12 UTC</p>
   </div>
 </div>
 
@@ -5681,8 +5681,12 @@ const CARS = C.cars;
 const calmMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const settings = Object.assign({ car: 0, color: C.colors[0], plate: C.defaultPlate, cam: 1, hornSide: 'right', hornSize: 'normal', sound: 1, volEngine: 70, volFx: 80, dir: 1, traffic: 1, trip: 0, quality: (matchMedia('(pointer: coarse)').matches ? 'low' : 'high'),
   control: 'stick', steerFeel: 50, brakeFeel: 50, fx: calmMotion ? 0 : 1, shake: calmMotion ? 0 : 1, mini: 1, volHorn: 80, volMusic: 60, music: 1, vib: 2, station: 0, autoQ: 1, time: 'auto', weather: 0, hornStyle: 'city', led: 0, sticker: 1, charm: 1, look: 'normal', kids: 0, kidsCar: -1, kidsPlace: -1, kidsSteer: 'arrows' }, store.get('settings', {}));
-// ?look=pixel or ?look=normal in the address picks the look
-try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
+// inside the iOS and Android apps: no web-only switches, test hooks or debug lines
+const APP = !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+// each launch starts on the normal menu; Kids Mode is one tap away and stays on only until the app closes
+settings.kids = 0;
+// ?look=pixel or ?look=normal in the address picks the look (web only)
+if (!APP) try { const lk = new URLSearchParams(location.search).get('look'); if (lk === 'pixel' || lk === 'normal') settings.look = lk; } catch (e) { /* no query */ }
 applyLook();
 function saveSettings() { store.set('settings', settings); }
 const album = Object.assign({}, store.get('album', {}));
@@ -6786,6 +6790,8 @@ function kidsHome(stepN) {
     $('#kCards').querySelectorAll('.kCard').forEach((x) => { x.classList.toggle('sel', x === b); x.setAttribute('aria-pressed', x === b); });
   });
   showScreen('#kids');
+  // grown-ups see how to leave for a few seconds each time
+  if (carStep) { const h = $('#kLockHint'); h.hidden = false; clearTimeout(kidsHome.t); kidsHome.t = setTimeout(() => { h.hidden = true; }, 5000); }
   say(q);
 }
 function kidsSwitch(on) {
@@ -7125,13 +7131,13 @@ async function boot() {
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
   if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
-  if (GPU.name) $('#settings .ver').textContent += ' · ' + GPU.name;
+  if (GPU.name && !APP) $('#settings .ver').textContent += ' · ' + GPU.name;
   // say whether this phone or browser could run WebGPU (Vulkan on Android, Metal on Apple), to plan a move to it
-  if (navigator.gpu) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
+  if (navigator.gpu && !APP) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud, kids };
+  if (!APP) window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud, kids };
 }
 boot();
 })();
