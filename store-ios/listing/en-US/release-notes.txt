@@ -1,1 +1,1 @@
-Each launch now opens on the normal menu, and Kids Mode shows grown-ups how to leave. Small fixes for the app.
+The touch stick no longer gets stuck on iPhone. Lift your thumb anywhere and it lets go, and a new touch always takes it over.

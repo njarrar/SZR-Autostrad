@@ -871,7 +871,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <p class="ver">v2.31 · 2026-10-23 18:12 UTC</p>
+    <p class="ver">v2.32 · 2026-10-27 18:14 UTC</p>
   </div>
 </div>
 
@@ -5769,7 +5769,9 @@ function stickMove(px, py) {
   stickEl.classList.toggle('left', stick.x < -0.3); stickEl.classList.toggle('right', stick.x > 0.3);
 }
 function stickPress(e) {
-  if (stick.on || game.mode !== 'drive') return;
+  if (game.mode !== 'drive' || (stick.on && e.pointerId === stick.id)) return;
+  // a lost lift (iOS can drop it) left the stick held; a new touch takes it over instead of being ignored
+  if (stick.on) stickRelease();
   e.preventDefault(); audioInit();
   const floating = settings.control === 'onehand' || settings.control === 'tilt';
   if (floating) { stickEl.style.left = e.clientX + 'px'; stickEl.style.top = e.clientY + 'px'; stickEl.style.bottom = 'auto'; stickEl.style.transform = 'translate(-50%, -50%)'; stick.ox = e.clientX; stick.oy = e.clientY; }
@@ -5790,6 +5792,8 @@ for (const el of [stickEl, $('#ctl')]) {
   el.addEventListener('pointermove', (e) => { if (stick.on && e.pointerId === stick.id) { e.preventDefault(); stickMove(e.clientX, e.clientY); } });
   for (const ev of ['pointerup', 'pointercancel']) el.addEventListener(ev, (e) => { if (e.pointerId === stick.id) stickRelease(); });
 }
+// the finger can come up outside the stick, so watch the whole page too
+for (const ev of ['pointerup', 'pointercancel']) addEventListener(ev, (e) => { if (stick.on && e.pointerId === stick.id) stickRelease(); });
 // tilt: turn the phone like a wheel; works upright and sideways
 function screenAngle() { try { return screen.orientation ? screen.orientation.angle : (window.orientation || 0); } catch (e) { return 0; } }
 addEventListener('deviceorientation', (e) => {
@@ -5804,7 +5808,7 @@ const wheelEl = $('#wheel'), wheelSvg = wheelEl.querySelector('svg');
 const wheelIn = { on: false, x: 0, ang: 0, last: 0, id: null };
 const angAt = (e) => { const b = wheelEl.getBoundingClientRect(); return Math.atan2(e.clientY - (b.top + b.height / 2), e.clientX - (b.left + b.width / 2)); };
 wheelEl.addEventListener('pointerdown', (e) => {
-  if (game.mode !== 'drive' || wheelIn.on) return;
+  if (game.mode !== 'drive' || (wheelIn.on && e.pointerId === wheelIn.id)) return;
   e.preventDefault(); audioInit(); wheelIn.on = true; wheelIn.id = e.pointerId; wheelIn.last = angAt(e); wheelEl.classList.add('held');
   try { wheelEl.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
 });
@@ -5821,6 +5825,7 @@ wheelEl.addEventListener('pointermove', (e) => {
   wheelSvg.style.transform = `rotate(${wheelIn.ang}rad)`;
 });
 for (const ev of ['pointerup', 'pointercancel']) wheelEl.addEventListener(ev, (e) => { if (e.pointerId === wheelIn.id) wheelRelease(); });
+for (const ev of ['pointerup', 'pointercancel']) addEventListener(ev, (e) => { if (wheelIn.on && e.pointerId === wheelIn.id) wheelRelease(); });
 function wheelRelease() { wheelIn.on = false; wheelIn.id = null; wheelIn.x = 0; wheelIn.ang = 0; wheelSvg.style.transform = ''; wheelEl.classList.remove('held'); }
 function askTilt() {
   try { if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') DeviceOrientationEvent.requestPermission().catch(() => {}); } catch (e) { /* ignore */ }
