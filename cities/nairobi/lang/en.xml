@@ -46,7 +46,7 @@
     <string key="car.2.name">Toyota Axio</string>
     <string key="car.2.sub">Taxi</string>
     <string key="car.2.pros">Even all round, and picks up fares</string>
-    <string key="car.2.cons">Nothing stands out</string>
+    <string key="car.2.cons"></string>
     <string key="car.3.name">Subaru WRX</string>
     <string key="car.3.sub">Rally car</string>
     <string key="car.3.pros">Quick and grippy, made for the Safari Rally</string>

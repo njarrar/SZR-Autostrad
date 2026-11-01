@@ -40,7 +40,7 @@
     <string key="car.2.name">Toyota Camry</string>
     <string key="car.2.sub">Taxi</string>
     <string key="car.2.pros">Even all round, good at everything</string>
-    <string key="car.2.cons">Nothing stands out</string>
+    <string key="car.2.cons"></string>
     <string key="car.3.name">Hyundai Accent</string>
     <string key="car.3.sub">Small sedan</string>
     <string key="car.3.pros">Light and easy to weave</string>

@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.32** (October 2026). See [What's new](#whats-new) for the changes.
+**Version 2.33** (November 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -321,6 +321,16 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.33 (November 2026)
+
+- **Horn says Horn.** The round horn button shows the word Horn (زامور, هرن or بوري in each city's Arabic) instead of a speaker, which looked like a mute button.
+- **Calmer pause.** When you pause, the road dims and blurs, and the driving panels and touch controls step aside until you resume.
+- **More road on a sideways phone.** The top panels are only as wide as their text, and Points and Fines show once they are above zero.
+- **One look on every screen.** iPads and computers now use the same slim stats row and round Pause and Radio buttons as phones, one size up.
+- **One clear start button.** On an upright phone Let's go takes the full width, and Haitham Mode sits under it as a quiet button. Sideways they stay side by side.
+- **No red line without a reason.** A car with no real downside no longer shows a red "Nothing stands out" line.
+- **Short version line.** Settings ends with just the version number. Tap it to see the build time and graphics chip.
 
 ### 2.32 (October 2026)
 
