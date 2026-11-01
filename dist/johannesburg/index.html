@@ -94,6 +94,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .goBar .go { flex: 1; }
 .goBar .walkGo { flex: 0 0 auto; margin-inline-start: 8px; display: flex; align-items: center; gap: 6px; font-size: 19px; background: var(--chip); color: var(--ink); padding: 8px 12px 6px; }
 .walkGo svg { width: 22px; height: 22px; flex: none; }
+/* one clear next step: Let's go takes the width, Haitham Mode sits under it as a quiet button (side by side on a sideways phone) */
+.goBar { flex-wrap: wrap; }
+.goBar .go { flex: 1 1 100%; }
+.goBar .walkGo { flex: 1 1 100%; margin: 6px 0 0; background: none; justify-content: center; padding: 6px; min-height: 44px; font-size: 16px; color: var(--muted); }
+.goBar .walkGo small { display: none; }
 .walkGo .wTxt { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
 .walkGo small { font-family: var(--body); font-size: 11.5px; font-weight: 600; color: var(--muted); line-height: 1.15; }
 /* Haitham Mode: no gears, limit, fuel or damage while walking; nitro lets the dog loose */
@@ -169,6 +174,7 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 .stats { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 104px); inset-inline-start: 12px; display: flex; flex-direction: column; gap: 6px; }
 .chip { background: var(--hud); color: var(--hud-ink); border-radius: 10px; padding: 5px 10px; font-size: 13px; display: flex; gap: 8px; align-items: baseline; }
 .chip span { opacity: .75; font-size: 11px; }
+.chip.zero { display: none; }
 .dmg, .fuel { width: 110px; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; align-self: center; }
 #hDmgBar { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #e2452b); }
 #hFuelBar { height: 100%; width: 100%; background: linear-gradient(90deg, #e2452b, #f6c445 45%, #2ecc71); }
@@ -238,7 +244,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 .tb.on { background: var(--accent); color: var(--on-accent); }
 .tb.gas { height: 110px; }
 .horn { position: absolute; bottom: calc(var(--pad) + 6px); right: 16px; width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22); background: var(--hud); color: var(--hud-ink); display: grid; place-items: center; pointer-events: auto; touch-action: none; }
-.horn svg { width: 46%; height: 46%; }
+/* the horn says its name, so nobody takes it for a sound button */
+.horn span { font-family: var(--display); font-size: 17px; line-height: 1; letter-spacing: .02em; }
+#touch.horn-small .horn span { font-size: 14px; }
 .horn.on { background: var(--accent); color: var(--on-accent); }
 #touch.horn-left .horn { right: auto; left: 16px; }
 #touch.horn-small .horn { width: 58px; height: 58px; }
@@ -315,6 +323,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 
 /* ---------- results / pause ---------- */
 #result, #pause { justify-content: center; align-items: center; }
+/* paused: the road dims and the driving panels and controls step aside */
+#pause { background: rgba(12,14,18,.55); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+body.paused #hud, body.paused #touch { visibility: hidden; }
 #result .sheet, #pause .sheet { margin: 0; }
 #rTitle { font-family: var(--display); font-weight: 400; font-size: 58px; line-height: 1; margin: 0; color: var(--accent); }
 #rSub { margin: 0; color: var(--muted); font-weight: 600; }
@@ -446,7 +457,9 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
   #menu .moreBox { grid-column: 1 / -1; }
   #menu .goBar { grid-column: 1 / -1; }
   #menu .go { font-size: 22px; padding: 7px 12px 4px; }
-  #menu .walkGo { font-size: 16px; }
+  #menu .goBar .go { flex: 1 1 0; }
+  #menu .goBar .walkGo { flex: 0 0 auto; margin: 0; margin-inline-start: 8px; background: var(--chip); color: var(--ink); padding: 8px 12px 6px; font-size: 16px; }
+  #menu .goBar .walkGo small { display: block; }
   #welcome .sheet { width: min(640px, 100%); }
   #welcome h1 { font-size: 44px; }
   .rules { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
@@ -490,16 +503,40 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 @media (max-height: 520px) and (orientation: landscape) {
   #hud { --top: calc(env(safe-area-inset-top, 0px) + 8px); --side: max(10px, env(safe-area-inset-left, 0px)); }
   .hbar { inset-inline: var(--side); }
-  .trip-hud { flex: 0 1 380px; box-sizing: border-box; }
-  .stats { inset-inline: var(--side) auto; width: 380px; box-sizing: border-box; }
+  .trip-hud { flex: 0 1 auto; max-width: 380px; padding-inline: 14px 18px; box-sizing: border-box; }
+  .stats { inset-inline: var(--side) auto; width: auto; max-width: 380px; padding: 0 6px; box-sizing: border-box; }
+  .chip { flex: none; padding: 0 9px; }
+  .dmg, .fuel { width: 52px; }
   #btnPause { inset-inline-end: var(--side); }
   #btnRadio { inset-inline-end: calc(var(--side) + 44px); }
   #mini { inset-inline-end: var(--side); }
   #radioMenu { inset-inline-end: var(--side); }
-  #warn, .toast { left: var(--side); right: auto; width: 380px; box-sizing: border-box; }
+  #warn, .toast { left: var(--side); right: auto; width: auto; max-width: 380px; box-sizing: border-box; }
   [dir=rtl] #warn, [dir=rtl] .toast { left: auto; right: var(--side); }
 }
 #fx:not(.fast) .streaks { animation: none; visibility: hidden; }
+/* tablets and desktops: the same slim rows as on phones, one size up */
+@media (min-width: 641px) and (min-height: 521px) {
+  #hud { --top: calc(env(safe-area-inset-top, 0px) + 14px); }
+  .hbar { top: var(--top); inset-inline: 14px; }
+  .trip-hud { flex: 0 1 auto; padding: 8px 16px; }
+  .trip-hud .lbl { display: none; }
+  .stats { top: calc(var(--top) + 78px); inset-inline-start: 14px; flex-direction: row; gap: 0; background: var(--hud); border-radius: 14px; padding: 0 8px; height: 44px; align-items: center; }
+  .chip { background: none; padding: 0 10px; align-items: center; gap: 6px; font-size: 16px; }
+  .chip > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .chip .ic { display: block; width: 18px; height: 18px; flex: none; opacity: .8; }
+  .dmg, .fuel { width: 64px; }
+  #mini { top: calc(var(--top) + 84px); inset-inline-end: 14px; }
+  #btnPause, #btnRadio { top: calc(var(--top) + 214px); width: 46px; height: 46px; padding: 0; border-radius: 14px; display: grid; place-items: center; }
+  #btnPause { inset-inline-end: 14px; font-size: 0; }
+  #btnPause::before { content: ''; width: 15px; height: 18px; box-sizing: border-box; border-inline: 5px solid currentColor; }
+  #btnRadio { inset-inline-end: 68px; max-width: none; }
+  #btnRadio span { display: none; }
+  #btnRadio:not(.on)::after { inset-inline-start: 7px; }
+  #radioMenu { top: calc(var(--top) + 266px); inset-inline-end: 14px; }
+  #warn { top: calc(var(--top) + 134px); left: 14px; transform: none; }
+  [dir=rtl] #warn { left: auto; right: 14px; }
+}
 /* upright phone: one slim stats row under the trip and speed, messages show over that row, and pause and radio sit on the free left side above the controls */
 @media (max-width: 640px) and (orientation: portrait) {
   .stats { top: calc(var(--top) + 60px); inset-inline: 10px 92px; height: 32px; }
@@ -517,13 +554,14 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
 /* version and build time under the blurb */
 @media (hover: none) and (pointer: coarse) { .keysNote { display: none; } }
-#settings .ver { margin: 0; font-size: 12px; color: var(--muted); direction: ltr; unicode-bidi: isolate; text-align: center; }
+#settings .ver { margin: 0 auto; display: block; border: 0; background: none; padding: 6px 10px; font: inherit; font-size: 12px; color: var(--muted); direction: ltr; unicode-bidi: isolate; text-align: center; }
 /* tablets: the stick sits in the bottom corner, out of the way of the car, and the buttons grow for bigger hands on a bigger screen */
 @media (pointer: coarse) and (min-width: 700px) and (min-height: 600px) {
   #touch { --stick: min(28vmin, 230px); --pad: calc(env(safe-area-inset-bottom, 0px) + 28px); }
   #touch[data-mode=stick] #stick { left: max(36px, calc(env(safe-area-inset-left, 0px) + 24px)); transform: none; }
   #touch[data-mode=stick].horn-left #stick { left: auto; right: max(36px, calc(env(safe-area-inset-right, 0px) + 24px)); }
   .horn { width: 92px; height: 92px; right: 28px; }
+  .horn span { font-size: 21px; }
   #touch.horn-left .horn { left: 28px; }
   #btnNitro { width: 72px; height: 72px; right: 38px; bottom: calc(var(--pad) + 116px); }
   #touch.horn-left #btnNitro { left: 38px; }
@@ -730,7 +768,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="grp"><button class="tb" data-hold="brake" type="button"><span data-t="page.T_BRAKE">بريك</span></button><button class="tb gas" data-hold="gas" type="button"><span data-t="page.T_GAS">بنزين</span></button></div>
   </div>
   <button id="btnNitro" type="button" aria-label="نيترو" data-t-aria="page.T_NITRO"><span>N<sub>2</sub>O</span></button>
-  <button class="horn" data-hold="horn" type="button" aria-label="زامور" data-t-aria="page.T_HORN"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg></button>
+  <button class="horn" data-hold="horn" type="button"><span><span data-t="page.T_HORN">زامور</span></span></button>
 </div>
 
 <div id="kidsUI" hidden>
@@ -871,7 +909,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <p class="ver">v2.32 · 2026-10-27 18:14 UTC</p>
+    <button class="ver" type="button" data-full="v2.33 · 2026-11-01 13:57 UTC">v2.33</button>
   </div>
 </div>
 
@@ -6179,7 +6217,8 @@ function togglePause() {
   if (tour) $('#tour').hidden = game.paused;
 }
 function toMenu() { const wasKids = game.kids; game.kids = false; kidsClear(); $('#kidsUI').hidden = true; if (wasKids) { buildPlayer(); applyTime(); } clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; if (settings.kids) kidsHome(0); else showScreen('#menu'); placeMenuCar(); }
-function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); statusBar(!!sel); }
+function zeroChip(el, on) { if (el._zero !== on) { el._zero = on; el.parentNode.classList.toggle('zero', on); } }
+function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); statusBar(!!sel); document.body.classList.toggle('paused', !!sel && game.paused && game.mode === 'drive'); }
 // in the iPhone app the clock and battery show in menus and hide on the road
 function statusBar(show) { try { window.webkit.messageHandlers.statusBar.postMessage(show); } catch (e) { /* not the iPhone app */ } }
 statusBar(!!document.querySelector('.screen:not([hidden])'));
@@ -6393,7 +6432,7 @@ function drawHud() {
   if (game.kids) { kidsHud(); return; }
   if (game.walk) {
     setText(hud.speed, Math.round(player.v * 3.6)); setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(walkScore()));
-    setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS);
+    setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS); zeroChip(hud.score, false); zeroChip(hud.viol, false);
     const nShow = (game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro).toFixed(2);
     setStyle(hud.nitro, '--n', nShow); setStyle(hud.nitroBtn, '--n', nShow); setClass(hud.nitro, 'on', game.boost > 0); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
     const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
@@ -6402,7 +6441,10 @@ function drawHud() {
   }
   const kmh = Math.round(player.v * 3.6);
   setText(hud.speed, kmh); speedoEl = speedoEl || hud.speed.closest('.speedo'); setClass(speedoEl, 'over', kmh > C.limit + C.tolerance);
-  setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(computeScore())); setText(hud.viol, game.radar + game.crashes);
+  const pts = computeScore(), viol = game.radar + game.crashes;
+  setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(pts)); setText(hud.viol, viol);
+  // points and fines show once there is something to show
+  zeroChip(hud.score, !pts); zeroChip(hud.viol, !viol);
   if (hud.pax && player.paxCap > 0) setText(hud.pax, `${game.pax}/${player.paxCap}`);
   if (hud.fuel) setStyle(hud.fuel, 'width', Math.round(game.fuel) + '%');
   setStyle(hud.dmg, 'width', Math.round(player.dmg) + '%');
@@ -6683,7 +6725,8 @@ function renderGarage() {
   const cur = CARS[settings.car];
   // phones hide the bars on the car cards, so the chosen car's bars sit under More options
   $('#carStats').innerHTML = `<b>${cur.name}</b><span></span>` + carStats(cur).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('');
-  $('#carPros').innerHTML = `<span class="pro">+ ${cur.pros}</span><span class="con">− ${cur.cons}</span>`;
+  // a car with no real downside shows no red line
+  $('#carPros').innerHTML = `<span class="pro">+ ${cur.pros}</span>` + (cur.cons ? `<span class="con">− ${cur.cons}</span>` : '');
   const fixed = CARS[settings.car].fixedColor;
   $('#colors').innerHTML = C.colors.map((c) => `<button type="button" class="sw${c === settings.color ? ' sel' : ''}" style="--sw:#${c.toString(16).padStart(6, '0')}" data-c="${c}" aria-label="color"${fixed ? ' disabled' : ''}></button>`).join('');
   $('#colors').querySelectorAll('.sw').forEach((b) => b.onclick = () => { settings.color = +b.dataset.c; saveSettings(); renderGarage(); buildPlayer(); });
@@ -7136,9 +7179,12 @@ async function boot() {
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
   if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
-  if (GPU.name && !APP) $('#settings .ver').textContent += ' · ' + GPU.name;
+  // Settings shows only the version; a tap shows the build time and graphics chip for bug reports
+  const ver = $('#settings .ver'), verShort = ver.textContent;
+  ver.onclick = () => { ver.textContent = ver.textContent === verShort ? ver.dataset.full : verShort; };
+  if (GPU.name && !APP) ver.dataset.full += ' · ' + GPU.name;
   // say whether this phone or browser could run WebGPU (Vulkan on Android, Metal on Apple), to plan a move to it
-  if (navigator.gpu && !APP) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
+  if (navigator.gpu && !APP) navigator.gpu.requestAdapter().then((a) => { if (a) ver.dataset.full += ' · WebGPU'; }).catch(() => {});
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);

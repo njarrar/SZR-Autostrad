@@ -3854,7 +3854,8 @@ function togglePause() {
   if (tour) $('#tour').hidden = game.paused;
 }
 function toMenu() { const wasKids = game.kids; game.kids = false; kidsClear(); $('#kidsUI').hidden = true; if (wasKids) { buildPlayer(); applyTime(); } clearFx(); evEnd(); resetStops(); walkClear(); game.walk = null; if (haitham) haitham.g.visible = false; if (player.group) player.group.visible = true; $('#hud').classList.remove('walk'); $('#touch').classList.remove('walk'); SND.radio.stop(); radioMenuOpen(false); $('#count').hidden = true; if (tour) { tour = null; $('#tour').hidden = true; } resetInputs(); renderTrips(); renderBooklet(); game.mode = 'menu'; game.paused = false; $('#hud').hidden = true; $('#touch').hidden = true; if (settings.kids) kidsHome(0); else showScreen('#menu'); placeMenuCar(); }
-function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); statusBar(!!sel); }
+function zeroChip(el, on) { if (el._zero !== on) { el._zero = on; el.parentNode.classList.toggle('zero', on); } }
+function showScreen(sel) { document.querySelectorAll('.screen').forEach((s) => { s.hidden = ('#' + s.id) !== sel; }); statusBar(!!sel); document.body.classList.toggle('paused', !!sel && game.paused && game.mode === 'drive'); }
 // in the iPhone app the clock and battery show in menus and hide on the road
 function statusBar(show) { try { window.webkit.messageHandlers.statusBar.postMessage(show); } catch (e) { /* not the iPhone app */ } }
 statusBar(!!document.querySelector('.screen:not([hidden])'));
@@ -4068,7 +4069,7 @@ function drawHud() {
   if (game.kids) { kidsHud(); return; }
   if (game.walk) {
     setText(hud.speed, Math.round(player.v * 3.6)); setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(walkScore()));
-    setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS);
+    setText(hud.viol, game.walk.bumps + '/' + WALK_MAX_BUMPS); zeroChip(hud.score, false); zeroChip(hud.viol, false);
     const nShow = (game.boost > 0 ? Math.min(1, game.boost / 4) : game.nitro).toFixed(2);
     setStyle(hud.nitro, '--n', nShow); setStyle(hud.nitroBtn, '--n', nShow); setClass(hud.nitro, 'on', game.boost > 0); setClass(hud.nitroBtn, 'on', game.boost > 0); setClass(hud.nitroBtn, 'ready', game.boost <= 0 && game.nitro >= 0.25);
     const w = toastTimer > 0 ? '' : game.warnTxt || ''; setText(hud.warn, w); if (hud.warn.hidden !== !w) hud.warn.hidden = !w;
@@ -4077,7 +4078,10 @@ function drawHud() {
   }
   const kmh = Math.round(player.v * 3.6);
   setText(hud.speed, kmh); speedoEl = speedoEl || hud.speed.closest('.speedo'); setClass(speedoEl, 'over', kmh > C.limit + C.tolerance);
-  setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(computeScore())); setText(hud.viol, game.radar + game.crashes);
+  const pts = computeScore(), viol = game.radar + game.crashes;
+  setText(hud.time, fmtTime(game.time)); setText(hud.score, fmt(pts)); setText(hud.viol, viol);
+  // points and fines show once there is something to show
+  zeroChip(hud.score, !pts); zeroChip(hud.viol, !viol);
   if (hud.pax && player.paxCap > 0) setText(hud.pax, `${game.pax}/${player.paxCap}`);
   if (hud.fuel) setStyle(hud.fuel, 'width', Math.round(game.fuel) + '%');
   setStyle(hud.dmg, 'width', Math.round(player.dmg) + '%');
@@ -4358,7 +4362,8 @@ function renderGarage() {
   const cur = CARS[settings.car];
   // phones hide the bars on the car cards, so the chosen car's bars sit under More options
   $('#carStats').innerHTML = `<b>${cur.name}</b><span></span>` + carStats(cur).map(([k, n]) => `<span class="st"><span>${k}</span><i style="--n:${n}"></i></span>`).join('');
-  $('#carPros').innerHTML = `<span class="pro">+ ${cur.pros}</span><span class="con">− ${cur.cons}</span>`;
+  // a car with no real downside shows no red line
+  $('#carPros').innerHTML = `<span class="pro">+ ${cur.pros}</span>` + (cur.cons ? `<span class="con">− ${cur.cons}</span>` : '');
   const fixed = CARS[settings.car].fixedColor;
   $('#colors').innerHTML = C.colors.map((c) => `<button type="button" class="sw${c === settings.color ? ' sel' : ''}" style="--sw:#${c.toString(16).padStart(6, '0')}" data-c="${c}" aria-label="color"${fixed ? ' disabled' : ''}></button>`).join('');
   $('#colors').querySelectorAll('.sw').forEach((b) => b.onclick = () => { settings.color = +b.dataset.c; saveSettings(); renderGarage(); buildPlayer(); });
@@ -4811,9 +4816,12 @@ async function boot() {
   resize(); status.hidden = true; $('#menuBody').hidden = false;
   // Windows' fallback driver means no graphics driver at all; the browser's acceleration switch won't help there
   if (GPU.soft) { $('#noGpu').textContent = /basic render/i.test(GPU.name) ? T.noDriver : T.noGpu; $('#noGpu').hidden = false; }
-  if (GPU.name && !APP) $('#settings .ver').textContent += ' · ' + GPU.name;
+  // Settings shows only the version; a tap shows the build time and graphics chip for bug reports
+  const ver = $('#settings .ver'), verShort = ver.textContent;
+  ver.onclick = () => { ver.textContent = ver.textContent === verShort ? ver.dataset.full : verShort; };
+  if (GPU.name && !APP) ver.dataset.full += ' · ' + GPU.name;
   // say whether this phone or browser could run WebGPU (Vulkan on Android, Metal on Apple), to plan a move to it
-  if (navigator.gpu && !APP) navigator.gpu.requestAdapter().then((a) => { if (a) $('#settings .ver').textContent += ' · WebGPU'; }).catch(() => {});
+  if (navigator.gpu && !APP) navigator.gpu.requestAdapter().then((a) => { if (a) ver.dataset.full += ' · WebGPU'; }).catch(() => {});
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);

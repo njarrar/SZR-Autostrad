@@ -32,7 +32,7 @@
     <string key="car.0.name">Hyundai Elantra</string>
     <string key="car.0.sub">Yellow taxi</string>
     <string key="car.0.pros">Even all round and easy to weave</string>
-    <string key="car.0.cons">Nothing stands out</string>
+    <string key="car.0.cons"></string>
     <string key="car.1.name">Toyota Prius</string>
     <string key="car.1.sub">Hybrid</string>
     <string key="car.1.pros">Steady in curves and easy to turn</string>
