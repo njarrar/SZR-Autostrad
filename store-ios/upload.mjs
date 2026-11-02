@@ -158,7 +158,9 @@ for (const loc of verLocs.filter((l) => LOCALES[l.attributes.locale] && env.SHOT
       let set = sets.find((s) => s.attributes.screenshotDisplayType === type);
       if (!set) set = (await post('/v1/appScreenshotSets', { data: { type: 'appScreenshotSets', attributes: { screenshotDisplayType: type }, relationships: { appStoreVersionLocalization: { data: { type: 'appStoreVersionLocalizations', id: loc.id } } } } })).data;
       for (const old of (await get(`/v1/appScreenshotSets/${set.id}/appScreenshots`)).data) await del(`/v1/appScreenshots/${old.id}`);
-      const shotDir = path.join(DIR, 'screenshots', folder);
+      // Arabic gets its own pictures when a folder-ar folder exists
+      const arDir = path.join(DIR, 'screenshots', folder + '-ar');
+      const shotDir = LOCALES[loc.attributes.locale] === 'ar' && fs.existsSync(arDir) ? arDir : path.join(DIR, 'screenshots', folder);
       for (const f of fs.readdirSync(shotDir).filter((f) => f.endsWith('.png')).sort()) await uploadShot(set.id, path.join(shotDir, f));
     });
   }

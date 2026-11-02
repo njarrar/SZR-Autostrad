@@ -1,1 +1,1 @@
-driving,car,taxi,bus,racing,Arab,Jordan,UAE,Saudi,Kenya,Nairobi,Johannesburg,kids,traffic,3D
+Amman,Jordan,Riyadh,Saudi,Nairobi,matatu,Johannesburg,Arabic,kids,pixel,taxi,UAE,Haitham,ring road
