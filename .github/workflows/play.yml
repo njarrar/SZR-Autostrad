@@ -6,7 +6,8 @@ name: Play Store
 # The .aab and .apk appear under Artifacts on the run page.
 # With the PLAY_SERVICE_ACCOUNT_JSON secret set, a signed bundle also goes straight to Google Play,
 # to the track picked when you run it (internal testing unless you pick another), with the notes
-# in android/whatsnew/.
+# in android/whatsnew/. Turn on "reuse" to put the bundle already uploaded for this version on a track
+# (for example from closed testing to production) without building it again.
 on:
   workflow_dispatch:
     inputs:
@@ -20,6 +21,10 @@ on:
         type: choice
         options: [completed, draft]
         default: completed
+      reuse:
+        description: Release the bundle for this version that is already on Google Play (no new build)
+        type: boolean
+        default: false
   push:
     tags: ['v*']
 
@@ -27,7 +32,23 @@ permissions:
   contents: read
 
 jobs:
+  reuse:
+    if: inputs.reuse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Put the uploaded bundle on the track
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          TRACK: ${{ inputs.track }}
+          STATUS: ${{ inputs.status }}
+        run: node .github/scripts/play-release.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+
   android:
+    if: ${{ !inputs.reuse }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
