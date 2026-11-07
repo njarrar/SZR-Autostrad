@@ -107,7 +107,13 @@ await step('age rating 4+', async () => {
 
 // ---------- the version: number, copyright, build, store text, screenshots ----------
 const versions = (await get(`/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=20`)).data;
-let ver = versions.find((v) => ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED'].includes(v.attributes.appStoreState));
+for (const v of versions) console.log('     have version', v.attributes.versionString, v.attributes.appStoreState, v.attributes.appVersionState || '');
+// a version still being worked on: Apple's states for that are not all listed in its docs, so also take the
+// version with this number when it is not live or in review
+const EDITABLE = ['PREPARE_FOR_SUBMISSION', 'DEVELOPER_REJECTED', 'REJECTED', 'METADATA_REJECTED', 'READY_FOR_REVIEW', 'INVALID_BINARY'];
+const LOCKED = ['WAITING_FOR_REVIEW', 'IN_REVIEW', 'READY_FOR_SALE', 'READY_FOR_DISTRIBUTION', 'PENDING_DEVELOPER_RELEASE', 'PENDING_APPLE_RELEASE', 'PROCESSING_FOR_APP_STORE', 'PROCESSING_FOR_DISTRIBUTION', 'REPLACED_WITH_NEW_VERSION', 'ACCEPTED'];
+let ver = versions.find((v) => EDITABLE.includes(v.attributes.appStoreState) || EDITABLE.includes(v.attributes.appVersionState))
+  || versions.find((v) => v.attributes.versionString === VERSION && !LOCKED.includes(v.attributes.appStoreState));
 if (!ver) ver = (await post('/v1/appStoreVersions', { data: { type: 'appStoreVersions', attributes: { platform: 'IOS', versionString: VERSION }, relationships: { app: { data: { type: 'apps', id: app.id } } } } })).data;
 console.log('version', ver.attributes.versionString, ver.attributes.appStoreState);
 const firstVersion = versions.every((v) => v.id === ver.id);
@@ -217,7 +223,23 @@ if (env.SUBMIT === '1') {
         console.log('     version is in submission', send.id, send.attributes.state);
       }
     }
-    await patch(`/v1/reviewSubmissions/${send.id}`, { data: { type: 'reviewSubmissions', id: send.id, attributes: { submitted: true } } });
+    try {
+      await patch(`/v1/reviewSubmissions/${send.id}`, { data: { type: 'reviewSubmissions', id: send.id, attributes: { submitted: true } } });
+    } catch (e) {
+      // Apple won't send an old submission again once its version changed: cancel it and send the version in a new one
+      if (send.id === sub.id && open == null) throw e;
+      console.log('     old submission refused, sending the version in a new one');
+      await patch(`/v1/reviewSubmissions/${send.id}`, { data: { type: 'reviewSubmissions', id: send.id, attributes: { canceled: true } } });
+      for (let i = 0; i < 20; i++) {
+        const st = (await get(`/v1/reviewSubmissions/${send.id}`)).data.attributes.state;
+        console.log('     old submission', st);
+        if (!['CANCELING'].includes(st)) break;
+        await new Promise((r) => setTimeout(r, 15000));
+      }
+      const fresh = (await post('/v1/reviewSubmissions', { data: { type: 'reviewSubmissions', attributes: { platform: 'IOS' }, relationships: { app: { data: { type: 'apps', id: app.id } } } } })).data;
+      await post('/v1/reviewSubmissionItems', { data: { type: 'reviewSubmissionItems', relationships: { reviewSubmission: { data: { type: 'reviewSubmissions', id: fresh.id } }, appStoreVersion: { data: { type: 'appStoreVersions', id: ver.id } } } } });
+      await patch(`/v1/reviewSubmissions/${fresh.id}`, { data: { type: 'reviewSubmissions', id: fresh.id, attributes: { submitted: true } } });
+    }
   });
 }
 
