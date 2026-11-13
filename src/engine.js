@@ -3540,9 +3540,12 @@ canvas.addEventListener('pointerdown', (e) => {
 addEventListener('pointermove', (e) => {
   if (e.pointerId !== peek.id) return;
   const dx = e.clientX - peek.x; peek.x = e.clientX;
-  peek.want -= dx / Math.max(320, innerWidth) * Math.PI * 1.4;
+  peek.want -= dx / Math.max(320, innerWidth) * Math.PI * 0.7; // a full screen swipe turns about a third of the way round
 });
 for (const ev of ['pointerup', 'pointercancel']) addEventListener(ev, (e) => { if (e.pointerId === peek.id) { peek.id = null; peek.hold = 0.45; } });
+// two fingers at once (stick plus a look drag) read as a pinch on iPhone and zoomed the whole page; block page zoom
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend', 'dblclick']) document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || e.scale !== undefined && e.scale !== 1) e.preventDefault(); }, { passive: false });
 const camBtn = $('#btnCam');
 function peekView(i) {
   peek.view = i; peek.id = null; peek.hold = 0;
@@ -3557,7 +3560,7 @@ function peekStep(dt) {
     else if (peek.hold > 0) peek.hold -= dt;
     else peek.want = PEEK_VIEWS[peek.view];
   }
-  peek.yaw += angDiff(peek.want, peek.yaw) * (1 - Math.exp(-dt * (peek.id !== null ? 16 : 4.5)));
+  peek.yaw += angDiff(peek.want, peek.yaw) * (1 - Math.exp(-dt * (peek.id !== null ? 7 : 3.5)));
   peek.yaw = angDiff(peek.yaw, 0);
 }
 // turn the smoothed camera round the point it follows; returns where to look

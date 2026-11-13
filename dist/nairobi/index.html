@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <title>لفّة نيروبي</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f16'/%3E%3Cpath d='M18 52 L28 12 H36 L46 52 Z' fill='%23253041'/%3E%3Crect x='30.5' y='16' width='3' height='10' rx='1.5' fill='%23f5b83d'/%3E%3Crect x='30.5' y='34' width='3' height='12' rx='1.5' fill='%23f5b83d'/%3E%3C/svg%3E">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&family=Silkscreen&display=swap">
@@ -923,7 +923,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="panel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
-    <button class="ver" type="button" data-full="v2.34 · 2026-11-13 01:12 UTC">v2.34</button>
+    <button class="ver" type="button" data-full="v2.35 · 2026-11-13 01:22 UTC">v2.35</button>
   </div>
 </div>
 
@@ -5913,9 +5913,12 @@ canvas.addEventListener('pointerdown', (e) => {
 addEventListener('pointermove', (e) => {
   if (e.pointerId !== peek.id) return;
   const dx = e.clientX - peek.x; peek.x = e.clientX;
-  peek.want -= dx / Math.max(320, innerWidth) * Math.PI * 1.4;
+  peek.want -= dx / Math.max(320, innerWidth) * Math.PI * 0.7; // a full screen swipe turns about a third of the way round
 });
 for (const ev of ['pointerup', 'pointercancel']) addEventListener(ev, (e) => { if (e.pointerId === peek.id) { peek.id = null; peek.hold = 0.45; } });
+// two fingers at once (stick plus a look drag) read as a pinch on iPhone and zoomed the whole page; block page zoom
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend', 'dblclick']) document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || e.scale !== undefined && e.scale !== 1) e.preventDefault(); }, { passive: false });
 const camBtn = $('#btnCam');
 function peekView(i) {
   peek.view = i; peek.id = null; peek.hold = 0;
@@ -5930,7 +5933,7 @@ function peekStep(dt) {
     else if (peek.hold > 0) peek.hold -= dt;
     else peek.want = PEEK_VIEWS[peek.view];
   }
-  peek.yaw += angDiff(peek.want, peek.yaw) * (1 - Math.exp(-dt * (peek.id !== null ? 16 : 4.5)));
+  peek.yaw += angDiff(peek.want, peek.yaw) * (1 - Math.exp(-dt * (peek.id !== null ? 7 : 3.5)));
   peek.yaw = angDiff(peek.yaw, 0);
 }
 // turn the smoothed camera round the point it follows; returns where to look
