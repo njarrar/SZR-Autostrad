@@ -223,7 +223,7 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 - Press the gas in the lane to skip a stop. Drive past and the people are left waiting.
 - Let go of the gas and press it again while stopped to drive off before everyone is in. People who already got out still pay, but anyone still walking to the car stays behind, and you miss the small nitro top-up you get for waiting.
 
-![A taxi stopped at a passenger stop in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
+![The Coaster bus stopped in a stop bay in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
 - The taxi carries 4 people. The bus carries 14, but each fare pays less.
 - Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
 - Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
