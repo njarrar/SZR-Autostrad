@@ -3423,6 +3423,51 @@ addEventListener('pointermove', (e) => {
 addEventListener('pointerup', () => { orbitDrag = false; });
 addEventListener('pointercancel', () => { orbitDrag = false; });
 
+// look around while driving: drag the open screen or tap the eye button; the camera swings round the car or Haitham
+const peek = { yaw: 0, want: 0, view: 0, id: null, x: 0, hold: 0 };
+const PEEK_VIEWS = [0, -1.25, 1.25, Math.PI]; // behind, left side, right side, looking back
+const PEEK_TEXT = ['viewBehind', 'viewLeft', 'viewRight', 'viewBack'];
+const peekOK = () => (game.mode === 'drive' || game.mode === 'done') && !game.kids;
+const angDiff = (a, b) => { let d = (a - b) % (Math.PI * 2); if (d > Math.PI) d -= Math.PI * 2; if (d < -Math.PI) d += Math.PI * 2; return d; };
+canvas.addEventListener('pointerdown', (e) => {
+  if (!peekOK() || game.paused) return;
+  // a new finger takes over, so a lift iOS missed can't leave the camera stuck
+  peek.id = e.pointerId; peek.x = e.clientX; peek.want = peek.yaw;
+});
+addEventListener('pointermove', (e) => {
+  if (e.pointerId !== peek.id) return;
+  const dx = e.clientX - peek.x; peek.x = e.clientX;
+  peek.want -= dx / Math.max(320, innerWidth) * Math.PI * 1.4;
+});
+for (const ev of ['pointerup', 'pointercancel']) addEventListener(ev, (e) => { if (e.pointerId === peek.id) { peek.id = null; peek.hold = 0.45; } });
+const camBtn = $('#btnCam');
+function peekView(i) {
+  peek.view = i; peek.id = null; peek.hold = 0;
+  camBtn.classList.toggle('on', i > 0); camBtn.dataset.v = i;
+}
+camBtn.addEventListener('click', () => { if (!peekOK()) return; peekView((peek.view + 1) % PEEK_VIEWS.length); toast(T[PEEK_TEXT[peek.view]]); vibrate(8); });
+function peekStep(dt) {
+  if (!peekOK()) { if (peek.view || peek.yaw) peekView(0); peek.yaw = peek.want = 0; return; }
+  const key = keys.KeyB ? Math.PI : keys.KeyQ ? -1.25 : keys.KeyE ? 1.25 : null;
+  if (peek.id === null) {
+    if (key !== null) { peek.want = key; peek.hold = 0.2; }
+    else if (peek.hold > 0) peek.hold -= dt;
+    else peek.want = PEEK_VIEWS[peek.view];
+  }
+  peek.yaw += angDiff(peek.want, peek.yaw) * (1 - Math.exp(-dt * (peek.id !== null ? 16 : 4.5)));
+  peek.yaw = angDiff(peek.yaw, 0);
+}
+// turn the smoothed camera round the point it follows; returns where to look
+const peekLook = new THREE.Vector3(), peekAt = new THREE.Vector3();
+function peekApply(cx, cy, cz) {
+  const a = peek.yaw;
+  if (Math.abs(a) < 0.002) return camLook;
+  const dx = camera.position.x - cx, dz = camera.position.z - cz, c = Math.cos(a), s = Math.sin(a);
+  const grow = 1 + 0.3 * Math.abs(Math.sin(a)); // a little further out at the sides, so the whole car fits
+  camera.position.x = cx + (dx * c + dz * s) * grow; camera.position.z = cz + (-dx * s + dz * c) * grow;
+  return peekLook.copy(camLook).lerp(peekAt.set(cx, cy, cz), Math.min(1, Math.abs(a) / 0.9));
+}
+
 // the stick: fixed at the bottom ("stick"), or it jumps under your thumb ("onehand", "tilt")
 const stickEl = $('#stick'), knobEl = $('#knob');
 const fills = { up: stickEl.querySelectorAll('.fil.up'), dn: stickEl.querySelectorAll('.fil.dn') };
@@ -4168,8 +4213,9 @@ function render(dt) {
     if (!camInit || camPos.distanceTo(wantPos) > 30) { camPos.copy(wantPos); camLook.copy(wantLook); camInit = true; }
     camPos.lerp(wantPos, 1 - Math.exp(-dt * 8)); camLook.lerp(wantLook, 1 - Math.exp(-dt * 10));
     camera.position.copy(camPos);
+    peekStep(dt); trackAt(player.t, player.d - 0.3, Q); const lookAt = peekApply(Q.x, Q.y + SW_Y + 1.1, Q.z);
     if (game.shake > 0) { game.shake -= dt; if (settings.shake) { camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; } }
-    camera.lookAt(camLook);
+    camera.lookAt(lookAt);
     camera.fov = 60 * (camera.aspect < 0.8 ? 0.85 : 1); camera.updateProjectionMatrix();
   } else if (game.mode === 'drive' || game.mode === 'done') {
     const dist = [6.5, 9, 13][settings.cam], hgt = [2.4, 3.4, 5.2][settings.cam];
@@ -4180,13 +4226,15 @@ function render(dt) {
     const kPos = 1 - Math.exp(-dt * 10), kLook = 1 - Math.exp(-dt * 12);
     camPos.lerp(wantPos, kPos); camLook.lerp(wantLook, kLook);
     camera.position.copy(camPos);
+    peekStep(dt); trackAt(player.t, player.d, Q); const lookAt = peekApply(Q.x, Q.y + 1.0, Q.z);
     if (game.shake > 0) { game.shake -= dt; if (settings.shake) { camera.position.x += (Math.random() - 0.5) * game.shake; camera.position.y += (Math.random() - 0.5) * game.shake; } }
-    camera.lookAt(camLook);
+    camera.lookAt(lookAt);
     camRoll += (clamp(player.lat * HAND * 0.006, -0.03, 0.03) - camRoll) * (1 - Math.exp(-dt * 6));
     camera.rotateZ(camRoll);
     nitroFov += ((game.boost > 0 ? 9 : 0) - nitroFov) * (1 - Math.exp(-dt * (game.boost > 0 ? 7 : 2.5)));
     camera.fov = (62 + Math.min(14, player.v * 0.18) + nitroFov) * (camera.aspect < 0.8 ? 0.8 : 1); camera.updateProjectionMatrix();
   } else {
+    peekStep(dt);
     if (!orbitDrag) {
       orbit += (0.14 + orbitVel) * dt;
       orbitVel *= Math.exp(-dt * 5);

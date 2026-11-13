@@ -41,7 +41,7 @@
     <string key="page.T_SOUND">Sound</string>
     <string key="page.T_ON">On</string>
     <string key="page.T_OFF">Off</string>
-    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Radio <kbd>R</kbd> · Pixel look <kbd>V</kbd> · Pause <kbd>P</kbd>]]></string>
+    <string key="page.T_KEYS"><![CDATA[Drive with the arrow keys or <kbd>WASD</kbd> · Horn <kbd>Space</kbd> · Nitro <kbd>N</kbd> · Camera <kbd>C</kbd> · Look around <kbd>Q</kbd> <kbd>E</kbd> <kbd>B</kbd> or drag · Radio <kbd>R</kbd> · Pixel look <kbd>V</kbd> · Pause <kbd>P</kbd>]]></string>
     <string key="page.T_PAUSED">Paused</string>
     <string key="page.T_RESUME">Resume</string>
     <string key="page.T_QUIT">Back to menu</string>
@@ -154,6 +154,7 @@
     <string key="page.T_VOLFX">Effects</string>
     <string key="page.T_VOLHORN">Horn</string>
     <string key="page.T_RADIO">Radio</string>
+    <string key="page.T_LOOK">Look around</string>
     <string key="page.T_C_WHEEL">Wheel</string>
     <string key="page.T_C_WHEEL_D">Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.</string>
     <string key="page.T_MUSIC">Radio music</string>
@@ -229,6 +230,10 @@
     <string key="text.paxOff">getting off</string>
     <string key="text.paxOn">getting on</string>
     <string key="text.paxMissed">You drove past the stop</string>
+    <string key="text.viewBehind">Normal view</string>
+    <string key="text.viewLeft">Left side</string>
+    <string key="text.viewRight">Right side</string>
+    <string key="text.viewBack">Looking back</string>
     <string key="text.refuel">Tank refilled at the station! +100</string>
     <string key="text.fuelLow">Low fuel! Pull into the next right-lane station</string>
     <string key="text.cardUnlocked">Unlocked landmark postcard:</string>

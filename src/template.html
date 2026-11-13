@@ -258,6 +258,15 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #btnRadio svg { width: 20px; height: 20px; flex: none; }
 #btnRadio span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #btnRadio.on { color: var(--accent-hud); }
+#btnCam { pointer-events: auto; position: absolute; top: calc(env(safe-area-inset-top, 0px) + 320px); inset-inline-end: 12px; width: 40px; height: 36px; padding: 0; background: var(--hud); color: var(--hud-ink); border: 0; border-radius: 10px; display: grid; place-items: center; }
+#btnCam svg { width: 22px; height: 22px; }
+#btnCam.on { color: var(--accent-hud); box-shadow: inset 0 0 0 2px var(--accent-hud); }
+/* small dots show which view: left, right or back */
+#btnCam i { position: absolute; bottom: 4px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: currentColor; display: none; }
+#btnCam.on i { display: block; }
+#btnCam[data-v="1"] i { margin-left: -9px; }
+#btnCam[data-v="2"] i { margin-left: 5px; }
+#btnCam[data-v="3"] i { box-shadow: -6px 0 0 currentColor, 6px 0 0 currentColor; }
 #btnRadio.tuning { animation: tuneGlow .7s ease-out; }
 @keyframes tuneGlow { 0% { box-shadow: 0 0 0 0 rgba(255,210,86,.9); } 100% { box-shadow: 0 0 0 14px rgba(255,210,86,0); } }
 #count { position: fixed; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; font-family: var(--display); font-size: min(30vmin, 180px); color: var(--accent-hud); text-shadow: 0 4px 24px rgba(0,0,0,.55), 0 0 2px #000; }
@@ -467,7 +476,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   .speedo { padding: 4px 10px 2px; gap: 8px; }
   .speedo .num { font-size: 34px; }
   .limit { width: 34px; height: 34px; border-width: 4px; font-size: 13px; }
-  .stats { top: calc(var(--top) + 64px); inset-inline: 10px calc(10px + 2 * 40px + 8px); flex-direction: row; gap: 0; background: var(--hud); border-radius: 12px; padding: 0 4px; height: 38px; align-items: center; }
+  .stats { top: calc(var(--top) + 64px); inset-inline: 10px calc(10px + 3 * 44px); flex-direction: row; gap: 0; background: var(--hud); border-radius: 12px; padding: 0 4px; height: 38px; align-items: center; }
   .chip { background: none; flex: 1; min-width: 0; padding: 0 2px; justify-content: center; align-items: center; gap: 4px; font-size: 13px; }
   .chip > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
   .chip .ic { display: block; width: 15px; height: 15px; flex: none; opacity: .75; }
@@ -477,6 +486,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #btnPause { inset-inline-end: 10px; font-size: 0; }
   #btnPause::before { content: ''; width: 13px; height: 15px; box-sizing: border-box; border-inline: 4.5px solid currentColor; }
   #btnRadio { inset-inline-end: 54px; max-width: none; }
+  #btnCam { top: calc(var(--top) + 64px); width: 38px; height: 38px; border-radius: 12px; inset-inline-end: 98px; }
   #btnRadio span { display: none; }
   #radioMenu { top: calc(var(--top) + 108px); inset-inline-end: 10px; }
   #btnRadio:not(.on)::after { inset-inline-start: 6px; }
@@ -495,6 +505,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   .dmg, .fuel { width: 52px; }
   #btnPause { inset-inline-end: var(--side); }
   #btnRadio { inset-inline-end: calc(var(--side) + 44px); }
+  #btnCam { inset-inline-end: calc(var(--side) + 88px); }
   #mini { inset-inline-end: var(--side); }
   #radioMenu { inset-inline-end: var(--side); }
   #warn, .toast { left: var(--side); right: auto; width: auto; max-width: 380px; box-sizing: border-box; }
@@ -517,6 +528,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #btnPause { inset-inline-end: 14px; font-size: 0; }
   #btnPause::before { content: ''; width: 15px; height: 18px; box-sizing: border-box; border-inline: 5px solid currentColor; }
   #btnRadio { inset-inline-end: 68px; max-width: none; }
+  #btnCam { top: calc(var(--top) + 214px); width: 46px; height: 46px; border-radius: 14px; inset-inline-end: 122px; }
   #btnRadio span { display: none; }
   #btnRadio:not(.on)::after { inset-inline-start: 7px; }
   #radioMenu { top: calc(var(--top) + 266px); inset-inline-end: 14px; }
@@ -532,7 +544,8 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #btnPause, #btnRadio { top: auto; inset-inline: 16px auto; width: 46px; height: 46px; border-radius: 14px; }
   #btnPause { bottom: calc(env(safe-area-inset-bottom, 0px) + 250px); }
   #btnRadio { bottom: calc(env(safe-area-inset-bottom, 0px) + 304px); }
-  #radioMenu { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 358px); inset-inline: 16px auto; }
+  #btnCam { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 358px); inset-inline: 16px auto; width: 46px; height: 46px; border-radius: 14px; }
+  #radioMenu { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 412px); inset-inline: 16px auto; }
   #warn, .toast { top: calc(var(--top) + 60px); left: 10px; right: 92px; min-height: 32px; box-sizing: border-box; padding: 5px 12px; }
   [dir=rtl] #warn, [dir=rtl] .toast { left: 92px; right: 10px; }
   .toast { background: rgba(20, 20, 24, .94); }
@@ -556,7 +569,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
 }
 /* pixel look: square HUD panels and a pixel font for the numbers */
 body.pixel { --pixfont: 'Silkscreen', var(--display); }
-body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, body.pixel #btnPause, body.pixel #btnRadio { border-radius: 0; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); }
+body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, body.pixel #btnPause, body.pixel #btnRadio, body.pixel #btnCam { border-radius: 0; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); }
 body.pixel .speedo .num, body.pixel .trip-hud .rem, body.pixel .chip b, body.pixel .gearbox b, body.pixel #count, body.pixel #hWeave { font-family: var(--pixfont); font-weight: 400; letter-spacing: -.02em; }
 body.pixel .speedo .num { font-size: 38px; }
 body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
@@ -610,7 +623,7 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 }
 @media (orientation: landscape) { .kCard .kTxt { display: contents; } .kBody { padding-right: clamp(80px, 16vmin, 130px); } }
 /* while driving */
-body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPause, body.kids #btnRadio, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet { display: none !important; }
+body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPause, body.kids #btnRadio, body.kids #btnCam, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet { display: none !important; }
 #kidsUI { position: fixed; inset: 0; z-index: 5; pointer-events: none; font-family: var(--display); color: #1d2b4f; direction: ltr; }
 #kidsUI > * { pointer-events: auto; }
 .kSteer { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); display: flex; gap: 4px; padding: 4px; background: #fff; border-radius: 28px; box-shadow: 0 3px 0 #c9d4e8; direction: ltr; z-index: 2; width: min(300px, calc(100vw - 88px)); }
@@ -720,6 +733,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   <canvas id="mini" width="300" height="300"></canvas>
   <button id="btnPause" type="button">__T_PAUSE__</button>
   <button id="btnRadio" type="button" aria-label="__T_RADIO__" aria-keyshortcuts="R M" aria-haspopup="menu" aria-expanded="false" aria-controls="radioMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8 17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14.5" r="3" fill="currentColor"/><path d="M5.5 12.5h5M5.5 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="radioName"></span></button>
+  <button id="btnCam" type="button" aria-label="__T_LOOK__" aria-keyshortcuts="Q E B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><i aria-hidden="true"></i></button>
   <div id="radioMenu" role="menu" aria-label="__T_RADIO__" hidden></div>
   <div id="warn" hidden></div>
   <div id="hWeave"></div>
