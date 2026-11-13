@@ -29,6 +29,7 @@
     <string key="page.T_VOLFX">المؤثرات</string>
     <string key="page.T_VOLHORN">الهرن</string>
     <string key="page.T_RADIO">راديو</string>
+    <string key="page.T_LOOK">اطّلع حواليك</string>
     <string key="page.T_C_WHEEL">دركسيون</string>
     <string key="page.T_MUSIC">أغاني الراديو</string>
     <string key="page.T_VOLMUSIC">صوت الراديو</string>
@@ -97,6 +98,10 @@
     <string key="text.paxOff">نازلين</string>
     <string key="text.paxOn">طالعين</string>
     <string key="text.paxMissed">فاتك الموقف</string>
+    <string key="text.viewBehind">المنظر العادي</string>
+    <string key="text.viewLeft">الجهة اليسار</string>
+    <string key="text.viewRight">الجهة اليمين</string>
+    <string key="text.viewBack">نطلّع لورا</string>
     <string key="text.refuel">فلّلت التانكي من المحطة! +100</string>
     <string key="text.fuelLow">البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين</string>
     <string key="text.cardUnlocked">فتحت بطاقة معلم جديدة:</string>
