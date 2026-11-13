@@ -6,6 +6,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { notes, code, fromCode } from '../store-notes/notes.mjs';
 
 const env = process.env;
 const BUNDLE = 'com.njarrar.autostrad';
@@ -117,6 +118,12 @@ let ver = versions.find((v) => EDITABLE.includes(v.attributes.appStoreState) || 
 if (!ver) ver = (await post('/v1/appStoreVersions', { data: { type: 'appStoreVersions', attributes: { platform: 'IOS', versionString: VERSION }, relationships: { app: { data: { type: 'apps', id: app.id } } } } })).data;
 console.log('version', ver.attributes.versionString, ver.attributes.appStoreState);
 const firstVersion = versions.every((v) => v.id === ver.id);
+// the version players have on the App Store now: the notes cover every version after it up to this build,
+// so they never promise a change that is only in a version Google Play has and Apple has not released yet
+const LIVE = ['READY_FOR_SALE', 'READY_FOR_DISTRIBUTION', 'REPLACED_WITH_NEW_VERSION'];
+const liveCodes = versions.filter((v) => v.id !== ver.id && (LIVE.includes(v.attributes.appStoreState) || LIVE.includes(v.attributes.appVersionState))).map((v) => code(v.attributes.versionString));
+const liveVersion = liveCodes.length ? fromCode(Math.max(...liveCodes)) : null;
+console.log('     live on the App Store:', liveVersion || 'nothing yet');
 
 await step('version ' + VERSION + ' and copyright', () => patch(`/v1/appStoreVersions/${ver.id}`, { data: { type: 'appStoreVersions', id: ver.id, attributes: { versionString: VERSION, copyright: '2026 njarrar', releaseType: 'AFTER_APPROVAL' } } }));
 
@@ -136,7 +143,7 @@ await step('build ' + BUILD, async () => {
 let verLocs = (await get(`/v1/appStoreVersions/${ver.id}/appStoreVersionLocalizations`)).data;
 for (const [locale, dir] of Object.entries(LOCALES)) {
   const attributes = { description: read(dir, 'description'), keywords: read(dir, 'keywords'), promotionalText: read(dir, 'promotional-text'), supportUrl: URLS.support, marketingUrl: URLS.marketing };
-  if (!firstVersion) attributes.whatsNew = read(dir, 'release-notes');
+  if (!firstVersion) attributes.whatsNew = notes(dir, { live: liveVersion, build: VERSION, max: 4000 });
   const have = verLocs.find((l) => l.attributes.locale === locale);
   await step('store text ' + locale, async () => {
     if (have) await patch(`/v1/appStoreVersionLocalizations/${have.id}`, { data: { type: 'appStoreVersionLocalizations', id: have.id, attributes } });
