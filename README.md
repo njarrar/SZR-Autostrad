@@ -217,12 +217,13 @@ Damage from crashes, the barrier and speed bumps grows or shrinks with the car's
 
 The taxis and the Coaster bus work a service shift. Green stops wait near each landmark.
 
-- Keep to the kerb lane (the right one, or the left one in Nairobi and Johannesburg) and slow below 75 km/h as a stop comes up. The car pulls onto the shoulder and stops by the shelter.
+- Each stop has a bay: the side barrier opens and the road widens into a yellow TAXI / BUS box, with a blue sign 200 m before it. The people wait on the bay's kerb.
+- Steer into the box and slow below 30 km/h, and the car stops by the shelter, even with a little gas on. Or keep to the kerb lane (the right one, or the left one in Nairobi and Johannesburg) and slow below 75 km/h without gas, and the car pulls into the bay by itself.
 - People on board climb out and walk off, then the ones waiting walk over and get in. The car sets off again once they are all in. Each drop pays a fare, and fares add points.
-- Press the gas to skip a stop. Drive past and the people are left waiting.
-- Press the gas while stopped to drive off before everyone is in. People who already got out still pay, but anyone still walking to the car stays behind, and you miss the small nitro top-up you get for waiting.
+- Press the gas in the lane to skip a stop. Drive past and the people are left waiting.
+- Let go of the gas and press it again while stopped to drive off before everyone is in. People who already got out still pay, but anyone still walking to the car stays behind, and you miss the small nitro top-up you get for waiting.
 
-![A taxi stopped at a passenger stop in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
+![The Coaster bus stopped in a stop bay in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
 - The taxi carries 4 people. The bus carries 14, but each fare pays less.
 - Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
 - Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.

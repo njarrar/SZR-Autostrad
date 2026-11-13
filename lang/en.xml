@@ -226,7 +226,7 @@
     <string key="text.paxPick">Passengers on board</string>
     <string key="text.paxDrop">Passengers off · fare</string>
     <string key="text.paxAhead">Passenger stop</string>
-    <string key="text.paxHow">keep right and slow down</string>
+    <string key="text.paxHow">pull into the bay and stop</string>
     <string key="text.paxOff">getting off</string>
     <string key="text.paxOn">getting on</string>
     <string key="text.paxMissed">You drove past the stop</string>

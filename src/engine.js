@@ -190,6 +190,26 @@ const LMS = C.landmarks.map((lm, idx) => {
   return Object.assign({}, lm, { idx, x: g[0], z: g[1], s: ns.s, dist: ns.dist, side: ns.side });
 });
 
+// ---------- passenger stop bays ----------
+// each stop sits in a bay: the side barrier opens, the road widens toward the kerb and the sidewalk steps back around it,
+// so a taxi or bus can pull out of the slow lane and stand right beside the people waiting
+const BAY_W = 3.4, BAY_HALF = 22, BAY_TAPER = 18, BAY_GAP = BAY_HALF + BAY_TAPER;
+const STOP_S = LMS.map((lm) => (lm.s + 95) % L);
+const sDist = (a, b) => { const d = (((a - b) % L) + L) % L; return Math.min(d, L - d); };
+// how far the road reaches past its usual edge here: BAY_W along the bay, easing to 0 over the tapers
+function bayW(s) {
+  let w = 0;
+  for (const q of STOP_S) {
+    const d = sDist(s, q); if (d >= BAY_GAP) continue;
+    if (d <= BAY_HALF) return BAY_W;
+    const x = 1 - (d - BAY_HALF) / BAY_TAPER; w = Math.max(w, BAY_W * x * x * (3 - 2 * x));
+  }
+  return w;
+}
+const inBay = (s) => STOP_S.some((q) => sDist(s, q) < BAY_GAP);
+// moves a roadside thing (a camera pole, a fuel station) along the road until it is clear of every bay
+function clearOfBays(s, room) { for (let k = 0; k < 40 && STOP_S.some((q) => sDist(s, q) < BAY_GAP + room); k++) s = (s + 15) % L; return s; }
+
 // ---------- three setup ----------
 const canvas = $('#gl');
 // a browser with hardware acceleration off draws on the processor, often at a frame a second or worse:
@@ -605,7 +625,7 @@ function buildRoad() {
       for (let i = i0; i <= i1; i++) {
         curveAt(i * ds, 0, o);
         for (let k = 0; k < np; k++) { const l = lc + prof[k][0]; P.push(o.x - o.tz * l, o.y + prof[k][1], o.z + o.tx * l); U.push(lens[k] / tot, (i * ds) / 4); }
-        if (i < i1) for (let k = 0; k < np - 1; k++) { const a = (i - i0) * np + k, b = a + np; I.push(a, b, a + 1, a + 1, b, b + 1); }
+        if (i < i1 && !(lc && (inBay(i * ds) || inBay((i + 1) * ds)))) for (let k = 0; k < np - 1; k++) { const a = (i - i0) * np + k, b = a + np; I.push(a, b, a + 1, a + 1, b, b + 1); }
       }
       const bg = new THREE.BufferGeometry();
       bg.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); bg.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); bg.setIndex(I); bg.computeVertexNormals();
@@ -1423,7 +1443,7 @@ function buildScenery() {
         curveAt(s + R(-4, 4), lat, o);
         const rad = Math.max(w, dp) * 0.72;
         const nr = nearestRoad(o.x, o.z);
-        if (nr.d < HW + 6 + rad) continue;
+        if (nr.d < HW + 6 + rad + bayW(nr.i * ds)) continue;
         if (blocked(o.x, o.z, rad)) continue;
         if (!free(o.x, o.z, rad * 0.8)) continue;
         mark(o.x, o.z, rad * 0.8);
@@ -1448,6 +1468,7 @@ function buildScenery() {
         const underRail = C.metro && side === C.metro.side && s > C.metro.from * L && s < C.metro.to * L;
         let lat = side * (HW + (underRail ? R(2.5, 4) : R(3, zn.setback - 2)));
         if (Math.abs(lat) < SW_OUT + 1.2) lat = side * (SW_OUT + 1.2 + (Math.abs(lat) - HW - 2.5) * 0.4); // keep the sidewalk clear
+        lat += side * bayW(s);
         curveAt(s + R(0, 10), lat, o);
         const nr = nearestRoad(o.x, o.z);
         if (nr.d > HW + 2.5 && !blocked(o.x, o.z, 3)) {
@@ -1804,7 +1825,7 @@ function buildSidewalk() {
     const base = P.length / 3, kb = KP.length / 3, fb = FP.length / 3;
     for (let i = 0; i <= N; i++) {
       const s = i * ds;
-      curveAt(s, side * SW_IN, a); curveAt(s, side * K0, b); curveAt(s, side * SW_OUT, c);
+      const ex = bayW(s); curveAt(s, side * (SW_IN + ex), a); curveAt(s, side * (K0 + ex), b); curveAt(s, side * (SW_OUT + ex), c);
       const y = a.y + SW_Y;
       P.push(b.x, y, b.z, c.x, y, c.z); U.push(0, s / 4, (SW_OUT - K0) / 4, s / 4);
       KP.push(b.x, y + 0.04, b.z, a.x, y + 0.04, a.z, a.x, a.y - 0.05, a.z); KU.push(0, s / 2, 0.5, s / 2, 1, s / 2);
@@ -1825,6 +1846,49 @@ function buildSidewalk() {
   make(P, U, I, new THREE.MeshLambertMaterial({ map: tex, side: THREE.DoubleSide }));
   make(KP, KU, KI, new THREE.MeshLambertMaterial({ map: kerbTex, side: THREE.DoubleSide }));
   make(FP, null, FI, new THREE.MeshLambertMaterial({ color: C.look.barrier, side: THREE.DoubleSide }));
+  buildBays();
+}
+// the bay floor, and a yellow box painted on it: dashed on the road side (you drive across it), solid at the ends and the kerb
+function buildBays() {
+  const asph = new THREE.MeshStandardMaterial({ color: C.look.bayFloor || 0x2c2b36, roughness: 0.8, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -1 });
+  const boxTex = (dashLeft) => canvasTex(256, 2048, (g, w, h) => {
+    g.clearRect(0, 0, w, h); g.fillStyle = '#ffd21f';
+    g.fillRect(0, 0, w, 14); g.fillRect(0, h - 14, w, 14);
+    const dx = dashLeft ? 0 : w - 14; g.fillRect(dashLeft ? w - 14 : 0, 0, 14, h);
+    for (let y = 0; y < h; y += 60) g.fillRect(dx, y, 14, 34);
+    g.textAlign = 'center'; g.font = `800 70px ${FONT_BODY}`;
+    // tall letters, so they read right from a low driving view
+    for (const [txt, y] of [['BUS', 300], ['TAXI', 520]]) { g.save(); g.translate(w / 2, y); g.scale(1, 2.6); g.fillText(txt, 0, 0); g.restore(); }
+    for (let x = 30; x < w - 30; x += 40) g.fillRect(x, h - 60, 22, 22);
+  }, true);
+  // the canvas is drawn as the driver sees it: u from left to right, v from near to far.
+  // On the right the road side is the left edge; where they drive on the left it is the right edge
+  const boxMat = new THREE.MeshBasicMaterial({ map: boxTex(HAND > 0), transparent: true, side: THREE.DoubleSide, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -4 });
+  const P = [], I = [], a = {}, b = {}, len = BAY_HALF * 2 + 6, m = 24;
+  const BP = [], BU = [], BI = [];
+  for (const q of STOP_S) for (const side of [-1, 1]) {
+    // asphalt over the gap in the barrier and the bay
+    const base = P.length / 3, n = Math.ceil(BAY_GAP);
+    for (let k = 0; k <= n; k++) {
+      const s = q - BAY_GAP + k * 2;
+      curveAt(s, side * (HW - 0.2), a); curveAt(s, side * (SW_IN + bayW(s) + 0.02), b);
+      P.push(a.x, a.y + 0.012, a.z, b.x, a.y + 0.012, b.z);
+      if (k < n) { const i = base + k * 2; I.push(i, i + 1, i + 2, i + 1, i + 3, i + 2); }
+    }
+    // the box, from the shoulder line out to the kerb; this side's traffic drives toward -s when side * HAND < 0
+    const dir = side * HAND, bb = BP.length / 3;
+    for (let k = 0; k <= m; k++) {
+      const s = q - len / 2 + len * k / m, v = dir > 0 ? k / m : 1 - k / m;
+      curveAt(s, side * (HW + 0.1), a); curveAt(s, side * (SW_IN + BAY_W - 0.1), b);
+      const uRoad = HAND > 0 ? 0 : 1;
+      BP.push(a.x, a.y + 0.03, a.z, b.x, b.y + 0.03, b.z); BU.push(uRoad, v, 1 - uRoad, v);
+      if (k < m) { const i = bb + k * 2; BI.push(i, i + 1, i + 2, i + 1, i + 3, i + 2); }
+    }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setIndex(I); g.computeVertexNormals();
+  const floor = new THREE.Mesh(g, asph); floor.receiveShadow = true; scene.add(floor);
+  const bg = new THREE.BufferGeometry(); bg.setAttribute('position', new THREE.Float32BufferAttribute(BP, 3)); bg.setAttribute('uv', new THREE.Float32BufferAttribute(BU, 2)); bg.setIndex(BI);
+  scene.add(new THREE.Mesh(bg, boxMat));
 }
 
 // ---------- signs ----------
@@ -1861,11 +1925,38 @@ function addGantry(sCurve, dir, tex, spanBoth) {
 function buildSigns() {
   for (const lm of LMS) {
     for (const dir of [1, -1]) {
-      const sSign = lm.s - dir * 450;
+      const sSign = clearOfBays(lm.s - dir * 450, 6); // its posts would stand in a bay
       addGantry(sSign, dir, signTexture(lm.ar, lm.en, '450 ' + T.meters, C.look.signColor), false);
       addBrownSign(lm, dir);
     }
   }
+}
+// a blue sign on a post 200 m before each passenger stop
+let stopSignTex = null;
+function addStopSign(sStop, dir) {
+  const s = sStop - dir * 200, lat = dir * HAND * (HW + 1.6), o = curveAt(s, lat, {});
+  SIDE_OBS.push({ s, lat, hl: 0.15, hw: 0.15, kind: 'pole' });
+  if (!stopSignTex) stopSignTex = canvasTex(512, 256, (g, w, h) => {
+    g.fillStyle = '#1d4f9c'; g.fillRect(0, 0, w, h);
+    g.strokeStyle = '#ffffff'; g.lineWidth = 7; g.strokeRect(10, 10, w - 20, h - 20);
+    // a white bus front: body, windscreen, wheels
+    g.fillStyle = '#ffffff'; g.fillRect(40, 64, 112, 120); g.fillStyle = '#1d4f9c'; g.fillRect(52, 78, 88, 50);
+    g.fillStyle = '#ffffff'; g.fillRect(48, 184, 24, 22); g.fillRect(120, 184, 24, 22);
+    g.fillStyle = '#1d4f9c'; g.fillRect(54, 150, 18, 14); g.fillRect(120, 150, 18, 14);
+    const ar = SIGN_AR['text.paxAhead'], en = SIGN_EN['text.paxAhead'], far = '200 ' + T.meters;
+    const fit = (txt, size, wt, font, max) => { let z = size; g.font = `${wt} ${z}px ${font}`; while (z > 18 && g.measureText(txt).width > max) { z -= 2; g.font = `${wt} ${z}px ${font}`; } };
+    g.fillStyle = '#ffffff'; g.textAlign = 'center';
+    if (C.signs === 'en') { fit(en, 56, 700, FONT_BODY, 300); g.fillText(en, 334, 120); }
+    else { g.direction = 'rtl'; fit(ar, 66, '', FONT_AR, 300); g.fillText(ar, 334, 100); g.direction = 'ltr'; fit(en, 36, 600, FONT_BODY, 300); g.fillText(en, 334, 150); }
+    g.direction = 'ltr'; fit(far, 40, 600, FONT_BODY, 300); g.fillText(far, 334, 205);
+  });
+  const g = new THREE.Group();
+  const post = new THREE.Mesh(CYL(0.09, 0.09, 4.2), BROWN_POST); post.position.set(0, 2.1, 0); g.add(post);
+  const pg = new THREE.PlaneGeometry(2.8, 1.4);
+  const face = new THREE.Mesh(pg, new THREE.MeshBasicMaterial({ map: stopSignTex })); face.position.set(0, 3.5, 0.1); g.add(face);
+  const back = new THREE.Mesh(pg, BROWN_POST); back.position.set(0, 3.5, 0.08); back.rotation.y = Math.PI; g.add(back);
+  g.position.set(o.x, o.y, o.z); g.rotation.y = Math.atan2(-dir * o.tx, -dir * o.tz);
+  scene.add(g);
 }
 // brown landmark signs on a post at the roadside, 200 m before each landmark, with an arrow to the side it stands on
 const BROWN_POST = new THREE.MeshLambertMaterial({ color: 0x8a8f96 });
@@ -1901,7 +1992,7 @@ const events = [];
 function buildEvents() {
   const o = {};
   for (const f of C.radars) {
-    const s = f * L;
+    const s = clearOfBays(f * L, 4);
     for (const dir of [1, -1]) {
       curveAt(s, dir * HAND * (HW + 1.6), o);
       SIDE_OBS.push({ s, lat: dir * HAND * (HW + 1.6), hl: 0.15, hw: 0.15, kind: 'pole' });
@@ -1920,7 +2011,7 @@ function buildEvents() {
       curveAt(s, dir * HAND * (MED + CW / 2), o);
       const m = new THREE.Mesh(new THREE.BoxGeometry(CW, 0.14, 1.6), new THREE.MeshLambertMaterial({ map: tex }));
       m.position.set(o.x, o.y + 0.05, o.z); m.rotation.y = yawOf(o.tx, o.tz); scene.add(m);
-      addGantry(s - dir * 120, dir, signTexture(SIGN_AR['text.bumpSign'], 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
+      addGantry(clearOfBays(s - dir * 120, 6), dir, signTexture(SIGN_AR['text.bumpSign'], 'Speed bump', '120 ' + T.meters, C.look.warnColor), false);
     }
     events.push({ type: 'bump', s });
   }
@@ -1944,7 +2035,7 @@ function buildEvents() {
     const paxMeshes = {};
     for (const dir of [1, -1]) {
       const side = dir * HAND; // the kerb on the side this direction drives
-      curveAt(s, side * (HW + 2.4), o);
+      curveAt(s, side * (HW + 2.4 + BAY_W), o);
       SIDE_OBS.push({ s, lat: side * (HW + 2.05), hl: 1.45, hw: 0.25, kind: 'crowd' });
       for (const z of [-2.2, 2.2]) SIDE_OBS.push({ s: s + z, lat: side * (HW + 3.2), hl: 0.1, hw: 0.1, kind: 'pole' });
       const g = new THREE.Group();
@@ -1957,12 +2048,14 @@ function buildEvents() {
       paxMeshes[dir] = paxGrp;
     }
     events.push({ type: 'paxStop', s, lm, paxMeshes });
+    for (const dir of [1, -1]) addStopSign(s, dir);
   }
   // roadside fuel and service stations every 4.8 km
   const canopyMat = new THREE.MeshLambertMaterial({ color: 0x10b981, emissive: 0x065f46, emissiveIntensity: 0.45 });
   const CANOPY_G = new THREE.BoxGeometry(4.6, 0.55, 11), PILLAR_G = CYL(0.22, 0.25, 4.4, 8), stationG = {};
   for (const dir of [1, -1]) { const parts = []; for (const z of [-4, 4]) parts.push({ g: PILLAR_G, c: 0xf1f5f9, y: 2.2, z }, box(0xf59e0b, -0.8 * dir, 0.8, z * 0.5, 0.7, 1.6, 0.9)); stationG[dir] = mergeParts(parts); }
-  for (let s = 2200; s < L - 1200; s += 4800) {
+  for (let s0 = 2200; s0 < L - 1200; s0 += 4800) {
+    const s = clearOfBays(s0, 12);
     for (const dir of [1, -1]) {
       const side = dir * HAND;
       curveAt(s, side * (HW + 4.2), o);
@@ -2031,34 +2124,42 @@ function updateWalkers(dt) {
 function clearWalkers() { for (const w of walkers) { w.on = false; w.g.visible = false; w.done = null; } }
 
 // ---------- passenger stops: slow down in the right lane, the car pulls in, people get off and on ----------
-const PULL_D = () => D_MAX - 0.15; // on the shoulder, so traffic in the right lane can get by
+// the furthest the car can go toward the kerb at travel position t: the usual edge, plus the bay where the whole car is in it
+const dMaxAt = (t) => D_MAX + Math.min(bayW(sOfT(t + player.len / 2)), bayW(sOfT(t - player.len / 2)));
+const inBayBox = () => player.d > D_MAX + 0.4; // past the usual road edge, so in a bay
+// stand in the bay, or ease toward it while it is still ahead; traffic in the slow lane gets by
+const PULL_D = () => Math.min(D_MAX + BAY_W - 0.1, dMaxAt(player.t) - 0.05);
 const stopAheadSigned = (ev) => { const a = aheadDist(sOfT(player.t), ev.s); return a > L / 2 ? a - L : a; };
 function paxStopStep(dt, gas) {
   if (player.paxCap <= 0 || game.tour) return;
   const st = game.stop;
   if (!st) {
-    // look for the next stop just ahead
+    // look for the next stop just ahead: slow down in the slow lane and the car pulls in by itself,
+    // or steer into the bay yourself and slow down, gas or not
     for (const e of events) {
       if (e.type !== 'paxStop' || (e.doneT != null && Math.abs(player.t - e.doneT) < 300) || e.skipT != null && Math.abs(player.t - e.skipT) < 300) continue;
-      const a = stopAheadSigned(e);
-      if (a > 0 && a < 110 && player.d >= laneD(LANES - 1) - LW * 0.5 && player.v * 3.6 < 75 && !gas) { game.stop = { ev: e, phase: 'pull' }; break; }
+      const a = stopAheadSigned(e), kmh = player.v * 3.6;
+      const lane = a > 0 && a < 110 && player.d >= laneD(LANES - 1) - LW * 0.5 && kmh < 75 && !gas;
+      const bay = a > -BAY_HALF + player.len / 2 && a < BAY_GAP && inBayBox() && kmh < 30;
+      if (lane || bay) { game.stop = { ev: e, phase: 'pull', held: gas }; break; }
     }
     return;
   }
+  if (!gas) st.held = false;
+  const fresh = gas && !st.held; // a new press, not the gas you were already holding as you rolled in
   const a = stopAheadSigned(st.ev);
   if (st.phase === 'pull') {
-    if (gas) { st.ev.skipT = player.t; game.stop = null; return; } // drove on
-    // brake to stand still beside the shelter, and ease onto the shoulder
+    if (fresh && !inBayBox()) { st.ev.skipT = player.t; game.stop = null; return; } // drove on
+    // brake to stand still beside the shelter, and ease into the bay
     const vWant = Math.min(32 / 3.6, Math.sqrt(2 * 2.2 * Math.max(0, a - 1.5)));
     player.cruise = Math.min(player.cruise, vWant);
     if (player.v > vWant + 0.3) player.v = Math.max(vWant, player.v - 4.5 * dt);
     player.d += (PULL_D() - player.d) * Math.min(1, dt * 1.6); player.lat = 0;
-    if (a < 2.5 || player.v < 0.6) beginDwell(st, a);
+    if (a < 2.5 || player.v < 0.6) { beginDwell(st, a); st.held = gas; }
     return;
   }
   // standing at the stop: the car stays put until everyone is on, or until you press gas to drive on.
-  // Gas was up when the stop began (it skips the stop otherwise), so any press here is a fresh one.
-  if (gas) { st.gone = true; endDwell(st, true); return; }
+  if (fresh) { st.gone = true; endDwell(st, true); return; }
   player.v = 0; player.cruise = 0; player.lat = 0;
   player.d += (PULL_D() - player.d) * Math.min(1, dt * 2);
   st.t += dt;
@@ -2070,7 +2171,7 @@ function beginDwell(st, a) {
   ev.doneT = player.t;
   const isBus = player.role === 'bus', len = player.len;
   const doorT = player.t + (isBus ? len * 0.36 : 0.1), carSide = player.d + player.wid / 2 + 0.35;
-  const curb = HW + 1.7, stopT = player.t + a; // where the shelter is, along the road
+  const curb = HW + 1.7 + BAY_W, stopT = player.t + a; // where the shelter is, along the road
   const dropN = game.pax > 0 ? Math.max(1, Math.ceil(game.pax * 0.6)) : 0;
   const room = player.paxCap - (game.pax - dropN), addN = Math.min(room, isBus ? 4 + Math.floor(Math.random() * 4) : 1 + Math.floor(Math.random() * 2));
   const showOff = Math.min(dropN, 5), showOn = Math.min(addN, 6);
@@ -2082,7 +2183,7 @@ function beginDwell(st, a) {
     if (ev.paxMeshes && ev.paxMeshes[DIR]) ev.paxMeshes[DIR].visible = false; // the people at the shelter start walking
     let boarded = 0;
     for (let k = 0; k < showOn; k++) {
-      const t0 = stopT + (k % 3 - 1) * 1.15 - Math.floor(k / 3) * 0.9, d0 = HW + 2.05 + Math.floor(k / 3) * 0.6;
+      const t0 = stopT + (k % 3 - 1) * 1.15 - Math.floor(k / 3) * 0.9, d0 = HW + 2.05 + BAY_W + Math.floor(k / 3) * 0.6;
       walk([[t0, d0], [doorT + 0.6, curb], [doorT, carSide], [doorT, carSide - 0.6]], 0.15 + k * 0.55, () => {
         if (st.gone) return; // the car left without them
         boarded++;
@@ -2186,7 +2287,7 @@ function dogStep(W, dt) {
   D.ph += dt * Math.abs(D.v) * 4.5; const sw = Math.sin(D.ph) * 0.7;
   D.legs[0].rotation.x = D.legs[3].rotation.x = sw; D.legs[1].rotation.x = D.legs[2].rotation.x = -sw;
   D.tail.rotation.y = Math.sin(D.ph * 1.7) * 0.5;
-  trackAt(D.t, D.d, WQ); D.g.position.set(WQ.x, WQ.y + SW_Y + Math.abs(Math.cos(D.ph)) * 0.05, WQ.z);
+  trackAt(D.t, swD(D.t, D.d), WQ); D.g.position.set(WQ.x, WQ.y + SW_Y + Math.abs(Math.cos(D.ph)) * 0.05, WQ.z);
   D.g.rotation.y = yawOf(WQ.fx, WQ.fz) + (D.v >= 0 ? Math.PI : 0);
 }
 function hideDog() { if (dog) { dog.on = false; dog.g.visible = false; } }
@@ -2240,8 +2341,10 @@ function crowdFigure(kid) {
   return f;
 }
 const WQ = {};
+// the sidewalk steps back around each bay, so walking things sit d metres out from wherever its edge is
+const swD = (t, d) => d + bayW(sOfT(t));
 function walkPlace(o) {
-  trackAt(o.t, o.d, WQ);
+  trackAt(o.t, swD(o.t, o.d), WQ);
   o.obj.position.set(WQ.x, WQ.y + SW_Y, WQ.z);
   o.obj.rotation.y = yawOf(WQ.fx, WQ.fz) + (o.v >= 0 ? Math.PI : 0) + (o.yaw || 0);
 }
@@ -2422,7 +2525,7 @@ function walkScore() { return Math.max(0, Math.round(game.dist * 2 + game.weaveP
 // Haitham's figure follows the player each frame
 function walkRender() {
   const f = getHaitham(), W = game.walk;
-  trackAt(player.t, player.d, P);
+  trackAt(player.t, swD(player.t, player.d), P);
   f.g.position.set(P.x, P.y + SW_Y, P.z);
   f.g.rotation.set(0, yawOf(P.fx, P.fz) + Math.PI - Math.atan2(player.lat * HAND, Math.max(player.v, 1.2)) * 0.7 + (W && W.spin > 0 ? (1.3 - W.spin) * 9 : 0), 0);
   f.ph = W ? W.stepPh * Math.PI * 2 : 0; swing(f, f.ph, 0.25 + player.v * 0.2);
@@ -3932,7 +4035,7 @@ function step(dt) {
   const horn = keys.Space || keys.KeyH || touch.horn;
   if (game.walk) {
     const hornTap = horn && !game.hornWas; game.hornWas = horn;
-    trackAt(player.t, player.d, P);
+    trackAt(player.t, swD(player.t, player.d), P);
     updateTraffic(dt, false);
     const end = walkStep(dt, gas, brake, steerIn, hornTap);
     if (end) { finishTrip(end === 'arrive' ? 'arrive' : 'wreck'); return; }
@@ -3990,8 +4093,9 @@ function step(dt) {
   if (need > cap) player.lat -= Math.sign(P.k) * (need - cap) * 0.6 * dt;
   player.slip = need > cap ? (need - cap) / cap : Math.abs(player.lat) > 2.5 && player.v > 15 ? (Math.abs(player.lat) - 2.5) / 4 : 0;
   player.d += player.lat * dt;
-  if (player.d < D_MIN || player.d > D_MAX) {
-    player.d = clamp(player.d, D_MIN, D_MAX); player.lat *= -0.2;
+  const dMax = dMaxAt(player.t);
+  if (player.d < D_MIN || player.d > dMax) {
+    player.d = clamp(player.d, D_MIN, dMax); player.lat *= -0.2;
     if (player.v > 8 && !game.kids) { player.v *= 1 - 0.8 * dt; if (!game.tour) player.dmg += 4 * dt * player.tough; if (toastTimer <= 0) toast(T.scrape, 'bad'); vibrate(30); }
   }
   paxStopStep(dt, gas);
@@ -4159,7 +4263,7 @@ function render(dt) {
   // player
   if (game.walk) walkRender();
   if (game.kids) kidsRender();
-  trackAt(player.t, player.d, P);
+  trackAt(player.t, game.walk ? swD(player.t, player.d) : player.d, P);
   const yaw = yawOf(P.fx, P.fz) - Math.atan2(player.lat * HAND, Math.max(player.v, 4)) * 0.8;
   player.group.position.set(P.x, P.y, P.z);
   // pitch from slope
@@ -4208,8 +4312,8 @@ function render(dt) {
     // with the dog on his heels the camera pulls back, so you see both of them
     walkCamBack += ((dog && dog.on && !dog.leave ? 3.2 : 0) - walkCamBack) * (1 - Math.exp(-dt * 2.5));
     const dist = [2.6, 3.6, 5.4][settings.cam] * tall + walkCamBack, hgt = [1.85, 2.3, 3.3][settings.cam] * tall + walkCamBack * 0.3;
-    trackAt(player.t - dist, player.d - 0.35, Q); wantPos.set(Q.x, Q.y + SW_Y + hgt, Q.z);
-    trackAt(player.t + 7, player.d - 0.2, Q); wantLook.set(Q.x, Q.y + SW_Y + 1.15, Q.z);
+    trackAt(player.t - dist, swD(player.t - dist, player.d - 0.35), Q); wantPos.set(Q.x, Q.y + SW_Y + hgt, Q.z);
+    trackAt(player.t + 7, swD(player.t + 7, player.d - 0.2), Q); wantLook.set(Q.x, Q.y + SW_Y + 1.15, Q.z);
     if (!camInit || camPos.distanceTo(wantPos) > 30) { camPos.copy(wantPos); camLook.copy(wantLook); camInit = true; }
     camPos.lerp(wantPos, 1 - Math.exp(-dt * 8)); camLook.lerp(wantLook, 1 - Math.exp(-dt * 10));
     camera.position.copy(camPos);
@@ -4873,7 +4977,7 @@ async function boot() {
   if (settings.kids) kidsHome(0);
   else if (!store.get('welcomed', 0)) showScreen('#welcome');
   requestAnimationFrame(loop);
-  if (!APP) window.__game = { scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud, kids };
+  if (!APP) window.__game = { events, laneD, LANES, CARS, tOfS, sOfT, HW, D_MAX, BAY_W, bayW, dMaxAt, scene, renderer, trackAt, game, player, L, LMS, settings, album, startTrip, keys, step, SAME, startTour, nextTourStep, touch, evStart, ev, hud, kids };
 }
 boot();
 })();
