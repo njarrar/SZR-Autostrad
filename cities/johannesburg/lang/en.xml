@@ -28,7 +28,6 @@
     <string key="text.bumpOk"></string>
     <string key="text.loadCity">Building Joburg...</string>
     <string key="text.currency">rand</string>
-    <string key="text.paxHow">keep left and slow down</string>
     <string key="text.fuelLow">Low fuel! Pull into the next left-lane garage</string>
     <string key="text.refuel">Tank filled at the garage! +100</string>
     <string key="text.paxAhead">Taxi rank</string>
