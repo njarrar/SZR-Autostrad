@@ -1,0 +1,21 @@
+# Release notes, one entry per version, newest on top. Write each entry about that version only.
+# Each store gets the entries newer than the version its players have now, up to the version in
+# the build, so neither store tells players about a change their build does not have yet.
+
+## 2.35
+Looking around turns at a calmer speed, and the screen no longer zooms in when you use two fingers.
+
+## 2.34
+Look around your car: drag the screen or tap the eye button next to the radio. Passenger stops now open into a yellow bay you can pull into, with a sign before each one.
+
+## 2.33
+The horn button now says Horn, pause dims the road, and the driving panels take less room on sideways phones and tablets. Let's go is the one big button on the menu.
+
+## 2.32
+The touch stick no longer gets stuck. Lift your thumb anywhere and it lets go, and a new touch always takes it over.
+
+## 2.30
+Go back a step in the guided tour with the Back button, a tap on a dot, or a swipe. In Kids Mode the car on the trip bar faces the right way, and the race cars sound softer.
+
+## 2.29
+A Cities button on each city's menu and an All cities button on the pause screen take you back to the list of cities. The back button on a city's menu now opens the list instead of closing the app.
