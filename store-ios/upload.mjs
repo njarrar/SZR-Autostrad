@@ -107,7 +107,24 @@ await step('age rating 4+', async () => {
 });
 
 // ---------- the version: number, copyright, build, store text, screenshots ----------
-const versions = (await get(`/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=20`)).data;
+let versions = (await get(`/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=20`)).data;
+for (const v of versions) console.log('     have version', v.attributes.versionString, v.attributes.appStoreState, v.attributes.appVersionState || '');
+// PULL=1: take an older version still waiting for Apple out of review, so this version can go in its place
+const waiting = versions.find((v) => ['WAITING_FOR_REVIEW', 'IN_REVIEW'].includes(v.attributes.appStoreState) && v.attributes.versionString !== VERSION);
+if (env.PULL === '1' && waiting) {
+  const subs = (await get(`/v1/reviewSubmissions?filter[app]=${app.id}&filter[platform]=IOS&filter[state]=WAITING_FOR_REVIEW,IN_REVIEW`)).data;
+  for (const sub of subs) {
+    console.log('     pulling', waiting.attributes.versionString, 'out of review: submission', sub.id, sub.attributes.state);
+    await patch(`/v1/reviewSubmissions/${sub.id}`, { data: { type: 'reviewSubmissions', id: sub.id, attributes: { canceled: true } } });
+    for (let i = 0; i < 40; i++) {
+      const st = (await get(`/v1/reviewSubmissions/${sub.id}`)).data.attributes.state;
+      console.log('     submission', st);
+      if (st !== 'CANCELING' && st !== 'WAITING_FOR_REVIEW' && st !== 'IN_REVIEW') break;
+      await new Promise((r) => setTimeout(r, 15000));
+    }
+  }
+  versions = (await get(`/v1/apps/${app.id}/appStoreVersions?filter[platform]=IOS&limit=20`)).data;
+}
 for (const v of versions) console.log('     have version', v.attributes.versionString, v.attributes.appStoreState, v.attributes.appVersionState || '');
 // a version still being worked on: Apple's states for that are not all listed in its docs, so also take the
 // version with this number when it is not live or in review

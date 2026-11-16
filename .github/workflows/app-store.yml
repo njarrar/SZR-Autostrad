@@ -21,6 +21,10 @@ on:
         description: Send the version for review
         type: boolean
         default: true
+      pull:
+        description: Take an older version out of Apple review first, so this one goes in its place
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -104,4 +108,5 @@ jobs:
           WAIT_BUILD: ${{ github.ref_name == 'main' && '1' || '0' }}
           SHOTS: ${{ inputs.shots && '1' || '0' }}
           SUBMIT: ${{ inputs.submit && '1' || '0' }}
+          PULL: ${{ inputs.pull && '1' || '0' }}
         run: node store-ios/upload.mjs
