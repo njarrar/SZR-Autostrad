@@ -48,8 +48,8 @@ const POSTCARD = (() => {
       jac: ['#8a6fc0', '#6a4fa0'], leaf: '#6a8a3a', roofs: ['#8b3a2b', '#4a4d52', '#9aa0a6', '#b5654a'], houses: ['#b5654a', '#d9c4a0', '#e8e2d6', '#6fb0d0', '#f2c418', '#8fc06a']
     }
   };
-  // locked cards: the sky goes slate and everything on it turns to one dark shape
-  const LOCK_SKY = ['#283041', '#2f3849', '#374153', '#404b5e'], LOCK_INK = '#161b25', LOCK_GROUND = '#1f2530';
+  // locked cards: higher-contrast dusk slate sky + dark silhouette + crisp corner padlock badge
+  const LOCK_SKY = ['#344157', '#3f4f68', '#4c5f7c', '#5b7091'], LOCK_INK = '#131923', LOCK_GROUND = '#1d2534';
   // 4x4 ordered dither, 0..15
   const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
   const bay = (x, y) => BAYER[(y & 3) * 4 + (x & 3)];
@@ -210,9 +210,9 @@ const POSTCARD = (() => {
         for (const dx of [-12, -6, 0, 6, 12]) K.line(P.gold, 48 + dx * 0.4, 17, 48 + dx, 31);
         K.rect(P.gold, 47, 12, 2, 4); K.px(P.gold, 47, 11);
       },
-      // 3 Amman Citadel: the Temple of Hercules columns on the hilltop, the Umayyad dome beside them
+      // 3 Amman Citadel: the Temple of Hercules columns on the hilltop, the Umayyad dome beside them (sun clear of entablature)
       (K) => {
-        const P = K.P; K.sky(P.sky); K.sun(80, 9, 4); K.cloud(30, 8, 20);
+        const P = K.P; K.sky(P.sky); K.sun(16, 10, 4); K.cloud(68, 8, 18);
         K.poly(P.far[0], [0, GY, 4, 34, 22, 28, 74, 28, 92, 34, 96, GY]); K.ground();
         K.rect(P.stone[2], 6, 30, 84, 4); K.wins(P.shade, 7, 31, 82, 2, 3, 2);
         K.rect(P.stone[1], 10, 20, 14, 10); K.oval(P.stone[2], 17, 20, 7, 6, 'top'); K.rect(P.dark, 15, 25, 3, 5);
@@ -229,19 +229,34 @@ const POSTCARD = (() => {
         K.poly(P.red, [fx, fy, fx + 18, fy + fh / 2, fx, fy + fh]);
         K.px(P.white, fx + 5, fy + 9); K.px(P.white, fx + 6, fy + 10); K.px(P.white, fx + 4, fy + 10); K.px(P.white, fx + 5, fy + 11); K.px(P.white, fx + 5, fy + 10);
       },
-      // 5 Roman Theatre: the rows of stone seats cut into the hill, the stage and its columns in front
+      // 5 Roman Theatre: curved semicircular tiered cavea seats, radial stairs, and stage colonnade
       (K) => {
         const P = K.P; K.sky(P.sky); K.cloud(18, 8, 18); ammanHill(K, 14, 21); K.ground();
-        for (let k = 0; k < 12; k++) { const y = 18 + k * 2.6, hw = 46 - k * 2.4; K.rect(k % 2 ? P.stone[1] : P.stone[2], 48 - hw, y, hw * 2, 3); }
-        K.rect(P.shade, 46, 18, 4, 31);
-        K.rect(P.stone[0], 22, 48, 52, 4); for (let k = 0; k < 9; k++) K.rect(P.stone[0], 24 + k * 6, 42, 2, 6); K.rect(P.stone[1], 22, 41, 52, 1);
+        for (let k = 0; k < 12; k++) {
+          const rx = 44 - k * 2.5, ry = 28 - k * 1.9;
+          K.oval(k % 2 ? P.stone[1] : P.stone[2], 48, 46, rx, ry, 'top');
+        }
+        K.oval(P.stone[3], 48, 46, 13, 6, 'top');
+        for (const dx of [-24, -12, 0, 12, 24]) K.line(P.shade, 48 + dx * 0.25, 44, 48 + dx, 22 + Math.abs(dx) * 0.35);
+        K.rect(P.stone[0], 22, 47, 52, 5); for (let k = 0; k < 9; k++) K.rect(P.stone[0], 24 + k * 6, 41, 2, 6); K.rect(P.stone[1], 22, 40, 52, 1);
       },
-      // 6 Rainbow Street: old stone houses stacked down the slope, coloured awnings at the bottom
+      // 6 Rainbow Street: stone cafes, glowing lantern string & iconic floating colourful umbrellas overhead
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(84, 8, 4);
-        ammanHill(K, 10, 31); ammanHill(K, 22, 17); K.ground();
+        ammanHill(K, 16, 31); K.ground();
         const cols = ['#c8102e', '#f2a900', '#007a3d', '#1f6fb8', '#8f3fb5', '#ef6c2c'];
-        for (let k = 0; k < 6; k++) { const x = 4 + k * 15; K.rect(P.stone[0], x, 40, 13, 10); K.rect(cols[k], x + 1, 44, 11, 2); K.rect(P.dark, x + 3, 46, 4, 4); K.px(P.win, x + 9, 42); }
+        for (let k = 0; k < 6; k++) {
+          const x = 4 + k * 15;
+          K.rect(P.stone[0], x, 36, 13, 14); K.rect(P.stone[2], x + 12, 36, 1, 14);
+          K.rect(cols[k], x + 1, 42, 11, 2); K.rect(P.dark, x + 3, 44, 4, 6); K.px(P.win, x + 9, 39);
+        }
+        // signature Rainbow Street floating umbrella canopy strung across the lane
+        K.line(P.dark, 2, 20, 94, 20);
+        for (let k = 0; k < 7; k++) {
+          const ux = 9 + k * 13, uy = 19 + (k % 2) * 3;
+          K.oval(cols[k % cols.length], ux, uy, 5, 3, 'top');
+          K.px(P.white, ux - 1, uy - 2);
+        }
       },
       // 7 Abdoun Bridge: two Y shaped towers holding the deck with fans of cables over the valley
       (K) => {
@@ -289,14 +304,21 @@ const POSTCARD = (() => {
         K.rect(P.stone[0], 38, 4, 18, 40); K.rect(P.stone[2], 52, 4, 4, 40); K.wins(P.shade, 40, 6, 14, 36, 2, 2);
         K.rect(P.stone[1], 24, 40, 46, 10); K.wins(P.win, 26, 42, 42, 6, 3, 3); K.road();
       },
-      // 2 Museum of the Future: the silver ring with lit calligraphy on its green mound
+      // 2 Museum of the Future: 3/4 metallic torus with recessed inner rim & glowing Arabic calligraphy ribbons
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(14, 36, 5); K.skyline(GY, 13, 14); K.ground();
         K.oval(P.green[1], 48, 54, 34, 7); K.oval(P.green[0], 48, 52, 30, 7);
-        K.oval(P.silver[1], 48, 27, 20, 23); K.oval(P.silver[0], 46, 26, 18, 21);
-        // the hole shows the sky behind, locked or not
-        K.raw = true; K.oval(K.lock ? LOCK_SKY[3] : P.sky[3], 48, 27, 9, 12); K.oval(K.lock ? LOCK_SKY[2] : P.sky[2], 48, 25, 8, 9); K.raw = false;
-        if (!K.lock) for (let k = 0; k < 26; k++) { const a = k / 26 * Math.PI * 2, r = k % 2 ? 14 : 16.5; K.rect(P.glow, 48 + Math.cos(a) * r * 0.86 - 1, 27 + Math.sin(a) * r - 0.5, 2 + (k % 3 === 0), 1); }
+        K.oval(P.silver[2], 50, 27, 21, 23); K.oval(P.silver[1], 48, 27, 20, 22); K.oval(P.silver[0], 45, 25, 16, 19);
+        // deep 3/4 metallic inner bevel before the sky void
+        K.oval(P.silver[2], 49, 27, 10, 13);
+        K.raw = true; K.oval(K.lock ? LOCK_SKY[3] : P.sky[3], 47, 27, 8.5, 11.5); K.oval(K.lock ? LOCK_SKY[2] : P.sky[2], 47, 24, 7.5, 8.5); K.raw = false;
+        if (!K.lock) {
+          for (let k = 0; k < 28; k++) {
+            const a = k / 28 * Math.PI * 2, r = k % 2 ? 13.5 : 16.5;
+            K.rect(P.glow, 47 + Math.cos(a) * r * 0.88 - 1, 27 + Math.sin(a) * r - 0.5, 2 + (k % 3 === 0), 1);
+            if (k % 4 === 0) K.px(P.white, 47 + Math.cos(a) * r * 0.88, 27 + Math.sin(a) * r);
+          }
+        }
       },
       // 3 Emirates Towers: the two glass towers with sharp triangle tops
       (K) => {
@@ -306,13 +328,13 @@ const POSTCARD = (() => {
         K.wins(P.win, 30, 14, 5, 34, 2, 3, (i, j) => (i * 7 + j) % 5 === 0); K.wins(P.win, 56, 22, 4, 26, 2, 3, (i, j) => (i * 3 + j) % 4 === 0);
         K.road();
       },
-      // 4 Burj Khalifa: the stepped needle rising out of the city, red light on top
+      // 4 Burj Khalifa: slender soaring stepped needle with bright spire and red aviation beacon
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(80, 42, 5); K.skyline(GY, 31, 14); K.ground();
-        const st = [[22, 12], [17, 10], [13, 9], [9, 8], [6, 6], [4, 5]];
+        const st = [[20, 10], [15, 9], [11, 8], [8, 7], [5, 6], [3, 5]];
         let y = GY;
-        st.forEach(([w, h], i) => { y -= h; K.rect(P.glass[2], 48 - w / 2, y, w, h); K.rect(P.glass[1], 48, y, w / 2, h); K.rect(P.silver[0], 48 - w / 2 - (i ? 0 : 1), y, w + (i ? 0 : 2), 1); });
-        K.rect(P.silver[1], 47, 3, 2, y - 3); K.rect(P.silver[0], 47.5, 1, 1, 3); K.px(P.red, 47, 0); K.px(P.red, 48, 0);
+        st.forEach(([w, h], i) => { y -= h; K.rect(P.glass[2], 48 - w / 2, y, w, h); K.rect(P.glass[1], 48, y, Math.ceil(w / 2), h); K.rect(P.silver[0], 48 - w / 2 - (i ? 0 : 1), y, w + (i ? 0 : 2), 1); });
+        K.rect(P.silver[1], 47.5, 2, 1, y - 2); K.px(P.silver[0], 47.5, 1); K.px(P.red, 47.5, 0);
       },
       // 5 Mall of the Emirates: the long mall with the ski slope rising beside it
       (K) => {
@@ -327,7 +349,8 @@ const POSTCARD = (() => {
         const P = K.P; K.sky(P.sky); K.sun(48, 40, 6);
         for (const [x, w, h, c] of [[2, 10, 30, 0], [12, 9, 40, 2], [24, 10, 34, 1], [54, 11, 44, 0], [66, 9, 30, 2], [76, 10, 38, 1], [87, 9, 26, 0]]) glassTower(K, P.glass[c], x, 44 - h, w, h, P.glass[3]);
         for (let k = 0; k < 20; k++) { const off = Math.round(Math.sin(k * 0.45) * 2); K.rect(P.silver[1], 38 + off, 6 + k * 2, 11, 2); K.rect(P.glass[1], 40 + off, 6 + k * 2, 6, 1); }
-        K.rect(P.sea[0], 0, 44, W, 20); K.checker(P.sea[1], 0, 46, W, 3); K.checker(P.sea[2], 40, 44, 16, 6, 1);
+        K.rect(P.sea[0], 0, 44, W, 20); K.checker(P.sea[1], 0, 46, W, 3);
+        for (let r = 0; r < 6; r++) K.rect(P.sea[2], 42 + r, 45 + r * 2, Math.max(4, 14 - r * 2), 1);
         K.rect(P.white, 14, 52, 10, 2); K.rect(P.white, 17, 49, 1, 3); K.rect(P.white, 64, 56, 12, 2); K.rect(P.white, 68, 52, 1, 4);
       },
       // 7 Ain Dubai: the great wheel with its cabins over the sea
@@ -339,10 +362,11 @@ const POSTCARD = (() => {
         for (let k = 0; k < 24; k++) { const a = k / 24 * Math.PI * 2; K.rect(P.white, 51 + Math.cos(a) * 22.5, 23 + Math.sin(a) * 22.5, 2, 2); }
         K.oval(P.silver[0], 52, 24, 2, 2); K.line(P.silver[1], 52, 24, 44, 50); K.line(P.silver[1], 52, 24, 60, 50); K.line(P.silver[2], 53, 24, 61, 50);
       },
-      // 8 Burj Al Arab: the white sail on its island in the sea
+      // 8 Burj Al Arab: the white sail on its island in the sea (tapered sun shimmer)
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(72, 40, 7);
-        K.rect(P.sea[0], 0, 46, W, 18); K.checker(P.sea[1], 0, 48, W, 4); K.checker(P.sea[2], 60, 46, 22, 5, 1);
+        K.rect(P.sea[0], 0, 46, W, 18); K.checker(P.sea[1], 0, 48, W, 4);
+        for (let r = 0; r < 6; r++) K.rect(P.sea[2], 64 + r * 1.5, 47 + r * 2, Math.max(4, 18 - r * 3), 1);
         K.oval(P.sand, 46, 47, 18, 3);
         K.rect(P.silver[2], 34, 4, 2, 42); K.rect(P.silver[1], 37, 2, 1, 44);
         K.poly(P.white, [36, 46, 36, 4, 40, 4, 52, 14, 58, 28, 57, 40, 54, 46]);
@@ -383,12 +407,16 @@ const POSTCARD = (() => {
         K.oval(P.stone[1], 48, 46, 40, 14); K.oval(P.red, 48, 45, 36, 11); K.oval(P.kgreen, 48, 46, 34, 8, 'top'); K.oval(P.terra[0], 48, 48, 26, 6); K.oval(P.green[0], 48, 48, 20, 4);
         for (const x of [10, 86]) { K.rect(P.stone[2], x, 14, 2, 34); K.rect(P.white, x - 3, 12, 8, 3); }
       },
-      // 3 Wilson Airport: the control tower, a curved hangar and a small plane taking off
+      // 3 Wilson Airport: control tower, curved hangar and side-view bush plane climbing over the runway
       (K) => {
         const P = K.P; K.sky(P.sky); K.cloud(30, 12, 20); K.ground();
-        K.oval(P.stone[2], 64, 50, 18, 14, 'top'); K.rect(P.dark, 58, 42, 12, 8);
-        K.rect(P.white, 18, 22, 4, 28); K.rect(P.glass[3], 15, 16, 10, 6); K.rect(P.white, 14, 14, 12, 2);
-        K.rect(P.white, 40, 18, 18, 3); K.rect(P.white, 46, 12, 3, 14); K.rect(P.red, 56, 15, 3, 3); K.px(P.glass[3], 43, 19); K.px(P.glass[3], 45, 19);
+        K.oval(P.stone[2], 68, 50, 18, 14, 'top'); K.rect(P.dark, 62, 42, 12, 8);
+        K.rect(P.white, 16, 22, 4, 28); K.rect(P.glass[3], 13, 16, 10, 6); K.rect(P.white, 12, 14, 12, 2);
+        // side-view climbing bush plane (nose tilted up-left, swept wing, tail fin & spinning prop)
+        K.poly(P.white, [38, 20, 56, 25, 55, 28, 37, 23]);
+        K.poly(P.red, [53, 24, 58, 19, 60, 20, 57, 26]);
+        K.line(P.white, 43, 20, 51, 17); K.line(P.stone[2], 43, 21, 51, 18);
+        K.px(P.glass[3], 42, 21); K.px(P.glass[3], 45, 22); K.line(P.dark, 36, 18, 36, 24);
         K.road();
       },
       // 4 Nairobi National Park: giraffes and acacias on the plain, the city's towers right behind
@@ -406,11 +434,13 @@ const POSTCARD = (() => {
         }
         for (let x = 2; x < W; x += 4) K.rect(P.wood, x, GY + 4, 1, 4);
       },
-      // 6 The Junction: the long mall with its red sign
+      // 6 The Junction: red terracotta canopy entrance with courtyard arches & jacarandas
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(80, 9, 4); K.skyline(GY, 51, 6); K.ground();
-        K.rect(P.stone[0], 6, 30, 84, 20); K.rect(P.stone[2], 6, 30, 84, 2); K.rect(P.white, 30, 33, 36, 6); K.rect(P.red, 33, 35, 30, 2);
-        K.rect(P.glass[0], 12, 42, 72, 8); K.wins(P.glass[3], 13, 43, 70, 6, 3, 2); K.jac(4, 50, 7); K.jac(92, 50, 6); K.road();
+        K.rect(P.stone[0], 8, 32, 80, 18); K.rect(P.terra[0], 8, 29, 80, 3);
+        K.poly(P.red, [26, 29, 70, 29, 64, 22, 32, 22]); K.rect(P.white, 34, 33, 28, 5); K.rect(P.red, 37, 35, 22, 2);
+        for (let x = 14; x < 80; x += 10) K.oval(P.glass[0], x + 3, 50, 3.5, 7, 'top');
+        K.jac(4, 50, 8); K.jac(92, 50, 7); K.road();
       },
       // 7 Upper Hill: the Britam tower's sloping glass face beside the pyramid topped tower
       (K) => {
@@ -465,33 +495,50 @@ const POSTCARD = (() => {
         glassTower(K, P.glass[1], 38, 2, 14, 48); K.rect(P.glass[1], 41, 0, 8, 2);
         K.rect(P.sand, 56, 16, 12, 34); K.poly(P.sand, [56, 16, 68, 16, 62, 8]); K.wins(P.brown[1], 58, 19, 8, 29, 2, 3);
       },
-      // 5 Nelson Mandela Square: the bronze of Madiba dancing, the shops behind
+      // 5 Nelson Mandela Square: clear silhouetted dancing Madiba bronze on tall pedestal against bright colonnade
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(16, 9, 4); K.ground(P.stone[1], P.stone[2]);
-        K.rect(P.stone[0], 4, 24, 88, 18); K.wins(P.win, 6, 27, 84, 6, 3, 2); for (let x = 8; x < 88; x += 14) K.rect([P.red, P.green[0], P.gold, P.blue][(x / 14 | 0) % 4], x, 36, 10, 2);
-        K.rect(P.stone[2], 42, 46, 12, 6); K.rect(P.bronze, 45, 34, 6, 12); K.rect(P.bronze, 46, 28, 4, 6); K.oval(P.bronze, 48, 26, 2.5, 2.5);
-        K.line(P.bronze, 45, 29, 40, 24); K.line(P.bronze, 51, 29, 56, 24);
+        K.rect(P.stone[0], 4, 26, 88, 16); K.wins(P.win, 6, 29, 32, 6, 4, 3); K.wins(P.win, 58, 29, 32, 6, 4, 3);
+        for (let x = 8; x < 88; x += 16) if (Math.abs(x - 44) > 8) K.rect([P.red, P.green[0], P.gold, P.blue][(x / 16 | 0) % 4], x, 37, 10, 2);
+        K.rect(P.stone[2], 41, 44, 14, 8); K.rect(P.stone[0], 42, 44, 12, 1);
+        K.rect(P.bronze, 46, 34, 2, 10); K.rect(P.bronze, 49, 35, 2, 9);
+        K.rect(P.bronze, 45, 25, 7, 10); K.oval(P.bronze, 48.5, 21.5, 2.5, 2.8);
+        K.line(P.bronze, 45, 27, 39, 21); K.line(P.bronze, 52, 27, 58, 21);
+        K.px('#7a6244', 47, 26); K.px('#7a6244', 48, 21);
       },
-      // 6 Orlando Towers: the two painted cooling towers in Soweto with the bridge between them
+      // 6 Orlando Towers: cylindrical-shaded painted cooling towers in Soweto with skybridge
       (K) => {
         const P = K.P; K.sky(P.sky); K.cloud(48, 6, 14); K.ground(); K.houses(GY + 2, 3);
         for (const [x, cols] of [[28, P.paint1], [68, P.paint2]]) {
-          for (let y = 8; y < GY; y++) { const f = (y - 8) / (GY - 8), w = 9 + Math.abs(f - 0.55) * 7 + f * 2; K.rect(cols[Math.floor(y / 7) % cols.length], x - w, y, w * 2, 1); }
+          for (let y = 8; y < GY; y++) {
+            const f = (y - 8) / (GY - 8), w = 9 + Math.abs(f - 0.55) * 7 + f * 2;
+            const col = cols[Math.floor(y / 7) % cols.length];
+            K.rect(col, x - w, y, w * 2, 1);
+            // right-edge cylindrical shadow + left rim specular
+            if (!K.lock) { K.rect('rgba(0,0,0,0.28)', x + w * 0.45, y, w * 0.55, 1); K.rect('rgba(255,255,255,0.22)', x - w * 0.85, y, Math.max(1, w * 0.22), 1); }
+          }
         }
         K.rect(P.dark, 36, 11, 24, 2);
       },
-      // 7 FNB Stadium: the calabash bowl in earth coloured panels, a ring of fire at its foot
+      // 7 FNB Stadium: calabash bowl clamped cleanly on right edge with earth mosaic & ring of fire
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(80, 8, 4); K.ground();
-        for (let y = 20; y < GY; y++) { const f = (y - 20) / (GY - 20), w = 40 - (f - 0.3) * (f - 0.3) * 30; for (let x = 48 - w; x < 48 + w; x += 4) K.rect(P.earth[((x / 4 | 0) + (y / 4 | 0)) % P.earth.length], x, y, 4, 1); }
+        for (let y = 20; y < GY; y++) {
+          const f = (y - 20) / (GY - 20), w = 40 - (f - 0.3) * (f - 0.3) * 30;
+          const x0 = Math.round(48 - w), x1 = Math.round(48 + w);
+          for (let x = x0; x < x1; x += 4) K.rect(P.earth[((x / 4 | 0) + (y / 4 | 0)) % P.earth.length], x, y, Math.min(4, x1 - x), 1);
+        }
         K.rect(P.dark, 12, 19, 72, 2); K.rect(P.fire, 14, GY - 3, 68, 2);
       },
-      // 8 Gold Reef City: the mine headgear and the red rollercoaster loop
+      // 8 Gold Reef City: mine headgear and continuous rollercoaster loop + full track
       (K) => {
         const P = K.P; K.sky(P.sky); K.cloud(20, 10, 16); K.ground();
-        K.line(P.brown[1], 20, GY, 26, 12); K.line(P.brown[1], 32, GY, 26, 12); K.line(P.brown[1], 40, GY, 27, 12); for (let y = 20; y < GY; y += 8) K.line(P.brown[1], 22 + (GY - y) * 0.1, y, 31 - (GY - y) * 0.1, y);
-        K.ring(P.brown[0], 26, 10, 3); K.ring(P.red, 66, 30, 13, 120); K.ring(P.red, 66, 30, 12, 110); K.rect(P.red, 44, 42, 50, 2);
-        for (let x = 46; x < 94; x += 8) K.rect(P.white, x, 44, 1, 6);
+        K.line(P.brown[1], 18, GY, 24, 12); K.line(P.brown[1], 30, GY, 24, 12); K.line(P.brown[1], 38, GY, 25, 12);
+        for (let y = 20; y < GY; y += 8) K.line(P.brown[1], 20 + (GY - y) * 0.1, y, 29 - (GY - y) * 0.1, y);
+        K.ring(P.brown[0], 24, 10, 3);
+        K.ring(P.red, 66, 29, 13, 120); K.ring(P.red, 66, 29, 12, 110);
+        K.rect(P.red, 38, 42, 58, 2); K.line(P.red, 38, 42, 48, 34); K.line(P.red, 86, 42, 96, 32);
+        for (let x = 42; x < 94; x += 8) K.rect(P.white, x, 44, 1, 6);
       },
       // 9 Mine Dumps: the flat topped yellow hills left by the gold mines
       (K) => {
@@ -567,21 +614,24 @@ const POSTCARD = (() => {
         K.rect(P.glass[2], 40, 10, 16, 40); K.rect(P.glass[1], 48, 10, 8, 40); K.poly(P.glass[2], [40, 10, 56, 10, 48, 0]); K.poly(P.glass[1], [48, 10, 56, 10, 48, 0]);
         K.wins(P.white, 42, 12, 12, 36, 3, 4);
       },
-      // 8 Riyadh Park: the long mall with its glass entrance
+      // 8 Riyadh Park: curved modern glass wave roof + glowing plaza fountain
       (K) => {
         const P = K.P; K.sky(P.sky); K.sun(80, 9, 4); K.skyline(GY, 37, 6); K.ground();
-        K.rect(P.stone[0], 6, 30, 84, 20); K.rect(P.stone[2], 6, 30, 84, 2); K.rect(P.glass[1], 34, 24, 28, 6); K.checker(P.glass[3], 34, 24, 28, 6);
-        K.rect(P.white, 34, 34, 28, 6); for (let x = 37; x < 60; x += 4) K.rect('#7a1f2b', x, 36, 2 + (x % 3 === 1), 3);
-        K.rect(P.glass[0], 12, 42, 72, 8); K.wins(P.glass[3], 13, 43, 70, 6, 3, 2); K.palm(4, 50, 14); K.palm(92, 50, 13); K.road();
+        K.rect(P.stone[0], 6, 32, 84, 18); K.poly(P.glass[1], [16, 32, 34, 21, 62, 21, 80, 32]); K.checker(P.glass[3], 32, 22, 32, 9);
+        K.rect(P.white, 34, 34, 28, 6); for (let x = 37; x < 60; x += 4) K.rect('#1f6e43', x, 36, 2 + (x % 3 === 1), 3);
+        K.rect(P.glass[0], 14, 42, 68, 8); K.oval('#5fc8e8', 48, 52, 10, 2); K.palm(4, 50, 14); K.palm(92, 50, 13); K.road();
       },
-      // 9 Boulevard City: the lit gate and bright shop signs at night
+      // 9 Boulevard City: bright glowing neon arch, giant LED billboards & night plaza
       (K) => {
         const P = K.P; K.sky(P.night);
         if (!K.lock) for (const [x, y] of [[10, 4], [30, 9], [70, 5], [86, 12], [52, 3], [20, 16]]) K.px(P.white, x, y);
-        for (let k = 0; k < 6; k++) { const x = k * 16, h = 14 + (k * 7) % 12; K.rect('#3a3446', x, GY - h, 15, h); K.rect(P.neon[k % 5], x + 2, GY - h + 3, 11, 2); }
+        for (let k = 0; k < 6; k++) { const x = k * 16, h = 15 + (k * 7) % 12; K.rect('#3c354c', x, GY - h, 15, h); K.rect(P.neon[k % 5], x + 2, GY - h + 3, 11, 3); }
         K.ground('#3a3446', '#2a2436');
-        for (let k = 0; k <= 40; k++) { const a = Math.PI * k / 40, x = 48 - Math.cos(a) * 22, y = GY - Math.sin(a) * 26; K.rect('#2a2340', x - 1.5, y - 1.5, 3, 3); K.px(P.neon[2], x, y - 1); }
-        for (const x of [12, 84]) { K.rect('#6b6f75', x, 28, 1, 22); K.oval('#fff1c2', x + 0.5, 27, 2, 2); }
+        for (let k = 0; k <= 44; k++) {
+          const a = Math.PI * k / 44, x = 48 - Math.cos(a) * 23, y = GY - Math.sin(a) * 27;
+          K.rect('#4a3875', x - 2, y - 2, 4, 4); K.rect(P.neon[2], x - 1, y - 1, 2, 2);
+        }
+        for (const x of [12, 84]) { K.rect('#8a9099', x, 28, 1, 22); K.oval('#fff1c2', x + 0.5, 27, 2.5, 2.5); }
       },
       // 10 Diriyah: mud brick houses and towers stacked on the low hill by the wadi
       (K) => {

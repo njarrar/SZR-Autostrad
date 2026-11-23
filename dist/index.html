@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>SZR Autostrad</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f16'/%3E%3Cpath d='M18 52 L28 12 H36 L46 52 Z' fill='%23253041'/%3E%3Crect x='30.5' y='16' width='3' height='10' rx='1.5' fill='%23f5b83d'/%3E%3Crect x='30.5' y='34' width='3' height='12' rx='1.5' fill='%23f5b83d'/%3E%3C/svg%3E">
-<meta name="description" content="3D driving games in the browser, set on real roads in Arab cities.">
+<meta name="description" content="Five 3D driving games in the browser, set on real roads in Amman, Dubai, Riyadh, Nairobi and Johannesburg.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
@@ -39,11 +39,13 @@ header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .city .txt { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .city h2 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; color: var(--c); }
 .city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+[dir="rtl"] h1, [dir="rtl"] .city h2 { line-height: 1.22; }
+[dir="rtl"] .eyebrow, [dir="rtl"] .city .en { letter-spacing: 0; }
 .city p { margin: 0; color: var(--muted); }
 .city .ver { font-size: 12px; color: var(--muted); direction: ltr; unicode-bidi: isolate; }
 .play { margin-top: 10px; align-self: flex-start; background: var(--c); color: var(--card); font-family: var(--display); font-size: 24px; padding: 8px 22px 4px; border-radius: 12px; }
 /* each city's color comes from its city.js */
-.c-amman { --c: #0b6e3a; } .c-dubai { --c: #b5822a; } .c-riyadh { --c: #0a6b45; } .c-nairobi { --c: #b5122b; } .c-johannesburg { --c: #6a3fa0; }
+.c-amman { --c: #0b6e3a; } .c-dubai { --c: #8f6214; } .c-riyadh { --c: #0a6b45; } .c-nairobi { --c: #b5122b; } .c-johannesburg { --c: #6a3fa0; }
 @media (prefers-color-scheme: dark) { .c-amman { --c: #4fc27f; } .c-dubai { --c: #e2b04f; } .c-riyadh { --c: #5fcf93; } .c-nairobi { --c: #ff7a85; } .c-johannesburg { --c: #b893f0; } }
 .how { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; border-top: 1px solid var(--line); padding-top: 28px; }
 .how h3 { margin: 0 0 4px; font-size: 16px; }
@@ -82,51 +84,51 @@ footer a { color: inherit; }
     <a class="city c-amman" href="amman/" data-game>
       <img src="img/amman.png" alt="سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر" data-t-alt="amman.alt">
       <div class="txt">
-        <span class="en" data-t="amman.tag">AMMAN LOOP · 22 KM</span>
+        <span class="en" data-t="amman.tag">لفّة عمّان · 22 كم</span>
         <h2 data-t="amman.name">لفّة عمّان</h2>
         <p data-t="amman.text">العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.35 · 2026-11-13 01:22 UTC</span>
+        <span class="ver">v2.36 · 2026-11-23 22:23 UTC</span>
       </div>
     </a>
     <a class="city c-dubai" href="dubai/" data-game>
       <img src="img/dubai.png" alt="سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب" data-t-alt="dubai.alt">
       <div class="txt">
-        <span class="en" data-t="dubai.tag">DUBAI LOOP · 47 KM</span>
+        <span class="en" data-t="dubai.tag">لفّة دبي · 47 كم</span>
         <h2 data-t="dubai.name">لفّة دبي</h2>
         <p data-t="dubai.text">برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.35 · 2026-11-13 01:22 UTC</span>
+        <span class="ver">v2.36 · 2026-11-23 22:23 UTC</span>
       </div>
     </a>
     <a class="city c-riyadh" href="riyadh/" data-game>
       <img src="img/riyadh.png" alt="لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض" data-t-alt="riyadh.alt">
       <div class="txt">
-        <span class="en" data-t="riyadh.tag">RIYADH LOOP · 43 KM</span>
+        <span class="en" data-t="riyadh.tag">لفّة الرياض · 43 كم</span>
         <h2 data-t="riyadh.name">لفّة الرياض</h2>
         <p data-t="riyadh.text">قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.35 · 2026-11-13 01:22 UTC</span>
+        <span class="ver">v2.36 · 2026-11-23 22:23 UTC</span>
       </div>
     </a>
     <a class="city c-nairobi" href="nairobi/" data-game>
       <img src="img/nairobi.png" alt="ماتاتو ملوّن على طريق أوهورو، وبرج مركز كينياتا وراه" data-t-alt="nairobi.alt">
       <div class="txt">
-        <span class="en" data-t="nairobi.tag">NAIROBI LOOP · 32 KM</span>
+        <span class="en" data-t="nairobi.tag">لفّة نيروبي · 32 كم</span>
         <h2 data-t="nairobi.name">لفّة نيروبي</h2>
         <p data-t="nairobi.text">مركز كينياتا، حديقة أوهورو، استاد نيايو، الزرافات بالمحمية، بوماس، أبر هيل وويستلاندز. السواقة عاليسار، انتبه للماتاتو والمطبات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.35 · 2026-11-13 01:22 UTC</span>
+        <span class="ver">v2.36 · 2026-11-23 22:23 UTC</span>
       </div>
     </a>
     <a class="city c-johannesburg" href="johannesburg/" data-game>
       <img src="img/johannesburg.png" alt="تكسي ميني باص أبيض تحت شجر الجاكرندا البنفسجي، وجوهانسبرغ وراه" data-t-alt="johannesburg.alt">
       <div class="txt">
-        <span class="en" data-t="johannesburg.tag">JOBURG LOOP · 46 KM</span>
+        <span class="en" data-t="johannesburg.tag">لفّة جوهانسبرغ · 46 كم</span>
         <h2 data-t="johannesburg.name">لفّة جوهانسبرغ</h2>
         <p data-t="johannesburg.text">مركز كارلتون، جسر مانديلا، بونتي، طالع على M1 لساندتون، ونازل لسويتو وأبراج أورلاندو وملعب سوكر سيتي ومدينة غولد ريف. السواقة عاليسار، وانتبه للتكسيات.</p>
         <span class="play" data-t="play">العب</span>
-        <span class="ver">v2.35 · 2026-11-13 01:22 UTC</span>
+        <span class="ver">v2.36 · 2026-11-23 22:23 UTC</span>
       </div>
     </a>
   </section>
@@ -139,22 +141,29 @@ footer a { color: inherit; }
   <footer><span data-t="footer">المسارات مرسومة بشكل تقريبي على أماكن حقيقية.</span> <a href="https://github.com/njarrar/SZR-Autostrad" data-t="code">الكود على GitHub</a></footer>
 </div>
 <script>
-window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"title":"SZR Autostrad","h1":"سوق بشوارع عمّان ودبي والرياض ونيروبي وجوهانسبرغ","intro":"خمس ألعاب سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار.","introWeb":"بتشتغل عالمتصفح، عالكمبيوتر والموبايل.","introShort":"خمس ألعاب سواقة على طرق حقيقية. اختار مدينة ويلا.","play":"العب","how1t":"السواقة","how1":"\u003ckbd>↑\u003c/kbd> بنزين، \u003ckbd>↓\u003c/kbd> بريك، \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> تغيير المسرب، \u003ckbd>Space\u003c/kbd> زامور، \u003ckbd>N\u003c/kbd> نيترو. عالموبايل في أزرار عالشاشة.","how2t":"النقاط","how2":"كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.","how3t":"المخالفات","how3":"الرادار، الحوادث، الحك بالحاجز والمطبات عليها مخالفات وبتخرّب السيارة.","how4t":"أول مرة؟","how4":"اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.","footer":"المسارات مرسومة بشكل تقريبي على أماكن حقيقية.","code":"الكود على GitHub","amman.tag":"AMMAN LOOP · 22 KM","amman.name":"لفّة عمّان","amman.text":"العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.","amman.alt":"سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر","dubai.tag":"DUBAI LOOP · 47 KM","dubai.name":"لفّة دبي","dubai.text":"برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.","dubai.alt":"سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب","riyadh.tag":"RIYADH LOOP · 43 KM","riyadh.name":"لفّة الرياض","riyadh.text":"قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.","riyadh.alt":"لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض","nairobi.tag":"NAIROBI LOOP · 32 KM","nairobi.name":"لفّة نيروبي","nairobi.text":"مركز كينياتا، حديقة أوهورو، استاد نيايو، الزرافات بالمحمية، بوماس، أبر هيل وويستلاندز. السواقة عاليسار، انتبه للماتاتو والمطبات.","nairobi.alt":"ماتاتو ملوّن على طريق أوهورو، وبرج مركز كينياتا وراه","johannesburg.tag":"JOBURG LOOP · 46 KM","johannesburg.name":"لفّة جوهانسبرغ","johannesburg.text":"مركز كارلتون، جسر مانديلا، بونتي، طالع على M1 لساندتون، ونازل لسويتو وأبراج أورلاندو وملعب سوكر سيتي ومدينة غولد ريف. السواقة عاليسار، وانتبه للتكسيات.","johannesburg.alt":"تكسي ميني باص أبيض تحت شجر الجاكرندا البنفسجي، وجوهانسبرغ وراه"}},"en":{"name":"English","dir":"ltr","s":{"title":"SZR Autostrad","h1":"Drive the roads of Amman, Dubai, Riyadh, Nairobi and Johannesburg","intro":"Five 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera.","introWeb":"Plays in the browser on a computer or a phone.","introShort":"Five 3D driving games on real roads. Pick a city and go.","play":"Play","how1t":"Driving","how1":"\u003ckbd>↑\u003c/kbd> gas, \u003ckbd>↓\u003c/kbd> brake, \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> change lane, \u003ckbd>Space\u003c/kbd> horn, \u003ckbd>N\u003c/kbd> nitro. On a phone, use the buttons on screen.","how2t":"Points","how2":"Every kilometer earns points. Close, fast passes earn more, and passes in a row multiply them.","how3t":"Fines","how3":"Speed cameras, crashes, scraping the barrier and speed bumps cost fines and damage the car.","how4t":"First time?","how4":"The game starts with a short guided tour that teaches every control while you drive.","footer":"The roads roughly follow real places.","code":"Code on GitHub","amman.tag":"22 KM LOOP","amman.name":"Amman Loop","amman.text":"Abdali, the Citadel, the Raghadan flagpole, the Roman Theatre, Abdoun Bridge and Mecca Mall. Hills, dips and speed bumps.","amman.alt":"A yellow taxi on an Amman road between stone buildings","dubai.tag":"47 KM LOOP","dubai.name":"Dubai Loop","dubai.text":"The Dubai Frame, the Museum of the Future, Burj Khalifa, the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab. Speed cameras and Salik gates.","dubai.alt":"A car on Sheikh Zayed Road between Dubai towers at sunset","riyadh.tag":"43 KM LOOP","riyadh.name":"Riyadh Loop","riyadh.text":"Masmak Fort, the TV Tower, Al Faisaliah, Kingdom Centre and the financial district, then out to Boulevard City and old Diriyah. Saher cameras on every stretch.","riyadh.alt":"A white Land Cruiser on King Fahd Road between Riyadh towers","nairobi.tag":"32 KM LOOP","nairobi.name":"Nairobi Loop","nairobi.text":"KICC, Uhuru Park, Nyayo Stadium, giraffes in the National Park, Bomas, Upper Hill and Westlands. Keep left, dodge the matatus, mind the bumps.","nairobi.alt":"A matatu covered in bright art on Uhuru Highway, the KICC tower behind it","johannesburg.tag":"46 KM LOOP","johannesburg.name":"Joburg Loop","johannesburg.text":"Carlton Centre, the Mandela Bridge, Ponte, up the M1 to Sandton, then down to Soweto, the Orlando Towers, Soccer City and Gold Reef City. Keep left, give the taxis space.","johannesburg.alt":"A white minibus taxi under purple jacarandas, the Johannesburg skyline behind it"}}};
+window.LANGS = {"ar":{"name":"العربية","dir":"rtl","s":{"title":"SZR Autostrad","h1":"سوق بشوارع عمّان ودبي والرياض ونيروبي وجوهانسبرغ","intro":"خمس ألعاب سواقة ثلاثية الأبعاد على طرق حقيقية. اختار مدينة، اختار مشوار بين معالمها، وتجاوز السيارات بدون ما تضرب أو يصوّرك الرادار.","introWeb":"بتشتغل عالمتصفح، عالكمبيوتر والموبايل.","introShort":"خمس ألعاب سواقة على طرق حقيقية. اختار مدينة ويلا.","play":"العب","how1t":"السواقة","how1":"\u003ckbd>↑\u003c/kbd> بنزين، \u003ckbd>↓\u003c/kbd> بريك، \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> تغيير المسرب، \u003ckbd>Space\u003c/kbd> زامور، \u003ckbd>N\u003c/kbd> نيترو. عالموبايل في أزرار عالشاشة.","how2t":"النقاط","how2":"كل كيلو بنقاط، وكل تجاوز قريب وسريع بنقاط زيادة، وكذا تجاوز ورا بعض بتضاعف.","how3t":"المخالفات","how3":"الرادار، الحوادث، الحك بالحاجز والمطبات عليها مخالفات وبتخرّب السيارة.","how4t":"أول مرة؟","how4":"اللعبة بتبدأ بجولة تعليمية قصيرة بتعلّمك كل الأزرار وإنت سايق.","footer":"المسارات مرسومة بشكل تقريبي على أماكن حقيقية.","code":"الكود على GitHub","amman.tag":"لفّة عمّان · 22 كم","amman.name":"لفّة عمّان","amman.text":"العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.","amman.alt":"سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر","dubai.tag":"لفّة دبي · 47 كم","dubai.name":"لفّة دبي","dubai.text":"برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.","dubai.alt":"سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب","riyadh.tag":"لفّة الرياض · 43 كم","riyadh.name":"لفّة الرياض","riyadh.text":"قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.","riyadh.alt":"لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض","nairobi.tag":"لفّة نيروبي · 32 كم","nairobi.name":"لفّة نيروبي","nairobi.text":"مركز كينياتا، حديقة أوهورو، استاد نيايو، الزرافات بالمحمية، بوماس، أبر هيل وويستلاندز. السواقة عاليسار، انتبه للماتاتو والمطبات.","nairobi.alt":"ماتاتو ملوّن على طريق أوهورو، وبرج مركز كينياتا وراه","johannesburg.tag":"لفّة جوهانسبرغ · 46 كم","johannesburg.name":"لفّة جوهانسبرغ","johannesburg.text":"مركز كارلتون، جسر مانديلا، بونتي، طالع على M1 لساندتون، ونازل لسويتو وأبراج أورلاندو وملعب سوكر سيتي ومدينة غولد ريف. السواقة عاليسار، وانتبه للتكسيات.","johannesburg.alt":"تكسي ميني باص أبيض تحت شجر الجاكرندا البنفسجي، وجوهانسبرغ وراه"}},"en":{"name":"English","dir":"ltr","s":{"title":"SZR Autostrad","h1":"Drive the roads of Amman, Dubai, Riyadh, Nairobi and Johannesburg","intro":"Five 3D driving games on real roads. Pick a city, pick a trip between its landmarks, and pass cars without crashing or getting caught by a speed camera.","introWeb":"Plays in the browser on a computer or a phone.","introShort":"Five 3D driving games on real roads. Pick a city and go.","play":"Play","how1t":"Driving","how1":"\u003ckbd>↑\u003c/kbd> gas, \u003ckbd>↓\u003c/kbd> brake, \u003ckbd>←\u003c/kbd> \u003ckbd>→\u003c/kbd> change lane, \u003ckbd>Space\u003c/kbd> horn, \u003ckbd>N\u003c/kbd> nitro. On a phone, use the buttons on screen.","how2t":"Points","how2":"Every kilometer earns points. Close, fast passes earn more, and passes in a row multiply them.","how3t":"Fines","how3":"Speed cameras, crashes, scraping the barrier and speed bumps cost fines and damage the car.","how4t":"First time?","how4":"The game starts with a short guided tour that teaches every control while you drive.","footer":"The roads roughly follow real places.","code":"Code on GitHub","amman.tag":"22 KM LOOP","amman.name":"Amman Loop","amman.text":"Abdali, the Citadel, the Raghadan flagpole, the Roman Theatre, Abdoun Bridge and Mecca Mall. Hills, dips and speed bumps.","amman.alt":"A yellow taxi on an Amman road between stone buildings","dubai.tag":"47 KM LOOP","dubai.name":"Dubai Loop","dubai.text":"The Dubai Frame, the Museum of the Future, Burj Khalifa, the Marina and Ain Dubai, then back along Jumeirah past Burj Al Arab. Speed cameras and Salik gates.","dubai.alt":"A car on Sheikh Zayed Road between Dubai towers at sunset","riyadh.tag":"43 KM LOOP","riyadh.name":"Riyadh Loop","riyadh.text":"Masmak Fort, the TV Tower, Al Faisaliah, Kingdom Centre and the financial district, then out to Boulevard City and old Diriyah. Saher cameras on every stretch.","riyadh.alt":"A white Land Cruiser on King Fahd Road between Riyadh towers","nairobi.tag":"32 KM LOOP","nairobi.name":"Nairobi Loop","nairobi.text":"KICC, Uhuru Park, Nyayo Stadium, giraffes in the National Park, Bomas, Upper Hill and Westlands. Keep left, dodge the matatus, mind the bumps.","nairobi.alt":"A matatu covered in bright art on Uhuru Highway, the KICC tower behind it","johannesburg.tag":"46 KM LOOP","johannesburg.name":"Joburg Loop","johannesburg.text":"Carlton Centre, the Mandela Bridge, Ponte, up the M1 to Sandton, then down to Soweto, the Orlando Towers, Soccer City and Gold Reef City. Keep left, give the taxis space.","johannesburg.alt":"A white minibus taxi under purple jacarandas, the Johannesburg skyline behind it"}}};
 // Same choice as the games: ?lang=, then the saved language, then the browser language.
 (function () {
-  var KEY = 'szr:lang', l = null;
+  var KEY = 'szr:lang', l = null, has = function (k) { return !!k && Object.prototype.hasOwnProperty.call(LANGS, k); };
   try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
-  if (!LANGS[l]) { try { l = localStorage.getItem(KEY); } catch (e) { l = null; } }
-  if (!LANGS[l]) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : 'en';
-  if (!LANGS[l]) l = Object.keys(LANGS)[0];
+  if (has(l)) { try { localStorage.setItem(KEY, l); } catch (e) {} }
+  else { try { l = localStorage.getItem(KEY); } catch (e) { l = null; } }
+  if (!has(l)) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : 'en';
+  if (!has(l)) l = Object.keys(LANGS)[0];
   function apply() {
     var L = LANGS[l], codes = Object.keys(LANGS), next = codes[(codes.indexOf(l) + 1) % codes.length];
     document.documentElement.lang = l; document.documentElement.dir = L.dir;
+    if (L.s.title) document.title = L.s.title;
     document.querySelectorAll('[data-t]').forEach(function (el) { el.innerHTML = L.s[el.dataset.t]; });
     document.querySelectorAll('[data-t-alt]').forEach(function (el) { el.alt = L.s[el.dataset.tAlt]; });
     document.querySelectorAll('a[data-game]').forEach(function (a) { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + l; });
     var b = document.querySelector('[data-lang-switch]'); b.textContent = LANGS[next].name; b.lang = next;
-    b.onclick = function () { l = next; try { localStorage.setItem(KEY, l); } catch (e) {} apply(); };
+    b.onclick = function () {
+      l = next;
+      try { localStorage.setItem(KEY, l); } catch (e) {}
+      try { history.replaceState(null, '', '?lang=' + l); } catch (e) {}
+      apply();
+    };
   }
   apply();
   // inside the phone apps: no talk of browsers, and on iPhone the clock and battery show

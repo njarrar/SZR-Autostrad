@@ -2,6 +2,9 @@
 # Each store gets the entries newer than the version its players have now, up to the version in
 # the build, so neither store tells players about a change their build does not have yet.
 
+## 2.36
+Dubai's Museum of the Future is back, building windows look right on angled towers, cars reach their full top speed, fuel now burns by distance, clean speed camera passes earn points, trips earn up to 3 stars, night roads get street light pools and headlight beams, and Kids Mode can no longer be left from the pause screen.
+
 ## 2.35
 Looking around turns at a calmer speed, and the screen no longer zooms in when you use two fingers.
 

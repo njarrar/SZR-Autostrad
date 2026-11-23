@@ -45,7 +45,7 @@ window.CITY = {
   radars: [0.07, 0.22, 0.38, 0.54, 0.7, 0.86],
   landmarks: [
     { lat: 24.6318, lon: 46.7141, build: 'masmak', clear: 70 },
-    { lat: 24.6321, lon: 46.7124, build: 'najdiMosque', clear: 60 },
+    { lat: 24.6365, lon: 46.7130, build: 'najdiMosque', clear: 60 },
     { lat: 24.6459, lon: 46.7102, build: 'murabba', clear: 80 },
     { lat: 24.6577, lon: 46.7043, build: 'waterTower', clear: 50, view: 160 },
     { lat: 24.6654, lon: 46.6959, build: 'tvTower', clear: 50, view: 220 },
@@ -60,12 +60,12 @@ window.CITY = {
   // Kids Mode: the three places little ones pick from, by landmark
   kids: ['kingdomCentre', 'masmak', 'tvTower'],
   cars: [
-    { kind: 'suv', vmax: 205, accel: 5.0, grip: 0.86, tough: 0.55, role: 'vip' },
-    { kind: 'pickup', vmax: 175, accel: 4.3, grip: 0.84, tough: 0.5, role: 'tough' },
-    { kind: 'dtaxi', fixedColor: 0xf4f4f0, extra: { roof: 0x1d8a4e }, vmax: 185, accel: 4.6, grip: 1.0, tough: 1.0, role: 'taxi', paxCap: 4 },
-    { kind: 'sedan', vmax: 170, accel: 3.9, grip: 1.18, tough: 1.25, role: 'weave' },
-    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x0b6e3a }, vmax: 155, accel: 3.8, grip: 0.92, tough: 0.45, role: 'bus', paxCap: 14 },
-    { kind: 'f1', fixedColor: 0xd40000, vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, role: 'race' }
+    { kind: 'suv', vmax: 205, accel: 5.0, grip: 0.86, tough: 0.52, fuel: 1.3, role: 'vip' },
+    { kind: 'pickup', vmax: 175, accel: 4.3, grip: 0.84, tough: 0.42, fuel: 0.85, role: 'tough' },
+    { kind: 'dtaxi', fixedColor: 0xf4f4f0, extra: { roof: 0x1d8a4e }, vmax: 185, accel: 4.6, grip: 1.0, tough: 1.0, fuel: 0.85, role: 'taxi', paxCap: 4 },
+    { kind: 'sedan', vmax: 170, accel: 3.9, grip: 1.18, tough: 1.25, fuel: 0.75, role: 'weave' },
+    { kind: 'coaster', fixedColor: 0xf4f4f0, extra: { stripe: 0x0b6e3a }, vmax: 155, accel: 3.8, grip: 0.92, tough: 0.58, fuel: 1.05, role: 'bus', paxCap: 14 },
+    { kind: 'f1', fixedColor: 0xd40000, vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, fuel: 1.8, role: 'race' }
   ],
   stickers: ['', 'ما شاء الله', 'هذا من فضل ربي', 'لا تسرع يا شيخ', 'عز الرياض', 'طويق', 'الله يحفظك'],
   // Haitham Mode: what people on the sidewalk say, and the street seller's cart
@@ -105,13 +105,17 @@ window.CITY = {
     g.fillRect(w * 0.72, h * 0.62, w * 0.02, h * 0.12); g.fillRect(w * 0.74, h * 0.665, w * 0.07, h * 0.026);
   },
   drawPlate(g, w, h, text) {
-    // a Saudi plate: Arabic on top, Latin below, and the KSA strip on the right
+    // a Saudi plate: Arabic on top (isolated letters), Latin below, and the KSA strip on the right
     const AR = { A: 'ا', B: 'ب', J: 'ح', D: 'د', R: 'ر', S: 'س', X: 'ص', T: 'ط', E: 'ع', G: 'ق', K: 'ك', L: 'ل', Z: 'م', N: 'ن', H: 'هـ', U: 'و', V: 'ى' };
-    const arText = String(text).toUpperCase().replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]).replace(/[A-Z]/g, (c) => AR[c] || c);
+    const latText = String(text).toUpperCase();
+    const arText = latText.replace(/[0-9]/g, (d) => '٠١٢٣٤٥٦٧٨٩'[d]).replace(/[A-Z]/g, (c) => (AR[c] || c) + ' ').replace(/\s+/g, ' ').trim();
     g.fillStyle = '#fff'; g.fillRect(0, 0, w, h); g.strokeStyle = '#111'; g.lineWidth = 6; g.strokeRect(3, 3, w - 6, h - 6);
     g.fillStyle = '#111'; g.fillRect(w - 92, 6, 3, h - 12); g.fillRect(8, h / 2 - 1.5, w - 100, 3);
-    g.textAlign = 'center'; g.font = 'bold 50px sans-serif'; g.fillText(arText, (w - 92) / 2, 54); g.fillText(String(text).toUpperCase(), (w - 92) / 2, 112);
-    g.fillStyle = '#0b6e3a'; g.beginPath(); g.arc(w - 46, 34, 17, 0, Math.PI * 2); g.fill();
+    g.textAlign = 'center';
+    let z = 48; g.font = `bold ${z}px sans-serif`;
+    while (z > 24 && Math.max(g.measureText(arText).width, g.measureText(latText).width) > w - 116) { z -= 3; g.font = `bold ${z}px sans-serif`; }
+    g.fillText(arText, (w - 92) / 2, 54); g.fillText(latText, (w - 92) / 2, 112);
+    g.fillStyle = '#111'; g.beginPath(); g.arc(w - 46, 34, 15, 0, Math.PI * 2); g.fill();
     g.fillStyle = '#111'; g.font = 'bold 20px sans-serif'; g.fillText('السعودية', w - 46, 80); g.font = 'bold 22px sans-serif'; g.fillText('KSA', w - 46, 110);
   },
   look: {
@@ -119,10 +123,10 @@ window.CITY = {
     skyLight: 0xd8e4f0, groundLight: 0xc2a578, hemi: 1.2, sunColor: 0xffe2b0, sun: 2.0, sunDir: [0.6, 0.5, -0.35],
     winLit: '#ffd58a', winGlass: '#3e4f60', windows: { floor: 3.5, bay: 2.8, size: 0.5 },
     // the pixel look snaps every colour to this palette, plus a few colours taken from the time of day
-    pixelPalette: ['#1e1a17', '#2a221c', '#5a5652', '#7c5530', '#a97e52', '#c9a072', '#dcb486', '#e4d2ac', '#f2ede2', '#f8f5ee', '#cfc5b0', '#9a907e', '#5b8cc2', '#7ea6d0', '#a8c3dc', '#cfd5cf', '#3e4f60', '#4f6f84', '#6f8fa8', '#8aa6bd', '#4f6b33', '#6f8f45', '#e5b548', '#5f9fb8',
+    pixelPalette: ['#1e1a17', '#1e1f24', '#36373d', '#2a221c', '#5a5652', '#7c5530', '#a97e52', '#c9a072', '#dcb486', '#e4d2ac', '#f2ede2', '#f8f5ee', '#cfc5b0', '#9a907e', '#5b8cc2', '#7ea6d0', '#a8c3dc', '#cfd5cf', '#3e4f60', '#4f6f84', '#6f8fa8', '#8aa6bd', '#4f6b33', '#6f8f45', '#e5b548', '#5f9fb8',
       '#2a2a30', '#45454e', '#6b6b72', '#9a9aa0', '#c4c4c2', '#e2e1dc',
       '#e0cba3', '#d8c9a8', '#b8b0a0', '#c2d0dc', '#e8e0d0', '#9fbcd2', '#c6b58e', '#d9c4a0', '#f6efe2', '#a9bccb',
-      '#d6342c', '#7a1f1f', '#2a4a1c', '#4f6b2a'],
+      '#d6342c', '#4f6b2a'],
     ground: ['#d4b685', '#c9a974', '#ab9a7e'], asphalt: '#505156', median: '#a39a88', lineEdge: '#f2e7c4', lineLane: '#f2f2f2',
     paving: '#cdb894', kerb: ['#e8c22a', '#1c1c1c'], barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0xe8e8e8, 0xd8d8d0],
     treeDark: 0x3e5a33, treeLight: 0x7d8a5a, signColor: '#0a6b45', warnColor: '#a8740a', radarColor: 0xdedede,
@@ -146,8 +150,9 @@ window.CITY = {
   page: {
     tokens: {
       ground: '#d9c39a', ink: '#2a2014', muted: '#6e5f49', panel: 'rgba(248,242,230,0.94)', 'panel-solid': '#fbf6ec', chip: '#efe3cb',
-      line: '#ddcdb0', accent: '#0a6b45', 'on-accent': '#ffffff', hud: 'rgba(26,22,16,0.72)', 'hud-ink': '#fbf5ea', 'accent-hud': '#7fe0aa',
-      bad: '#c8102e', good: '#0a7a45', flagbar: 'linear-gradient(90deg,#006c35 0 70%,#f4efe6 70% 76%,#006c35 76%)'
+      line: '#ddcdb0', accent: '#0a6b45', 'on-accent': '#ffffff', hud: 'rgba(22,19,14,0.84)', 'hud-ink': '#fbf5ea', 'accent-hud': '#82e6af',
+      bad: '#c8102e', 'bad-hud': '#ff7575', good: '#0a7a45', 'toast-good': '#0a7a45', 'toast-bad': '#b5142b',
+      flagbar: 'linear-gradient(90deg,#006c35 0 70%,#f4efe6 70% 76%,#006c35 76%)'
     }
   }
 };

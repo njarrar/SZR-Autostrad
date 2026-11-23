@@ -32,7 +32,7 @@ The games come in English and Arabic. The Arabic text uses each city's own diale
 | ![A matatu in Upper Hill, Nairobi](docs/screenshots/nairobi-drive.png) | ![A minibus taxi heading into the Johannesburg city centre](docs/screenshots/johannesburg-drive.png) |
 | ![Acacias along Nairobi National Park](docs/screenshots/nairobi-park.png) | ![The painted Orlando Towers over the houses of Soweto](docs/screenshots/johannesburg-soweto.png) |
 
-**Version 2.35** (November 2026). See [What's new](#whats-new) for the changes.
+**Version 2.36** (November 2026). See [What's new](#whats-new) for the changes.
 
 On a phone it plays upright or sideways, with a touch stick and a horn button:
 
@@ -225,8 +225,8 @@ The taxis and the Coaster bus work a service shift. Green stops wait near each l
 
 ![The Coaster bus stopped in a stop bay in Amman while people walk to it](docs/screenshots/amman-pax-stop.png)
 - The taxi carries 4 people. The bus carries 14, but each fare pays less.
-- Every car burns fuel, faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
-- Fuel stations stand beside the road every 4.8 km. Pass one to fill up and fix some damage.
+- Every car burns fuel by distance, and each car has its own thirst. It burns faster on the gas and with nitro. The bar under your speed shows what is left. If the tank runs dry, the car limps at half speed.
+- Fuel stations are spread evenly round each loop. Pull into the kerb lane beside one to fill up, earn +100 points and fix some damage.
 
 ### Kids Mode
 
@@ -234,7 +234,7 @@ A gentle way to play for children aged 4 to 7. Press **Switch to Kids Mode** in 
 
 - Two big steps with no reading needed: pick a car from three pictures, then pick a place from three landmark postcards. A voice reads each question out loud when the phone has one for the chosen language.
 - Pick a taxi, a bus or a race car (the Formula 1 car).
-- The car drives itself at 46 km/h. A switch at the top right of the picker offers three ways to steer: **Arrows** (two big arrows, one lane per tap), **Wheel** (a big steering wheel: slide it left or right to turn) and **Joystick** (the round stick from the normal game: slide it sideways to change lanes, pull it down to slow down). With the wheel or the joystick the car settles into the nearest lane when you let go. While driving, the round button next to pause swaps to the next way. The game remembers the choice. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
+- The car drives itself at 46 km/h. A switch at the top right of the picker offers three ways to steer: **Arrows** (two big arrows, one lane per tap), **Wheel** (a big steering wheel: slide it left or right to turn) and **Joystick** (the round stick from the normal game: slide it sideways to change lanes, push it up to go a little faster, pull it down to slow down). With the wheel or the joystick the car settles into the nearest lane when you let go. While driving, the round button next to pause swaps to the next way. The game remembers the choice. STOP holds it back and BEEP sounds the horn, and cars ahead move over for it.
 - Stars and balloons float over the lanes. Steer into them to catch them.
 - A bar at the top shows the car on its way from home to the place. There is no speed, fine, fuel, damage, radio or map.
 - Bumping into a car only goes BOING. The car slows down, and the arrow toward the free lane glows. Nothing is lost and there is no game over.
@@ -312,7 +312,7 @@ About once a minute something happens on the road:
 - **Speed bumps (Amman).** Take them under 35 km/h.
 - **Salik gates (Dubai).** Each one adds 4 dirhams to your trip.
 
-If damage reaches 100% the car breaks down and the trip ends. In free drive, the car gets repaired every 25 km.
+If damage reaches 100% the car breaks down and the trip ends. In free drive, the car gets repaired every 25 km, and every 5 km earns +250 points.
 
 ### Tips
 
@@ -322,6 +322,19 @@ If damage reaches 100% the car breaks down and the trip ends. In free drive, the
 - On a slow phone, set graphics to **Fast** in Settings > Display. It turns off shadows and draws fewer pixels.
 
 ## What's new
+
+### 2.36 (November 2026)
+
+- **Dubai's Museum of the Future is back.** Nairobi's museum shared its builder name, so Dubai showed Nairobi's stone hall and elephant. The build now stops if two landmark builders or two text keys share a name.
+- **Driving.** Every car now reaches its listed top speed (drag was counted twice on the gas, so the F1 car topped out near 245 km/h). Cars no longer slide through each other during the second after a crash, side swipes hurt less than hitting a car head on, and scraping the barrier makes a sound.
+- **Fuel and points.** Fuel burns by distance, and each car has its own thirst. Stations are spread evenly round each loop: pull into the kerb lane to fill up for +100. A clean pass under a speed camera pays +75 and some nitro, a flash breaks your pass streak. The distance bonus is +250 every 5 km. Arriving with no crashes or fines adds 25%, and each trip keeps its best rating of up to 3 stars.
+- **Passengers.** Stop bays sit at least 400 m apart, each passenger pays as they step off, and the people at a stop come back on your next lap.
+- **Road events.** The ambulance and the tailgater keep pace with fast cars, the wedding convoy finds a free lane, and holding the horn counts for it. Trucks and buses keep to the slow lanes, and traffic shows brake lights.
+- **Looks.** Tower windows follow angled and stretched towers. Car paint and the road reflect the real sky at each time of day, so Dubai's road is no longer black at sunset. Street lights cast pools of light at night, your headlights reach further and light the road ahead, the wheels turn and steer, the body leans in turns and dips under braking, and nitro shows flames at the back. The pixel look is a bit sharper (240 rows) and draws softer outlines, and the locked album cards show the padlock in a corner.
+- **Sound.** A limiter stops loud moments from clipping, the radio no longer bursts after you switch back to the tab, the bass and pads follow the chords, a passing car stays on its own side, the siren shifts pitch as the ambulance passes, the nitro sound lasts as long as the boost, and the Kids Mode voice is ready the first time.
+- **Kids Mode.** The pause screen no longer shows All cities, and Android Back no longer leaves the first picker. In Nairobi and Johannesburg the hint arrow now points to the free lane. Balloons are worth 2 stars, and pushing the stick up speeds up a little.
+- **Phones and Arabic.** On an upright phone with the horn on the left, pause, radio and look around move to the right. Numbers stay left to right in Arabic, Arabic headings get more line height and no letter spacing, and the Arabic store cards and page text are fully in Arabic. Haitham Mode shows a 400 m progress bar in place of the map, and its buttons read Faster and Excuse me.
+- **Apps.** Android buzzes again (the app lacked the vibrate permission), pauses the sound for calls, and keeps the screen on only while you drive. On iPhone, buzz patterns play in full, the sound comes back after a call, and Arabic is listed as a language of the app.
 
 ### 2.35 (November 2026)
 

@@ -4,11 +4,16 @@
 // version, the other store's notes never promise a change that store's players do not have.
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const DIR = path.dirname(new URL(import.meta.url).pathname);
+const DIR = path.dirname(fileURLToPath(import.meta.url));
 
-// '2.35' -> 235, the same number the stores use as the build number
-export const code = (v) => { const [a, b = '0'] = String(v).split('.'); return Number(a) * 100 + Number(b); };
+// '2.36' -> 236, the same number the stores use as the build number
+export const code = (v) => {
+  const m = String(v).trim().match(/^(\d+)\.(\d{1,2})$/);
+  if (!m) throw new Error(`Invalid version "${v}" (expected MAJOR.MINOR with 0 <= MINOR <= 99)`);
+  return Number(m[1]) * 100 + Number(m[2]);
+};
 export const fromCode = (c) => `${Math.floor(c / 100)}.${String(c % 100).padStart(2, '0')}`;
 
 export const buildVersion = () => fs.readFileSync(path.join(DIR, '../build.mjs'), 'utf8').match(/const VERSION = '([\d.]+)'/)[1];

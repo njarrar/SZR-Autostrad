@@ -3,7 +3,7 @@
 <language code="ar" name="العربية" dir="rtl">
   <city>
     <string key="page.T_WXON">مطر الخريف</string>
-    <string key="card.tag">NAIROBI LOOP · 32 KM</string>
+    <string key="card.tag">لفّة نيروبي · 32 كم</string>
     <string key="card.name">لفّة نيروبي</string>
     <string key="card.text">مركز كينياتا، حديقة أوهورو، استاد نيايو، الزرافات بالمحمية، بوماس، أبر هيل وويستلاندز. السواقة عاليسار، انتبه للماتاتو والمطبات.</string>
     <string key="card.alt">ماتاتو ملوّن على طريق أوهورو، وبرج مركز كينياتا وراه</string>
@@ -13,7 +13,7 @@
     <string key="page.title">لفّة نيروبي</string>
     <string key="page.name">لفّة نيروبي</string>
     <string key="page.eyebrow">Nairobi · نيروبي</string>
-    <string key="page.alt">Driving through Nairobi</string>
+    <string key="page.alt">سواقة في شوارع نيروبي</string>
     <string key="page.blurb">من مركز كينياتا نازل على طريق أوهورو، جنب مطار ويلسون والمحمية اللي فيها زرافات عطرف الطريق، لفّة من كارين وراجع من أبر هيل وويستلاندز. بكينيا بيسوقوا عاليسار.</string>
     <string key="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية بنيروبي. بكينيا بيسوقوا عاليسار، فالمسرب البطيء عاليسار. الزامور بخلّي السيارة اللي قدامك توسّعلك.</string>
     <string key="page.T_R1S">اختار مشوار بين معالم نيروبي، من مركز كينياتا للمحمية لويستلاندز، ووصل لآخره.</string>
@@ -155,7 +155,7 @@
     <string key="text.radarAhead">رادار بعد</string>
     <string key="text.flash">صوّرك الرادار!</string>
     <string key="text.radarOk">مرقت عالرادار تمام</string>
-    <string key="text.bonus">+500 كل 10 كم</string>
+    <string key="text.bonus">+250 كل 5 كم</string>
     <string key="text.workshop">صيانة: رجعت السيارة جديدة</string>
     <string key="text.weave">تحشيرة</string>
     <string key="text.loadRoad">بنرسم الشارع...</string>
@@ -199,5 +199,9 @@
     <string key="text.radioKeys"><![CDATA[<kbd>R</kbd> المحطة الجاية · <kbd>M</kbd> شغّل أو سكّر]]></string>
     <string key="text.autoLow">خففنا الرسم عشان تضل سلسة</string>
     <string key="tour.0.touch">ادفع العصا لفوق لحد ما السرعة تطلع فوق 45. لما تتركها السيارة بتضل ماشية على نفس السرعة.</string>
+    <string key="page.T_C_ONE">إيد وحدة</string>
+    <string key="page.T_HORNSIZE">حجم زر الزامور</string>
+    <string key="page.T_VOLHORN">الزامور</string>
+    <string key="page.T_HORNSTYLE">صوت الزامور</string>
   </city>
 </language>

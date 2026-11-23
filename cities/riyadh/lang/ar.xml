@@ -4,7 +4,7 @@
   <city>
     <string key="page.T_WALK_SUB">امشِ مع الكلب للبقالة</string>
     <string key="page.T_WXON">غبار</string>
-    <string key="card.tag">RIYADH LOOP · 43 KM</string>
+    <string key="card.tag">لفّة الرياض · 43 كم</string>
     <string key="card.name">لفّة الرياض</string>
     <string key="card.text">قصر المصمك، برج التلفزيون، الفيصلية، برج المملكة والمركز المالي، وبعدها البوليفارد والدرعية. كاميرات ساهر على كل الطريق.</string>
     <string key="card.alt">لاندكروزر أبيض على طريق الملك فهد بين أبراج الرياض</string>
@@ -21,7 +21,7 @@
     <string key="page.title">لفّة الرياض</string>
     <string key="page.name">لفّة الرياض</string>
     <string key="page.eyebrow">Riyadh · الرياض</string>
-    <string key="page.alt">Driving through Riyadh</string>
+    <string key="page.alt">قيادة في شوارع الرياض</string>
     <string key="page.blurb">من قصر المصمك في الديرة على طريق الملك فهد جنب الفيصلية وبرج المملكة، وبعدين غرب للدرعية ونرجع. ساهر يشوف كل شي.</string>
     <string key="page.T_NEXT">الوجهة</string>
     <string key="page.T_KMH">كم/س</string>
@@ -121,7 +121,7 @@
     <string key="text.radarOk">عدّيت ساهر على خير</string>
     <string key="text.bumpHit"></string>
     <string key="text.bumpOk"></string>
-    <string key="text.bonus">+500 كل 10 كم</string>
+    <string key="text.bonus">+250 كل 5 كم</string>
     <string key="text.workshop">صيانة: السيارة رجعت جديدة</string>
     <string key="text.weave">تجاوز</string>
     <string key="text.loadRoad">جالسين نرسم الطريق...</string>
@@ -203,9 +203,14 @@
       <string key="text.walkGoal">البقالة</string>
     <string key="text.walkTiredSub">هيثم رجع البيت</string>
     <string key="text.walkHow">وضع هيثم: امشِ 400 م للبقالة. يمين ويسار عشان تتفادى، لفوق أسرع، المسافة تقول لو سمحت، وN يطلّع الكلب وراك</string>
-    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، الهرن يقول لو سمحت، والنيترو يطلّع الكلب وراك</string>
+    <string key="text.walkHowTouch">وضع هيثم: امشِ 400 م للبقالة. حرّك عشان تتفادى، البوري يقول لو سمحت، والنيترو يطلّع الكلب وراك</string>
     <string key="text.walkExcuse">لو سمحت!</string>
     <string key="text.walkFalafel">ساندويش فلافل! راحت خبطة</string>
     <string key="text.walkCoffee">قهوة! الكل يوسّع لك</string>
+    <string key="page.T_HORNSIZE">حجم زر البوري</string>
+    <string key="page.T_VOLHORN">البوري</string>
+    <string key="page.T_HORNSTYLE">صوت البوري</string>
+    <string key="text.paxHow">ادخل الموقف ووقّف</string>
+    <string key="text.fuelLow">البنزين قرب يخلص! مرّ على محطة البنزين بالمسار اليمين</string>
 </city>
 </language>

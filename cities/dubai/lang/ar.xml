@@ -4,7 +4,7 @@
   <city>
     <string key="page.T_WALK_SUB">امشِ مع الكلب للبقالة</string>
     <string key="page.T_WXON">غبار</string>
-    <string key="card.tag">DUBAI LOOP · 47 KM</string>
+    <string key="card.tag">لفّة دبي · 47 كم</string>
     <string key="card.name">لفّة دبي</string>
     <string key="card.text">برواز دبي، متحف المستقبل، برج خليفة، المارينا وعين دبي، والرجعة على جميرا جنب برج العرب. رادارات وبوابات سالك.</string>
     <string key="card.alt">سيارة على شارع الشيخ زايد بين أبراج دبي وقت المغرب</string>
@@ -21,7 +21,7 @@
     <string key="page.title">لفّة دبي</string>
     <string key="page.name">لفّة دبي</string>
     <string key="page.eyebrow">Dubai · دبي</string>
-    <string key="page.alt">Driving through Dubai</string>
+    <string key="page.alt">قيادة في شوارع دبي</string>
     <string key="page.blurb">من برواز دبي على شارع الشيخ زايد لين المارينا، ونرجع على شارع جميرا. الرادار ما يرحم، وبوابات سالك تحسب عليك.</string>
     <string key="page.T_NEXT">الوجهة</string>
     <string key="page.T_KMH">كم/س</string>
@@ -121,7 +121,7 @@
     <string key="text.radarOk">عديت الرادار تمام</string>
     <string key="text.bumpHit"></string>
     <string key="text.bumpOk"></string>
-    <string key="text.bonus">+500 كل 10 كم</string>
+    <string key="text.bonus">+250 كل 5 كم</string>
     <string key="text.workshop">صيانة: السيارة رجعت جديدة</string>
     <string key="text.weave">تجاوز</string>
     <string key="text.loadRoad">قاعدين نرسم الشارع...</string>
@@ -160,7 +160,7 @@
     <string key="car.0.cons">ثقيلة ولفّتها صعبة</string>
     <string key="car.1.name">لامبورغيني هوراكان</string>
     <string key="car.1.sub">Lamborghini Huracán</string>
-    <string key="car.1.pros">أسرع سيارة في الشارع وثابتة وايد</string>
+    <string key="car.1.pros">سيارة رياضية خارقة وثابتة وايد</string>
     <string key="car.1.cons">أي صدمة تخربها</string>
     <string key="car.2.name">تويوتا كامري</string>
     <string key="car.2.sub">Toyota Camry</string>
@@ -202,5 +202,8 @@
     <string key="text.walkExcuse">لو سمحت!</string>
     <string key="text.walkFalafel">ساندويش فلافل! راحت خبطة</string>
     <string key="text.walkCoffee">قهوة! الكل يوسّع لك</string>
+    <string key="page.T_STEERFEEL">السكان</string>
+    <string key="text.paxHow">ادخل الموقف ووقّف</string>
+    <string key="text.fuelLow">البترول قرب يخلص! مرّ على محطة البترول بالمسار اليمين</string>
 </city>
 </language>

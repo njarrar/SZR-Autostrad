@@ -6,13 +6,14 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { notes, code, fromCode } from '../store-notes/notes.mjs';
 
 const env = process.env;
 const BUNDLE = 'com.njarrar.autostrad';
-const VERSION = env.VERSION || fs.readFileSync(path.join(path.dirname(new URL(import.meta.url).pathname), '../build.mjs'), 'utf8').match(/const VERSION = '([\d.]+)'/)[1];
-const BUILD = String(Math.round(parseFloat(VERSION) * 100));
-const DIR = path.dirname(new URL(import.meta.url).pathname);
+const DIR = path.dirname(fileURLToPath(import.meta.url));
+const VERSION = env.VERSION || fs.readFileSync(path.join(DIR, '../build.mjs'), 'utf8').match(/const VERSION = '([\d.]+)'/)[1];
+const BUILD = String(code(VERSION));
 const LOCALES = { 'en-US': 'en-US', 'ar-SA': 'ar' };
 const SHOT_SETS = { APP_IPHONE_67: 'iphone-6.9', APP_IPAD_PRO_3GEN_129: 'ipad-13' };
 const URLS = {
@@ -142,7 +143,7 @@ const liveCodes = versions.filter((v) => v.id !== ver.id && (LIVE.includes(v.att
 const liveVersion = liveCodes.length ? fromCode(Math.max(...liveCodes)) : null;
 console.log('     live on the App Store:', liveVersion || 'nothing yet');
 
-await step('version ' + VERSION + ' and copyright', () => patch(`/v1/appStoreVersions/${ver.id}`, { data: { type: 'appStoreVersions', id: ver.id, attributes: { versionString: VERSION, copyright: '2026 njarrar', releaseType: 'AFTER_APPROVAL' } } }));
+await step('version ' + VERSION + ' and copyright', () => patch(`/v1/appStoreVersions/${ver.id}`, { data: { type: 'appStoreVersions', id: ver.id, attributes: { versionString: VERSION, copyright: `${new Date().getFullYear()} njarrar`, releaseType: 'AFTER_APPROVAL' } } }));
 
 await step('build ' + BUILD, async () => {
   let b = await findBuild();

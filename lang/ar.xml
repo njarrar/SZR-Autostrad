@@ -29,7 +29,7 @@
     <string key="page.T_VOLFX">المؤثرات</string>
     <string key="page.T_VOLHORN">الهرن</string>
     <string key="page.T_RADIO">راديو</string>
-    <string key="page.T_LOOK">اطّلع حواليك</string>
+    <string key="page.T_LOOKAROUND">اطّلع حواليك</string>
     <string key="page.T_C_WHEEL">دركسيون</string>
     <string key="page.T_MUSIC">أغاني الراديو</string>
     <string key="page.T_VOLMUSIC">صوت الراديو</string>
@@ -103,7 +103,7 @@
     <string key="text.viewRight">الجهة اليمين</string>
     <string key="text.viewBack">نطلّع لورا</string>
     <string key="text.refuel">فلّلت التانكي من المحطة! +100</string>
-    <string key="text.fuelLow">البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين</string>
+    <string key="text.fuelLow">البنزين قرب يخلص! مرّ على المحطة بجانب الطريق</string>
     <string key="text.cardUnlocked">فتحت بطاقة معلم جديدة:</string>
     <string key="page.T_NONE">بدون</string>
     <string key="page.T_CHARM_1">سبحة</string>
@@ -112,7 +112,9 @@
     <string key="text.rFares">الأجرة</string>
     <!-- Haitham Mode: walking on the sidewalk -->
     <string key="page.T_WALK">وضع هيثم</string>
-    <string key="page.T_WALK_SUB">امشِ مع الكلب للدكّانة</string>
+    <string key="page.T_WALK_SUB">امشِ 400 م للدكّانة</string>
+    <string key="page.T_WALK_FAST">أسرع</string>
+    <string key="page.T_WALK_EXCUSE">عن إذنك</string>
     <string key="page.T_BUMPS">خبطات</string>
     <string key="text.walkGoal">الدكّانة</string>
     <string key="text.walkHow">وضع هيثم: امشِ 400 م للدكّانة. يمين ويسار لتتفادى، لفوق أسرع، المسافة بتقول عن إذنك، وN بيطلّع الكلب وراك</string>
