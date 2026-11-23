@@ -3,7 +3,7 @@
 <language code="ar" name="العربية" dir="rtl">
   <city>
     <string key="page.T_WXON">عاصفة</string>
-    <string key="card.tag">JOBURG LOOP · 46 KM</string>
+    <string key="card.tag">لفّة جوهانسبرغ · 46 كم</string>
     <string key="card.name">لفّة جوهانسبرغ</string>
     <string key="card.text">مركز كارلتون، جسر مانديلا، بونتي، طالع على M1 لساندتون، ونازل لسويتو وأبراج أورلاندو وملعب سوكر سيتي ومدينة غولد ريف. السواقة عاليسار، وانتبه للتكسيات.</string>
     <string key="card.alt">تكسي ميني باص أبيض تحت شجر الجاكرندا البنفسجي، وجوهانسبرغ وراه</string>
@@ -13,7 +13,7 @@
     <string key="page.title">لفّة جوهانسبرغ</string>
     <string key="page.name">لفّة جوهانسبرغ</string>
     <string key="page.eyebrow">Johannesburg · جوهانسبرغ</string>
-    <string key="page.alt">Driving through Johannesburg</string>
+    <string key="page.alt">سواقة في شوارع جوهانسبرغ</string>
     <string key="page.blurb">من مركز كارلتون على جسر مانديلا، طالع على M1 تحت شجر الجاكرندا لساندتون، وبعدين نازل لسويتو جنب أبراج أورلاندو الملوّنة وسوكر سيتي وتلال المناجم. بجنوب أفريقيا بيسوقوا عاليسار.</string>
     <string key="page.T_MAPNOTE">الطريق مرسوم بشكل تقريبي على أماكن حقيقية بجوهانسبرغ. بجنوب أفريقيا بيسوقوا عاليسار، فالمسرب البطيء عاليسار. الزامور بخلّي السيارة اللي قدامك توسّعلك.</string>
     <string key="page.T_R1S">اختار مشوار بين معالم جوهانسبرغ، من مركز كارلتون لساندتون لسويتو، ووصل لآخره.</string>
@@ -155,7 +155,7 @@
     <string key="text.radarAhead">رادار بعد</string>
     <string key="text.flash">صوّرك الرادار!</string>
     <string key="text.radarOk">مرقت عالرادار تمام</string>
-    <string key="text.bonus">+500 كل 10 كم</string>
+    <string key="text.bonus">+250 كل 5 كم</string>
     <string key="text.workshop">صيانة: رجعت السيارة جديدة</string>
     <string key="text.weave">تحشيرة</string>
     <string key="text.loadRoad">بنرسم الشارع...</string>
@@ -199,5 +199,9 @@
     <string key="text.radioKeys"><![CDATA[<kbd>R</kbd> المحطة الجاية · <kbd>M</kbd> شغّل أو سكّر]]></string>
     <string key="text.autoLow">خففنا الرسم عشان تضل سلسة</string>
     <string key="tour.0.touch">ادفع العصا لفوق لحد ما السرعة تطلع فوق 45. لما تتركها السيارة بتضل ماشية على نفس السرعة.</string>
+    <string key="page.T_C_ONE">إيد وحدة</string>
+    <string key="page.T_HORNSIZE">حجم زر الزامور</string>
+    <string key="page.T_VOLHORN">الزامور</string>
+    <string key="page.T_HORNSTYLE">صوت الزامور</string>
   </city>
 </language>

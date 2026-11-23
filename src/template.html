@@ -17,9 +17,9 @@ __TOKENS__
 }
 [hidden] { display: none !important; }
 html, body { height: 100%; }
-body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--body); overflow: hidden; -webkit-user-select: none; user-select: none; touch-action: none; }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--body); overflow: hidden; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; touch-action: none; }
 #gl { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
-button { font: inherit; color: inherit; cursor: pointer; }
+button { font: inherit; color: inherit; cursor: pointer; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
 /* ---------- menu sheet ---------- */
@@ -87,8 +87,14 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .goBar .walkGo small { display: none; }
 .walkGo .wTxt { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
 .walkGo small { font-family: var(--body); font-size: 11.5px; font-weight: 600; color: var(--muted); line-height: 1.15; }
-/* Haitham Mode: no gears, limit, fuel or damage while walking; nitro lets the dog loose */
-#hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .limit { display: none; }
+/* Haitham Mode: no gears, limit, fuel or damage while walking; nitro lets the dog loose; swap road minimap for sidewalk 400m strip */
+#hud:not(.walk) .wOnly, #hud.walk .dOnly, #hud.walk .gearbox, #hud.walk .limit, #hud.walk #mini, #touch:not(.walk) .wOnly, #touch.walk .dOnly { display: none; }
+#walkBar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 108px); inset-inline-end: 12px; width: 146px; padding: 8px 10px; box-sizing: border-box; background: var(--hud); color: var(--hud-ink); border-radius: 12px; display: flex; flex-direction: column; gap: 6px; }
+#walkBar .wHead { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; opacity: .85; }
+#walkBar .wTrack { position: relative; height: 8px; border-radius: 4px; background: rgba(255,255,255,.2); overflow: hidden; }
+#walkFill { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #2ecc71); border-radius: 4px; transition: width .12s linear; }
+[dir="rtl"] .brand h1, [dir="rtl"] #welcome h1, [dir="rtl"] .setHead h2, [dir="rtl"] #rTitle, [dir="rtl"] #tourTitle { line-height: 1.22; }
+[dir="rtl"] .brand .eyebrow, [dir="rtl"] .label, [dir="rtl"] .go, [dir="rtl"] .horn span, [dir="rtl"] body.pixel #hWeave, [dir="rtl"] body.pixel #count, [dir="rtl"] body.pixel .speedo .num { letter-spacing: 0; }
 .chip .ic { display: none; }
 .carStats { display: none; }
 .carStats .bars { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
@@ -122,8 +128,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); ou
 .pcard img.art { width: 100%; height: auto; aspect-ratio: 3 / 2; image-rendering: pixelated; border-radius: 4px; display: block; background: #283041; }
 .pcard.locked img.art { filter: none; }
 .pcard .pic { position: relative; }
-.pcard .pic i { position: absolute; inset: 0; display: grid; place-items: center; font-style: normal; font-size: 22px; }
-#postcard { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 10px); left: 50%; z-index: 6; display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 6px; background: var(--hud); color: var(--hud-ink); border-radius: 10px; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); transform: translate(-50%, -140%); opacity: 0; transition: transform .35s, opacity .35s; pointer-events: none; max-width: 92vw; }
+.pcard .pic i { position: absolute; top: 6px; inset-inline-end: 6px; width: 26px; height: 26px; border-radius: 50%; background: rgba(15, 20, 28, .76); display: grid; place-items: center; font-style: normal; font-size: 13px; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+#postcard { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 94px); left: 50%; z-index: 6; display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 6px; background: var(--hud); color: var(--hud-ink); border-radius: 10px; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); transform: translate(-50%, -180%); opacity: 0; transition: transform .35s, opacity .35s; pointer-events: none; max-width: 92vw; }
 [dir=rtl] #postcard { padding: 6px 6px 6px 12px; }
 #postcard.show { transform: translate(-50%, 0); opacity: 1; }
 #postcard img { width: 144px; height: 96px; image-rendering: pixelated; display: block; border-radius: 2px; flex: none; }
@@ -149,10 +155,10 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #fxCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
 .hbar { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 12px); inset-inline: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
 .speedo { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 6px 14px 4px; display: flex; align-items: center; gap: 12px; }
-.speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; }
-.speedo.over .num { color: var(--bad); }
+.speedo .num { font-family: var(--display); font-size: 46px; line-height: 1; min-width: 2.2ch; text-align: center; direction: ltr; unicode-bidi: isolate; }
+.speedo.over .num { color: var(--bad-hud, var(--bad)); }
 .speedo .unit { font-size: 11px; opacity: .8; }
-.limit { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 5px solid #d0201a; color: #111; display: grid; place-items: center; font-weight: 700; font-size: 15px; box-sizing: border-box; }
+.limit { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 5px solid #d0201a; color: #111; display: grid; place-items: center; font-weight: 700; font-size: 15px; box-sizing: border-box; direction: ltr; unicode-bidi: isolate; }
 .trip-hud { background: var(--hud); color: var(--hud-ink); border-radius: 14px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; max-width: 46vw; }
 .trip-hud .lbl { font-size: 11px; opacity: .75; }
 .trip-hud b { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -161,15 +167,18 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 .chip { background: var(--hud); color: var(--hud-ink); border-radius: 10px; padding: 5px 10px; font-size: 13px; display: flex; gap: 8px; align-items: baseline; }
 .chip span { opacity: .75; font-size: 11px; }
 .chip.zero { display: none; }
+#hTime, #hPax, #hViol, #tourStep, #bookletProg { direction: ltr; unicode-bidi: isolate; }
 .dmg, .fuel { width: 110px; height: 6px; background: rgba(255,255,255,.2); border-radius: 3px; overflow: hidden; align-self: center; }
-#hDmgBar { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #e2452b); }
-#hFuelBar { height: 100%; width: 100%; background: linear-gradient(90deg, #e2452b, #f6c445 45%, #2ecc71); }
+#hDmgBar { height: 100%; width: 0; background: linear-gradient(90deg, #f6c445, #e2452b); background-size: 110px 100%; }
+#hFuelBar { height: 100%; width: 100%; background: linear-gradient(90deg, #e2452b, #f6c445 45%, #2ecc71); background-size: 110px 100%; }
+[dir="rtl"] #hDmgBar { background: linear-gradient(270deg, #f6c445, #e2452b); background-size: 110px 100%; }
+[dir="rtl"] #hFuelBar { background: linear-gradient(270deg, #e2452b, #f6c445 45%, #2ecc71); background-size: 110px 100%; }
 #mini { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 108px); inset-inline-end: 12px; width: 120px; height: 120px; background: var(--hud); border-radius: 14px; }
 #btnPause { pointer-events: auto; position: absolute; top: calc(env(safe-area-inset-top, 0px) + 236px); inset-inline-end: 12px; background: var(--hud); color: var(--hud-ink); border: 0; border-radius: 10px; padding: 7px 14px; font-weight: 700; }
 .toast { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -8px); background: var(--hud); color: var(--hud-ink); padding: 10px 18px; border-radius: 12px; font-weight: 700; font-size: 17px; opacity: 0; transition: opacity .2s, transform .2s; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
-.toast.bad { background: var(--bad); color: #fff; }
-.toast.good { background: var(--good); color: #fff; }
+.toast.bad { background: var(--toast-bad, var(--bad)); color: #fff; }
+.toast.good { background: var(--toast-good, var(--good)); color: #fff; }
 #warn { position: absolute; top: calc(env(safe-area-inset-top, 0px) + 80px); left: 50%; transform: translateX(-50%); background: #f2c218; color: #111; font-weight: 700; padding: 6px 14px; border-radius: 8px; font-size: 14px; }
 #hWeave { position: absolute; top: 24%; left: 50%; transform: translateX(-50%); font-family: var(--display); font-size: 32px; color: var(--accent-hud); text-shadow: 0 2px 10px rgba(0,0,0,.5); opacity: 0; white-space: nowrap; }
 #hWeave.pop { animation: pop 1.1s ease-out; }
@@ -197,13 +206,13 @@ kbd { font: 600 11px var(--body); background: var(--chip); border-radius: 4px; p
 #touch[data-mode=onehand] #stick, #touch[data-mode=tilt] #stick { pointer-events: none; opacity: .55; transition: opacity .15s; }
 #touch.held #stick { opacity: 1; }
 #stick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-#stick .base { fill: rgba(16,18,24,.38); }
-#stick .rim { fill: none; stroke: rgba(255,255,255,.34); stroke-width: 2; }
+#stick .base { fill: rgba(16,18,24,.56); }
+#stick .rim { fill: none; stroke: rgba(255,255,255,.52); stroke-width: 2.4; }
 #stick::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; pointer-events: none;
   background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 52%, rgba(255,255,255,.07) 70%, rgba(255,255,255,.16) 98%), radial-gradient(circle at 35% 25%, rgba(255,255,255,.12), rgba(255,255,255,0) 45%);
-  box-shadow: 0 6px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.18); }
-#stick .dead { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 1.5; stroke-dasharray: 3 5; }
-#stick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .32; }
+  box-shadow: 0 6px 24px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.22); }
+#stick .dead { fill: none; stroke: rgba(255,255,255,.28); stroke-width: 1.5; stroke-dasharray: 3 5; }
+#stick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .5; }
 #stick .trk.up { stroke: #f6c445; } #stick .trk.dn { stroke: #ff5a3c; }
 #stick .fil { fill: none; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 0 200; }
 #stick .fil.up { stroke: #ffd256; filter: drop-shadow(0 0 5px rgba(255,210,86,.9)); }
@@ -380,19 +389,19 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
 #tourTitle { font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1.1; margin: 0; color: var(--accent); }
 #tourBody { margin: 0; font-size: 15px; line-height: 1.65; }
 #tourBody b { color: var(--accent); }
-#tourDots { display: flex; gap: 5px; }
-#tourDots i { width: 8px; height: 8px; border-radius: 4px; background: var(--line); }
-#tourDots i.past { background: var(--accent); opacity: .5; }
-#tourDots i.now { width: 22px; background: var(--accent); }
+#tourDots { display: flex; gap: 5px; align-items: center; }
+#tourDots button { border: 0; padding: 0; width: 8px; height: 8px; border-radius: 4px; background: var(--line); position: relative; }
+#tourDots button.past { background: var(--accent); opacity: .5; }
+#tourDots button.now { width: 22px; background: var(--accent); }
 .tourFoot { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 #tourTry { font-weight: 700; font-size: 14px; color: var(--accent); background: var(--chip); padding: 8px 14px; border-radius: 999px; animation: pulse 1.4s ease-in-out infinite; }
-#tourTry.ok { animation: none; background: var(--good); color: #fff; }
+#tourTry.ok { animation: none; background: var(--toast-good, var(--good)); color: #fff; }
 #tourNext { padding: 9px 22px; }
 #tourCard { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .tourBtns { display: flex; gap: 8px; align-items: center; margin-inline-start: auto; }
 #tourBack { padding: 9px 14px; font-size: 15px; font-weight: 700; border-radius: 999px; background: var(--chip); color: var(--accent); border: 0; }
-#tourDots i.seen { cursor: pointer; }
-#tourDots i.seen::before { content: ''; display: block; margin: -10px -3px; height: 28px; }
+#tourDots button.seen { cursor: pointer; }
+#tourDots button.seen::before { content: ''; position: absolute; inset: -10px -3px; }
 @keyframes pulse { 50% { opacity: .55; } }
 #tourEnd { justify-content: center; align-items: center; }
 #tourEnd .sheet { margin: 0; }
@@ -423,7 +432,7 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   .horn { width: 64px; height: 64px; right: max(16px, env(safe-area-inset-right, 0px)); }
   #touch.horn-left .horn { left: max(16px, env(safe-area-inset-left, 0px)); }
   #touch.horn-small .horn { width: 50px; height: 50px; }
-  .lanesUI { padding-inline: max(14px, env(safe-area-inset-left, 0px)); }
+  .lanesUI { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: max(14px, env(safe-area-inset-right, 0px)); }
   .lanesUI .tb { width: 58px; height: 58px; }
   .lanesUI .tb.gas { height: 84px; }
   #touch[data-mode=lanes] .horn { bottom: calc(var(--pad) + 96px); }
@@ -497,8 +506,8 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #hWeave { top: 36%; font-size: 26px; }
 }
 @media (max-height: 520px) and (orientation: landscape) {
-  #hud { --top: calc(env(safe-area-inset-top, 0px) + 8px); --side: max(10px, env(safe-area-inset-left, 0px)); }
-  .hbar { inset-inline: var(--side); }
+  #hud { --top: calc(env(safe-area-inset-top, 0px) + 8px); --sideL: max(10px, env(safe-area-inset-left, 0px)); --sideR: max(10px, env(safe-area-inset-right, 0px)); --side: max(var(--sideL), var(--sideR)); }
+  .hbar { left: var(--sideL); right: var(--sideR); }
   .trip-hud { flex: 0 1 auto; max-width: 380px; padding-inline: 14px 18px; box-sizing: border-box; }
   .stats { inset-inline: var(--side) auto; width: auto; max-width: 380px; padding: 0 6px; box-sizing: border-box; }
   .chip { flex: none; padding: 0 9px; }
@@ -506,10 +515,10 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #btnPause { inset-inline-end: var(--side); }
   #btnRadio { inset-inline-end: calc(var(--side) + 44px); }
   #btnCam { inset-inline-end: calc(var(--side) + 88px); }
-  #mini { inset-inline-end: var(--side); }
+  #mini, #walkBar { inset-inline-end: var(--side); }
   #radioMenu { inset-inline-end: var(--side); }
-  #warn, .toast { left: var(--side); right: auto; width: auto; max-width: 380px; box-sizing: border-box; }
-  [dir=rtl] #warn, [dir=rtl] .toast { left: auto; right: var(--side); }
+  #warn, .toast { left: var(--sideL); right: auto; width: auto; max-width: 380px; box-sizing: border-box; }
+  [dir=rtl] #warn, [dir=rtl] .toast { left: auto; right: var(--sideR); }
 }
 #fx:not(.fast) .streaks { animation: none; visibility: hidden; }
 /* tablets and desktops: the same slim rows as on phones, one size up */
@@ -535,20 +544,25 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   #warn { top: calc(var(--top) + 134px); left: 14px; transform: none; }
   [dir=rtl] #warn { left: auto; right: 14px; }
 }
-/* upright phone: one slim stats row under the trip and speed, messages show over that row, and pause and radio sit on the free left side above the controls */
+/* upright phone: one slim stats row under the trip and speed, messages show over that row, and pause/radio/cam always sit on the opposite physical side from the horn & nitro controls (even in RTL or horn-left) */
 @media (max-width: 640px) and (orientation: portrait) {
   .stats { top: calc(var(--top) + 60px); inset-inline: 10px 92px; height: 32px; }
   .chip { font-size: 13.5px; }
   .chip .ic { opacity: 1; }
   #mini { top: calc(var(--top) + 60px); width: 74px; height: 74px; }
-  #btnPause, #btnRadio { top: auto; inset-inline: 16px auto; width: 46px; height: 46px; border-radius: 14px; }
+  #walkBar { top: calc(var(--top) + 100px); inset-inline: 10px auto; width: 150px; }
+  #btnPause, #btnRadio, #btnCam { top: auto; left: 16px; right: auto; width: 46px; height: 46px; border-radius: 14px; }
+  #hud.ctrl-left #btnPause, #hud.ctrl-left #btnRadio, #hud.ctrl-left #btnCam { left: auto; right: 16px; }
   #btnPause { bottom: calc(env(safe-area-inset-bottom, 0px) + 250px); }
   #btnRadio { bottom: calc(env(safe-area-inset-bottom, 0px) + 304px); }
-  #btnCam { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 358px); inset-inline: 16px auto; width: 46px; height: 46px; border-radius: 14px; }
-  #radioMenu { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 412px); inset-inline: 16px auto; }
+  #btnCam { bottom: calc(env(safe-area-inset-bottom, 0px) + 358px); }
+  #radioMenu { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 304px); left: 70px; right: auto; }
+  #hud.ctrl-left #radioMenu { left: auto; right: 70px; }
   #warn, .toast { top: calc(var(--top) + 60px); left: 10px; right: 92px; min-height: 32px; box-sizing: border-box; padding: 5px 12px; }
   [dir=rtl] #warn, [dir=rtl] .toast { left: 92px; right: 10px; }
   .toast { background: rgba(20, 20, 24, .94); }
+  .toast.bad { background: var(--toast-bad, var(--bad)); }
+  .toast.good { background: var(--toast-good, var(--good)); }
 }
 @media (prefers-reduced-motion: reduce) { #fx .streaks { animation: none; } #tourTry { animation: none; } #tourHole, #tourCard { transition: none; } #hWeave.pop, #flash.go { animation-duration: .01s; } .toast { transition: none; } }
 /* version and build time under the blurb */
@@ -567,9 +581,10 @@ body.paused #hud, body.paused #touch { visibility: hidden; }
   .tb { width: 88px; height: 88px; }
   .tb.gas { height: 128px; }
 }
-/* pixel look: square HUD panels and a pixel font for the numbers */
+/* pixel look: square HUD panels, sharp menus, pixelated minimap, and a pixel font for the numbers */
 body.pixel { --pixfont: 'Silkscreen', var(--display); }
-body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, body.pixel #btnPause, body.pixel #btnRadio, body.pixel #btnCam { border-radius: 0; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); }
+body.pixel .speedo, body.pixel .trip-hud, body.pixel .chip, body.pixel #mini, body.pixel #walkBar, body.pixel #btnPause, body.pixel #btnRadio, body.pixel #btnCam, body.pixel #radioMenu, body.pixel .sheet, body.pixel .btn, body.pixel .go, body.pixel #tourCard { border-radius: 0; box-shadow: 0 0 0 2px rgba(0,0,0,.55), 4px 4px 0 rgba(0,0,0,.35); }
+body.pixel #mini { image-rendering: pixelated; }
 body.pixel .speedo .num, body.pixel .trip-hud .rem, body.pixel .chip b, body.pixel .gearbox b, body.pixel #count, body.pixel #hWeave { font-family: var(--pixfont); font-weight: 400; letter-spacing: -.02em; }
 body.pixel .speedo .num { font-size: 38px; }
 body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
@@ -585,11 +600,12 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 .kTop { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); display: flex; gap: 10px; direction: ltr; }
 .kRound { width: 48px; height: 48px; border-radius: 50%; border: 0; background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 #c9d4e8; font-size: 24px; position: relative; padding: 0; color: var(--kink); }
 .kRound svg { width: 26px; height: 26px; }
-#kLock { background: rgba(255,255,255,.7); }
+#kLock { background: rgba(255,255,255,.78); }
+[dir="rtl"] #kBack svg { transform: scaleX(-1); }
 #kLock .ring { position: absolute; inset: -4px; width: auto; height: auto; transform: rotate(-90deg); }
-#kLock .ring circle { fill: none; stroke: #20b456; stroke-width: 4; stroke-dasharray: 151; stroke-dashoffset: 151; }
+#kLock .ring circle { fill: none; stroke: #12803a; stroke-width: 4; stroke-dasharray: 151; stroke-dashoffset: 151; }
 #kLock.hold .ring circle { stroke-dashoffset: 0; transition: stroke-dashoffset 3s linear; }
-#kLockHint { position: absolute; top: 4px; left: 56px; white-space: nowrap; background: var(--kink); color: #fff; font-family: var(--body); font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 10px; }
+#kLockHint { position: absolute; top: 4px; left: 56px; white-space: nowrap; background: var(--kink); color: #fff; font-family: var(--body); font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 10px; z-index: 5; }
 .kAsk { display: flex; align-items: center; gap: 12px; background: #fff; border: 3px solid #ffcc1a; border-radius: 30px; padding: 6px 22px 6px 8px; box-shadow: 0 4px 0 #f0b400; max-width: calc(100vw - 150px); }
 [dir=rtl] .kAsk { padding: 6px 8px 6px 22px; }
 .kAsk b { font-weight: 400; font-size: clamp(22px, 5.2vmin, 34px); line-height: 1.15; }
@@ -602,31 +618,39 @@ body.pixel .dmg, body.pixel .fuel { border-radius: 0; }
 .kCard b { font-weight: 400; font-size: clamp(17px, 3.8vmin, 24px); line-height: 1.1; text-align: center; }
 .kCard .kSt { font-size: clamp(14px, 3vmin, 20px); letter-spacing: 2px; line-height: 1; color: #ffb400; }
 .kCard .kSt i { font-style: normal; opacity: .25; }
-.kCard.sel { border-color: #20b456; transform: translateY(-6px) scale(1.04); box-shadow: 0 8px 0 #148a3f, 0 16px 26px rgba(0,0,0,.18); }
-.kCard.sel::after { content: '✓'; position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; background: #20b456; color: #fff; font-family: var(--body); font-weight: 800; font-size: 24px; display: grid; place-items: center; border: 4px solid #fff; }
-.kGoBtn { position: absolute; right: max(22px, env(safe-area-inset-right, 0px)); bottom: calc(max(14px, env(safe-area-inset-bottom, 0px)) + 30px); width: clamp(96px, 22vmin, 136px); height: clamp(96px, 22vmin, 136px); border-radius: 50%; border: 6px solid #fff; background: radial-gradient(circle at 35% 30%, #4ee07e, #18a24a 70%); box-shadow: 0 8px 0 #0e7434, 0 14px 26px rgba(0,0,0,.25); display: grid; place-items: center; padding: 0; color: #fff; }
+.kCard.sel { border-color: #12803a; transform: translateY(-6px) scale(1.04); box-shadow: 0 8px 0 #0d622c, 0 16px 26px rgba(0,0,0,.18); }
+.kCard.sel::after { content: '✓'; position: absolute; top: -14px; right: -14px; width: 40px; height: 40px; border-radius: 50%; background: #12803a; color: #fff; font-family: var(--body); font-weight: 800; font-size: 24px; display: grid; place-items: center; border: 4px solid #fff; }
+.kGoBtn { position: absolute; right: max(22px, env(safe-area-inset-right, 0px)); bottom: calc(max(14px, env(safe-area-inset-bottom, 0px)) + 30px); width: clamp(96px, 22vmin, 136px); height: clamp(96px, 22vmin, 136px); border-radius: 50%; border: 6px solid #fff; background: radial-gradient(circle at 35% 30%, #2fc465, #12803a 72%); box-shadow: 0 8px 0 #0b5a28, 0 14px 26px rgba(0,0,0,.25); display: grid; place-items: center; padding: 0; color: #fff; }
 .kGoBtn svg { width: 46%; height: 46%; }
-.kGoBtn .kLbl { position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%); background: #fff; color: #0e7434; border-radius: 14px; padding: 0 12px; font-size: 20px; line-height: 28px; white-space: nowrap; }
+.kGoBtn .kLbl { position: absolute; bottom: -26px; left: 50%; transform: translateX(-50%); background: #fff; color: #0e662e; border-radius: 14px; padding: 0 12px; font-size: 20px; line-height: 28px; white-space: nowrap; }
 .kGoBtn:active, .kCard:active, .kRound:active { transform: translateY(3px); }
 .kDots { position: absolute; left: max(26px, env(safe-area-inset-left, 0px)); bottom: max(22px, env(safe-area-inset-bottom, 0px)); display: flex; gap: 10px; direction: ltr; }
 .kDots i { width: 16px; height: 16px; border-radius: 10px; background: rgba(29,43,79,.25); transition: width .2s; }
-.kDots i.on { width: 40px; background: #20b456; }
+.kDots i.on { width: 40px; background: #12803a; }
 @media (orientation: portrait) {
   .kCards { flex-direction: column; }
   .kCard { flex-direction: row; width: min(86vw, 380px); aspect-ratio: auto; height: clamp(84px, 17vh, 140px); justify-content: flex-start; gap: 14px; padding: 8px 16px; }
   .kCard img.kPic { width: auto; height: 82%; }
   .kCard .kTxt { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
-  .kAsk { max-width: calc(100vw - 32px); margin-top: 52px; }
+  .kAsk { max-width: calc(100vw - 32px); margin-top: 112px; }
   .kGoBtn { left: 50%; right: auto; transform: translateX(-50%); }
   .kGoBtn:active { transform: translateX(-50%) translateY(3px); }
   .kBody { padding-bottom: clamp(110px, 20vh, 170px); }
 }
 @media (orientation: landscape) { .kCard .kTxt { display: contents; } .kBody { padding-right: clamp(80px, 16vmin, 130px); } }
-/* while driving */
-body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPause, body.kids #btnRadio, body.kids #btnCam, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet { display: none !important; }
+/* while driving — also keep external All Cities link hidden in Kids Mode pause screen */
+body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #walkBar, body.kids #btnPause, body.kids #btnRadio, body.kids #btnCam, body.kids #radioMenu, body.kids #warn, body.kids #hWeave, body.kids #touch, body.kids #btnPauseSet, body.kids #pause a[data-home] { display: none !important; }
 #kidsUI { position: fixed; inset: 0; z-index: 5; pointer-events: none; font-family: var(--display); color: #1d2b4f; direction: ltr; }
 #kidsUI > * { pointer-events: auto; }
-.kSteer { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); display: flex; gap: 4px; padding: 4px; background: #fff; border-radius: 28px; box-shadow: 0 3px 0 #c9d4e8; direction: ltr; z-index: 2; width: min(300px, calc(100vw - 88px)); }
+.kSteer { position: absolute; top: max(12px, env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); display: flex; gap: 4px; padding: 4px; background: #fff; border-radius: 28px; box-shadow: 0 3px 0 #c9d4e8; direction: ltr; z-index: 2; width: min(300px, calc(100vw - 140px)); }
+@media (max-width: 520px) and (orientation: portrait) {
+  .kSteer { top: calc(max(12px, env(safe-area-inset-top, 0px)) + 56px); left: 50%; right: auto; transform: translateX(-50%); width: min(320px, calc(100vw - 24px)); }
+  .kSteer button { height: 48px; font-size: 14px; }
+  #kids { align-items: flex-start; }
+  #kids .kBody { margin-top: calc(max(12px, env(safe-area-inset-top, 0px)) + 122px); gap: 10px; padding-bottom: 132px; }
+  #kids .kAsk { margin-top: 0; }
+  #kids .kCard { height: clamp(78px, 14.5vh, 118px); }
+}
 .kSteer button { flex: 1; min-width: 0; height: 58px; border: 0; border-radius: 24px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px; color: var(--kink); font: 15px/1 var(--display); white-space: nowrap; }
 .kSteer button svg { width: 28px; height: 28px; flex: none; }
 .kSteer button.on { background: #1f72e0; color: #fff; }
@@ -641,11 +665,11 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 #kidsUI.stick .kStick { display: block; }
 #kidsUI.stick .kBig { display: none; }
 .kStick svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.kStick .base { fill: rgba(16,18,24,.38); }
-.kStick .rim { fill: none; stroke: rgba(255,255,255,.34); stroke-width: 2; }
-.kStick::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; pointer-events: none; box-shadow: inset 0 2px 10px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25); }
-.kStick .dead { fill: none; stroke: rgba(255,255,255,.18); stroke-width: 1.5; stroke-dasharray: 3 5; }
-.kStick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .32; }
+.kStick .base { fill: rgba(16,18,24,.56); }
+.kStick .rim { fill: none; stroke: rgba(255,255,255,.52); stroke-width: 2.4; }
+.kStick::before { content: ''; position: absolute; inset: 1%; border-radius: 50%; pointer-events: none; box-shadow: inset 0 2px 10px rgba(0,0,0,.35), 0 4px 16px rgba(0,0,0,.35); }
+.kStick .dead { fill: none; stroke: rgba(255,255,255,.28); stroke-width: 1.5; stroke-dasharray: 3 5; }
+.kStick .trk { fill: none; stroke-width: 7; stroke-linecap: round; opacity: .5; }
 .kStick .trk.up { stroke: #f6c445; } .kStick .trk.dn { stroke: #ff5a3c; }
 .kStick .chev path { fill: none; stroke: rgba(255,255,255,.5); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
 .kStick .chev path:last-child { opacity: .35; }
@@ -665,14 +689,14 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   #kidsUI.stick .kSmall { bottom: max(24px, env(safe-area-inset-bottom, 0px)); }
   #kidsUI.stick .kStop { left: auto; right: calc(max(34px, env(safe-area-inset-right, 0px)) + clamp(70px, 17vmin, 88px) + 20px); }
 }
-.kScore { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); height: 54px; padding: 0 16px 0 10px; border-radius: 27px; background: #ffcc1a; box-shadow: 0 4px 0 #d39b00; display: flex; align-items: center; gap: 6px; font-size: 30px; }
-.kScore .e { font-size: 30px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.kScore { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); height: 54px; padding: 0 16px 0 10px; border-radius: 27px; background: #1d2b4f; color: #ffd23f; border: 3px solid #ffd23f; box-shadow: 0 4px 0 #0f172a; display: flex; align-items: center; gap: 6px; font-size: 30px; box-sizing: border-box; }
+.kScore .e { font-size: 28px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
 .kScore.pop { animation: kpop .35s; }
 @keyframes kpop { 50% { transform: scale(1.25); } }
 .kTrip { position: absolute; top: max(10px, env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); width: min(400px, calc(100vw - 260px)); height: 54px; background: rgba(255,255,255,.92); border-radius: 27px; box-shadow: 0 4px 0 #c9d4e8; display: flex; align-items: center; gap: 10px; padding: 0 8px 0 14px; pointer-events: none !important; }
 .kTrip .e { font-size: 24px; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; line-height: 1; }
 .kLine { position: relative; flex: 1; height: 12px; background: #cfd8ea; border-radius: 6px; }
-.kLine i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #20b456; border-radius: 6px; }
+.kLine i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #12803a; border-radius: 6px; }
 /* car emojis face left, so turn the car to face the place it drives to */
 .kLine .kMe { position: absolute; left: 0; top: 50%; transform: translate(-50%, -58%) scaleX(-1); font-size: 30px; line-height: 1; }
 .kTrip img { height: 40px; aspect-ratio: 3 / 2; border-radius: 8px; image-rendering: pixelated; }
@@ -684,10 +708,13 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 .kBig.on { transform: translateY(5px); box-shadow: 0 3px 0 #1553a8; }
 .kBig.hint { animation: khint .8s ease-in-out infinite; }
 @keyframes khint { 50% { box-shadow: 0 0 0 12px rgba(32,180,86,.55), 0 0 0 26px rgba(32,180,86,.2), 0 8px 0 #1553a8; } }
-.kSmall { position: absolute; bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + clamp(100px, 25vmin, 132px) + 18px); width: clamp(70px, 17vmin, 88px); height: clamp(70px, 17vmin, 88px); border-radius: 50%; border: 5px solid #fff; padding: 0; font-family: var(--display); font-size: clamp(17px, 4.2vmin, 22px); touch-action: none; }
+.kSmall { position: absolute; bottom: calc(max(18px, env(safe-area-inset-bottom, 0px)) + clamp(100px, 25vmin, 132px) + 18px); width: clamp(70px, 17vmin, 88px); height: clamp(70px, 17vmin, 88px); border-radius: 50%; border: 5px solid #fff; padding: 0; font-family: var(--display); font-size: clamp(14px, 3.4vmin, 18px); line-height: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; touch-action: none; }
+.kSmall .ki { font-size: clamp(20px, 5vmin, 26px); line-height: 1; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
 .kStop { left: max(34px, env(safe-area-inset-left, 0px)); background: radial-gradient(circle at 35% 30%, #ff7a7a, #e02d2d 70%); color: #fff; box-shadow: 0 6px 0 #a81c1c, 0 10px 18px rgba(0,0,0,.2); }
-.kBeep { right: max(34px, env(safe-area-inset-right, 0px)); background: radial-gradient(circle at 35% 30%, #ffe36b, #ffb300 70%); color: #6b4200; box-shadow: 0 6px 0 #c98600, 0 10px 18px rgba(0,0,0,.2); }
+.kBeep { right: max(34px, env(safe-area-inset-right, 0px)); background: radial-gradient(circle at 35% 30%, #ffe36b, #ffb300 70%); color: #4a2d00; box-shadow: 0 6px 0 #c98600, 0 10px 18px rgba(0,0,0,.2); }
 .kSmall.on { transform: translateY(4px); }
+body.kids #pause #btnResume::before { content: '▶ '; }
+body.kids #pause #btnQuit::before { content: '🏠 '; }
 #kOops { position: absolute; top: 24%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; background: #fff; border: 3px solid #ffcc1a; border-radius: 24px; padding: 8px 18px; box-shadow: 0 4px 0 #f0b400; font-size: clamp(20px, 4.6vmin, 28px); white-space: nowrap; pointer-events: none !important; animation: kpop .35s; }
 #kOops .e { font-size: 1.3em; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
 #kOops .arr { font-size: 1.3em; color: #20b456; font-family: var(--body); font-weight: 800; }
@@ -731,13 +758,14 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <div class="chip dOnly"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2.5-.5-.5-2.5z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>__T_DMG__</span><div class="dmg"><div id="hDmgBar"></div></div></div>
   </div>
   <canvas id="mini" width="300" height="300"></canvas>
+  <div id="walkBar" class="wOnly" aria-hidden="true"><div class="wHead"><span>🚶</span><span id="walkPct">0%</span><span>🏪</span></div><div class="wTrack"><div id="walkFill"></div></div></div>
   <button id="btnPause" type="button">__T_PAUSE__</button>
   <button id="btnRadio" type="button" aria-label="__T_RADIO__" aria-keyshortcuts="R M" aria-haspopup="menu" aria-expanded="false" aria-controls="radioMenu"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="8" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 8 17 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="14.5" r="3" fill="currentColor"/><path d="M5.5 12.5h5M5.5 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span id="radioName"></span></button>
-  <button id="btnCam" type="button" aria-label="__T_LOOK__" aria-keyshortcuts="Q E B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><i aria-hidden="true"></i></button>
+  <button id="btnCam" type="button" aria-label="__T_LOOKAROUND__" aria-keyshortcuts="Q E B"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg><i aria-hidden="true"></i></button>
   <div id="radioMenu" role="menu" aria-label="__T_RADIO__" hidden></div>
-  <div id="warn" hidden></div>
-  <div id="hWeave"></div>
-  <div id="toast" class="toast"></div>
+  <div id="warn" role="status" aria-live="polite" hidden></div>
+  <div id="hWeave" aria-live="polite"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <div id="postcard" aria-live="polite"><img alt=""><div><small></small><b></b></div></div>
 </div>
 
@@ -753,7 +781,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <g class="chev r"><path d="M58 -11 L70 0 L58 11"/><path d="M70 -11 L82 0 L70 11"/></g>
     </svg>
     <div id="knob"></div>
-    <span class="lbl u">__T_GAS__</span><span class="lbl d">__T_BRAKE__</span>
+    <span class="lbl u"><span class="dOnly">__T_GAS__</span><span class="wOnly">__T_WALK_FAST__</span></span><span class="lbl d">__T_BRAKE__</span>
   </div>
   <div id="wheel" role="img" aria-label="__T_C_WHEEL__">
     <svg viewBox="-100 -100 200 200" aria-hidden="true">
@@ -765,18 +793,18 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   </div>
   <div class="lanesUI">
     <div class="grp"><button class="tb" data-hold="left" type="button" aria-label="__T_LEFT__">&#9664;</button><button class="tb" data-hold="right" type="button" aria-label="__T_RIGHT__">&#9654;</button></div>
-    <div class="grp"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button">__T_GAS__</button></div>
+    <div class="grp"><button class="tb" data-hold="brake" type="button">__T_BRAKE__</button><button class="tb gas" data-hold="gas" type="button"><span class="dOnly">__T_GAS__</span><span class="wOnly">__T_WALK_FAST__</span></button></div>
   </div>
   <button id="btnNitro" type="button" aria-label="__T_NITRO__"><span>N<sub>2</sub>O</span></button>
-  <button class="horn" data-hold="horn" type="button"><span>__T_HORN__</span></button>
+  <button class="horn" data-hold="horn" type="button"><span class="dOnly">__T_HORN__</span><span class="wOnly">__T_WALK_EXCUSE__</span></button>
 </div>
 
 <div id="kidsUI" hidden>
   <div class="kScore" id="kScore"><span class="e" aria-hidden="true">⭐</span><b id="kStars">0</b></div>
   <div class="kTrip" aria-hidden="true"><span class="e">🏠</span><div class="kLine"><i id="kDoneBar"></i><span class="kMe e" id="kMe"></span></div><img id="kDest" alt=""></div>
   <button class="kRound" id="kPause" type="button" aria-label="__T_PAUSE__"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5" fill="currentColor"/><rect x="14" y="4" width="5" height="16" rx="1.5" fill="currentColor"/></svg></button>
-  <button class="kSmall kStop" data-hold="brake" type="button">__T_KSTOP__</button>
-  <button class="kSmall kBeep" data-hold="horn" type="button">__T_KBEEP__</button>
+  <button class="kSmall kStop" data-hold="brake" type="button"><span class="ki" aria-hidden="true">✋</span><span>__T_KSTOP__</span></button>
+  <button class="kSmall kBeep" data-hold="horn" type="button"><span class="ki" aria-hidden="true">📯</span><span>__T_KBEEP__</span></button>
   <button class="kBig kL" data-kid="-1" type="button" aria-label="__T_LEFT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4 7 12l8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <button class="kBig kR" data-kid="1" type="button" aria-label="__T_RIGHT__"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 4 8 8-8 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   <div class="kWheel" id="kWheel" aria-label="__T_KWHEEL__"><svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="41" fill="none" stroke="#fff" stroke-width="17"/><circle cx="50" cy="50" r="41" fill="none" stroke="#2b3346" stroke-width="11"/><path d="M13 53 37 50M63 50l24 3M50 63v24" stroke="#2b3346" stroke-width="11" stroke-linecap="round"/><circle cx="50" cy="50" r="16" fill="#1f72e0" stroke="#fff" stroke-width="5"/><rect x="43" y="3" width="14" height="13" rx="4" fill="#ffcc1a" stroke="#fff" stroke-width="2"/></svg></div>
@@ -791,7 +819,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
     <span class="lbl u">__T_GAS__</span><span class="lbl d">__T_BRAKE__</span>
   </div>
   <button class="kRound" id="kSwap" type="button" aria-label="__T_KSWAP__"></button>
-  <div id="kOops" hidden><span class="e" aria-hidden="true">😮</span><b id="kOopsTxt"></b><span class="arr" id="kOopsArr"></span></div>
+  <div id="kOops" role="status" aria-live="polite" hidden><span class="e" aria-hidden="true">😮</span><b id="kOopsTxt" dir="auto"></b><span class="arr" id="kOopsArr"></span></div>
 </div>
 
 <div id="menu" class="screen">
@@ -833,7 +861,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   </div>
 </div>
 
-<div id="booklet" class="screen" hidden>
+<div id="booklet" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet" style="margin:0;width:min(560px,100%)">
     <div class="setHead"><h2>__T_ALBUM__ <small id="bookletProg"></small></h2><button class="btn" id="bookClose" type="button">__T_CLOSE__</button></div>
     <div class="album-grid" id="albumGrid"></div>
@@ -841,7 +869,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
 </div>
 
 
-<div id="welcome" class="screen" hidden>
+<div id="welcome" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet">
     <div class="brand"><div class="brandtop"><span class="eyebrow">__EYEBROW__</span><button class="langbtn" type="button" data-lang-switch></button></div><h1>__NAME__</h1><div class="flagbar"></div></div>
     <div class="rules">
@@ -863,7 +891,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   </div>
 </div>
 
-<div id="tourEnd" class="screen" hidden>
+<div id="tourEnd" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet">
     <h2 style="font-family:var(--display);font-weight:400;font-size:52px;margin:0;color:var(--accent)">__T_TEND__</h2>
     <p style="margin:0;color:var(--muted);line-height:1.6">__T_TENDS__</p>
@@ -872,11 +900,11 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   </div>
 </div>
 
-<div id="settings" class="screen" hidden>
+<div id="settings" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet">
     <div class="setHead"><h2>__T_SETTINGS__</h2><button class="btn" id="setClose" type="button">__T_CLOSE__</button></div>
     <div class="tabs" role="tablist"><button type="button" role="tab" data-tab="ctl"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="2.6" fill="currentColor"/><path d="M3.5 10.5h6M14.5 10.5h6M12 14.5V21" stroke="currentColor" stroke-width="2.2"/></svg><span>__T_SET_CONTROLS__</span></button><button type="button" role="tab" data-tab="snd"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>__T_SET_SOUND__</span></button><button type="button" role="tab" data-tab="dsp"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M8 20h8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg><span>__T_SET_DISPLAY__</span></button><button type="button" role="tab" data-tab="lng"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="1.8"/></svg><span>__T_LANG__</span></button></div>
-    <div class="panel" data-panel="ctl">
+    <div class="panel" role="tabpanel" data-panel="ctl">
       <div><div class="label">__T_CTRL__</div><div class="modes" id="ctlModes"><button type="button" class="mode" data-v="stick"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="20" cy="15" r="6" fill="currentColor"/></svg><b>__T_C_STICK__</b></button><button type="button" class="mode" data-v="onehand"><svg viewBox="0 0 40 40"><rect x="11" y="4" width="18" height="32" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M14 20h12M14 20l3-3M14 20l3 3M26 20l-3-3M26 20l-3 3" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>__T_C_ONE__</b></button><button type="button" class="mode" data-v="tilt"><svg viewBox="0 0 40 40"><rect x="12" y="6" width="16" height="28" rx="4" transform="rotate(-20 20 20)" fill="none" stroke="currentColor" stroke-width="3"/><path d="M5 14a16 16 0 0 0 0 12M35 14a16 16 0 0 1 0 12" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg><b>__T_C_TILT__</b></button><button type="button" class="mode" data-v="lanes"><svg viewBox="0 0 40 40"><path d="M10 36 15 4M30 36 25 4" stroke="currentColor" stroke-width="3" fill="none"/><path d="M20 30v-6M20 18v-6" stroke="currentColor" stroke-width="2.4"/></svg><b>__T_C_LANES__</b></button><button type="button" class="mode" data-v="wheel"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="none" stroke="currentColor" stroke-width="3.4"/><circle cx="20" cy="21" r="4" fill="currentColor"/><path d="M5.5 19h10M24.5 19h10M20 25v10" stroke="currentColor" stroke-width="3"/></svg><b>__T_C_WHEEL__</b></button></div><p class="note" id="modeNote"></p></div>
       <div><div class="label"><label for="rSteer">__T_STEERFEEL__</label></div><div class="slider"><span>__T_LIGHT__</span><input type="range" id="rSteer" min="0" max="100" step="1"><span>__T_HEAVY__</span></div></div>
       <div><div class="label"><label for="rBrake">__T_BRAKEFEEL__</label></div><div class="slider"><span>__T_SOFT__</span><input type="range" id="rBrake" min="0" max="100" step="1"><span>__T_HARD__</span></div></div>
@@ -884,7 +912,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <div><div class="label">__T_HORNSIZE__</div><div class="seg " id="segHornSize"><button type="button" data-v="small">__T_SMALL__</button><button type="button" data-v="normal">__T_NORMAL__</button></div></div>
       <p class="note keysNote">__T_KEYSNOTE__</p>
     </div>
-    <div class="panel" data-panel="snd" hidden>
+    <div class="panel" role="tabpanel" data-panel="snd" hidden>
       <div><div class="label">__T_SOUND__</div><div class="seg segSound" id="segSound"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
       <div><div class="label"><label for="rEngine">__T_VOLENG__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rEngine" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
       <div><div class="label"><label for="rHorn">__T_VOLHORN__</label></div><div class="slider"><span>__T_QUIET__</span><input type="range" id="rHorn" min="0" max="100" step="1"><span>__T_LOUD__</span></div></div>
@@ -895,7 +923,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <div id="vibRow"><div class="label">__T_VIB__</div><div class="seg" id="segVib"><button type="button" data-v="0">__T_OFF__</button><button type="button" data-v="1">__T_VIB1__</button><button type="button" data-v="2">__T_VIB2__</button><button type="button" data-v="3">__T_VIB3__</button></div></div>
       <p class="note">__T_RADIONOTE__</p>
     </div>
-    <div class="panel" data-panel="dsp" hidden>
+    <div class="panel" role="tabpanel" data-panel="dsp" hidden>
       <div><div class="label">__T_QUALITY__</div><div class="seg segQual" id="segQual"><button type="button" data-v="high">__T_QHIGH__</button><button type="button" data-v="low">__T_QLOW__</button></div></div>
       <div><div class="label">__T_AUTOQ__</div><div class="seg" id="segAutoQ"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div><p class="note">__T_AUTOQ_D__</p></div>
       <div><div class="label">__T_TOD__</div><div class="seg seg5" id="segTime"><button type="button" data-v="auto">__T_TAUTO__</button><button type="button" data-v="morning">__T_TMORN__</button><button type="button" data-v="noon">__T_TNOON__</button><button type="button" data-v="sunset">__T_TSUN__</button><button type="button" data-v="night">__T_TNIGHT__</button></div></div>
@@ -906,7 +934,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
       <div><div class="label">__T_SHAKE__</div><div class="seg " id="segShake"><button type="button" data-v="1">__T_ON__</button><button type="button" data-v="0">__T_OFF__</button></div></div>
       <div><div class="label">__T_MINIMAP__</div><div class="seg " id="segMini"><button type="button" data-v="1">__T_SHOW__</button><button type="button" data-v="0">__T_HIDE__</button></div></div>
     </div>
-    <div class="panel" data-panel="lng" hidden>
+    <div class="panel" role="tabpanel" data-panel="lng" hidden>
       <div class="langs" id="langList"></div>
     </div>
     <button class="ver" type="button" data-full="__STAMP__">v__VERSION__</button>
@@ -943,7 +971,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   <button class="kGoBtn" id="kAgain" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.05-4.95" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M19.5 3.5v5h-5" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="kLbl">__T_KAGAIN__</span></button>
 </div>
 
-<div id="pause" class="screen" hidden>
+<div id="pause" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet">
     <h2 id="pTitle" style="font-family:var(--display);font-weight:400;font-size:44px;margin:0;color:var(--accent)">__T_PAUSED__</h2>
     <div class="row"><button class="go" id="btnResume" type="button">__T_RESUME__</button></div>
@@ -952,7 +980,7 @@ body.kids #hud .hbar, body.kids #hud .stats, body.kids #mini, body.kids #btnPaus
   </div>
 </div>
 
-<div id="result" class="screen" hidden>
+<div id="result" class="screen" role="dialog" aria-modal="true" hidden>
   <div class="sheet">
     <div><h2 id="rTitle"></h2><p id="rSub"></p></div>
     <div id="rStats"></div>

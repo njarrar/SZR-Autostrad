@@ -29,6 +29,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: app-store-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
   ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -37,6 +41,7 @@ env:
 jobs:
   ios:
     runs-on: macos-15
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,7 +50,7 @@ jobs:
       # Apple only takes apps built with the iOS 26 SDK or later, so pick the newest Xcode 26 on the runner
       - name: Use Xcode 26
         run: |
-          X=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1 || true)
           [ -n "$X" ] || { echo "No Xcode 26 on this runner"; exit 1; }
           sudo xcode-select -s "$X"
           xcodebuild -version
@@ -70,12 +75,13 @@ jobs:
           P12_PASS: ${{ secrets.APPLE_CERTS_PASSWORD }}
         run: |
           KC=$RUNNER_TEMP/build.keychain-db
-          security create-keychain -p ci "$KC"
+          KC_PASS=$(openssl rand -hex 24)
+          security create-keychain -p "$KC_PASS" "$KC"
           security set-keychain-settings -lut 21600 "$KC"
-          security unlock-keychain -p ci "$KC"
+          security unlock-keychain -p "$KC_PASS" "$KC"
           echo "$P12" | base64 --decode > $RUNNER_TEMP/cert.p12
           security import $RUNNER_TEMP/cert.p12 -P "$P12_PASS" -A -t cert -f pkcs12 -k "$KC"
-          security set-key-partition-list -S apple-tool:,apple: -k ci "$KC"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KC_PASS" "$KC"
           security list-keychain -d user -s "$KC" $(security list-keychains -d user | tr -d '"')
           mkdir -p $RUNNER_TEMP/keys
           if echo "$ASC_KEY" | grep -q BEGIN; then echo "$ASC_KEY" > $RUNNER_TEMP/keys/key.p8; else echo "$ASC_KEY" | base64 --decode > $RUNNER_TEMP/keys/key.p8; fi
@@ -88,7 +94,7 @@ jobs:
           AUTH="-allowProvisioningUpdates -authenticationKeyPath $RUNNER_TEMP/keys/key.p8 -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
           xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
             -destination 'generic/platform=iOS' -archivePath $RUNNER_TEMP/App.xcarchive \
-            DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Automatic $AUTH archive | tail -40
+            DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Automatic $AUTH archive | tee $RUNNER_TEMP/xcodebuild.log | tail -40
           cat > $RUNNER_TEMP/export.plist <<EOF
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -102,6 +108,18 @@ jobs:
           if [ "$GITHUB_REF_NAME" = app-store ]; then echo "try-out branch: archive built, not uploading"; exit 0; fi
           xcodebuild -exportArchive -archivePath $RUNNER_TEMP/App.xcarchive \
             -exportOptionsPlist $RUNNER_TEMP/export.plist -exportPath $RUNNER_TEMP/export $AUTH
+      - name: Upload Xcode build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: ${{ runner.temp }}/xcodebuild.log
+          if-no-files-found: ignore
+      - name: Clean up signing keychain and keys
+        if: always()
+        run: |
+          security delete-keychain "$RUNNER_TEMP/build.keychain-db" 2>/dev/null || true
+          rm -f "$RUNNER_TEMP/cert.p12" "$RUNNER_TEMP/keys/key.p8" "$RUNNER_TEMP/export.plist"
       - name: Fill in the store page
         env:
           REVIEW_PHONE: ${{ secrets.REVIEW_PHONE }}

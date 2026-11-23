@@ -2,6 +2,9 @@
 # Each store gets the entries newer than the version its players have now, up to the version in
 # the build, so neither store tells players about a change their build does not have yet.
 
+## 2.36
+رجع متحف المستقبل لدبي، والسيارات صارت توصل لأعلى سرعتها، والبنزين صار يخلص حسب المسافة، والمرور النظيف تحت الرادار بيعطيك نقاط، وكل مشوار بياخذ لحد 3 نجوم، والشوارع بالليل صار فيها ضو أعمدة وضو سيارات، ووضع الأطفال ما عاد ينطلع منه من شاشة الإيقاف.
+
 ## 2.35
 التطلّع حوالين السيارة صار أهدى، والشاشة ما عادت تكبر لما تستعمل إصبعين.
 

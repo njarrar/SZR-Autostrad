@@ -3,7 +3,7 @@
 <language code="ar" name="العربية" dir="rtl">
   <city>
     <string key="page.T_WXON">شتوية</string>
-    <string key="card.tag">AMMAN LOOP · 22 KM</string>
+    <string key="card.tag">لفّة عمّان · 22 كم</string>
     <string key="card.name">لفّة عمّان</string>
     <string key="card.text">العبدلي، جبل القلعة، سارية رغدان، المدرج الروماني، جسر عبدون ومكة مول. طلعات ونزلات ومطبات.</string>
     <string key="card.alt">سيارة تكسي صفرا على شارع بعمّان بين بنايات حجر</string>
@@ -19,7 +19,7 @@
     <string key="page.title">لفّة عمّان</string>
     <string key="page.name">لفّة عمّان</string>
     <string key="page.eyebrow">Amman · عمّان</string>
-    <string key="page.alt">Driving through Amman</string>
+    <string key="page.alt">سواقة في شوارع عمّان</string>
     <string key="page.blurb">من العبدلي للقلعة لجبل عمّان، بين الطلعات والنزلات. انتبه عالرادار والمطبات، وحشّر بين السيارات بس بدون ما تضرب.</string>
     <string key="page.T_NEXT">رايحين على</string>
     <string key="page.T_KMH">كم/س</string>
@@ -119,7 +119,7 @@
     <string key="text.radarOk">مرقت عالرادار تمام</string>
     <string key="text.bumpHit">مطب! خفّف شوي</string>
     <string key="text.bumpOk">نزلت عالمطب بهدوء</string>
-    <string key="text.bonus">+500 كل 10 كم</string>
+    <string key="text.bonus">+250 كل 5 كم</string>
     <string key="text.workshop">صيانة: رجعت السيارة جديدة</string>
     <string key="text.weave">تحشيرة</string>
     <string key="text.loadRoad">بنرسم الشارع...</string>
@@ -199,6 +199,7 @@
     <string key="page.T_TILTPERM">اسمح للعبة تقرا حركة التلفون عشان تسوق بالإمالة.</string>
     <string key="page.T_NOTILT">هالجهاز ما فيه حسّاس إمالة، فالعصا رح تسوق بداله.</string>
     <string key="page.T_KEYSNOTE"><![CDATA[عالكمبيوتر الكيبورد دايماً شغّال: الأسهم أو <kbd>WASD</kbd> للسواقة و<kbd>Space</kbd> للزامور و<kbd>N</kbd> أو <kbd>Shift</kbd> للنيترو.]]></string>
-      <string key="page.T_HORNSTYLE">صوت الزامور</string>
+    <string key="page.T_HORNSTYLE">صوت الزامور</string>
+    <string key="text.fuelLow">البنزين قرب يخلص! مرّ عالكازية بالمسرب اليمين</string>
 </city>
 </language>

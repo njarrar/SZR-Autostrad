@@ -12,15 +12,27 @@ const CITIES = fs.readdirSync(here + 'cities').filter((d) => fs.existsSync(here 
 if (!CITIES.length) throw new Error('no cities found in cities/');
 const DEFAULT_LANG = 'ar';
 // shown on each game's start screen and on the landing cards; raise VERSION with each release
-const VERSION = '2.35';
+const VERSION = '2.36';
 const BUILT = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
 const STAMP = `v${VERSION} · ${BUILT}`;
 
+// guard against accidental duplicate landmark builders in engine.js
+{
+  const seenLb = new Set();
+  for (const m of engine.matchAll(/^\s*LB\.([A-Za-z0-9_]+)\s*=/gm)) {
+    if (seenLb.has(m[1])) throw new Error(`src/engine.js: duplicate landmark builder LB.${m[1]}`);
+    seenLb.add(m[1]);
+  }
+}
+
 // ---------- language files: lang/<code>.xml ----------
 const unescape = (s) => s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
-function readStrings(body) {
+function readStrings(body, sourceLabel = 'xml') {
   const out = {};
-  for (const m of body.matchAll(/<string key="([^"]+)">(?:<!\[CDATA\[([\s\S]*?)\]\]>|([^<]*))<\/string>/g)) out[m[1]] = m[2] != null ? m[2] : unescape(m[3]);
+  for (const m of body.matchAll(/<string key="([^"]+)">(?:<!\[CDATA\[([\s\S]*?)\]\]>|([^<]*))<\/string>/g)) {
+    if (Object.prototype.hasOwnProperty.call(out, m[1])) throw new Error(`${sourceLabel}: duplicate <string key="${m[1]}">`);
+    out[m[1]] = m[2] != null ? m[2] : unescape(m[3]);
+  }
   return out;
 }
 const readXml = (file) => fs.readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '');
@@ -29,17 +41,17 @@ function readLang(file) {
   const xml = readXml(file);
   const head = xml.match(/<language code="([^"]+)" name="([^"]+)" dir="(ltr|rtl)">/);
   if (!head) throw new Error(file + ': missing <language code name dir>');
-  const section = (src, re) => { const m = src.match(re); return m ? readStrings(m[1]) : {}; };
-  const common = section(xml, /<common>([\s\S]*?)<\/common>/);
+  const section = (src, re, label) => { const m = src.match(re); return m ? readStrings(m[1], label) : {}; };
+  const common = section(xml, /<common>([\s\S]*?)<\/common>/, file + ' <common>');
   const cities = {};
   for (const id of CITIES) {
     const cf = here + `cities/${id}/lang/${head[1]}.xml`;
     if (!fs.existsSync(cf)) throw new Error(`missing cities/${id}/lang/${head[1]}.xml`);
-    cities[id] = { ...common, ...section(readXml(cf), /<city>([\s\S]*?)<\/city>/) };
+    cities[id] = { ...common, ...section(readXml(cf), /<city>([\s\S]*?)<\/city>/, cf + ' <city>') };
   }
   // each game links to the next city; the label uses that city's name in this language
   CITIES.forEach((id, i) => { const next = CITIES[(i + 1) % CITIES.length]; cities[id]['page.otherLabel'] = (common['page.tryCity'] || '{city}').replace('{city}', cities[next]['page.name']); });
-  return { code: head[1], name: head[2], dir: head[3], cities, landing: section(xml, /<landing>([\s\S]*?)<\/landing>/) };
+  return { code: head[1], name: head[2], dir: head[3], cities, landing: section(xml, /<landing>([\s\S]*?)<\/landing>/, file + ' <landing>') };
 }
 const langs = {};
 for (const f of fs.readdirSync(here + 'lang').filter((f) => f.endsWith('.xml')).sort()) { const l = readLang(here + 'lang/' + f); langs[l.code] = l; }

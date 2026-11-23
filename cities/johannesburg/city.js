@@ -64,12 +64,12 @@ window.CITY = {
   kids: ['orlando', 'fnb', 'goldReef'],
   // the cars you see most on Johannesburg roads
   cars: [
-    { kind: 'bmw', vmax: 230, accel: 6.0, grip: 1.12, tough: 1.0, role: 'weave' },
-    { kind: 'van', fixedColor: 0xf4f4f0, extra: { stripe: 0xe8302a }, vmax: 160, accel: 4.0, grip: 0.92, tough: 0.5, role: 'bus', paxCap: 14 },
-    { kind: 'pickup', vmax: 175, accel: 4.3, grip: 0.84, tough: 0.5, role: 'tough' },
-    { kind: 'hatch', vmax: 175, accel: 4.0, grip: 1.2, tough: 1.25, role: 'weave' },
-    { kind: 'suv', vmax: 190, accel: 4.6, grip: 0.86, tough: 0.6, role: 'vip' },
-    { kind: 'f1', fixedColor: 0xd40000, vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, role: 'race' }
+    { kind: 'bmw', vmax: 230, accel: 6.0, grip: 1.12, tough: 1.2, fuel: 1.15, role: 'weave' },
+    { kind: 'van', fixedColor: 0xf4f4f0, extra: { stripe: 0xe8302a }, vmax: 160, accel: 4.0, grip: 0.92, tough: 0.58, fuel: 1.05, role: 'bus', paxCap: 14 },
+    { kind: 'pickup', vmax: 175, accel: 4.3, grip: 0.84, tough: 0.42, fuel: 0.85, role: 'tough' },
+    { kind: 'hatch', vmax: 175, accel: 4.0, grip: 1.2, tough: 1.25, fuel: 0.75, role: 'weave' },
+    { kind: 'suv', vmax: 190, accel: 4.6, grip: 0.86, tough: 0.55, fuel: 1.3, role: 'vip' },
+    { kind: 'f1', fixedColor: 0xd40000, vmax: 320, accel: 9.5, grip: 1.45, tough: 1.6, fuel: 1.8, role: 'race' }
   ],
   stickers: ['', 'Sharp Sharp', 'Ubuntu', 'Proudly Jozi', 'Lekker!', 'Eish', 'Ayoba!'],
   // Haitham Mode: what people on the sidewalk say, and the street seller's cart
@@ -114,8 +114,8 @@ window.CITY = {
     const gr = g.createLinearGradient(0, 0, w, 0); gr.addColorStop(0, '#f2a900'); gr.addColorStop(0.5, '#3a8fd0'); gr.addColorStop(1, '#2e9d4a');
     g.fillStyle = gr; g.fillRect(6, 6, w - 12, 18);
     g.fillStyle = '#fbfbf6'; for (let x = 12; x < w - 12; x += 22) g.fillRect(x, 6, 10, 6 + (x * 7) % 10);
-    g.strokeStyle = '#111'; g.lineWidth = 6; g.strokeRect(3, 3, w - 6, h - 6);
-    g.fillStyle = '#111'; g.textAlign = 'center'; const t = String(text).toUpperCase();
+    g.strokeStyle = '#00338d'; g.lineWidth = 6; g.strokeRect(3, 3, w - 6, h - 6);
+    g.fillStyle = '#00338d'; g.textAlign = 'center'; const t = String(text).toUpperCase();
     let z = 78; g.font = `bold ${z}px sans-serif`; while (z > 36 && g.measureText(t).width > w - 40) { z -= 4; g.font = `bold ${z}px sans-serif`; }
     g.fillText(t, w / 2, h / 2 + 12 + z * 0.36);
   },
@@ -123,11 +123,11 @@ window.CITY = {
     clouds: 0.3, cloudColor: '#f6f6f2', exposure: 1.05, night: 0, fog: '#d6dbd2', fogNear: 700, fogFar: 7000, skyTop: '#3f7fc8', sunGlow: '#ffe2a0',
     skyLight: 0xd8e4f0, groundLight: 0x9a8a5a, hemi: 1.15, sunColor: 0xfff0d0, sun: 2.0, sunDir: [0.4, 0.7, 0.4],
     winLit: '#ffd58a', winGlass: '#3e4f60', windows: { floor: 3.4, bay: 3, size: 0.5 },
-    pixelPalette: ['#1c1a17', '#2c2620', '#4a3a2c', '#7a4a32', '#8b3a2b', '#b5654a', '#c97b5a', '#d9c4a0', '#e8dcc4', '#f4efe4', '#9a8f80', '#8a7f72',
+    pixelPalette: ['#1c1a17', '#1e1f24', '#36373d', '#2c2620', '#4a3a2c', '#7a4a32', '#8b3a2b', '#b5654a', '#c97b5a', '#d9c4a0', '#e8dcc4', '#f4efe4', '#9a8f80', '#8a7f72',
       '#3f7fc8', '#6f9fd8', '#a8c6e6', '#d6dbd2', '#3e4f60', '#6f8fa8', '#9ab0c0', '#4f6b33', '#7a8f45', '#9aa060', '#b5a76a', '#d9c27a',
       '#2a2a30', '#45454e', '#6b6b72', '#9a9aa0', '#c4c4c2', '#e2e1dc', '#8a6fc0', '#a98ad8', '#6a4fa0',
       '#de3831', '#002395', '#007a4d', '#ffb612', '#e83e8c', '#1fa2d9'],
-    ground: ['#7f9a4a', '#a8a868', '#8a8460'], asphalt: '#47484c', median: '#9a9a8a', lineEdge: '#f2d23a', lineLane: '#f2f2f2',
+    ground: ['#7f9a4a', '#a8a868', '#8a8460'], asphalt: '#47484c', median: '#9a9a8a', lineEdge: '#f2d23a', lineLane: '#f2f2f2', lineMedian: '#f2f2f2',
     paving: '#bfb6a4', kerb: ['#f2f2f0', '#c8102e'], barrier: 0xcfc8b8, pole: 0xa8adb2, tanks: [0x2a2a2a, 0x9aa0a6],
     treeDark: 0x2f5a2a, treeLight: 0x6a8a3a, jacaranda: [0x8a6fc0, 0x9a7ad0, 0x7a5fb0, 0xa98ad8], roofs: [0x8b3a2b, 0x4a4d52, 0x9aa0a6, 0x7a2e24, 0x5a6f7a, 0xa04a32],
     signColor: '#0a6b3a', warnColor: '#c89a0a', radarColor: 0xdedede,
@@ -151,8 +151,9 @@ window.CITY = {
   page: {
     tokens: {
       ground: '#d2cfe0', ink: '#1e1a26', muted: '#5e586c', panel: 'rgba(246,244,250,0.94)', 'panel-solid': '#f8f6fb', chip: '#e8e2f2',
-      line: '#d8d2e4', accent: '#6a3fa0', 'on-accent': '#ffffff', hud: 'rgba(22,18,28,0.72)', 'hud-ink': '#f7f5fa', 'accent-hud': '#c4a4f4',
-      bad: '#c8102e', good: '#127a3a', flagbar: 'linear-gradient(90deg,#007a4d 0 22%,#ffb612 22% 28%,#000 28% 44%,#fff 44% 48%,#de3831 48% 74%,#fff 74% 78%,#002395 78%)'
+      line: '#d8d2e4', accent: '#6a3fa0', 'on-accent': '#ffffff', hud: 'rgba(20,16,26,0.84)', 'hud-ink': '#f7f5fa', 'accent-hud': '#d4bcff',
+      bad: '#c8102e', 'bad-hud': '#ff7575', good: '#127a3a', 'toast-good': '#127a3a', 'toast-bad': '#b5142b',
+      flagbar: 'linear-gradient(90deg,#007a4d 0 22%,#ffb612 22% 28%,#000 28% 44%,#fff 44% 48%,#de3831 48% 74%,#fff 74% 78%,#002395 78%)'
     }
   }
 };

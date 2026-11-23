@@ -95,7 +95,7 @@
     <string key="text.radarAhead">Speed camera in</string>
     <string key="text.flash">Speed camera got you!</string>
     <string key="text.radarOk">Clean pass under the camera</string>
-    <string key="text.bonus">+500 every 10 km</string>
+    <string key="text.bonus">+250 every 5 km</string>
     <string key="text.workshop">Repair: your car is like new</string>
     <string key="text.weave">Close pass</string>
     <string key="text.loadRoad">Drawing the road...</string>
@@ -154,7 +154,7 @@
     <string key="page.T_VOLFX">Effects</string>
     <string key="page.T_VOLHORN">Horn</string>
     <string key="page.T_RADIO">Radio</string>
-    <string key="page.T_LOOK">Look around</string>
+    <string key="page.T_LOOKAROUND">Look around</string>
     <string key="page.T_C_WHEEL">Wheel</string>
     <string key="page.T_C_WHEEL_D">Turn the wheel with one thumb to steer. The gas and brake pedals sit on the other side.</string>
     <string key="page.T_MUSIC">Radio music</string>
@@ -235,7 +235,7 @@
     <string key="text.viewRight">Right side</string>
     <string key="text.viewBack">Looking back</string>
     <string key="text.refuel">Tank refilled at the station! +100</string>
-    <string key="text.fuelLow">Low fuel! Pull into the next right-lane station</string>
+    <string key="text.fuelLow">Low fuel! Pull into the next kerb-lane station</string>
     <string key="text.cardUnlocked">Unlocked landmark postcard:</string>
     <string key="page.T_NONE">None</string>
     <string key="page.T_CHARM_1">Prayer beads</string>
@@ -244,7 +244,9 @@
     <string key="text.rFares">Fares</string>
     <!-- Haitham Mode: walking on the sidewalk -->
     <string key="page.T_WALK">Haitham Mode</string>
-    <string key="page.T_WALK_SUB">Walk the dog to the shop</string>
+    <string key="page.T_WALK_SUB">Walk 400 m to the shop</string>
+    <string key="page.T_WALK_FAST">Faster</string>
+    <string key="page.T_WALK_EXCUSE">Excuse me</string>
     <string key="page.T_BUMPS">Bumps</string>
     <string key="text.walkGoal">The corner shop</string>
     <string key="text.walkHow">Haitham Mode: walk 400 m to the shop. Left and right to dodge, up walks faster, Space says excuse me, N lets the dog loose</string>

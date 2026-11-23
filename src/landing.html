@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>SZR Autostrad</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0f16'/%3E%3Cpath d='M18 52 L28 12 H36 L46 52 Z' fill='%23253041'/%3E%3Crect x='30.5' y='16' width='3' height='10' rx='1.5' fill='%23f5b83d'/%3E%3Crect x='30.5' y='34' width='3' height='12' rx='1.5' fill='%23f5b83d'/%3E%3C/svg%3E">
-<meta name="description" content="3D driving games in the browser, set on real roads in Arab cities.">
+<meta name="description" content="Five 3D driving games in the browser, set on real roads in Amman, Dubai, Riyadh, Nairobi and Johannesburg.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Lalezar&display=swap">
@@ -39,6 +39,8 @@ header p { margin: 0; max-width: 60ch; color: var(--muted); font-size: 17px; }
 .city .txt { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .city h2 { font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; margin: 0; color: var(--c); }
 .city .en { font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--muted); }
+[dir="rtl"] h1, [dir="rtl"] .city h2 { line-height: 1.22; }
+[dir="rtl"] .eyebrow, [dir="rtl"] .city .en { letter-spacing: 0; }
 .city p { margin: 0; color: var(--muted); }
 .city .ver { font-size: 12px; color: var(--muted); direction: ltr; unicode-bidi: isolate; }
 .play { margin-top: 10px; align-self: flex-start; background: var(--c); color: var(--card); font-family: var(--display); font-size: 24px; padding: 8px 22px 4px; border-radius: 12px; }
@@ -93,19 +95,26 @@ __CARDS__
 __LANGS__
 // Same choice as the games: ?lang=, then the saved language, then the browser language.
 (function () {
-  var KEY = 'szr:lang', l = null;
+  var KEY = 'szr:lang', l = null, has = function (k) { return !!k && Object.prototype.hasOwnProperty.call(LANGS, k); };
   try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
-  if (!LANGS[l]) { try { l = localStorage.getItem(KEY); } catch (e) { l = null; } }
-  if (!LANGS[l]) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : 'en';
-  if (!LANGS[l]) l = Object.keys(LANGS)[0];
+  if (has(l)) { try { localStorage.setItem(KEY, l); } catch (e) {} }
+  else { try { l = localStorage.getItem(KEY); } catch (e) { l = null; } }
+  if (!has(l)) l = /^ar\b/i.test(navigator.language || '') ? 'ar' : 'en';
+  if (!has(l)) l = Object.keys(LANGS)[0];
   function apply() {
     var L = LANGS[l], codes = Object.keys(LANGS), next = codes[(codes.indexOf(l) + 1) % codes.length];
     document.documentElement.lang = l; document.documentElement.dir = L.dir;
+    if (L.s.title) document.title = L.s.title;
     document.querySelectorAll('[data-t]').forEach(function (el) { el.innerHTML = L.s[el.dataset.t]; });
     document.querySelectorAll('[data-t-alt]').forEach(function (el) { el.alt = L.s[el.dataset.tAlt]; });
     document.querySelectorAll('a[data-game]').forEach(function (a) { a.href = a.getAttribute('href').split('?')[0] + '?lang=' + l; });
     var b = document.querySelector('[data-lang-switch]'); b.textContent = LANGS[next].name; b.lang = next;
-    b.onclick = function () { l = next; try { localStorage.setItem(KEY, l); } catch (e) {} apply(); };
+    b.onclick = function () {
+      l = next;
+      try { localStorage.setItem(KEY, l); } catch (e) {}
+      try { history.replaceState(null, '', '?lang=' + l); } catch (e) {}
+      apply();
+    };
   }
   apply();
   // inside the phone apps: no talk of browsers, and on iPhone the clock and battery show
